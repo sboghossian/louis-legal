@@ -9,7 +9,7 @@ import Link from "next/link";
 import { LouisWordmark } from "@/components/brand/louis-mark";
 import { CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { updateUserProfile } from "@/app/lib/louisApi";
+import { signupViaServer, updateUserProfile } from "@/app/lib/louisApi";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 
 export default function SignupPage() {
@@ -46,13 +46,51 @@ export default function SignupPage() {
             return;
         }
 
+        const trimmedName = name.trim();
+        const trimmedOrg = organisation.trim();
+
         try {
-            const { data, error } = await supabase.auth.signUp({ email, password });
+            // 1) Try the service-role signup endpoint first. This bypasses
+            //    Supabase's email-confirmation gate + the built-in SMTP
+            //    rate limit, which were silently blocking new users.
+            const serverResult = await signupViaServer({
+                email,
+                password,
+                ...(trimmedName && { displayName: trimmedName }),
+                ...(trimmedOrg && { organisation: trimmedOrg }),
+            });
+
+            if (serverResult.ok) {
+                // Account exists + is email-confirmed. Sign them in to
+                // mint a real session client-side.
+                const { error: signInError } =
+                    await supabase.auth.signInWithPassword({
+                        email,
+                        password,
+                    });
+                if (signInError) throw signInError;
+                setSuccess(true);
+                setTimeout(() => router.push("/onboarding"), 1500);
+                return;
+            }
+
+            // 2) Conflict (email already exists) is its own user-facing
+            //    case — point them at sign-in instead of looping the form.
+            if (serverResult.status === 409) {
+                setError(serverResult.detail);
+                return;
+            }
+
+            // 3) If the server endpoint isn't reachable (CORS, offline,
+            //    server not deployed yet), fall back to the direct
+            //    Supabase client signup so single-instance dev still works.
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+            });
             if (error) throw error;
 
             if (data.session) {
-                const trimmedName = name.trim();
-                const trimmedOrg = organisation.trim();
                 if (trimmedName || trimmedOrg) {
                     try {
                         await updateUserProfile({
@@ -60,14 +98,27 @@ export default function SignupPage() {
                             ...(trimmedOrg && { organisation: trimmedOrg }),
                         });
                     } catch (profileError) {
-                        console.error("[signup] failed to persist profile fields", profileError);
+                        console.error(
+                            "[signup] failed to persist profile fields",
+                            profileError,
+                        );
                     }
                 }
+                setSuccess(true);
+                setTimeout(() => router.push("/onboarding"), 1500);
+            } else {
+                // No session means Supabase queued a confirmation email.
+                // Surface clearly so the user doesn't sit at a blank screen.
+                setError(
+                    "Account created. Check your inbox for a confirmation email — if it doesn't arrive within a minute, ask the admin to disable email confirmation in Supabase.",
+                );
             }
-            setSuccess(true);
-            setTimeout(() => router.push("/onboarding"), 1500);
         } catch (error: unknown) {
-            setError(error instanceof Error ? error.message : "An error occurred during signup");
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "An error occurred during signup",
+            );
         } finally {
             setLoading(false);
         }

@@ -47,8 +47,51 @@ type UserProfileRow = {
   feeds: FeedTopic[] | null;
 };
 
-const PROFILE_COLUMNS =
-  "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model, appearance, feeds";
+// Core columns that have always existed. Newer columns (appearance,
+// feeds) are queried separately and silently dropped when the schema
+// hasn't been migrated yet on the deployment's Supabase project.
+const PROFILE_COLUMNS_CORE =
+  "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model";
+const PROFILE_COLUMNS_OPTIONAL = ["appearance", "feeds"] as const;
+
+// We track which optional columns have been confirmed present, in a
+// per-process cache, so we don't pay the "ask + fail" round-trip on
+// every profile read.
+const PRESENT_OPTIONAL_COLUMNS = new Set<string>();
+const MISSING_OPTIONAL_COLUMNS = new Set<string>();
+
+function buildProfileColumns(): string {
+  const optional = PROFILE_COLUMNS_OPTIONAL.filter(
+    (c) => !MISSING_OPTIONAL_COLUMNS.has(c),
+  );
+  return optional.length
+    ? `${PROFILE_COLUMNS_CORE}, ${optional.join(", ")}`
+    : PROFILE_COLUMNS_CORE;
+}
+
+function noteMissingColumn(message: string): boolean {
+  // Supabase + Postgres surface "column missing" two different ways:
+  //   - Raw Postgres:  column user_profiles.appearance does not exist
+  //   - PostgREST:     Could not find the 'appearance' column of 'user_profiles' in the schema cache
+  // We accept either.
+  let col: string | null = null;
+  const m1 = message.match(/column user_profiles\.(\w+) does not exist/i);
+  const m2 = message.match(
+    /could not find the '(\w+)' column of 'user_profiles'/i,
+  );
+  if (m1) col = m1[1];
+  else if (m2) col = m2[1];
+  if (!col) return false;
+  if ((PROFILE_COLUMNS_OPTIONAL as readonly string[]).includes(col)) {
+    MISSING_OPTIONAL_COLUMNS.add(col);
+    PRESENT_OPTIONAL_COLUMNS.delete(col);
+    console.warn(
+      `[user] user_profiles.${col} column not present in this DB. Apply backend/migrations/2026-05-12-appearance-and-feeds.sql to enable that feature.`,
+    );
+    return true;
+  }
+  return false;
+}
 
 const VALID_THEMES = new Set([
   "cream",
@@ -295,14 +338,30 @@ async function loadProfile(
   userId: string,
   options: { repairMissing?: boolean } = {},
 ) {
-  let { data, error } = await db
+  let result = await db
     .from("user_profiles")
-    .select(
-      PROFILE_COLUMNS,
-    )
+    .select(buildProfileColumns())
     .eq("user_id", userId)
     .maybeSingle();
 
+  // If the DB doesn't have appearance/feeds yet, mark them missing and
+  // retry with the reduced column list — keeps existing deployments
+  // working until the operator applies the migration. Loop because
+  // *both* optional columns may be missing.
+  let retries = PROFILE_COLUMNS_OPTIONAL.length;
+  while (
+    retries-- > 0 &&
+    result.error &&
+    noteMissingColumn(result.error.message)
+  ) {
+    result = await db
+      .from("user_profiles")
+      .select(buildProfileColumns())
+      .eq("user_id", userId)
+      .maybeSingle();
+  }
+
+  let { data, error } = result;
   if (error) return { data: null, error };
   if (!data) {
     if (!options.repairMissing) {
@@ -315,7 +374,7 @@ async function loadProfile(
     const created = await db
       .from("user_profiles")
       .select(
-        PROFILE_COLUMNS,
+        buildProfileColumns(),
       )
       .eq("user_id", userId)
       .single();
@@ -323,7 +382,7 @@ async function loadProfile(
     data = created.data;
   }
 
-  let row = data as UserProfileRow;
+  let row = data as unknown as UserProfileRow;
   if (row.credits_reset_date && new Date() > new Date(row.credits_reset_date)) {
     const creditsResetDate = new Date();
     creditsResetDate.setDate(creditsResetDate.getDate() + 30);
@@ -336,12 +395,12 @@ async function loadProfile(
       })
       .eq("user_id", userId)
       .select(
-        PROFILE_COLUMNS,
+        buildProfileColumns(),
       )
       .single();
 
     if (resetError) return { data: null, error: resetError };
-    row = resetData as UserProfileRow;
+    row = resetData as unknown as UserProfileRow;
   }
 
   return { data: serializeProfile(row), error: null };
@@ -379,10 +438,39 @@ userRouter.patch("/profile", requireAuth, async (req, res) => {
   if (ensureError)
     return void res.status(500).json({ detail: ensureError.message });
 
-  const { error: updateError } = await db
-    .from("user_profiles")
-    .update(parsed.update)
-    .eq("user_id", userId);
+  // Strip optional fields whose DB columns we've already learned aren't
+  // present — keeps the older Supabase deployments working until the
+  // operator applies backend/migrations/2026-05-12-appearance-and-feeds.sql.
+  const update: Record<string, unknown> = { ...parsed.update };
+  for (const col of PROFILE_COLUMNS_OPTIONAL) {
+    if (MISSING_OPTIONAL_COLUMNS.has(col) && col in update) {
+      delete update[col];
+    }
+  }
+
+  let updateError: { message: string } | null = null;
+  {
+    const { error } = await db
+      .from("user_profiles")
+      .update(update)
+      .eq("user_id", userId);
+    updateError = error ?? null;
+  }
+
+  // If we hit a "column does not exist" error, mark + retry once with
+  // the offending field stripped.
+  while (updateError && noteMissingColumn(updateError.message)) {
+    for (const col of PROFILE_COLUMNS_OPTIONAL) {
+      if (MISSING_OPTIONAL_COLUMNS.has(col) && col in update) {
+        delete update[col];
+      }
+    }
+    const { error } = await db
+      .from("user_profiles")
+      .update(update)
+      .eq("user_id", userId);
+    updateError = error ?? null;
+  }
   if (updateError)
     return void res.status(500).json({ detail: updateError.message });
 

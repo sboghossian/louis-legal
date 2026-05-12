@@ -32,6 +32,7 @@ import { mcpRouter } from "./routes/mcp";
 import { inboxRouter } from "./routes/inbox";
 import { feedbackRouter } from "./routes/feedback";
 import { feedRouter } from "./routes/feed";
+import { authRouter } from "./routes/auth";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -167,6 +168,17 @@ app.use("/api/mcp", mcpRouter);
 app.use("/api/inbox", inboxRouter);
 app.use("/api/feedback", feedbackRouter);
 app.use("/api/feed", feedRouter);
+
+// Auth helpers — service-role signup that bypasses the email-confirm
+// gate + Supabase's built-in mailer rate limit. Capped tightly because
+// it can create accounts.
+const signupLimiter = makeLimiter({
+  windowMs: minutes(envInt("RATE_LIMIT_SIGNUP_WINDOW_MINUTES", 10)),
+  max: envInt("RATE_LIMIT_SIGNUP_MAX", 5),
+  message: "Too many signup attempts. Please try again later.",
+});
+app.use("/api/auth/signup", signupLimiter);
+app.use("/api/auth", authRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 

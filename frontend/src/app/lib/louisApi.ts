@@ -97,6 +97,40 @@ export async function deleteAccount(): Promise<void> {
     return apiRequest<void>("/user/account", { method: "DELETE" });
 }
 
+// Service-role signup that bypasses Supabase's email-confirm gate.
+// The frontend calls this first; on success it follows up with
+// supabase.auth.signInWithPassword to mint a real session client-side.
+export async function signupViaServer(payload: {
+    email: string;
+    password: string;
+    displayName?: string;
+    organisation?: string;
+}): Promise<{ ok: true } | { ok: false; status: number; detail: string }> {
+    try {
+        const r = await fetch(`${API_BASE}/api/auth/signup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        if (r.ok) return { ok: true };
+        let detail = `Signup failed (${r.status})`;
+        try {
+            const body = (await r.json()) as { detail?: string };
+            if (body?.detail) detail = body.detail;
+        } catch {
+            /* ignore parse */
+        }
+        return { ok: false, status: r.status, detail };
+    } catch (e) {
+        return {
+            ok: false,
+            status: 0,
+            detail:
+                e instanceof Error ? e.message : "Network error during signup",
+        };
+    }
+}
+
 export type AppearanceTheme = "cream" | "light" | "dark" | "paper" | "slate";
 export type AppearanceFont =
     | "serif-garamond"
