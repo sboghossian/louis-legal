@@ -16,8 +16,8 @@
 # or:
 #   npm run tunnel
 
-tunnel: REPLACE_WITH_TUNNEL_UUID
-credentials-file: /Users/stephanemacmini/.cloudflared/REPLACE_WITH_TUNNEL_UUID.json
+tunnel: c38f70b1-8334-46af-90fa-12514ba09f0d
+credentials-file: /Users/stephanemacmini/.cloudflared/c38f70b1-8334-46af-90fa-12514ba09f0d.json
 
 # Logs at $TMPDIR/cloudflared.log when run.sh is used.
 loglevel: info
