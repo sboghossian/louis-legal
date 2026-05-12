@@ -2,20 +2,27 @@
 id: review.KSA-PDPL-readiness
 name: 'KSA PDPL readiness'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, data-protection, ksa]
+jurisdictions: [KSA]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.KSA-PDPL-readiness — STUB
+Skill: Review — KSA PDPL (Personal Data Protection Law) readiness.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Saudi Arabia's PDPL (Royal Decree M/19, effective September 2024, enforced by SDAIA's Saudi Data & AI Authority):
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Check contract / DPIA / processing for:
+- Lawful basis (consent, contract, legal obligation, legitimate interest — narrower than GDPR)
+- Data subject rights (access, rectification, erasure, portability — newer in PDPL)
+- Cross-border transfer rules (adequacy determinations, controller assurance, exceptions per Art. 29)
+- Data Protection Officer appointment (mandatory for high-volume / sensitive)
+- Privacy notice fields
+- Sensitive data handling (health, biometrics, race, religion, criminal)
+- Breach notification timing (72 hours)
+- Records of Processing Activities (Art. 31 ROPA)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { gaps: [{ requirement, currentState, severity, remediation }], readinessScore (0-100), criticalActions: [...] }
+
+Pair with [[draft.privacy-policy-MENA]] and [[review.UAE-PDPL]] for multi-jurisdiction operations.

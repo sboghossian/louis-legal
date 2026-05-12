@@ -1,0 +1,248 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { ShieldAlert, AlertOctagon, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+const SEVERITY_STYLE: Record<string, { bg: string; text: string; icon: typeof AlertOctagon; label: string }> = {
+    P0: { bg: "bg-red-100", text: "text-red-700", icon: AlertOctagon, label: "Dealbreaker" },
+    P1: { bg: "bg-amber-100", text: "text-amber-700", icon: AlertTriangle, label: "High" },
+    P2: { bg: "bg-yellow-50", text: "text-yellow-800", icon: AlertCircle, label: "Medium" },
+    P3: { bg: "bg-gray-100", text: "text-gray-600", icon: Info, label: "Low" },
+};
+
+interface Finding {
+    ruleId: string;
+    severity: "P0" | "P1" | "P2" | "P3";
+    category: string;
+    title: string;
+    description: string;
+    remediation: string;
+    excerpt?: string;
+    alternateClauseId?: string;
+    jurisdictionalNotes?: string;
+}
+
+interface ScanResult {
+    characters: number;
+    findings: Finding[];
+    countBySeverity: Record<string, number>;
+    countByCategory: Record<string, number>;
+    riskScore: number;
+    summary: string;
+}
+
+const SAMPLE = `MASTER SERVICES AGREEMENT
+
+This Master Services Agreement is entered into between Acme Trading LLC ("Customer") and Globex Solutions FZE ("Service Provider").
+
+1. Services. Service Provider agrees to provide consulting services to Customer.
+
+2. Fees. Customer shall pay Service Provider AED 10,000 per month.
+
+3. Term. This Agreement is effective from 1 January 2026 and may be terminated at any time by either party for convenience by giving thirty (30) days written notice.
+
+4. Intellectual Property. Service Provider agrees to assign to Customer all intellectual property created during the engagement.
+
+5. Confidentiality. Each party shall keep the other's information confidential.
+
+6. Data Protection. Service Provider may process personal data of Customer's employees and customers as part of the Services. Service Provider may transfer such personal data to third countries.
+
+7. Liability. Service Provider's liability under this Agreement is unlimited.
+
+8. Governing Law. This Agreement shall be governed by the laws of [JURISDICTION TBD].
+
+IN WITNESS WHEREOF, the parties have executed this Agreement.
+`;
+
+export default function RiskScanPage() {
+    const [text, setText] = useState(SAMPLE);
+    const [jurisdiction, setJurisdiction] = useState<string>("");
+    const [result, setResult] = useState<ScanResult | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    async function scan() {
+        setLoading(true);
+        setError(null);
+        setResult(null);
+        try {
+            const r = await fetch(`${API_BASE}/api/risk/scan`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, jurisdiction: jurisdiction || undefined }),
+            });
+            if (!r.ok) {
+                const j = await r.json();
+                throw new Error(j.error || `HTTP ${r.status}`);
+            }
+            setResult(await r.json());
+        } catch (e) {
+            setError((e as Error).message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const grouped = useMemo(() => {
+        if (!result) return {} as Record<string, Finding[]>;
+        const g: Record<string, Finding[]> = {};
+        for (const f of result.findings) {
+            g[f.category] = g[f.category] || [];
+            g[f.category].push(f);
+        }
+        return g;
+    }, [result]);
+
+    const scoreColor =
+        !result ? "" :
+        result.riskScore >= 60 ? "from-red-100 to-red-50 border-red-300 text-red-700" :
+        result.riskScore >= 30 ? "from-amber-100 to-amber-50 border-amber-300 text-amber-700" :
+        result.riskScore > 0 ? "from-yellow-50 to-emerald-50 border-yellow-200 text-yellow-800" :
+        "from-emerald-50 to-emerald-100 border-emerald-300 text-emerald-700";
+
+    return (
+        <div className="max-w-6xl mx-auto px-6 py-8">
+            <div className="flex items-center gap-3 mb-2">
+                <ShieldAlert className="w-6 h-6 text-gray-700" />
+                <h1 className="text-2xl font-semibold">Contract Risk Scanner</h1>
+            </div>
+            <p className="text-sm text-gray-600 mb-8">
+                Rule-based red-flag detection. Paste a contract and Louis scans for missing protections, unilateral terms, and known gotchas across {`${30}+`} dimensions.
+            </p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div className="bg-white border border-gray-200 rounded-lg p-5">
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Contract text</h2>
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="jur" className="text-xs">Jurisdiction</Label>
+                            <select id="jur" value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} className="border border-gray-300 rounded text-xs px-2 py-1">
+                                <option value="">(auto)</option>
+                                <option value="UAE">UAE</option>
+                                <option value="KSA">KSA</option>
+                                <option value="LB">Lebanon</option>
+                                <option value="FR">France</option>
+                                <option value="UK">UK</option>
+                                <option value="US">US</option>
+                            </select>
+                        </div>
+                    </div>
+                    <textarea
+                        value={text}
+                        onChange={e => setText(e.target.value)}
+                        rows={24}
+                        className="w-full border border-gray-300 rounded p-3 text-xs font-mono"
+                    />
+                    <div className="flex items-center gap-2 mt-3">
+                        <Button onClick={scan} disabled={loading || !text.trim()}>
+                            {loading ? "Scanning…" : "Scan for risks"}
+                        </Button>
+                        <Button variant="outline" onClick={() => setText("")}>Clear</Button>
+                        <Button variant="ghost" onClick={() => setText(SAMPLE)} className="ml-auto text-xs">Load sample</Button>
+                    </div>
+                </div>
+
+                {/* Scoreboard / summary */}
+                <div className="space-y-4">
+                    {!result && !error && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-5">
+                            <div className="text-sm text-gray-500 italic">Scan a contract to see its risk score and findings.</div>
+                        </div>
+                    )}
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 text-sm">{error}</div>
+                    )}
+                    {result && (
+                        <>
+                            <div className={`bg-gradient-to-br ${scoreColor} border rounded-lg p-5`}>
+                                <div className="text-xs uppercase tracking-wide opacity-70">Risk score</div>
+                                <div className="text-4xl font-semibold mt-1">{result.riskScore} <span className="text-base opacity-50">/100</span></div>
+                                <div className="text-sm mt-2 opacity-90">{result.summary}</div>
+                            </div>
+                            <div className="bg-white border border-gray-200 rounded-lg p-5 grid grid-cols-4 gap-3">
+                                {(["P0", "P1", "P2", "P3"] as const).map(sev => {
+                                    const s = SEVERITY_STYLE[sev];
+                                    const Icon = s.icon;
+                                    return (
+                                        <div key={sev} className={`rounded p-3 ${s.bg}`}>
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <Icon className={`w-4 h-4 ${s.text}`} />
+                                                <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{s.label}</span>
+                                            </div>
+                                            <div className={`text-xl font-semibold ${s.text}`}>{result.countBySeverity[sev]}</div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            {Object.keys(result.countByCategory).length > 0 && (
+                                <div className="bg-white border border-gray-200 rounded-lg p-5">
+                                    <div className="text-xs uppercase tracking-wide text-gray-500 mb-2">By category</div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {Object.entries(result.countByCategory).sort((a,b) => b[1]-a[1]).map(([cat, n]) => (
+                                            <span key={cat} className="bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full">
+                                                {cat} · {n}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {result && result.findings.length > 0 && (
+                <div className="space-y-6">
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Findings ({result.findings.length})</h2>
+                    {Object.entries(grouped).map(([cat, fs]) => (
+                        <div key={cat}>
+                            <h3 className="text-xs uppercase tracking-wide font-semibold text-gray-600 mb-2">{cat}</h3>
+                            <div className="space-y-2">
+                                {fs.map(f => {
+                                    const s = SEVERITY_STYLE[f.severity];
+                                    const Icon = s.icon;
+                                    return (
+                                        <div key={f.ruleId} className={`border rounded-lg p-4 ${s.bg} border-opacity-50`}>
+                                            <div className="flex items-start gap-2">
+                                                <Icon className={`w-4 h-4 mt-0.5 ${s.text}`} />
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                                                        <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{f.severity} · {s.label}</span>
+                                                        <span className="text-xs text-gray-500 font-mono">{f.ruleId}</span>
+                                                    </div>
+                                                    <div className="font-medium text-gray-900">{f.title}</div>
+                                                    <div className="text-sm text-gray-700 mt-1">{f.description}</div>
+                                                    {f.excerpt && (
+                                                        <div className="mt-2 text-xs font-mono bg-white border border-gray-200 rounded p-2 italic">
+                                                            "…{f.excerpt}…"
+                                                        </div>
+                                                    )}
+                                                    <div className="mt-2 text-sm text-emerald-800 bg-emerald-50/40 border border-emerald-100 rounded p-2">
+                                                        <span className="font-semibold">Fix: </span>{f.remediation}
+                                                    </div>
+                                                    {f.alternateClauseId && (
+                                                        <div className="mt-1 text-xs text-blue-700">
+                                                            See clause: <a href={`/clauses?q=${f.alternateClauseId}`} className="underline font-mono">{f.alternateClauseId}</a>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            <div className="mt-8 text-xs text-gray-500 italic text-center">
+                Rule-based scanning catches known patterns. Semantic risks (commercial fairness, ambiguity, hidden gotchas) require human or LLM review on top.
+            </div>
+        </div>
+    );
+}

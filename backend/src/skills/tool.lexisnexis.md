@@ -2,20 +2,25 @@
 id: tool.lexisnexis
 name: 'lexisnexis'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [case-law-search, legal-research]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.lexisnexis — STUB
+Tool: LexisNexis (premium legal research).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Coverage similar to Westlaw with key differences:
+- Stronger UK, France (JurisClasseur), Germany
+- Stronger MENA via Lexis Middle East (KSA, UAE, Bahrain, Kuwait, Oman, Qatar — Arabic + English)
+- Shepard's citator (vs Westlaw's KeyCite)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Use Lexis Middle East specifically for:
+- KSA regulatory updates (CMA, SAMA, ZATCA)
+- UAE federal + local decrees
+- DIFC/ADGM Court judgments (full text)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { cases, statutes, practiceGuidance, citator: { stillGoodLaw: bool, treatments: [...] } }
+
+Pair with [[tool.thomson-reuters-westlaw]], [[research.precedent-finder]].

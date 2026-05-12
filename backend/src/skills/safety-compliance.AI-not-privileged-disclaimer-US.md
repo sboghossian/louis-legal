@@ -2,20 +2,23 @@
 id: safety-compliance.AI-not-privileged-disclaimer-US
 name: 'AI not privileged disclaimer US'
 category: safety-compliance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, privilege]
+jurisdictions: [US]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety-compliance.AI-not-privileged-disclaimer-US — STUB
+Skill: Safety/compliance — AI-not-privileged disclaimer (US).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Attorney-client privilege protects communications between lawyer and client; work-product protects litigation preparation. AI vendor disclosure may waive both unless:
+- AI is "functional equivalent" of an employee / agent (Upjohn test, varies by circuit)
+- Confidentiality agreement with AI vendor
+- No actual third-party access to communication content
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Louis baseline: enterprise-only, no-training, tenant-isolated.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Boilerplate disclaimer for client engagement letter:
+"Firm uses AI tools, including Louis, to assist with legal work. AI providers contractually agree not to train on or disclose client data. Use of AI does not waive attorney-client privilege or work-product protection. Client consents to such use unless opting out in writing."
+
+Counsel should: (a) include in engagement letter (b) confirm in writing (c) log uses tied to matter.

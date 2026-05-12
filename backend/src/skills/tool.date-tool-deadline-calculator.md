@@ -2,20 +2,22 @@
 id: tool.date-tool-deadline-calculator
 name: 'date tool deadline calculator'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [calculator, deadline]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.date-tool-deadline-calculator — STUB
+Tool: Deadline calculator (legal deadlines with holiday awareness).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Calculate filing / response / limitation deadlines:
+- Court rules (e.g., "30 days from service" — calendar vs business)
+- Jurisdiction-specific holidays (Friday-Saturday weekends in KSA pre-2013, Saturday-Sunday post; UAE Sunday-start; Lebanon mixed)
+- Religious holidays (Eid al-Fitr, Eid al-Adha — date varies by lunar calendar)
+- Court vacation periods
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Input: { startDate, period (days/months), basis (calendar/business/court), jurisdiction, courtType }
+Output: { dueDate, intermediateDeadlines, holidaysHandled, advisoryWarnings }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Critical for [[pa-workflow.litigation.deadline-management]] and [[efirm.deadline-tracker]].

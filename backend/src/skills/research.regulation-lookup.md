@@ -2,20 +2,24 @@
 id: research.regulation-lookup
 name: 'regulation lookup'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [regulation-lookup]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.regulation-lookup — STUB
+Skill: Regulation lookup (statutory / regulatory text).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Pull authoritative text of statutes, regulations, executive orders, and ministerial circulars:
+- KSA: regulations from Bureau of Experts (BOE), CMA implementing regulations, SAMA circulars, ZATCA notices
+- UAE Federal: Federal Decrees, Federal Laws (FDL), Cabinet Resolutions; per-emirate executive councils
+- DIFC: DIFC Laws + DFSA Rulebook
+- ADGM: FSRA Rulebook + ADGM Regulations
+- Lebanon: Loi 26/1932 commercial code, Loi des sociétés, banking secrecy law 1956, etc.
+- EU: per CELEX number
+- US: USC sections, CFR titles
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { source, citation, fullText, asOfDate, consolidationFlag, linkToAuthority }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Always pair with [[research.regulator-guidance-lookup]] for interpretive guidance.

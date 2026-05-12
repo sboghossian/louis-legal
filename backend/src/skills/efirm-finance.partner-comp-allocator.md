@@ -2,20 +2,27 @@
 id: efirm-finance.partner-comp-allocator
 name: 'partner comp allocator'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [comp, partner]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.partner-comp-allocator — STUB
+Skill: Partner compensation allocator.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each partner per period:
+- Billable hours (own)
+- Originating (client brought in)
+- Working (matter management)
+- Supervising (associate hours)
+- Practice contributions (training, marketing, recruiting)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Allocation models:
+- Lockstep (seniority-based equal)
+- Eat-what-you-kill (originator-heavy)
+- Hybrid (typical: 50% originating + 30% working + 20% firm-contributions)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: comp recommendation + sensitivity analysis + comparable benchmarks.
+
+For US firms: align with PEP (Profits per Equity Partner) benchmarking.

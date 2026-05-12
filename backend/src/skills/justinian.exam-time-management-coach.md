@@ -2,20 +2,22 @@
 id: justinian.exam-time-management-coach
 name: 'exam time management coach'
 category: justinian
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [education]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justinian.exam-time-management-coach — STUB
+Skill: Justinian — exam time-management coach.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For timed exams (MBE, MEE, CRFPA, KSA Bar, etc.):
+- Recommended pacing per question type
+- "Skip & return" strategy
+- Last-15-min sweep checklist
+- Anxiety management cues
+- Calculator / device / consumable rules per exam
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Builds personal pacing log over practice sets; adapts coaching.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[justinian.moot-court-rehearsal]] for oral exams.

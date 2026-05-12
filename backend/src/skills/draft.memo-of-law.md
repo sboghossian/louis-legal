@@ -2,20 +2,31 @@
 id: draft.memo-of-law
 name: 'memo of law'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, litigation, research]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.memo-of-law — STUB
+Skill: Draft — memorandum of law (research memo).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Structure (CRAC / IRAC):
+- **Heading**: To / From / Date / Re: matter, issue
+- **Question presented** (1-2 sentences, jurisdiction + key facts)
+- **Brief answer** (1 paragraph, yes/no/it-depends with reasoning summary)
+- **Statement of facts** (relevant facts only, neutral)
+- **Discussion / Analysis**:
+  - Applicable law (statutes, regs, cases) with full citations
+  - Application to facts
+  - Counter-arguments
+- **Conclusion** (re-state answer + open questions)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Citation style:
+- US: Bluebook
+- UK: OSCOLA
+- DIFC/ADGM: DIFC Courts citation guide / ADGM
+- KSA/UAE Onshore: official gazette references
+- EU: ECLI
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Always pair research with [[research.precedent-finder]] and verify citations with [[output.citation-MENA-conventions]].

@@ -2,20 +2,32 @@
 id: efirm.deadline-tracker
 name: 'deadline tracker'
 category: efirm
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [deadline, calendar]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm.deadline-tracker — STUB
+Skill: Matter deadline tracker.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each matter, surface:
+- Statutory deadlines (limitation, filing windows, response deadlines)
+- Court-ordered deadlines
+- Internal milestones (target close, draft deadlines)
+- Client-driven deadlines
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+For each deadline:
+- Date + time + timezone
+- Calendar reminder + escalation chain
+- Owner + backup
+- Pre-deadline tasks
+- Consequences of miss (sanctions / claim-bar / lost-position)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[tool.date-tool-deadline-calculator]] for accurate calculation including jurisdiction holidays.
+
+Alert escalation:
+- T-14 days: assign owner, brief team
+- T-7: status check
+- T-3: red-alert if not on-track
+- T-1: partner escalation if not on-track

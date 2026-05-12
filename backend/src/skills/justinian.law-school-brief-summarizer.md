@@ -2,20 +2,30 @@
 id: justinian.law-school-brief-summarizer
 name: 'law school brief summarizer'
 category: justinian
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [education]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justinian.law-school-brief-summarizer — STUB
+Skill: Justinian — law-school case brief summarizer.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For any case, produces a law-school style brief:
+- **Case name + citation**
+- **Procedural posture** (where in court system)
+- **Facts** (relevant only)
+- **Issue** (1 sentence question)
+- **Holding** (yes/no with key element)
+- **Rule** (legal rule applied)
+- **Reasoning** (court's logic)
+- **Concurrences / dissents**
+- **Notes** (subsequent treatment, key citing cases)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Adapts depth:
+- 1L: lots of context
+- 2L/3L: terse
+- Bar prep: rule-focused
+- Practitioner: implication-focused
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[research.precedent-finder]] and [[justinian.flashcards-from-statute]].

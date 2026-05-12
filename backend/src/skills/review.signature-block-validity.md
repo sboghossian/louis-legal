@@ -2,20 +2,25 @@
 id: review.signature-block-validity
 name: 'signature block validity'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, execution]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.signature-block-validity — STUB
+Skill: Review — signature block validity.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Pre-execution check that signature pages are legally valid:
+- Signatory has authority (verify via license / CR / board resolution / POA)
+- Capacity printed correctly (Director / Manager / Authorized Signatory)
+- Entity name matches commercial registration exactly (including Arabic version where required)
+- Witness blocks (UAE requires 2 witnesses for certain commercial docs; KSA notarization for some)
+- Date format consistent
+- Counterparts clause if signed in counterparts
+- Apostille / legalization layer if cross-border
+- E-signature vs wet ink (jurisdiction recognition — see [[tool.e-signature-orchestrator]])
+- Common seal requirement (older Lebanese / KSA docs)
+- Initialing every page (UAE customary; not strictly required for validity)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { issues: [{ signatory, problem, severity, remediation }] }

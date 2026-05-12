@@ -2,20 +2,24 @@
 id: casesim.opposing-counsel-simulator
 name: 'opposing counsel simulator'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [litigation-prep]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.opposing-counsel-simulator — STUB
+Skill: Casesim — opposing-counsel simulator.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Models opposing counsel:
+- Strategy (aggressive / collaborative / dilatory)
+- Likely motions (MTD, MSJ, discovery disputes)
+- Likely settlement posture
+- Likely tactical moves (jurisdictional challenges, forum-shopping, parallel proceedings)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Builds opposing-counsel "playbook" for:
+- Predicting next move
+- Pre-empting attacks
+- Settlement leverage
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Calibrated by firm reputation / past cases / counsel personality.

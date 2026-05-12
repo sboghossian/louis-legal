@@ -2,20 +2,24 @@
 id: review.employment-contract-employer-side
 name: 'employment contract employer side'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, employment]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.employment-contract-employer-side — STUB
+Skill: Review — employment contract (employer-side).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Red-flag scan from employer's perspective:
+- Compensation traps: ambiguous bonus formula triggering pay-out claims
+- IP assignment: include moral-rights waiver (where waivable)
+- Non-compete: practically enforceable (KSA 2 yrs max + scope test; UAE 2 yrs max + 100km + consideration)
+- Confidentiality: trade secrets + customer lists + know-how, post-termination duration
+- Restrictive covenants: garden leave option
+- Termination for cause: list grounds clearly (insubordination, fraud, gross misconduct, etc.) per [[kb.employment-LB-KSA-UAE]]
+- Reduction in force: notice + severance per law
+- Drug-test / fit-for-work clauses
+- Choice of law + Saudization/Emiratization compliance
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { findings, riskExposure, suggestedRedlines, complianceGaps }

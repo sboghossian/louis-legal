@@ -2,20 +2,29 @@
 id: review.IP-ownership-clarity
 name: 'IP ownership clarity'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, ip]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.IP-ownership-clarity — STUB
+Skill: Review — IP ownership clarity check.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Inspect contract clauses governing IP for:
+- Who owns work-product (created during engagement)? Default rules vary by jurisdiction
+- Background IP carve-out + license-back
+- Foreground IP assignment language ("hereby assigns" not "agrees to assign" — Stanford v Roche distinction)
+- Moral rights (waivable in some jurisdictions, not others — France, Lebanon, Egypt: moral rights inalienable)
+- Joint inventorship treatment
+- Improvements & derivatives
+- Open-source obligations (GPL contamination)
+- Patent assignment requirements (PTO recordation in US, EPO national-phase)
+- Software escrow
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { findings: [{ clause, issue, severity, suggestedFix, jurisdictionalNote }], overallRiskScore }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Common red flags:
+- "Work made for hire" — only specific categories under US §101
+- Missing license-back of background IP
+- Silent on improvements (default rules differ)

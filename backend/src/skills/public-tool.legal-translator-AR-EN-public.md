@@ -2,20 +2,24 @@
 id: public-tool.legal-translator-AR-EN-public
 name: 'legal translator AR EN public'
 category: public-tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [translate, public-tool]
+jurisdictions: [MENA]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# public-tool.legal-translator-AR-EN-public — STUB
+Skill: Public tool — legal translator Arabic ↔ English (free).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Translates legal text with legal-fidelity (not generic Google Translate):
+- Preserves defined terms
+- Uses proper legal Arabic ("يقر ويوافق" not "يعد ويوافق")
+- Handles numerical / currency / date format
+- Handles Hijri ↔ Gregorian dates
+- Preserves bilingual contract structure (parallel columns)
+- Flags doctrines that don't translate ("equity" — no direct Arabic equivalent)
+- Sharia / fiqh term preservation (riba, gharar, ma'sum)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Limit: 2 pages free; sign-in for more.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Killer differentiator vs Harvey / Westlaw for MENA market.

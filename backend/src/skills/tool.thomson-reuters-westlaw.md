@@ -2,20 +2,25 @@
 id: tool.thomson-reuters-westlaw
 name: 'thomson reuters westlaw'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [case-law-search, legal-research]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.thomson-reuters-westlaw — STUB
+Tool: Thomson Reuters Westlaw (premium legal research).
 
-This skill is named in the Louis skills inventory but not yet authored.
+When configured with client credentials, access:
+- US case law (federal + state, all jurisdictions)
+- UK, AU, Canadian case law
+- Statutes & regulations (annotated)
+- Practical Law (forms, checklists, drafting notes)
+- Secondary sources (treatises, ALR, law reviews)
+- KeyCite (citator: still good law? overruled?)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: cases with headnotes, key numbers, citation history.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+For MENA practice: most useful for English-common-law jurisdictions (DIFC, ADGM, BVI, Cayman holding-structure analysis).
+
+Pair with [[tool.lexisnexis]] and [[tool.cocounsel]] (TR's AI layer) for triangulation.

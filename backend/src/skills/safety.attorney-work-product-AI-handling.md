@@ -2,20 +2,28 @@
 id: safety.attorney-work-product-AI-handling
 name: 'attorney work product AI handling'
 category: safety
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, privilege]
+jurisdictions: [__multi__]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety.attorney-work-product-AI-handling — STUB
+Skill: Safety — attorney work-product handling.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Work-product doctrine protections may be lost if disclosed to third parties — including AI vendors in some interpretations.
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Best practice:
+- Use only enterprise-grade AI with confidentiality controls (no-training default, encrypted storage, jurisdictional data residency)
+- For privileged material: do NOT paste into consumer-grade tools
+- Audit trail: log who accessed what (Louis: [[ops.audit-log-export]])
+- Client engagement letter should disclose AI use (informed consent)
+- Cross-border data transfer rules apply: GDPR (EU client docs) → AI vendor location matters
+- KSA PDPL / UAE PDPL: similar cross-border transfer constraints
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Louis enforces:
+- No-training by default on all skills
+- Tenant-isolated storage
+- Cross-region data residency (MENA cluster for MENA clients on request)
+- Access logs surface in [[docs.audit-log-export]]
+- Confidentiality skill [[safety-compliance.confidentiality-and-privilege]]

@@ -2,20 +2,20 @@
 id: tool.harvey-knowledge-source-bridge
 name: 'harvey knowledge source bridge'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [competitor-bridge]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# tool.harvey-knowledge-source-bridge — STUB
+Tool: Harvey knowledge-source bridge (interoperability).
 
-This skill is named in the Louis skills inventory but not yet authored.
+If client uses Harvey for some workflows, Louis can:
+- Accept Harvey-exported markdown (clause libraries, term sheets)
+- Import Harvey research summaries as context
+- Hand off long-form drafting to Harvey when client requests Allen & Overy / firm-specific styling
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Bridge format: { source: "harvey", document, clauseLibrary, citations }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Strategy: Louis differentiates on (1) MENA jurisdictions (2) Arabic (3) skill-router transparency. Harvey is stronger on (1) Big Law US/UK styling (2) team-account workflows.

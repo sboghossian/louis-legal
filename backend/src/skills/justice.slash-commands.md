@@ -2,20 +2,28 @@
 id: justice.slash-commands
 name: 'slash commands'
 category: justice
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [commands]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justice.slash-commands — STUB
+Skill: Slash commands.
 
-This skill is named in the Louis skills inventory but not yet authored.
+In-chat shortcuts:
+- /draft [type] — invoke drafting skill
+- /review [type] — invoke review skill
+- /research [topic] — invoke research
+- /translate [lang] — translate selection / last message
+- /clause [name] — pull from clause library
+- /citation [case] — look up + format citation
+- /matter [id] — switch active matter
+- /jurisdiction [code] — set active jurisdiction filter
+- /skills — list available skills
+- /help — help menu
+- /export — export conversation
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Triggered by typing "/" in chat input; surfaces autocomplete dropdown filtered by typing.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[justice.message-actions]] for after-message actions.

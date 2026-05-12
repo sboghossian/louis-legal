@@ -2,20 +2,25 @@
 id: casesim.fact-pattern-builder
 name: 'fact pattern builder'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [litigation-prep, education]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.fact-pattern-builder — STUB
+Skill: Casesim — fact-pattern builder.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For litigation training / moot court / scenario planning:
+- Build realistic fact pattern from real or synthetic facts
+- Add complicating factors (witness credibility, evidence gaps, jurisdictional issues)
+- Generate document set (contracts, emails, photos, expert reports)
+- Score difficulty 1-5
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Use cases:
+- Law school / bar prep
+- Junior associate training
+- Mock arbitration prep
+- Settlement valuation scenarios
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: full case file with privileged + non-privileged splits.

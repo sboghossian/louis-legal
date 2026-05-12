@@ -2,20 +2,28 @@
 id: conversation.intake-data-privacy-assessment
 name: 'intake data privacy assessment'
 category: conversation
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [intake, privacy]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# conversation.intake-data-privacy-assessment — STUB
+Skill: Intake conversation — data privacy assessment.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For organization processing personal data:
+1. Organization (name, jurisdictions of operation)
+2. Data subjects (employees, customers, prospects, vendors, public, minors)
+3. Data types (basic identifiers, sensitive — health/biometric/financial/political/religious)
+4. Volume + retention
+5. Processing purposes
+6. Lawful bases per purpose
+7. Recipients (internal teams, service providers, advertisers, authorities)
+8. Cross-border transfers (where, mechanism)
+9. Existing policies (privacy notice, DPA, cookie banner)
+10. Incidents (last 12 months)
+11. DPO appointed?
+12. ROPA maintained?
+13. DPIAs done?
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: gap-analysis matrix vs applicable frameworks (GDPR / KSA PDPL / UAE PDPL / etc.) + remediation roadmap.

@@ -2,20 +2,23 @@
 id: ops.hubspot-property-mapper-stripe-sync
 name: 'hubspot property mapper stripe sync'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [hubspot, stripe]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.hubspot-property-mapper-stripe-sync — STUB
+Skill: HubSpot ↔ Stripe property mapper.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Syncs Stripe customer/subscription data to HubSpot deal/contact:
+- Stripe customer ID → HubSpot stripe_customer_id
+- Subscription status → HubSpot deal stage
+- MRR → HubSpot mrr property
+- Plan name → HubSpot product
+- Renewal date → HubSpot renewal_date
+- Failed payment → HubSpot at_risk flag
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Direction: Stripe (source of truth for billing) → HubSpot (CRM view).
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[ops.hubspot-deal-stage-router]].

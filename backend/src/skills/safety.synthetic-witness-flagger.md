@@ -2,20 +2,25 @@
 id: safety.synthetic-witness-flagger
 name: 'synthetic witness flagger'
 category: safety
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, evidence]
+jurisdictions: [__multi__]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety.synthetic-witness-flagger — STUB
+Skill: Safety — synthetic-witness flagger.
 
-This skill is named in the Louis skills inventory but not yet authored.
+When user submits a deposition transcript / witness statement / sworn declaration:
+- Style heuristics: identical phrasing across multiple witnesses (boilerplate-rotation indicator)
+- LLM-generated tells: smoothed prose, hedged language, lack of specific concrete detail
+- Inconsistency check with other case documents
+- Date / location inconsistencies
+- Improbable level of recall (verbatim conversations from years ago)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Louis output:
+- Flag specific anomalies without making conclusions
+- "Consider deposition follow-up on items X / Y / Z to test recall"
+- Suggest forensic-linguistics expert for high-stakes use
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+NEVER label a witness statement "fake" — flag for human investigation.

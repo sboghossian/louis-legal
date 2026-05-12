@@ -2,20 +2,23 @@
 id: tool.local-trademark-registers
 name: 'local trademark registers'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [trademark-lookup, ip]
+jurisdictions: [MENA]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.local-trademark-registers — STUB
+Tool: MENA national trademark registers (KSA SAIP, UAE MoE/MoEC, Egypt EPA, Lebanon MoE, etc.).
 
-This skill is named in the Louis skills inventory but not yet authored.
+WIPO global doesn't capture purely national filings. Each MENA jurisdiction maintains its own register:
+- KSA: SAIP (Saudi Authority for IP) — https://saip.gov.sa
+- UAE: Ministry of Economy
+- Bahrain: BCIP
+- Kuwait: Ministry of Commerce & Industry
+- Oman: Ministry of Commerce & Industry
+- Qatar: Trademark Department, Ministry of Commerce
+- Egypt: EPO / TMTI
+- Lebanon: Ministry of Economy & Trade
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Each has different search UX (some Arabic-only), filing fees, and opposition windows. For full clearance always pair with [[tool.WIPO-trademark-search]] (Madrid + global) and [[research.precedent-finder]] for opposition decisions.

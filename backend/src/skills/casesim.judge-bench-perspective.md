@@ -2,20 +2,24 @@
 id: casesim.judge-bench-perspective
 name: 'judge bench perspective'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [litigation-prep]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.judge-bench-perspective — STUB
+Skill: Casesim — judge-bench perspective.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each motion / argument, plays judge:
+- Asks the questions a judge would ask (with reasonable lines of inquiry)
+- Highlights weak points an opposing brief would attack
+- Notes procedural objections
+- Flags what's likely to land + what's unlikely
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Calibrated by:
+- Court (DIFC, ADGM, KSA Commercial, UAE Civil, Lebanon Civil, English High Court)
+- Judge style (if known — strict vs facilitative, motivated by efficiency vs facts)
+- Matter type
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: judge-style critique + reframed arguments + likely follow-up questions.

@@ -2,20 +2,24 @@
 id: ops.case-study-asker-after-N-messages
 name: 'case study asker after N messages'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [case-study, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.case-study-asker-after-N-messages — STUB
+Skill: Case-study ask trigger.
 
-This skill is named in the Louis skills inventory but not yet authored.
+When user has had N high-value successful turns:
+- "Louis helped you save ~X hours. Would you share a 1-paragraph quote we can use?"
+- Or: "Mind if we feature your firm on the customer wall?" (logo only)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Triggers:
+- 50+ turns, 90+ days tenure
+- NPS promoter (9-10)
+- Matter closed-won (if attributed)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Format: short in-chat prompt + skip/later/yes flow.
+
+Saves to [[outreach.testimonial-collector]] for marketing use.

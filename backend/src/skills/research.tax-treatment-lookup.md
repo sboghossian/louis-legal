@@ -2,20 +2,26 @@
 id: research.tax-treatment-lookup
 name: 'tax treatment lookup'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [tax-treatment]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.tax-treatment-lookup — STUB
+Skill: Tax treatment lookup (corporate, VAT, withholding, transfer pricing).
 
-This skill is named in the Louis skills inventory but not yet authored.
+For a given transaction + jurisdiction, return:
+- Corporate income tax rate + applicability
+- VAT/GST rate + place-of-supply rules
+- Withholding tax on outbound payments (dividends, interest, royalties, services)
+- Treaty relief (DTT) if applicable
+- Transfer pricing rules (BEPS Action 13: CbC, master file, local file)
+- Stamp duty / registration tax
+- Special regimes (free zones, IP regimes, pillar two top-up)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Coverage focus: KSA (ZATCA), UAE (FTA — 9% CIT since 2023, 5% VAT, free zone QFZP rules), Egypt, Lebanon (Bank Secrecy nuance), GCC generally, then UK/FR/US.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { headline, breakdown, treatyReliefAvailable, optimizationOptions, watchOuts }
+
+Always disclaim: "not tax advice — confirm with licensed tax advisor in jurisdiction." 

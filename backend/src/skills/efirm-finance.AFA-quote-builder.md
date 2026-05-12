@@ -2,20 +2,29 @@
 id: efirm-finance.AFA-quote-builder
 name: 'AFA quote builder'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [pricing, afa]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.AFA-quote-builder — STUB
+Skill: AFA (Alternative Fee Arrangement) quote builder.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For a given matter, generates fee proposals across:
+- **Fixed fee**: flat fee per phase (intake / drafting / negotiation / close)
+- **Capped fee**: hourly with hard cap; over-cap discount
+- **Blended rate**: weighted-average across team (partner + associate + paralegal)
+- **Success fee**: contingent percentage tied to outcome (deal close, judgment, settlement)
+- **Retainer + retainer-credit**: monthly retainer, credit against hourly
+- **Subscription**: monthly all-you-can-eat for in-house counsel work
+- **Volume discount**: tiered by volume of work
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Inputs: matter type, complexity, urgency, jurisdiction, team mix, comparable historic matters.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output:
+- 3 quote variations
+- Range estimate per phase
+- Sensitivity analysis
+- Risk-shared upside/downside framing
+- Comparison vs hourly baseline (% discount expected)

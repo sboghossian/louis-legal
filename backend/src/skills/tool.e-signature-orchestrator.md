@@ -2,20 +2,25 @@
 id: tool.e-signature-orchestrator
 name: 'e signature orchestrator'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [e-signature]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.e-signature-orchestrator — STUB
+Tool: E-signature orchestrator (DocuSign / Adobe Sign / Tawqi3i / UAE Pass).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Routing rules:
+- KSA: use Tawqi3i (national e-signature) or Nafath for B2C; DocuSign for cross-border B2B
+- UAE: UAE Pass (PKI) for gov-facing; DocuSign Connect for commercial
+- Egypt: ITIDA-licensed providers required for "advanced" signatures
+- Lebanon: e-Signature Law 81/2018 — qualified electronic signatures recognized
+- EU: eIDAS Qualified TSPs (Adobe, GlobalSign, etc.)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { signerOrder, fields, recipients, callbackUrl }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Validity guardrails:
+- Witness requirements (UAE: 2 witnesses for some commercial docs)
+- Notarization layer (e.g., Saudi MOJ Najiz notary for certain agreements)
+- Apostille / legalization if cross-border execution

@@ -2,20 +2,30 @@
 id: safety.cross-border-data-transfer-GCC-EU
 name: 'cross border data transfer GCC EU'
 category: safety
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, data-protection]
+jurisdictions: [GCC, EU]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety.cross-border-data-transfer-GCC-EU — STUB
+Skill: Safety — cross-border data transfer (GCC ↔ EU).
 
-This skill is named in the Louis skills inventory but not yet authored.
+GDPR Art. 44-50 + KSA PDPL Art. 29 + UAE PDPL Art. 22 + Bahrain PDPL Art. 12-13:
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Lawful transfer mechanisms (EU → GCC):
+- Adequacy decision (none yet for GCC; UK adequacy ongoing)
+- Standard Contractual Clauses (2021 SCCs) + Transfer Impact Assessment
+- Binding Corporate Rules (BCRs)
+- Specific derogations (consent, contract necessity, public interest, vital interests, legal claims, public register)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+GCC → EU (under KSA / UAE PDPL):
+- KSA PDPL: requires SDAIA adequacy decision, controller assurance, or specific exception
+- UAE PDPL: similar — UAE Data Office adequacy or specific contractual safeguards
+- Always document basis in DPIA
+
+For HAQQ-style MENA-EU clients:
+- Hosting in EU (Frankfurt / Paris) + access from MENA: still a "transfer" — apply SCCs
+- Conversely MENA data → EU lawyer: PDPL transfer rules apply
+
+Pair with [[review.compliance-gap-analysis]] and [[draft.privacy-policy-MENA]].

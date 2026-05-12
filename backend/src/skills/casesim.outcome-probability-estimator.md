@@ -2,20 +2,25 @@
 id: casesim.outcome-probability-estimator
 name: 'outcome probability estimator'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [litigation-prep, settlement]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.outcome-probability-estimator — STUB
+Skill: Casesim — outcome probability estimator.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Estimates likely outcome distribution:
+- P(win on liability) × P(damage range) → expected award
+- Adjusts for jurisdiction / judge / forum
+- Accounts for appeal probability + reversal rate
+- Costs (own legal + opposing if loser-pays)
+- Time-to-judgment
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output:
+- Expected value of trial
+- Probability-weighted scenarios (50%, 75%, 90%)
+- Reasoned ranges, not single-point estimates
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Always disclaim: predictions are estimates, not guarantees. Pair with [[casesim.settlement-vs-trial-EV-calculator]].

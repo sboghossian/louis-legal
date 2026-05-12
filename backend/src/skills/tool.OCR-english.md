@@ -2,20 +2,29 @@
 id: tool.OCR-english
 name: 'OCR english'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [ocr, scan]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.OCR-english — STUB
+Tool: OCR (English) for scanned PDFs and contract images.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Capabilities:
+- Convert image-based PDF pages to searchable text
+- Detect signature blocks and handwritten initials
+- Preserve clause numbering and section hierarchy
+- Output text with page anchors so chat can cite "page 4, clause 7.2"
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+When to use:
+- User uploads a PDF that returns empty text on extraction
+- User shares a contract photo from WhatsApp/email
+- Re-running OCR after a low-confidence first pass
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Limits:
+- English only (use [[tool.OCR-arabic]] for Arabic, [[tool.OCR-french]] for French)
+- Handwriting in margins may be lossy; flag for human review
+- Stamps/seals: detect but do not transcribe; note their presence
+
+Output shape: { fullText, pages: [{ pageNum, text, confidence }], detectedSignatures: [...] }

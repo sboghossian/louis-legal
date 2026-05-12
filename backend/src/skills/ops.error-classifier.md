@@ -2,20 +2,23 @@
 id: ops.error-classifier
 name: 'error classifier'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [error, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.error-classifier — STUB
+Skill: Error classifier.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Auto-classifies errors into:
+- Transient (timeout, rate-limit, network) → retry
+- Provider (LLM 5xx) → fail-over to next provider
+- Client input (bad doc, oversized upload) → user-friendly retry guidance
+- Auth / quota (out of credits, expired token) → upgrade / refresh flow
+- Backend bug → P-level ticket
+- Schema / data integrity → DBA escalation
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { errorClass, action, userMessage, internalTicket }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Used by frontend error boundaries + backend middleware.

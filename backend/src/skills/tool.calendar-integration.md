@@ -2,20 +2,21 @@
 id: tool.calendar-integration
 name: 'calendar integration'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [calendar, scheduling]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# tool.calendar-integration — STUB
+Tool: Calendar integration (Google / Outlook / iCal).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Connect lawyer's calendar to Louis for:
+- Auto-block court dates from matter management
+- Suggest meeting slots based on matter urgency
+- Surface upcoming statutes of limitations as calendar reminders
+- Block "deep work" time for drafting
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { events: [{ title, start, end, location, matterId, type }] }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Combined with [[connector.calendar]] and [[tool.date-tool-deadline-calculator]] for end-to-end deadline orchestration.

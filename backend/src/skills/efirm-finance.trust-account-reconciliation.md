@@ -2,20 +2,32 @@
 id: efirm-finance.trust-account-reconciliation
 name: 'trust account reconciliation'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [trust, compliance]
+jurisdictions: [__multi__]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.trust-account-reconciliation — STUB
+Skill: Trust account / client-money reconciliation.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Critical compliance work. Per-jurisdiction rules:
+- US: IOLTA accounts, state-bar reporting, 3-way reconciliation monthly
+- UK: SRA Accounts Rules, designated client accounts
+- DIFC: DFSA client-money rules
+- ADGM: FSRA client-asset rules
+- KSA / UAE: Bar / Law Society rules typically requiring segregation
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Reconciliation steps:
+1. Bank statement balance
+2. Trust ledger balance
+3. Sum of client ledger balances
+- All three must match within tolerance (penny)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Flags:
+- Negative client balance (overdraft on client's money — serious)
+- Stale balances (return to client or unclaimed property)
+- Missing payee identifications
+- Co-mingling with firm funds (regulatory violation)
+
+Output: 3-way reconciliation report + exceptions list + remediation actions.

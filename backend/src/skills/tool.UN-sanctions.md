@@ -2,20 +2,23 @@
 id: tool.UN-sanctions
 name: 'UN sanctions'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [sanctions, screening]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.UN-sanctions — STUB
+Tool: UN Consolidated Sanctions List screening.
 
-This skill is named in the Louis skills inventory but not yet authored.
+The UN Security Council Consolidated List combines all UN sanctions programs (1267/1989/2253 ISIL & Al-Qaida, 1718 DPRK, 1737/2231 Iran, 1572 Côte d'Ivoire, 1591 Sudan, 1718, etc.).
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+For MENA-region transactions UN list is the authoritative baseline — most GCC central banks (CBUAE, SAMA, BDL, CBI, CBK, CBO, CBB, QCB) mirror it.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Match rules:
+- Arabic transliteration normalization (e.g., 'Muhammad' / 'Mohammad' / 'Muhamad')
+- DOB tolerance
+- Vessel IMO numbers exact-match
+
+Always pair with [[tool.OFAC-sanctions]] (US-doing-business), [[tool.EU-sanctions]] (EU nexus).
+Reference: https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list

@@ -2,20 +2,27 @@
 id: casesim.settlement-vs-trial-EV-calculator
 name: 'settlement vs trial EV calculator'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [settlement, ev]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.settlement-vs-trial-EV-calculator — STUB
+Skill: Casesim — settlement-vs-trial expected-value calculator.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Inputs:
+- Settlement offer
+- P(win at trial)
+- Damages range at trial (low / median / high)
+- Costs to trial (own + opposing if loser-pays)
+- Discount rate / time value
+- Reputational / strategic factors
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output:
+- EV(trial) = Σ probability × (award - costs) discounted
+- EV(settlement) = settlement - costs-to-date
+- Recommendation: take / counter / decline
+- Sensitivity analysis
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Frames trade-off explicitly. Always disclaim: probabilistic estimate, not certainty. Pair with [[casesim.outcome-probability-estimator]].

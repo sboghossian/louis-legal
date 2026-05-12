@@ -2,20 +2,31 @@
 id: casesim.client-Q-and-A-prep
 name: 'client Q and A prep'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [litigation-prep]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.client-Q-and-A-prep — STUB
+Skill: Casesim — client Q&A prep for deposition / witness statement / mediation.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Coaches client through anticipated questions:
+- Opening narrative ("Tell me about yourself / your role")
+- Key facts (what client knows, doesn't know, source of knowledge)
+- Conflicting evidence + how to address
+- Documents under attack
+- Privilege boundaries (work-product, attorney-client)
+- Personal weak points (prior testimony, social media, conflicts of interest)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Process:
+1. Build question bank from case file
+2. Score difficulty
+3. Roleplay rehearsal — Louis plays opposing counsel
+4. Critique answers (rambling, speculation, volunteering)
+5. Refine
+6. Mock under time / interruption stress
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: question bank + answer-coaching notes + rehearsal log.
+
+Refuse: coaching client to lie / fabricate / hide privileged material.

@@ -2,20 +2,21 @@
 id: research.licensing-requirements-lookup
 name: 'licensing requirements lookup'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [licensing-lookup, regulatory]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.licensing-requirements-lookup — STUB
+Skill: Licensing requirements lookup (activity → required licenses).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Given a client business activity and target jurisdiction, identify all required licenses:
+- Commercial license (DED / MOC / free zone)
+- Sector-specific (financial: SAMA/CMA/SCA/DFSA/FSRA; healthcare: MoH/DOH/DHA/SCFHS; food: ADAFSA/SFDA; education: MOE/SCAI)
+- Professional licenses (legal: SBA/UAE MOJ/Beirut/Tripoli Bar; accountants: SOCPA/SBA; doctors: HAAD/DHA/SCFHS)
+- Environmental, fire/safety, labor, data protection
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { license, issuer, validity, cost, leadTime, prereqs, renewalPath }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Cross-reference [[tool.UAE-DED]] / [[tool.KSA-MOC]] / [[tool.LB-commercial-register]] for specific filing.

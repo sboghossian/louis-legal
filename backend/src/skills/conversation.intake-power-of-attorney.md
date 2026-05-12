@@ -2,20 +2,27 @@
 id: conversation.intake-power-of-attorney
 name: 'intake power of attorney'
 category: conversation
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [intake, poa]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# conversation.intake-power-of-attorney — STUB
+Skill: Intake conversation — Power of Attorney.
 
-This skill is named in the Louis skills inventory but not yet authored.
+1. Principal (grantor — name, ID, residence, jurisdiction)
+2. Attorney-in-fact (agent — name, ID, relationship)
+3. Scope:
+   - General (all powers) vs special (specific transactions)
+   - Real estate / banking / litigation / business management
+4. Duration (specific date range / event-conditional / durable)
+5. Cross-border use (apostille / legalization needed?)
+6. MENA notarization (KSA MOJ Najiz, UAE Notary Department, Lebanon Notary, etc.)
+7. Revocability
+8. Successor agent
+9. Special instructions / limits
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: intake summary + jurisdiction-specific draft via [[draft.power-of-attorney]] + notarization checklist.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Critical for cross-border MENA: apostille (Hague Convention member) vs MOFA legalization (non-member like KSA pre-2018, now apostille-accepted).

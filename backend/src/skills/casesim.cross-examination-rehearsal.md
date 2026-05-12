@@ -2,20 +2,26 @@
 id: casesim.cross-examination-rehearsal
 name: 'cross examination rehearsal'
 category: casesim
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [litigation-prep]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# casesim.cross-examination-rehearsal — STUB
+Skill: Casesim — cross-examination rehearsal.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For attorney preparing to cross-examine witness:
+- Identifies prior inconsistent statements (depositions, social media, prior testimony)
+- Generates leading-question sequences
+- Sequence cross to maximize impasse opportunities
+- Identifies "loops" (closed traps)
+- Prepares contingencies for non-cooperative witnesses
+- Time budget per witness
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Louis plays witness:
+- Cooperative / hostile / evasive modes
+- Realistic memory failures
+- Lawyer-coached cleanups
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: cross outline + impeachment files + scoring rubric.

@@ -2,20 +2,28 @@
 id: ops.ad-budget-vs-bug-rate-circuit-breaker
 name: 'ad budget vs bug rate circuit breaker'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [ops, growth]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.ad-budget-vs-bug-rate-circuit-breaker — STUB
+Skill: Ad-budget vs bug-rate circuit breaker.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Auto-pause paid acquisition if quality metrics degrade:
+- Bug-rate / hallucination-rate above threshold
+- P0/P1 incident open >24h
+- Churn spike >2σ vs baseline
+- NPS rolling 7-day avg drops >10 points
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Channels covered:
+- Google Ads (Search + Display)
+- Meta Ads (FB + IG)
+- LinkedIn
+- Twitter/X
+- Reddit promoted
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Re-enable: requires manual approval + post-incident summary.
+
+Cost guardrail: prevents burning marketing $ during quality crisis (HAQQ learned this in beta).

@@ -2,20 +2,22 @@
 id: efirm-finance.eWallet-balance-checker
 name: 'eWallet balance checker'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [wallet, advance]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.eWallet-balance-checker — STUB
+Skill: Client e-wallet / advance retainer balance checker.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Reports per-client:
+- Retainer balance (held in trust)
+- Recent debits / credits
+- Time since last top-up
+- Projected runway (avg burn rate × balance)
+- Warning if balance < threshold (top-up request)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: dashboard + email-draft requesting top-up.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Trust account compliance: see [[efirm-finance.trust-account-reconciliation]] for IOLTA / client-money rules.

@@ -2,20 +2,28 @@
 id: public-tool.legal-jargon-simplifier-public
 name: 'legal jargon simplifier public'
 category: public-tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [plain-english, public-tool]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# public-tool.legal-jargon-simplifier-public — STUB
+Skill: Public tool — legal jargon simplifier (free).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Paste any legal text → get 6th-grade-reading-level translation.
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Rules:
+- "Notwithstanding the foregoing" → "Even though we just said..."
+- "Heretofore" / "hereinafter" / "wherein" → just rewrite
+- Preserve numerical figures + party names exactly
+- Footnote tricky doctrines (force majeure, indemnity, warranty, etc.)
+- Add 1-line "real-world meaning" per paragraph
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Use cases:
+- Consumer reading terms of service before signing
+- Tenant reading lease
+- Patient reading consent form
+- Employee reading offer letter
+
+Demonstrates the "comfort" core of HAQQ. Pair with [[messaging.comfort-UI-vision-haqq-prototype]].

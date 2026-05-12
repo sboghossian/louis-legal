@@ -2,20 +2,27 @@
 id: efirm-finance.budget-vs-actual-matter
 name: 'budget vs actual matter'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [budget, matter]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.budget-vs-actual-matter — STUB
+Skill: Budget-vs-actual matter dashboard.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each matter with a budget:
+- Budget by phase
+- Actual hours + fees by phase
+- Variance (% and absolute)
+- Burn rate (hrs / week vs budget pace)
+- Projected total at completion
+- Action: refile bill, request budget increase, write off, accelerate close
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Triggers an alert when:
+- >80% of budget consumed
+- Burn rate exceeds plan by 25%
+- Phase complete but budget under-consumed (carry-forward opportunity)
+- Phase exceeded budget (escalation)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: dashboard + partner email draft.

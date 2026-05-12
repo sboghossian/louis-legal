@@ -2,20 +2,28 @@
 id: draft.FIDIC-amendment
 name: 'FIDIC amendment'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, construction]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.FIDIC-amendment — STUB
+Skill: Draft — FIDIC contract amendment / particular conditions.
 
-This skill is named in the Louis skills inventory but not yet authored.
+FIDIC Rainbow Suite (Red / Yellow / Silver / Pink / Green / Gold / Emerald 2017 ed.):
+- Red Book: build only, employer designs
+- Yellow Book: plant + design-build
+- Silver Book: EPC turnkey
+- Pink Book: MDB harmonized
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Drafting Particular Conditions to override General Conditions:
+- Currency of payment + exchange-rate mechanism
+- Local language requirement (Arabic in KSA/UAE govt)
+- Sub-clause modifications (typically: time-bar, claims procedure, retention, performance security, DAAB rules)
+- Local-content / nationalization clauses (KSA Vision 2030, UAE Emiratization)
+- Dispute clause: DAB → DAAB → arbitration (often ICC Paris or DIAC)
+- Limitation of liability (FIDIC default unlimited — particularly bad for contractor)
+- Force majeure expanded (pandemic, sanctions, embargo)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: marked-up Particular Conditions with rationale per clause.

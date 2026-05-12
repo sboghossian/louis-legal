@@ -2,20 +2,30 @@
 id: public-tool.contract-redline-public
 name: 'contract redline public'
 category: public-tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [redline, public-tool]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# public-tool.contract-redline-public — STUB
+Skill: Public tool — contract redline (free, limited).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Upload a 1-pager / short contract → get:
+- Top 5 risk flags
+- Suggested redlines in track-changes format
+- Industry-standard comparator language
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Limit: 1 contract / day; max 3 pages; sign-in for full doc.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Categories:
+- NDA
+- MSA
+- SOW
+- Lease
+- Employment
+- SaaS terms
+
+Output:
+- DOCX with track changes
+- 1-page risk report PDF

@@ -2,20 +2,23 @@
 id: review.definitions-consistency
 name: 'definitions consistency'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, drafting]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.definitions-consistency — STUB
+Skill: Review — definitions consistency check.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each defined term ("Affiliate", "Confidential Information", "Material Adverse Effect", etc.):
+- Used consistently throughout
+- Definition not contradicted by inline use
+- Singular/plural matched usage
+- Definition not buried in clause body when central concept
+- Defined terms in CAPS or Title Case consistently
+- "include" vs "including, without limitation" usage
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { findings: [{ term, definition, inconsistencies: [{ location, excerpt }] }], suggestedDefinitions: [...] }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[review.cross-reference-integrity]] for full drafting QC pass.

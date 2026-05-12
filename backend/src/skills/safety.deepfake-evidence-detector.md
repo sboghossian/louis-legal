@@ -2,20 +2,31 @@
 id: safety.deepfake-evidence-detector
 name: 'deepfake evidence detector'
 category: safety
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, evidence]
+jurisdictions: [__multi__]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety.deepfake-evidence-detector — STUB
+Skill: Safety — deepfake / synthetic evidence flagger.
 
-This skill is named in the Louis skills inventory but not yet authored.
+When user submits images / audio / video as evidence:
+- Auto-flag for authenticity-review track
+- Metadata check: EXIF, container, codec, generation tool fingerprints
+- Visual anomalies: lip-sync, lighting consistency, periodic artifacts
+- Reverse image search for prior appearances (date-shift hint)
+- Audio: spectrogram analysis for synthesis fingerprints
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Louis output:
+- "This media should be reviewed by a forensic-evidence expert before use in proceedings."
+- Specific anomalies flagged
+- Suggested next-step: instruct certified digital forensic examiner
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+NEVER: assert authenticity / inauthenticity definitively — only flag for expert review.
+
+Court admissibility nuance:
+- US: FRE 901 authentication; Daubert for expert tech testimony
+- UK: Civil Evidence Act 1995 + CPR
+- DIFC/ADGM: ER + Practice Directions
+- MENA civil law: expert appointed by court usually decisive

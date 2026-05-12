@@ -2,20 +2,28 @@
 id: public-tool.statute-explainer-public
 name: 'statute explainer public'
 category: public-tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [statute-explainer, public-tool]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# public-tool.statute-explainer-public — STUB
+Skill: Public tool — statute explainer (free).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Paste statute reference (e.g., "UAE FDL 33/2021 Article 42") → get:
+- Verbatim text
+- Plain-English explanation
+- When this article applies (typical fact patterns)
+- Recent amendments / case interpretations
+- Cross-references to related articles
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Coverage:
+- UAE Federal laws
+- KSA Royal Decrees (Saudi version + English unofficial translation)
+- Lebanon major codes
+- Egyptian codes
+- EU regulations + directives
+- US federal (USC titles)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output PDF with citation + Louis branding.

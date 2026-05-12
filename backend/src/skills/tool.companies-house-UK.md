@@ -2,20 +2,23 @@
 id: tool.companies-house-UK
 name: 'companies house UK'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [registry-lookup, kyc]
+jurisdictions: [UK]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.companies-house-UK — STUB
+Tool: UK Companies House (CH) registry lookup.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Most-comprehensive free corporate registry globally. Searches:
+- Company number → full filing history (annual returns, accounts, mortgages, charges)
+- Officer name → all directorships (current + historic)
+- PSC (People with Significant Control) register — UBO transparency at 25% threshold
+- Insolvency filings
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+For MENA deals: many BVI/Cayman holding structures end up with UK Sub or UK officer — CH is the easiest free entry point.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { company, officers, pscs, filings, chargeRegister, accounts }
+
+Source: https://find-and-update.company-information.service.gov.uk/

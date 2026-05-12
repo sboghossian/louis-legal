@@ -1,21 +1,24 @@
 ---
 id: justice.product-demo.recap
-name: 'product demo · recap'
+name: 'product demo.recap'
 category: justice
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [demo]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justice.product-demo.recap — STUB
+Skill: Product demo — recap.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Generates a tailored recap at the end of a demo session:
+- Top 3 wins for the user during the demo
+- Specific features they engaged with
+- Time saved estimate vs current workflow
+- Recommended next steps
+- Pricing snapshot for their use case
+- Trial sign-up link / onboarding contact
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Tone: warm, specific, not salesy.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[outreach.userflow-analyzer]] for session insights.

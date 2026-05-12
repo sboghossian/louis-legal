@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T11:06:19.406Z",
+  "generated_at": "2026-05-12T11:59:04.680Z",
   "total": 982,
   "entries": [
     {
@@ -158,56 +158,101 @@
       "id": "casesim.client-Q-and-A-prep",
       "name": "client Q and A prep",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "litigation-prep"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.client-Q-and-A-prep.md"
     },
     {
       "id": "casesim.cross-examination-rehearsal",
       "name": "cross examination rehearsal",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "litigation-prep"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.cross-examination-rehearsal.md"
     },
     {
       "id": "casesim.fact-pattern-builder",
       "name": "fact pattern builder",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "litigation-prep",
+        "education"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.fact-pattern-builder.md"
     },
     {
       "id": "casesim.judge-bench-perspective",
       "name": "judge bench perspective",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "litigation-prep"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.judge-bench-perspective.md"
     },
     {
       "id": "casesim.opposing-counsel-simulator",
       "name": "opposing counsel simulator",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "litigation-prep"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.opposing-counsel-simulator.md"
     },
     {
       "id": "casesim.outcome-probability-estimator",
       "name": "outcome probability estimator",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "litigation-prep",
+        "settlement"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.outcome-probability-estimator.md"
     },
     {
       "id": "casesim.settlement-vs-trial-EV-calculator",
       "name": "settlement vs trial EV calculator",
       "category": "casesim",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "settlement",
+        "ev"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "casesim.settlement-vs-trial-EV-calculator.md"
     },
     {
@@ -512,16 +557,30 @@
       "id": "conversation.intake-data-privacy-assessment",
       "name": "intake data privacy assessment",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake",
+        "privacy"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-data-privacy-assessment.md"
     },
     {
       "id": "conversation.intake-divorce-petition",
       "name": "intake divorce petition",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake",
+        "family"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-divorce-petition.md"
     },
     {
@@ -572,16 +631,28 @@
       "id": "conversation.intake-loan-agreement",
       "name": "intake loan agreement",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-loan-agreement.md"
     },
     {
       "id": "conversation.intake-MSA",
       "name": "intake MSA",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-MSA.md"
     },
     {
@@ -599,8 +670,15 @@
       "id": "conversation.intake-power-of-attorney",
       "name": "intake power of attorney",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake",
+        "poa"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-power-of-attorney.md"
     },
     {
@@ -619,16 +697,30 @@
       "id": "conversation.intake-trademark-filing",
       "name": "intake trademark filing",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake",
+        "ip"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-trademark-filing.md"
     },
     {
       "id": "conversation.intake-will",
       "name": "intake will",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake",
+        "estate"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "conversation.intake-will.md"
     },
     {
@@ -995,8 +1087,15 @@
       "id": "draft.brokerage-agreement",
       "name": "brokerage agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "commercial"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.brokerage-agreement.md"
     },
     {
@@ -1064,8 +1163,15 @@
       "id": "draft.construction-contract",
       "name": "construction contract",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "construction"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.construction-contract.md"
     },
     {
@@ -1136,8 +1242,15 @@
       "id": "draft.custody-agreement",
       "name": "custody agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "family"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.custody-agreement.md"
     },
     {
@@ -1365,8 +1478,15 @@
       "id": "draft.FIDIC-amendment",
       "name": "FIDIC amendment",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "construction"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.FIDIC-amendment.md"
     },
     {
@@ -1411,8 +1531,15 @@
       "id": "draft.guardianship",
       "name": "guardianship",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "family"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.guardianship.md"
     },
     {
@@ -1554,8 +1681,16 @@
       "id": "draft.licensing-agreement",
       "name": "licensing agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "ip",
+        "commercial"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.licensing-agreement.md"
     },
     {
@@ -1601,16 +1736,31 @@
       "id": "draft.mediation-agreement",
       "name": "mediation agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "adr"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.mediation-agreement.md"
     },
     {
       "id": "draft.memo-of-law",
       "name": "memo of law",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "litigation",
+        "research"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.memo-of-law.md"
     },
     {
@@ -1708,8 +1858,15 @@
       "id": "draft.notice-of-arbitration",
       "name": "notice of arbitration",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "draft",
+        "arbitration"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "draft.notice-of-arbitration.md"
     },
     {
@@ -2162,120 +2319,224 @@
       "id": "efirm-finance.AFA-quote-builder",
       "name": "AFA quote builder",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "pricing",
+        "afa"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.AFA-quote-builder.md"
     },
     {
       "id": "efirm-finance.billing-narrative-cleanup",
       "name": "billing narrative cleanup",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "billing",
+        "narrative"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.billing-narrative-cleanup.md"
     },
     {
       "id": "efirm-finance.budget-vs-actual-matter",
       "name": "budget vs actual matter",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "budget",
+        "matter"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.budget-vs-actual-matter.md"
     },
     {
       "id": "efirm-finance.collection-rate-tracker",
       "name": "collection rate tracker",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "collection",
+        "ar"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.collection-rate-tracker.md"
     },
     {
       "id": "efirm-finance.contingency-fee-calculator",
       "name": "contingency fee calculator",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "contingency",
+        "pricing"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.contingency-fee-calculator.md"
     },
     {
       "id": "efirm-finance.eWallet-balance-checker",
       "name": "eWallet balance checker",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "wallet",
+        "advance"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.eWallet-balance-checker.md"
     },
     {
       "id": "efirm-finance.expense-categorizer",
       "name": "expense categorizer",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "expense",
+        "finance"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.expense-categorizer.md"
     },
     {
       "id": "efirm-finance.invoice-generator-from-time-entries",
       "name": "invoice generator from time entries",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "invoice",
+        "billing"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.invoice-generator-from-time-entries.md"
     },
     {
       "id": "efirm-finance.partner-comp-allocator",
       "name": "partner comp allocator",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "comp",
+        "partner"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.partner-comp-allocator.md"
     },
     {
       "id": "efirm-finance.realization-rate-tracker",
       "name": "realization rate tracker",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "realization",
+        "billing"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.realization-rate-tracker.md"
     },
     {
       "id": "efirm-finance.trust-account-reconciliation",
       "name": "trust account reconciliation",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "trust",
+        "compliance"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.trust-account-reconciliation.md"
     },
     {
       "id": "efirm-finance.utilization-dashboard",
       "name": "utilization dashboard",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "utilization",
+        "efirm"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.utilization-dashboard.md"
     },
     {
       "id": "efirm-finance.WIP-aging-report",
       "name": "WIP aging report",
       "category": "efirm-finance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "wip",
+        "finance"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm-finance.WIP-aging-report.md"
     },
     {
       "id": "efirm.client-intake-form",
       "name": "client intake form",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "intake"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.client-intake-form.md"
     },
     {
       "id": "efirm.client-update-email-draft",
       "name": "client update email draft",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "email",
+        "client-communication"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.client-update-email-draft.md"
     },
     {
@@ -2293,8 +2554,15 @@
       "id": "efirm.deadline-tracker",
       "name": "deadline tracker",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "deadline",
+        "calendar"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.deadline-tracker.md"
     },
     {
@@ -3567,8 +3835,14 @@
       "id": "justice.human-handoff",
       "name": "human handoff",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "handoff"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.human-handoff.md"
     },
     {
@@ -3732,16 +4006,29 @@
       "id": "justice.message-actions",
       "name": "message actions",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "ui-routing"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.message-actions.md"
     },
     {
       "id": "justice.product-demo.context-memory",
-      "name": "product demo · context memory",
+      "name": "product demo.context memory",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "demo",
+        "memory"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.product-demo.context-memory.md"
     },
     {
@@ -3754,42 +4041,74 @@
     },
     {
       "id": "justice.product-demo.recap",
-      "name": "product demo · recap",
+      "name": "product demo.recap",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "demo"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.product-demo.recap.md"
     },
     {
       "id": "justice.result-page-routing",
       "name": "result page routing",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "routing"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.result-page-routing.md"
     },
     {
       "id": "justice.slash-commands",
       "name": "slash commands",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "commands"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.slash-commands.md"
     },
     {
       "id": "justinian.bar-exam-prep-FR-CRFPA",
       "name": "bar exam prep FR CRFPA",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "bar-prep",
+        "fr"
+      ],
+      "jurisdictions": [
+        "FR"
+      ],
       "filename": "justinian.bar-exam-prep-FR-CRFPA.md"
     },
     {
       "id": "justinian.bar-exam-prep-KSA",
       "name": "bar exam prep KSA",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "bar-prep",
+        "ksa"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "justinian.bar-exam-prep-KSA.md"
     },
     {
@@ -3807,8 +4126,15 @@
       "id": "justinian.bar-exam-prep-UAE",
       "name": "bar exam prep UAE",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "bar-prep",
+        "uae"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "justinian.bar-exam-prep-UAE.md"
     },
     {
@@ -3827,8 +4153,15 @@
       "id": "justinian.bar-exam-prep-US-bar",
       "name": "bar exam prep US bar",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "bar-prep",
+        "us"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
       "filename": "justinian.bar-exam-prep-US-bar.md"
     },
     {
@@ -3859,8 +4192,14 @@
       "id": "justinian.exam-time-management-coach",
       "name": "exam time management coach",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "education"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justinian.exam-time-management-coach.md"
     },
     {
@@ -3891,8 +4230,14 @@
       "id": "justinian.law-school-brief-summarizer",
       "name": "law school brief summarizer",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "education"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justinian.law-school-brief-summarizer.md"
     },
     {
@@ -3910,16 +4255,29 @@
       "id": "justinian.moot-court-rehearsal",
       "name": "moot court rehearsal",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "education",
+        "litigation-prep"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justinian.moot-court-rehearsal.md"
     },
     {
       "id": "justinian.outline-builder",
       "name": "outline builder",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "education"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justinian.outline-builder.md"
     },
     {
@@ -4907,8 +5265,15 @@
       "id": "ops.ad-budget-vs-bug-rate-circuit-breaker",
       "name": "ad budget vs bug rate circuit breaker",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "ops",
+        "growth"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.ad-budget-vs-bug-rate-circuit-breaker.md"
     },
     {
@@ -4926,48 +5291,90 @@
       "id": "ops.case-study-asker-after-N-messages",
       "name": "case study asker after N messages",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "case-study",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.case-study-asker-after-N-messages.md"
     },
     {
       "id": "ops.churn-risk-detector",
       "name": "churn risk detector",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "churn",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.churn-risk-detector.md"
     },
     {
       "id": "ops.crash-report-formatter",
       "name": "crash report formatter",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "crash",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.crash-report-formatter.md"
     },
     {
       "id": "ops.credit-burn-rate-watcher",
       "name": "credit burn rate watcher",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "credits",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.credit-burn-rate-watcher.md"
     },
     {
       "id": "ops.error-classifier",
       "name": "error classifier",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "error",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.error-classifier.md"
     },
     {
       "id": "ops.feature-flag-experiment-launcher",
       "name": "feature flag experiment launcher",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "feature-flag",
+        "experiment"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.feature-flag-experiment-launcher.md"
     },
     {
@@ -4985,16 +5392,30 @@
       "id": "ops.hubspot-deal-stage-router",
       "name": "hubspot deal stage router",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "hubspot",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.hubspot-deal-stage-router.md"
     },
     {
       "id": "ops.hubspot-property-mapper-stripe-sync",
       "name": "hubspot property mapper stripe sync",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "hubspot",
+        "stripe"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.hubspot-property-mapper-stripe-sync.md"
     },
     {
@@ -5012,8 +5433,15 @@
       "id": "ops.NPS-collector-in-chat",
       "name": "NPS collector in chat",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "nps",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.NPS-collector-in-chat.md"
     },
     {
@@ -5031,16 +5459,30 @@
       "id": "ops.posthog-funnel-debugger",
       "name": "posthog funnel debugger",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "posthog",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.posthog-funnel-debugger.md"
     },
     {
       "id": "ops.subscription-erd-validator",
       "name": "subscription erd validator",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "subscription",
+        "ops"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "ops.subscription-erd-validator.md"
     },
     {
@@ -7842,72 +8284,135 @@
       "id": "public-tool.case-summarizer-public",
       "name": "case summarizer public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "case-summary",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.case-summarizer-public.md"
     },
     {
       "id": "public-tool.contract-redline-public",
       "name": "contract redline public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "redline",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.contract-redline-public.md"
     },
     {
       "id": "public-tool.contract-summarizer-public",
       "name": "contract summarizer public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "summarize",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.contract-summarizer-public.md"
     },
     {
       "id": "public-tool.legal-jargon-simplifier-public",
       "name": "legal jargon simplifier public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "plain-english",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.legal-jargon-simplifier-public.md"
     },
     {
       "id": "public-tool.legal-translator-AR-EN-public",
       "name": "legal translator AR EN public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "translate",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "public-tool.legal-translator-AR-EN-public.md"
     },
     {
       "id": "public-tool.NDA-generator-public",
       "name": "NDA generator public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "nda",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.NDA-generator-public.md"
     },
     {
       "id": "public-tool.privacy-policy-generator-public",
       "name": "privacy policy generator public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "privacy",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.privacy-policy-generator-public.md"
     },
     {
       "id": "public-tool.statute-explainer-public",
       "name": "statute explainer public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "statute-explainer",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.statute-explainer-public.md"
     },
     {
       "id": "public-tool.terms-generator-public",
       "name": "terms generator public",
       "category": "public-tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "terms",
+        "public-tool"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "public-tool.terms-generator-public.md"
     },
     {
@@ -8042,8 +8547,15 @@
       "id": "research.beneficial-ownership-lookup",
       "name": "beneficial ownership lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "ubo",
+        "kyc"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.beneficial-ownership-lookup.md"
     },
     {
@@ -8063,8 +8575,14 @@
       "id": "research.court-procedure-lookup",
       "name": "court procedure lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "procedure-lookup"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.court-procedure-lookup.md"
     },
     {
@@ -8095,16 +8613,30 @@
       "id": "research.licensing-requirements-lookup",
       "name": "licensing requirements lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "licensing-lookup",
+        "regulatory"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.licensing-requirements-lookup.md"
     },
     {
       "id": "research.precedent-finder",
       "name": "precedent finder",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "precedent-search",
+        "case-law"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.precedent-finder.md"
     },
     {
@@ -8124,24 +8656,42 @@
       "id": "research.regulation-lookup",
       "name": "regulation lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "regulation-lookup"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.regulation-lookup.md"
     },
     {
       "id": "research.regulator-guidance-lookup",
       "name": "regulator guidance lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "regulator-guidance"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.regulator-guidance-lookup.md"
     },
     {
       "id": "research.sanctions-screening",
       "name": "sanctions screening",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "sanctions"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.sanctions-screening.md"
     },
     {
@@ -8161,32 +8711,59 @@
       "id": "research.statute-of-limitations-lookup",
       "name": "statute of limitations lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "statute-of-limitations"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.statute-of-limitations-lookup.md"
     },
     {
       "id": "research.tax-treatment-lookup",
       "name": "tax treatment lookup",
       "category": "research",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "tax-treatment"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "research.tax-treatment-lookup.md"
     },
     {
       "id": "review.cap-table-sanity",
       "name": "cap table sanity",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "corporate",
+        "vc"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.cap-table-sanity.md"
     },
     {
       "id": "review.compliance-gap-analysis",
       "name": "compliance gap analysis",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "compliance"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.compliance-gap-analysis.md"
     },
     {
@@ -8207,40 +8784,76 @@
       "id": "review.cross-reference-integrity",
       "name": "cross reference integrity",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "drafting"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.cross-reference-integrity.md"
     },
     {
       "id": "review.definitions-consistency",
       "name": "definitions consistency",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "drafting"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.definitions-consistency.md"
     },
     {
       "id": "review.dispute-resolution-mechanism-fit",
       "name": "dispute resolution mechanism fit",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "litigation",
+        "arbitration"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.dispute-resolution-mechanism-fit.md"
     },
     {
       "id": "review.employment-contract-employee-side",
       "name": "employment contract employee side",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "employment"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.employment-contract-employee-side.md"
     },
     {
       "id": "review.employment-contract-employer-side",
       "name": "employment contract employer side",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "employment"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.employment-contract-employer-side.md"
     },
     {
@@ -8259,8 +8872,15 @@
       "id": "review.governing-law-conflict",
       "name": "governing law conflict",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "conflict-of-laws"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.governing-law-conflict.md"
     },
     {
@@ -8279,16 +8899,31 @@
       "id": "review.IP-ownership-clarity",
       "name": "IP ownership clarity",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "ip"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.IP-ownership-clarity.md"
     },
     {
       "id": "review.KSA-PDPL-readiness",
       "name": "KSA PDPL readiness",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "data-protection",
+        "ksa"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "review.KSA-PDPL-readiness.md"
     },
     {
@@ -8378,32 +9013,63 @@
       "id": "review.signature-block-validity",
       "name": "signature block validity",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "execution"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.signature-block-validity.md"
     },
     {
       "id": "review.term-sheet-founder-side",
       "name": "term sheet founder side",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "vc",
+        "founder"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.term-sheet-founder-side.md"
     },
     {
       "id": "review.term-sheet-investor-side",
       "name": "term sheet investor side",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "vc",
+        "investor"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "review.term-sheet-investor-side.md"
     },
     {
       "id": "review.translation-quality-AR-EN",
       "name": "translation quality AR EN",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "review",
+        "translation",
+        "arabic"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "review.translation-quality-AR-EN.md"
     },
     {
@@ -8555,40 +9221,76 @@
       "id": "safety-compliance.AI-not-privileged-disclaimer-US",
       "name": "AI not privileged disclaimer US",
       "category": "safety-compliance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "privilege"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
       "filename": "safety-compliance.AI-not-privileged-disclaimer-US.md"
     },
     {
       "id": "safety-compliance.attorney-work-product-AI-handling",
       "name": "attorney work product AI handling",
       "category": "safety-compliance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "privilege"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "safety-compliance.attorney-work-product-AI-handling.md"
     },
     {
       "id": "safety-compliance.client-data-retention-MENA-rules",
       "name": "client data retention MENA rules",
       "category": "safety-compliance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "retention"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "safety-compliance.client-data-retention-MENA-rules.md"
     },
     {
       "id": "safety-compliance.cross-border-data-transfer-GCC-EU",
       "name": "cross border data transfer GCC EU",
       "category": "safety-compliance",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "data-protection"
+      ],
+      "jurisdictions": [
+        "GCC",
+        "EU"
+      ],
       "filename": "safety-compliance.cross-border-data-transfer-GCC-EU.md"
     },
     {
       "id": "safety.AI-disclosure-required-tribunals",
       "name": "AI disclosure required tribunals",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "disclosure"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "safety.AI-disclosure-required-tribunals.md"
     },
     {
@@ -8606,8 +9308,15 @@
       "id": "safety.attorney-work-product-AI-handling",
       "name": "attorney work product AI handling",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "privilege"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "safety.attorney-work-product-AI-handling.md"
     },
     {
@@ -8669,16 +9378,30 @@
       "id": "safety.client-data-retention-MENA-rules",
       "name": "client data retention MENA rules",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "retention"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "safety.client-data-retention-MENA-rules.md"
     },
     {
       "id": "safety.copyright-respect-no-verbatim-cases",
       "name": "copyright respect no verbatim cases",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "copyright"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "safety.copyright-respect-no-verbatim-cases.md"
     },
     {
@@ -8696,16 +9419,31 @@
       "id": "safety.cross-border-data-transfer-GCC-EU",
       "name": "cross border data transfer GCC EU",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "data-protection"
+      ],
+      "jurisdictions": [
+        "GCC",
+        "EU"
+      ],
       "filename": "safety.cross-border-data-transfer-GCC-EU.md"
     },
     {
       "id": "safety.deepfake-evidence-detector",
       "name": "deepfake evidence detector",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "evidence"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "safety.deepfake-evidence-detector.md"
     },
     {
@@ -8756,8 +9494,15 @@
       "id": "safety.synthetic-witness-flagger",
       "name": "synthetic witness flagger",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "safety",
+        "evidence"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "safety.synthetic-witness-flagger.md"
     },
     {
@@ -8985,8 +9730,15 @@
       "id": "tool.ADGM-courts-search",
       "name": "ADGM courts search",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "court-search",
+        "adgm"
+      ],
+      "jurisdictions": [
+        "UAE-ADGM"
+      ],
       "filename": "tool.ADGM-courts-search.md"
     },
     {
@@ -9006,8 +9758,15 @@
       "id": "tool.calculator-stamp-duty-tax",
       "name": "calculator stamp duty tax",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "calculator",
+        "tax"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.calculator-stamp-duty-tax.md"
     },
     {
@@ -9026,24 +9785,44 @@
       "id": "tool.calendar-integration",
       "name": "calendar integration",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "calendar",
+        "scheduling"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.calendar-integration.md"
     },
     {
       "id": "tool.cocounsel",
       "name": "cocounsel",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "ai-legal-assistant"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.cocounsel.md"
     },
     {
       "id": "tool.companies-house-UK",
       "name": "companies house UK",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "registry-lookup",
+        "kyc"
+      ],
+      "jurisdictions": [
+        "UK"
+      ],
       "filename": "tool.companies-house-UK.md"
     },
     {
@@ -9058,24 +9837,45 @@
       "id": "tool.currency-converter",
       "name": "currency converter",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "calculator",
+        "currency"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.currency-converter.md"
     },
     {
       "id": "tool.date-tool-deadline-calculator",
       "name": "date tool deadline calculator",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "calculator",
+        "deadline"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.date-tool-deadline-calculator.md"
     },
     {
       "id": "tool.DIFC-courts-search",
       "name": "DIFC courts search",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "court-search",
+        "difc"
+      ],
+      "jurisdictions": [
+        "UAE-DIFC"
+      ],
       "filename": "tool.DIFC-courts-search.md"
     },
     {
@@ -9094,32 +9894,59 @@
       "id": "tool.e-signature-orchestrator",
       "name": "e signature orchestrator",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "e-signature"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.e-signature-orchestrator.md"
     },
     {
       "id": "tool.email-drafter",
       "name": "email drafter",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "email",
+        "drafting"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.email-drafter.md"
     },
     {
       "id": "tool.EU-sanctions",
       "name": "EU sanctions",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "sanctions",
+        "screening"
+      ],
+      "jurisdictions": [
+        "EU",
+        "__multi__"
+      ],
       "filename": "tool.EU-sanctions.md"
     },
     {
       "id": "tool.eur-lex-EU",
       "name": "eur lex EU",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "statute-lookup"
+      ],
+      "jurisdictions": [
+        "EU"
+      ],
       "filename": "tool.eur-lex-EU.md"
     },
     {
@@ -9142,8 +9969,14 @@
       "id": "tool.harvey-knowledge-source-bridge",
       "name": "harvey knowledge source bridge",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "competitor-bridge"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.harvey-knowledge-source-bridge.md"
     },
     {
@@ -9158,16 +9991,30 @@
       "id": "tool.KSA-MOC",
       "name": "KSA MOC",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "registry-lookup",
+        "kyc"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "tool.KSA-MOC.md"
     },
     {
       "id": "tool.LB-commercial-register",
       "name": "LB commercial register",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "registry-lookup",
+        "kyc"
+      ],
+      "jurisdictions": [
+        "LB"
+      ],
       "filename": "tool.LB-commercial-register.md"
     },
     {
@@ -9182,24 +10029,44 @@
       "id": "tool.legifrance-FR",
       "name": "legifrance FR",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "statute-lookup"
+      ],
+      "jurisdictions": [
+        "FR"
+      ],
       "filename": "tool.legifrance-FR.md"
     },
     {
       "id": "tool.lexisnexis",
       "name": "lexisnexis",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "case-law-search",
+        "legal-research"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.lexisnexis.md"
     },
     {
       "id": "tool.local-trademark-registers",
       "name": "local trademark registers",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "trademark-lookup",
+        "ip"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "tool.local-trademark-registers.md"
     },
     {
@@ -9218,16 +10085,31 @@
       "id": "tool.OCR-english",
       "name": "OCR english",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "ocr",
+        "scan"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.OCR-english.md"
     },
     {
       "id": "tool.OFAC-sanctions",
       "name": "OFAC sanctions",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "sanctions",
+        "screening"
+      ],
+      "jurisdictions": [
+        "US",
+        "__multi__"
+      ],
       "filename": "tool.OFAC-sanctions.md"
     },
     {
@@ -9275,8 +10157,14 @@
       "id": "tool.SEC-EDGAR-US",
       "name": "SEC EDGAR US",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "filings-lookup"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
       "filename": "tool.SEC-EDGAR-US.md"
     },
     {
@@ -9291,24 +10179,45 @@
       "id": "tool.thomson-reuters-westlaw",
       "name": "thomson reuters westlaw",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "case-law-search",
+        "legal-research"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.thomson-reuters-westlaw.md"
     },
     {
       "id": "tool.UAE-DED",
       "name": "UAE DED",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "registry-lookup",
+        "kyc"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "tool.UAE-DED.md"
     },
     {
       "id": "tool.UN-sanctions",
       "name": "UN sanctions",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "sanctions",
+        "screening"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.UN-sanctions.md"
     },
     {
@@ -9343,8 +10252,15 @@
       "id": "tool.WIPO-trademark-search",
       "name": "WIPO trademark search",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "trademark-lookup",
+        "ip"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.WIPO-trademark-search.md"
     },
     {

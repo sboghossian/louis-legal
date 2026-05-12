@@ -2,20 +2,25 @@
 id: review.translation-quality-AR-EN
 name: 'translation quality AR EN'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, translation, arabic]
+jurisdictions: [MENA]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.translation-quality-AR-EN — STUB
+Skill: Review — Arabic ↔ English translation quality.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Evaluate translation for legal-fidelity:
+- Terminology consistency (e.g., "shall" → "يجب أن" not "سوف")
+- Defined terms preserved (capitalization in EN; underline + brackets in AR)
+- Numerical / currency / date conversions correct
+- Hijri ↔ Gregorian dates handled
+- Party names in both scripts
+- Boilerplate matching jurisdiction's standard (KSA Saudi-Arabic vs Egyptian-Arabic vs Levantine)
+- Legal-doctrine terms preserved (e.g., "force majeure" → "القوة القاهرة" not literal)
+- Sharia / fiqh terms (riba, gharar, maysir) preserved with definition footnote
+- Bilingual contract: which language prevails — clause says so?
+- LTR/RTL formatting preserved
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { errors: [{ ar, en, issue, suggestion }], inconsistencies: [...], styleNotes: [...] }

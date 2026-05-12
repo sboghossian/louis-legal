@@ -2,20 +2,28 @@
 id: ops.credit-burn-rate-watcher
 name: 'credit burn rate watcher'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [credits, ops]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# ops.credit-burn-rate-watcher — STUB
+Skill: Credit / token burn-rate watcher.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each tenant + matter:
+- Tokens consumed per turn (Gemini / Claude / GPT-4 / etc.)
+- $ cost per turn
+- Burn rate trend
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Alerts:
+- Tenant approaches plan limit (T-7 days at current rate)
+- Matter abnormal burn (deep-research multi-hop on inefficient model)
+- Cost-per-turn drift upward (model selection issue or prompt bloat)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Optimization suggestions:
+- Switch routine queries to Gemini Flash from Claude Opus
+- Reuse cached responses
+- Trim system-prompt skill composition (use [[ops.skill-router-prompt-bloat-watcher]])
+
+Output: dashboard + ops alert + customer-facing usage email.

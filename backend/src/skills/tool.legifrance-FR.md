@@ -2,20 +2,28 @@
 id: tool.legifrance-FR
 name: 'legifrance FR'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [statute-lookup]
+jurisdictions: [FR]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.legifrance-FR — STUB
+Tool: Legifrance (FR official legal text).
 
-This skill is named in the Louis skills inventory but not yet authored.
+The official French government repository for:
+- Codes (Code civil, Code de commerce, Code du travail, etc.)
+- Lois, ordonnances, décrets, arrêtés
+- Conventions collectives
+- Jurisprudence (Cassation, Conseil d'Etat, Constitutional Council)
+- Treaties
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Lookup by:
+- Article reference (e.g., "Art. 1134 du Code civil")
+- Keyword (full-text)
+- ECLI for case law
+- Date / consolidation point
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { articleText (with consolidation flag), version effectiveDate, history }
+
+Useful for [[review.governing-law-conflict]] when French law applies via choice-of-law in MENA contracts (common for francophone-influenced Lebanon, Tunisia, Morocco).

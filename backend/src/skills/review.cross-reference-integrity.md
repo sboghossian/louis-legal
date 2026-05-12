@@ -2,20 +2,24 @@
 id: review.cross-reference-integrity
 name: 'cross reference integrity'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, drafting]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.cross-reference-integrity — STUB
+Skill: Review — cross-reference integrity check.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Scan contract for:
+- Broken section/clause references ("see Section 4.2" when only 4.1 exists)
+- Defined terms used before defined or never defined
+- Defined terms defined twice with different meanings
+- Schedule / Exhibit references with missing attachment
+- Cross-references to wrong page after edit
+- Capitalized terms not in definitions section
+- Forward references where backward intended
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { issues: [{ location, type, suggestedFix }], allCrossRefs: [...], unusedDefinitions: [...], undefinedCapitalizedTerms: [...] }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Critical pre-execution check — catches drafting bugs that escape human review on contracts >50 pages.

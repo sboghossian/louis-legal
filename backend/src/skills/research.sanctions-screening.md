@@ -2,20 +2,27 @@
 id: research.sanctions-screening
 name: 'sanctions screening'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [sanctions]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.sanctions-screening — STUB
+Skill: Comprehensive sanctions screening (multi-list).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Runs [[tool.OFAC-sanctions]] + [[tool.UN-sanctions]] + [[tool.EU-sanctions]] + UK HMT OFSI + KSA NCASGS + UAE EOCN + Lebanon BDL Special Investigation Commission lists in parallel.
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Match logic:
+- Name (fuzzy, transliteration-aware)
+- DOB (±2 yr)
+- POB
+- ID / passport number (if available)
+- Vessel IMO, aircraft tail number
+- Address
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { hits: [{ name, lists: [{ list, score, programs }], requiresEscalation: bool }], cleared: bool, screenedAt: timestamp, screenedLists: [...] }
+
+Always pair with [[research.beneficial-ownership-lookup]] — screen UBOs not just direct parties.
+
+Re-run periodically: sanctions lists update daily.

@@ -2,20 +2,30 @@
 id: ops.churn-risk-detector
 name: 'churn risk detector'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [churn, ops]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# ops.churn-risk-detector — STUB
+Skill: Churn risk detector.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Predictive model. Inputs:
+- Login frequency trend
+- Messages-per-session trend
+- Feature breadth (drift to single feature = risk)
+- Support ticket volume
+- NPS detractor score
+- Plan downgrade history
+- Time-since-last-success-event
+- Recent churn-signal events (export-all, delete-account inquiry, billing-dispute)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { userId, riskScore (0-100), topSignals: [...], suggestedAction: ... }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Triggers:
+- Risk > 70: CSM outreach
+- Risk > 90: discount offer / save-call
+- Risk > 95: cancel-prevention flow
+
+Pair with [[ops.NPS-collector-in-chat]] and [[unlock.empty-state-suggestions]].

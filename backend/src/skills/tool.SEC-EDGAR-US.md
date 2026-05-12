@@ -2,20 +2,27 @@
 id: tool.SEC-EDGAR-US
 name: 'SEC EDGAR US'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [filings-lookup]
+jurisdictions: [US]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.SEC-EDGAR-US — STUB
+Tool: SEC EDGAR (US public company filings).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Search filings by:
+- Company / CIK
+- Form type (10-K annual, 10-Q quarterly, 8-K material event, S-1 IPO, DEF 14A proxy, 13D/G ownership)
+- Filing date range
+- Officer/director (4 + insider trades)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Use cases:
+- Counterparty due diligence on US-listed parent
+- Pull recent risk factors before signing supply agreement
+- Track changes in beneficial ownership
+- Find acquisition history / material agreements
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { filings: [{ form, date, url, exhibits: [...] }] }
+
+Pair with [[connector.SEC-EDGAR]] for live MCP-style access in chat.

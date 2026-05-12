@@ -2,20 +2,29 @@
 id: draft.licensing-agreement
 name: 'licensing agreement'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, ip, commercial]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.licensing-agreement — STUB
+Skill: Draft — IP licensing agreement (patent / trademark / copyright / software).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Core sections:
+- Definitions (Licensed IP, Territory, Field of Use, Net Sales)
+- Grant: exclusive / non-exclusive / sole; field; territory; sublicense rights
+- Royalty: % of net sales + minimums; milestone payments; running royalty
+- Reporting + audit rights
+- Improvements: who owns; grant-back to licensor
+- Quality control (trademarks: licensor MUST police quality or risk naked-license forfeiture)
+- Infringement: who enforces against third parties; cost-sharing
+- Warranties: validity, enforceability, non-infringement
+- Indemnity
+- Term + termination
+- Post-termination: sell-off period, return of materials
+- Governing law + DR
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+MENA-specific:
+- Saudi SAIP for patents/TMs; ADGM/DIFC for English-common-law variants
+- Tech-transfer / KSA Sharia constraint on uncertainty (gharar) → keep terms determinate

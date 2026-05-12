@@ -2,20 +2,24 @@
 id: ops.posthog-funnel-debugger
 name: 'posthog funnel debugger'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [posthog, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.posthog-funnel-debugger — STUB
+Skill: PostHog funnel debugger.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For a defined conversion funnel (e.g., signup → first chat → first draft → first save → upgrade):
+- Step-by-step conversion %
+- Median time-to-step
+- Top drop-off reasons (segmented)
+- Cohort comparison (new vs returning, plan tiers)
+- Path analysis (what users do between steps)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output:
+- Funnel chart
+- Drop-off summary
+- 3 hypotheses for biggest leak
+- Recommended experiment (link to [[ops.feature-flag-experiment-launcher]])

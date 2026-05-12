@@ -2,20 +2,26 @@
 id: research.regulator-guidance-lookup
 name: 'regulator guidance lookup'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [regulator-guidance]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.regulator-guidance-lookup — STUB
+Skill: Regulator guidance lookup (interpretive guidance, FAQs, circulars).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Statutes alone don't tell the full story — regulator guidance often controls implementation:
+- DFSA Guidance & Policy
+- FSRA Guidance Notes
+- SAMA Implementing Regulations / Circulars
+- CMA Circulars (KSA)
+- SCA Decisions (UAE)
+- CBUAE Notices
+- FATF Guidance (cross-jurisdiction)
+- IFRS / IFAC technical pronouncements
+- EU Commission Guidelines (e.g., EDPB on GDPR)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { issuer, title, dateIssued, summary, fullText, supersedes: [...], supersededBy: [...] }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Highlight when guidance contradicts or softens literal statutory reading.

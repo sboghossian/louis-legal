@@ -2,20 +2,29 @@
 id: conversation.intake-divorce-petition
 name: 'intake divorce petition'
 category: conversation
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [intake, family]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# conversation.intake-divorce-petition — STUB
+Skill: Intake conversation — divorce petition.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Sensitive subject — handle with care. Establishes:
+1. Jurisdiction (where parties live, marriage location, nationality)
+2. Marriage details (date, place, type — civil/religious sect)
+3. Children (ages, custody preference)
+4. Assets (real estate, financial, business interests)
+5. Debts (joint, individual)
+6. Spousal support / alimony expectations
+7. Grounds (fault / no-fault depending on jurisdiction)
+8. History of abuse / safety concerns (mandatory reporter consideration in some jurisdictions)
+9. Current living arrangements
+10. Documentation available
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: intake summary + recommended jurisdiction analysis + next-steps + safety resources if applicable.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+MENA-specific: identify confessional court applicable; civil-marriage abroad → file there or have decree recognized.
+
+Refuses: any prejudgment of fault, asset-hiding strategies.

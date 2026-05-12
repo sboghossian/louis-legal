@@ -2,20 +2,24 @@
 id: tool.email-drafter
 name: 'email drafter'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [email, drafting]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# tool.email-drafter — STUB
+Tool: Email drafter (client / opposing counsel / court clerk).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Drafts professional email with awareness of:
+- Recipient role (client = warmer; opposing counsel = formal & on-record; court clerk = procedural)
+- Matter status (active dispute = guarded; transactional close = collaborative)
+- Region (MENA: more formal openings, religious greetings appropriate when reciprocated; US: direct & brief; UK: polite-formal)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Drafts include:
+- Subject line (cites matter ref + topic)
+- Greeting matched to relationship history
+- Body: max 3 paragraphs + bullet asks
+- Sign-off matched to local custom
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[outreach.payment-recovery-flow]] for AR chase emails, [[efirm.client-update-email-draft]] for client updates.

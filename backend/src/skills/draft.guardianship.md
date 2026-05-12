@@ -2,20 +2,34 @@
 id: draft.guardianship
 name: 'guardianship'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, family]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.guardianship — STUB
+Skill: Draft — guardianship / wilayah deed.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For:
+- Minors (when parents deceased / incapacitated)
+- Incapacitated adults
+- Limited-purpose guardianship (specific asset / decision)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Jurisdiction patterns:
+- KSA: Najiz court system; wilayah typically paternal grandfather then court-appointed
+- UAE: Wills & Probate Registry (DIFC for non-Muslims), Personal Status Court for Muslims (mainland)
+- Lebanon: sect courts
+- France (for MENA-FR dual nationals): tutelle / curatelle regime
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Clauses:
+- Identity of ward
+- Scope of guardian's powers
+- Investment / property management rules
+- Reporting to court
+- Compensation (typically modest)
+- Successor guardian
+- Term + termination
+- Sharia / civil-law dual-track if applicable
+
+Pair with [[draft.will]] (if guardian appointed in will) and [[draft.power-of-attorney]] (for delegated authority short of guardianship).

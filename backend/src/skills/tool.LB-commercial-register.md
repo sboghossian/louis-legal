@@ -2,20 +2,28 @@
 id: tool.LB-commercial-register
 name: 'LB commercial register'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [registry-lookup, kyc]
+jurisdictions: [LB]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.LB-commercial-register — STUB
+Tool: Lebanon Commercial Register (Sijil al-Tijari) lookup.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Searches the registry held by each Mohafaza commercial court (Beirut, Mt Lebanon, North, South, Bekaa, Nabatieh).
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Fields:
+- Registration number
+- Company name (Arabic / Latin)
+- Form (SAL, SARL, etc.)
+- Capital + paid-up capital
+- Object clause
+- Partners / shareholders (for SARL — visible; for SAL — not always)
+- Board members + statutory auditor
+- Mortgages / liens
+- Bankruptcy / liquidation status
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Caveat: data freshness varies — Beirut court tends to be slower; verify with notarized excerpt for high-stakes deals.
+
+Bridge: [[research.beneficial-ownership-lookup]] for UBO past the share-register layer.

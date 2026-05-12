@@ -2,20 +2,26 @@
 id: conversation.intake-trademark-filing
 name: 'intake trademark filing'
 category: conversation
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [intake, ip]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# conversation.intake-trademark-filing — STUB
+Skill: Intake conversation — trademark filing.
 
-This skill is named in the Louis skills inventory but not yet authored.
+1. Mark (word, logo, sound, scent, 3D)
+2. Owner (entity or individual)
+3. Goods/services (Nice classification 1-45)
+4. Countries (single / multiple / Madrid Protocol designation list)
+5. Prior use (date of first use, evidence)
+6. Existing registrations
+7. Clearance search done? Results?
+8. Special character handling (Arabic script for MENA filings)
+9. Color / no-color claim
+10. Description of mark
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: intake summary + filing strategy (national vs Madrid) + clearance recommendation via [[research.precedent-finder]] + cost estimate.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[tool.WIPO-trademark-search]] + [[tool.local-trademark-registers]].

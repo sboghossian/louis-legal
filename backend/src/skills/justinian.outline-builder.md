@@ -2,20 +2,23 @@
 id: justinian.outline-builder
 name: 'outline builder'
 category: justinian
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [education]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justinian.outline-builder — STUB
+Skill: Justinian — course outline builder.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For a law-school course, produces structured outline:
+- Topic hierarchy
+- Black-letter law per topic
+- Leading cases per topic (1-3)
+- Common exam patterns
+- Tested issue interactions
+- Memorization aids (mnemonics, charts)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Calibrated to course (Civ Pro, Con Law, Crim Law, Contracts, Property, Torts, Evidence, etc.) + jurisdiction.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: markdown + flashcard-ready format.

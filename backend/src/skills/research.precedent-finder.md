@@ -2,20 +2,27 @@
 id: research.precedent-finder
 name: 'precedent finder'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [precedent-search, case-law]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.precedent-finder — STUB
+Skill: Precedent finder (case-law search).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Given a legal issue + jurisdiction, return:
+- Top 5 most-cited / most-relevant cases
+- Each case: facts summary, holding, key reasoning, citation
+- Citator status (still good law? overruled? distinguished?)
+- Treatment by later courts
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Process:
+1. Identify controlling jurisdiction
+2. Identify level of authority needed (binding vs persuasive)
+3. Search authoritative database ([[tool.thomson-reuters-westlaw]], [[tool.lexisnexis]], [[tool.courtlistener-US]], [[tool.DIFC-courts-search]], [[tool.ADGM-courts-search]])
+4. Filter by date (recent = stronger), level (apex > appellate > first instance)
+5. Hand off citations + summaries
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Never fabricate case names — only cite from verified search results.
+Refuse if cannot verify — say "no verified precedent found" rather than guess.

@@ -2,20 +2,25 @@
 id: ops.NPS-collector-in-chat
 name: 'NPS collector in chat'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [nps, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.NPS-collector-in-chat — STUB
+Skill: In-chat NPS collector.
 
-This skill is named in the Louis skills inventory but not yet authored.
+After successful turn / milestone:
+- "On a scale 0-10, how likely are you to recommend Louis?"
+- One-tap reply or skip
+- Follow-up open-ended for promoters (testimonial ask) + detractors (issue capture)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Triggers:
+- After 10th successful turn
+- After major milestone (first contract drafted, first matter closed)
+- Quarterly heartbeat (with cool-down)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { score, comment, userId, context, timestamp }
+
+Pipes to [[ops.churn-risk-detector]] (detractor signal) and [[ops.case-study-asker-after-N-messages]] (promoter signal).

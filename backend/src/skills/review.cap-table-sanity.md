@@ -2,20 +2,27 @@
 id: review.cap-table-sanity
 name: 'cap table sanity'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, corporate, vc]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.cap-table-sanity — STUB
+Skill: Review — cap table sanity check (pre/post-money).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Inspect cap-table spreadsheet / data for:
+- Math: shares × % = total; preferences sum to total liquidation prefs
+- Pre-money + investment = post-money (check)
+- Fully-diluted math: options + warrants + safes/notes converted
+- SAFE conversion: pre-money vs post-money SAFE (YC v2 vs v1.5), MFN, valuation cap, discount
+- Convertible notes: principal + accrued interest at conversion
+- Option pool: pre-money expansion (founder dilution) vs post-money pool
+- Preference stack ordering (1x non-participating vs 1x participating with cap)
+- Anti-dilution math (broad-based weighted average is standard)
+- Drag-along / tag-along trigger thresholds
+- ESOP vesting (4-yr cliff 1-yr is standard)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { findings: [{ row, issue, expectedValue, actualValue, severity }], reconciledTable }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Common bugs: ignoring SAFE-as-stock when computing fully-diluted; mis-applying option pool shuffle

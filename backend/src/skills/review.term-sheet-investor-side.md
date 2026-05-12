@@ -2,20 +2,28 @@
 id: review.term-sheet-investor-side
 name: 'term sheet investor side'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, vc, investor]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.term-sheet-investor-side — STUB
+Skill: Review — VC term sheet (investor-side).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Red-flag scan from investor's perspective:
+- Liquidation preference adequate (1x non-participating fine for late stage; participating + cap acceptable for seed)
+- Anti-dilution: broad-based weighted-average minimum
+- Board: at least 1 seat for lead investor + observer for follow-ons
+- Protective provisions: sale of company, change in business, debt above $X, issue of senior securities, M&A, IPO
+- Information rights: monthly mgmt accounts, annual audited, budget review, info on senior hires
+- Pro-rata rights through Series N
+- Pay-to-play (light or heavy)
+- Drag-along: aligned with prefs
+- Founder vesting: 4-yr cliff 1-yr; double-trigger acceleration on CIC
+- ROFR + co-sale
+- Founder IP assignment + non-compete
+- Founder severance limited
+- Exclusivity 30-60 days; expense reimbursement; legal-fee cap
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { findings, marketTerms, recommendedRedlines, dealKillers: [...] }

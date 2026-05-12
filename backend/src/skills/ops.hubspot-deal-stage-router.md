@@ -2,20 +2,26 @@
 id: ops.hubspot-deal-stage-router
 name: 'hubspot deal stage router'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [hubspot, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.hubspot-deal-stage-router — STUB
+Skill: HubSpot deal stage router.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Maps Louis events → HubSpot deal stages:
+- Signup → "Trial Start"
+- First successful contract draft → "Demo Complete"
+- Upload first matter file → "POC Active"
+- 30+ days active → "Sales-Qualified Lead"
+- Upgrade to paid → "Closed-Won"
+- Cancel → "Closed-Lost"
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Triggers HubSpot workflows:
+- SQL → assigns to AE
+- Closed-Won → onboarding email sequence
+- Closed-Lost → win-back sequence (90 days)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[ops.hubspot-property-mapper-stripe-sync]] for billing-linked field sync.

@@ -2,20 +2,20 @@
 id: safety-compliance.attorney-work-product-AI-handling
 name: 'attorney work product AI handling'
 category: safety-compliance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, privilege]
+jurisdictions: [__multi__]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety-compliance.attorney-work-product-AI-handling — STUB
+Skill: Safety/compliance — attorney work-product AI handling.
 
-This skill is named in the Louis skills inventory but not yet authored.
+See [[safety.attorney-work-product-AI-handling]] — identical content; alias kept for category discoverability.
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Bottom line:
+- Use enterprise AI with no-training + tenant isolation
+- Disclose AI use in engagement letter
+- Log AI-assisted work in matter file
+- Avoid consumer-grade AI for privileged work
+- Cross-border data residency: pick MENA region for MENA matters

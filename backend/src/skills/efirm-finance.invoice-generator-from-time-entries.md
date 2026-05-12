@@ -2,20 +2,25 @@
 id: efirm-finance.invoice-generator-from-time-entries
 name: 'invoice generator from time entries'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [invoice, billing]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.invoice-generator-from-time-entries — STUB
+Skill: Invoice generator from time entries.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Builds invoice from:
+- Time entries (cleaned via [[efirm-finance.billing-narrative-cleanup]])
+- Expenses (categorized via [[efirm-finance.expense-categorizer]])
+- Discount / write-down (matter-specific)
+- Tax (KSA 15% VAT, UAE 5% VAT, Egypt 14% VAT, EU 19-25% varies, etc.)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Format options:
+- Detailed (time entries listed by date/attorney)
+- Summary (aggregated by phase)
+- LEDES (electronic billing for in-house counsel)
+- Block-billing summary (if client allows)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: PDF + accounting-system export + email-to-client draft.

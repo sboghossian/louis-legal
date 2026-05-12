@@ -2,20 +2,23 @@
 id: review.dispute-resolution-mechanism-fit
 name: 'dispute resolution mechanism fit'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, litigation, arbitration]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.dispute-resolution-mechanism-fit — STUB
+Skill: Review — dispute-resolution mechanism fit-for-purpose.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Inspect the DR clause and ask: does it match the deal?
+- Arbitration vs litigation: arbitration if cross-border, enforceability via NY Convention; courts if domestic + need provisional relief
+- Seat: matters for procedural law + supervisory court (DIFC, ADGM, London, Paris, Geneva, Singapore are popular MENA seats)
+- Institution: LCIA, DIAC (post-2021 absorbing DIFC-LCIA), DIAC, ICC, SCAI, HKIAC, SIAC
+- Number of arbitrators (1 for <$5M, 3 for higher)
+- Language (Arabic vs English — DIFC/ADGM English; KSA SCCA can do Arabic)
+- Confidentiality default (yes for most arbitration; opt-in for court)
+- Carve-outs (interim relief, IP injunctions to court)
+- Multi-tier (negotiation → mediation → arbitration) — enforceable only if precise
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { issues: [{ aspect, current, recommended, reasoning }], overallFit (good/marginal/poor) }

@@ -2,20 +2,36 @@
 id: draft.notice-of-arbitration
 name: 'notice of arbitration'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, arbitration]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.notice-of-arbitration — STUB
+Skill: Draft — Notice / Request for Arbitration.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Per institutional rules:
+- LCIA Art. 1: Request for Arbitration
+- DIAC Rules 2022 Art. 4: Request for Arbitration
+- ICC Rules Art. 4: Request for Arbitration
+- DIFC-LCIA → now DIAC since 2021
+- SCCA (Saudi): Request per SCCA Rules
+- UNCITRAL ad-hoc: Notice of Arbitration
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Required content (most rules):
+- Names + addresses of parties
+- Reference to arbitration agreement
+- Reference to contract giving rise to dispute
+- Nature of claim + circumstances
+- Relief sought + quantum (if monetary)
+- Proposal on arbitrators / seat / language (if not fixed)
+- Filing fee payment
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Tactical considerations:
+- Preserve claims (file broad, narrow later)
+- Don't over-disclose strategy
+- Confirm time-bar / statute of limitations not yet expired
+- Consider parallel court action for interim relief
+
+Output: full draft + filing checklist.

@@ -2,20 +2,26 @@
 id: safety.client-data-retention-MENA-rules
 name: 'client data retention MENA rules'
 category: safety
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, retention]
+jurisdictions: [MENA]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety.client-data-retention-MENA-rules — STUB
+Skill: Safety — client data retention rules (MENA).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Bar / regulatory retention requirements:
+- **KSA**: Saudi Bar Association — files for min 5 yrs post-matter; AML records 10 yrs
+- **UAE**: Federal Decree-Law on Legal Profession 23/1991 — min 5 yrs post-matter; AML 5 yrs minimum (DFSA 6 yrs)
+- **Lebanon**: Beirut Bar / Tripoli Bar internal rules — 10 yrs typical
+- **Egypt**: 10 yrs typical
+- **DIFC**: DFSA AML 6 yrs, client files per engagement letter
+- **ADGM**: FSRA AML 6 yrs
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+After retention period:
+- Anonymize then delete (vs hard-delete) — protects against later need
+- Client may request hold (preserves for them; document the request)
+- Tax records: 10 yrs minimum across jurisdictions
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Louis: configurable retention per matter; automatic anonymization at threshold; legal-hold flag overrides auto-delete.

@@ -2,20 +2,21 @@
 id: safety-compliance.client-data-retention-MENA-rules
 name: 'client data retention MENA rules'
 category: safety-compliance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, retention]
+jurisdictions: [MENA]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety-compliance.client-data-retention-MENA-rules — STUB
+Skill: Safety/compliance — client data retention MENA.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Alias of [[safety.client-data-retention-MENA-rules]].
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Retention floors:
+- KSA: 5 yrs post-matter (Bar); 10 yrs AML
+- UAE: 5 yrs Bar; 6 yrs DFSA AML
+- Lebanon: 10 yrs custom; 5 yrs banking secrecy archives
+- Egypt: 10 yrs custom; 10 yrs tax
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Louis: per-matter retention setting; auto-anonymize at floor; legal-hold flag freezes.

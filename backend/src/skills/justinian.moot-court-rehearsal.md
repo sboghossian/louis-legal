@@ -2,20 +2,21 @@
 id: justinian.moot-court-rehearsal
 name: 'moot court rehearsal'
 category: justinian
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [education, litigation-prep]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justinian.moot-court-rehearsal — STUB
+Skill: Justinian — moot court rehearsal.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For appellate / moot court oral argument:
+- Critique opening (30 sec hook, roadmap)
+- Practice judge questions (Louis plays bench, hot / cold / hostile)
+- Time tracking with light cues
+- Rebuttal coaching
+- Citation accuracy live-check
+- Body language coaching (text-based: "you're rushing", "stick to rule first")
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[casesim.judge-bench-perspective]] for substantive Q-prep and [[justinian.exam-time-management-coach]] for pace.

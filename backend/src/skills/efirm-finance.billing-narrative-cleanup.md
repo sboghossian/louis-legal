@@ -2,20 +2,22 @@
 id: efirm-finance.billing-narrative-cleanup
 name: 'billing narrative cleanup'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [billing, narrative]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.billing-narrative-cleanup — STUB
+Skill: Billing narrative cleanup.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Reviews time-entry narratives for:
+- Detail level matching client guidelines (block-billing flagged)
+- Privilege protection (no work-product reveal)
+- Activity description clear (not "review file" — "review of M&A due diligence findings for IP issues")
+- Proper grammar / spelling
+- Initial / attorney tag included
+- Allergy: any mention of opposing counsel by name (some clients prefer redacted)
+- Length within firm style
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: cleaned narrative + diff showing changes. Pair with [[efirm-finance.invoice-generator-from-time-entries]].

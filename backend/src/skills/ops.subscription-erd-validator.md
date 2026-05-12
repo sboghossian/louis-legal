@@ -2,20 +2,25 @@
 id: ops.subscription-erd-validator
 name: 'subscription erd validator'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [subscription, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.subscription-erd-validator — STUB
+Skill: Subscription ERD validator.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Cross-checks the subscription data model:
+- Stripe customer ↔ User: 1-1 or 1-many?
+- Subscription ↔ Tenant: 1-1 required
+- Plan ↔ Feature flags: rules consistent
+- Invoice ↔ Usage: matches metering
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Flags inconsistencies:
+- Orphan Stripe customer (no Louis user)
+- Active subscription without active user
+- User with multiple active subscriptions
+- Plan downgrade in middle of cycle (proration mismatch)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Used by [[ops.error-classifier]] when billing-related errors appear.

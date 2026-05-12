@@ -2,20 +2,31 @@
 id: efirm-finance.contingency-fee-calculator
 name: 'contingency fee calculator'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [contingency, pricing]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.contingency-fee-calculator — STUB
+Skill: Contingency-fee calculator.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For contingency / success-fee arrangements:
+- Statutory caps (varies — KSA limits, France no contingency on result alone, US varies)
+- Sliding-scale (e.g., 25% pre-suit, 33% post-filing, 40% on appeal)
+- Lien on recovery
+- Expense reimbursement (off the top or net)
+- Settlement vs judgment treatment
+- Tax treatment of fee
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Inputs: matter type, jurisdiction, estimated recovery range.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: fee schedule + expected-value table + comparator vs hourly.
+
+Jurisdictional notes:
+- Saudi Arabia: contingency permitted; reasonableness standard
+- UAE: contingency permitted; courts can adjust
+- Lebanon: not permitted as sole fee; permitted as success bonus
+- France: pacte de quota litis prohibited; honoraires de résultat permitted on top of base
+- UK: CFA / DBA regimes
+- US: state-by-state; common in PI/employment

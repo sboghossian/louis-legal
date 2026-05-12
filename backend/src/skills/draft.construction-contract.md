@@ -2,20 +2,30 @@
 id: draft.construction-contract
 name: 'construction contract'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, construction]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.construction-contract — STUB
+Skill: Draft — construction contract (non-FIDIC).
 
-This skill is named in the Louis skills inventory but not yet authored.
+For smaller projects where FIDIC overhead is too much:
+- Scope of works + technical specifications (Schedule A)
+- Bill of Quantities + payment schedule (milestones / measurement)
+- Programme + extensions of time grounds
+- Liquidated damages for delay (cap at 10% common; KSA Sharia constraint on penalty character)
+- Performance bond + retention
+- Variations procedure
+- Insurance: CAR, third-party liability, workers' comp
+- Health & safety
+- Site possession + handover
+- Defects liability period (12 months standard)
+- Sub-contracting rights
+- Termination: convenience + default
+- Dispute: expert / DAB / arbitration
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Sharia note (KSA): "penalty" clauses unenforceable if punitive; "compensation for actual proven damage" enforceable. Draft as compensation pre-estimate.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: full draft + Schedule list.

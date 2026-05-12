@@ -2,20 +2,22 @@
 id: review.governing-law-conflict
 name: 'governing law conflict'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, conflict-of-laws]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.governing-law-conflict — STUB
+Skill: Review — governing-law + forum conflict check.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Inspect choice-of-law + choice-of-forum for:
+- Validity of choice (Rome I in EU, common law freedom-of-contract in DIFC/ADGM/English, mandatory rules in KSA/UAE onshore)
+- Mismatch: governing law England, forum DIFC — OK; governing law DIFC, forum onshore Dubai — possible problems
+- Mandatory overriding rules (employment, consumer, antitrust apply regardless of choice)
+- Public policy carve-outs (Sharia in KSA, public order in Lebanon/UAE)
+- Sharia compliance carve-out (for Islamic-finance docs)
+- Connection requirement (some jurisdictions reject choice if no nexus)
+- Enforcement — NY Convention + Riyadh + GCC Convention for arbitration awards; reciprocity for foreign judgments
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { conflicts: [{ issue, severity, recommendation }], enforcementRisk }

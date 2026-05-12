@@ -2,20 +2,23 @@
 id: review.compliance-gap-analysis
 name: 'compliance gap analysis'
 category: review
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [review, compliance]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# review.compliance-gap-analysis — STUB
+Skill: Review — compliance gap analysis (multi-framework).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Map client's current state vs requirements across frameworks:
+- AML/KYC (FATF 40 Recs, FATF Travel Rule for crypto)
+- Sanctions (OFAC, UN, EU, UK, MENA national lists)
+- Data protection (GDPR, KSA PDPL, UAE PDPL, Bahrain PDPL, Egypt PDPL, etc.)
+- Anti-bribery (FCPA, UK Bribery Act, KSA Anti-Bribery Law)
+- ESG / disclosure (CSRD for EU operations, SEC climate disclosure, Saudi Green Initiative)
+- Sector-specific (banking, insurance, fintech, healthcare, telco)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: { framework, currentState, requiredState, gap, remediation, owner, targetDate, severity }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Always disclose materiality threshold: distinguish "blocker" from "polish".

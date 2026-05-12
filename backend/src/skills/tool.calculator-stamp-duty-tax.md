@@ -2,20 +2,23 @@
 id: tool.calculator-stamp-duty-tax
 name: 'calculator stamp duty tax'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [calculator, tax]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.calculator-stamp-duty-tax — STUB
+Tool: Stamp duty / transfer-tax calculator (MENA + UK + FR).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Computes statutory transfer taxes on real-estate / share transfers:
+- UAE Dubai: 4% transfer fee (split 2%/2% by custom) — DLD; AD: 2%; Sharjah 2%; etc.
+- KSA: 5% Real Estate Transaction Tax (RETT) — replaces VAT on real property
+- Lebanon: 5–7% (varies) registration + stamp
+- UK: SDLT (residential surcharge, non-resident 2%, additional dwelling 3%)
+- FR: droits d'enregistrement ~5.8% departmental
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Input: { jurisdiction, propertyValue, propertyType, buyerStatus (resident/non-resident, first-time, corporate), structuringNotes }
+Output: { tax, breakdown, exemptions, dueDate, notes }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Always couple with [[review.title-clean]] and [[research.tax-treatment-lookup]].

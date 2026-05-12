@@ -2,20 +2,32 @@
 id: research.court-procedure-lookup
 name: 'court procedure lookup'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [procedure-lookup]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.court-procedure-lookup — STUB
+Skill: Court procedure lookup.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For a given court + matter type, return:
+- Required initial filings (statement of claim, supporting affidavits, exhibits)
+- Filing fees + payment method
+- Service of process rules (personal, registered post, publication)
+- Response deadlines
+- Discovery / disclosure regime (common-law vs civil-law)
+- Witness rules (live, written, expert)
+- Costs framework (loser pays / each side bears)
+- Appeal track + deadlines
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Jurisdictions covered (initial):
+- DIFC Courts (English common law procedure)
+- ADGM Courts
+- UAE Onshore Civil Courts (DIFCCD if commercial)
+- Saudi: General Courts, Commercial Courts, Labor Courts, Administrative Courts (Diwan al-Mazalim)
+- Lebanon: Civil, Commercial, Criminal, Labor, Administrative (Conseil d'Etat / Shura)
+- English High Court (Commercial)
+- LCIA, DIAC, DIFC-LCIA arbitration rules
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: structured checklist with citations to court rules.

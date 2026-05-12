@@ -2,20 +2,27 @@
 id: tool.DIFC-courts-search
 name: 'DIFC courts search'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [court-search, difc]
+jurisdictions: [UAE-DIFC]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.DIFC-courts-search — STUB
+Tool: DIFC Courts case search.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Dubai International Financial Centre Courts (DIFC) — English-common-law:
+- Court of First Instance, Court of Appeal
+- Small Claims Tribunal
+- Wills & Probate Registry
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Search by:
+- Party name
+- Case number (e.g., CFI-001-2024)
+- Judge
+- Practice area
+- Citation in earlier authorities
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Notable for: DIFC judgments are enforceable in Dubai per DIFC Law No. 12/2020 — when a DIFC-court judgment becomes "executable" by ratification in onshore Dubai Courts.
+
+Cross-reference [[tool.ADGM-courts-search]] and consider DIFC-LCIA reform (now under DIAC since 2021).

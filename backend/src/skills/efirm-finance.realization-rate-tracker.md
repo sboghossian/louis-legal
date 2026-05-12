@@ -2,20 +2,28 @@
 id: efirm-finance.realization-rate-tracker
 name: 'realization rate tracker'
 category: efirm-finance
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [realization, billing]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm-finance.realization-rate-tracker — STUB
+Skill: Realization rate tracker.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Metrics:
+- Billed realization = billed / worked (write-down %)
+- Collected realization = collected / worked (write-down + bad-debt)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Granularity:
+- Per attorney
+- Per practice
+- Per client
+- Per matter type
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Flags:
+- Attorney realization below firm avg (training opportunity / re-pricing)
+- Client with chronic write-down (re-price or terminate)
+- Matter type with thin margin (re-evaluate AFA structure)
+
+Pair with [[efirm-finance.collection-rate-tracker]] for full revenue-cycle picture.

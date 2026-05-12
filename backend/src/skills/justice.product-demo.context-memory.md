@@ -1,21 +1,22 @@
 ---
 id: justice.product-demo.context-memory
-name: 'product demo · context memory'
+name: 'product demo.context memory'
 category: justice
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [demo, memory]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justice.product-demo.context-memory — STUB
+Skill: Product demo — context memory.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Within a demo session:
+- Remember client industry + key facts shared early
+- Reuse those facts in later demo examples (e.g., user said "we do MSAs for marketing agencies" → later draft demo uses marketing-agency context)
+- Surface relevant skills as user explores
+- Avoid re-asking already-answered questions
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Memory ends at session close (unless user signs up).
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[justice.product-demo.recap]].

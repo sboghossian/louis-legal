@@ -2,20 +2,20 @@
 id: justinian.bar-exam-prep-FR-CRFPA
 name: 'bar exam prep FR CRFPA'
 category: justinian
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [bar-prep, fr]
+jurisdictions: [FR]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# justinian.bar-exam-prep-FR-CRFPA — STUB
+Skill: Justinian — French Bar (CRFPA) exam prep.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Centre Régional de Formation Professionnelle d'Avocats — pre-bar entry exam:
+- Note de synthèse (5 hr)
+- Speciality (droit civil / commercial / pénal / social / administratif / européen / international / des affaires) — 3 hr
+- Oral grand oral (15 min on Conv. EDH / fundamental liberties)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Then 18-mo EFB training + CAPA (final bar exam).
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Louis: outline practice, note-de-synthèse drills (timed), grand oral roleplay, jurisprudence mémorisation.

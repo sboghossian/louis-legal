@@ -2,20 +2,36 @@
 id: draft.mediation-agreement
 name: 'mediation agreement'
 category: draft
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [draft, adr]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# draft.mediation-agreement — STUB
+Skill: Draft — mediation / settlement agreement.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Two flavors:
+1. **Mediation agreement** (before mediation): submitting dispute to mediator
+2. **Settlement agreement** (after mediation): documenting settlement terms
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Mediation agreement clauses:
+- Mediator identity / institution (DIAC, DIFC, ADGM, JAMS, CEDR, ICC ADR)
+- Confidentiality (absolute)
+- Without-prejudice nature
+- Timeline
+- Costs split
+- Carve-out for litigation/arbitration if mediation fails
+- Singapore Convention 2019 status (for cross-border settlement enforcement)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Settlement agreement clauses:
+- Recitals (background + dispute summary)
+- Payment terms / non-monetary obligations
+- Release & discharge (full, mutual, limited)
+- Confidentiality
+- Non-disparagement
+- Tax allocation
+- Breach remedies
+- Governing law + DR (often retain prior contract's clause)
+
+Output: full draft with redlines from standard institutional form.

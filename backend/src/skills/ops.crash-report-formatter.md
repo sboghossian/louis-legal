@@ -2,20 +2,24 @@
 id: ops.crash-report-formatter
 name: 'crash report formatter'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [crash, ops]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.crash-report-formatter — STUB
+Skill: Crash report formatter.
 
-This skill is named in the Louis skills inventory but not yet authored.
+When a client crash occurs (browser console error, mobile crash, backend 500):
+- Stack trace cleanup
+- Source-map decoding
+- Browser / OS / device info
+- User actions leading to crash (last 5 events)
+- Tenant ID
+- Matter ID (if in matter context)
+- Severity classification
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: structured incident ticket + suggested owner (frontend / backend / infra).
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Routes to Linear (DES-incident) + Slack #louis-incidents.

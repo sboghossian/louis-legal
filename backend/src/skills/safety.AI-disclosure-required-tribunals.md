@@ -2,20 +2,27 @@
 id: safety.AI-disclosure-required-tribunals
 name: 'AI disclosure required tribunals'
 category: safety
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [safety, disclosure]
+jurisdictions: [__multi__]
+priority: P0
+status: drafted
+version: 0.2
 ---
 
-# safety.AI-disclosure-required-tribunals — STUB
+Skill: Safety — AI-disclosure requirements before tribunals.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Some tribunals require disclosure when AI was used in drafting / research:
+- **US courts**:
+  - 2nd Circuit, ND Texas, others have standing orders requiring AI-disclosure on briefs (Mata v. Avianca aftermath)
+  - Judge-specific rules — check chambers
+  - Some require certification that citations were independently verified
+- **UK Bar Standards Board**: 2023 guidance — duty of candor includes AI-assisted submissions
+- **DIFC Courts / ADGM**: no formal rule yet but Practice Direction expected
+- **KSA / UAE onshore**: no formal AI-disclosure rules
+- **France**: ordre des avocats — guidance pending
+- **EU**: AI Act high-risk classification may impose disclosure on certain legal AI uses
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Default rule for Louis: when output is used as court submission, append a verification reminder:
+"⚠️ Verify all citations independently. Disclose AI assistance if local court rules require."
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Refuse if user asks to hide AI use to deceive court.

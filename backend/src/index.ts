@@ -14,6 +14,12 @@ import { downloadsRouter } from "./routes/downloads";
 import { skillsRouter } from "./routes/skills";
 import { customizeRouter } from "./routes/customize";
 import { docWorkspaceRouter } from "./routes/docWorkspace";
+import { clausesRouter } from "./routes/clauses";
+import { calculatorsRouter } from "./routes/calculators";
+import { mattersRouter } from "./routes/matters";
+import { citationsRouter } from "./routes/citations";
+import { riskRouter } from "./routes/risk";
+import { legalFlowsRouter } from "./routes/legalFlows";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -124,6 +130,12 @@ app.use("/download", downloadsRouter);
 app.use("/api/skills", skillsRouter);
 app.use("/api/customize", customizeRouter);
 app.use("/api/doc-workspace", docWorkspaceRouter);
+app.use("/api/clauses", clausesRouter);
+app.use("/api/calculators", calculatorsRouter);
+app.use("/api/matters", mattersRouter);
+app.use("/api/citations", citationsRouter);
+app.use("/api/risk", riskRouter);
+app.use("/api/legal-flows", legalFlowsRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 

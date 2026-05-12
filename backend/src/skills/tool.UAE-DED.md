@@ -2,20 +2,31 @@
 id: tool.UAE-DED
 name: 'UAE DED'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [registry-lookup, kyc]
+jurisdictions: [UAE]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.UAE-DED — STUB
+Tool: UAE Department of Economic Development (DED) trade-name & license lookup.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Each emirate has its own DED:
+- Dubai DED (now DET — Dubai Economy & Tourism)
+- Abu Dhabi DED (ADDED)
+- Sharjah Economic Development Department (SEDD)
+- etc.
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Lookup capabilities:
+- Trade license number → entity name, license type, expiry, activities
+- Trade name → registered owner / shareholders (if public)
+- Activity code (e.g., 7020 management consulting) → permissions
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Use cases:
+- KYC counterparty due diligence
+- Verify license expiry before signing
+- Confirm signatory has authority (manager / partner in license)
+
+Output: { license: { number, issuer, expiry, activities, shareholders, signatories } }
+
+Note: Free zones (DIFC, ADGM, DMCC, JAFZA, etc.) have separate registers — use [[tool.UAE-freezone-registries]].

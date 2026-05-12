@@ -2,20 +2,21 @@
 id: public-tool.contract-summarizer-public
 name: 'contract summarizer public'
 category: public-tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [summarize, public-tool]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# public-tool.contract-summarizer-public — STUB
+Skill: Public tool — contract summarizer (free).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Paste / upload contract → get:
+- Parties + dates
+- Key terms (1-line each: term, fee, governing law, termination, IP)
+- 5 plain-English bullets explaining the contract
+- 5 potential gotchas to ask a lawyer about
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Output: 1-page summary PDF + email capture for full breakdown.
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Demonstrates "Louis makes legal understandable" — central value prop.

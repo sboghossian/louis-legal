@@ -2,20 +2,30 @@
 id: efirm.client-update-email-draft
 name: 'client update email draft'
 category: efirm
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [email, client-communication]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# efirm.client-update-email-draft — STUB
+Skill: Client update email drafter.
 
-This skill is named in the Louis skills inventory but not yet authored.
+For each matter, drafts periodic client-update email:
+- Status summary (what's happened since last update)
+- Next steps + timeline
+- Decisions needed from client
+- Costs to date + projected
+- Risks / opportunities
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Tone:
+- Senior partner = strategic + confident
+- Mid-level lawyer = detailed + collaborative
+- Junior = informative + deferential
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Adapts to:
+- Matter type (litigation = guarded; transaction = collaborative)
+- Client preference (terse vs detailed)
+- Region (MENA = formal openings; US = direct)
+
+Output: draft email + suggested send time + reminder if no response.

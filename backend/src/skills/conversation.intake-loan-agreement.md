@@ -2,20 +2,26 @@
 id: conversation.intake-loan-agreement
 name: 'intake loan agreement'
 category: conversation
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [intake]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# conversation.intake-loan-agreement — STUB
+Skill: Intake conversation — loan agreement.
 
-This skill is named in the Louis skills inventory but not yet authored.
+1. Lender + Borrower (entities or individuals; CR / ID numbers)
+2. Principal amount + currency
+3. Disbursement (lump sum / tranches)
+4. Repayment (term, schedule, balloon)
+5. Interest (rate, basis, day-count) — Sharia carve-out for Islamic finance (use murabaha / ijarah / sukuk if interest-free required)
+6. Security (mortgage / pledge / personal guarantee / corporate guarantee)
+7. Covenants (financial / operational / negative)
+8. Events of default + acceleration
+9. Cross-default / cross-acceleration
+10. Governing law + DR + jurisdiction
+11. Bank-secrecy / data-protection
+12. Tax (withholding, gross-up)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: intake summary + Islamic vs conventional structure recommendation + draft request via [[draft.loan-agreement]].

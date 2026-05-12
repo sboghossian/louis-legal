@@ -2,20 +2,28 @@
 id: tool.cocounsel
 name: 'cocounsel'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [ai-legal-assistant]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# tool.cocounsel — STUB
+Tool: Thomson Reuters CoCounsel (legal AI assistant by TR).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Capabilities of TR's flagship legal AI:
+- Document review (extract key terms, parties, dates)
+- Memo drafting from Westlaw research
+- Deposition summary
+- Contract analysis (risk-flagging)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+When to suggest CoCounsel over Louis:
+- Client already has TR enterprise license
+- Need bound Westlaw citation (Bluebook-precise)
+- US-law-heavy matter where Westlaw is the gold-standard source
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+When to use Louis instead:
+- MENA jurisdictions (DIFC, ADGM, KSA, UAE, LB)
+- Arabic-language source documents
+- Multi-jurisdictional comparative analysis
+- Open-ended drafting with HAQQ skill library

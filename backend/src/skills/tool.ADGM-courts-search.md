@@ -2,20 +2,27 @@
 id: tool.ADGM-courts-search
 name: 'ADGM courts search'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [court-search, adgm]
+jurisdictions: [UAE-ADGM]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.ADGM-courts-search — STUB
+Tool: ADGM Courts case search.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Abu Dhabi Global Market Courts are English-common-law courts. The case database covers:
+- Court of First Instance, Court of Appeal
+- Small Claims Division
+- Employment Division
+- Arbitration Division (DIAC seat overflow)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Search by:
+- Party name (corporate or individual)
+- Case number (e.g., ADGMCFI-2024-CIV-123)
+- Practice area
+- Date range
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: { cases: [{ number, parties, status, judgments: [pdfUrl] }], totalHits }
+
+Note: ADGM judgments are publicly accessible; full text is searchable. Pair with [[tool.DIFC-courts-search]] when client may forum-shop between the two.

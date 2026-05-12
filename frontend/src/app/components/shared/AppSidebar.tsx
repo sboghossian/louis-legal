@@ -21,6 +21,11 @@ import {
     Briefcase,
     Settings as SettingsIcon,
     Bell,
+    BookOpen,
+    Calculator,
+    Quote,
+    ShieldAlert,
+    Workflow,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,10 +45,16 @@ const NAV_ITEMS = [
     { href: "/doc-workspace", label: "Doc Workspace", icon: FileText },
     { href: "/drafting-board", label: "Drafting Board", icon: Network },
     { href: "/efirm", label: "e-Firm", icon: Briefcase },
+    { href: "/matters", label: "Matters", icon: Briefcase },
     { href: "/routines", label: "Routines", icon: Repeat },
     { href: "/tabular-reviews", label: "Tabular Review", icon: Table2 },
     { href: "/workflows", label: "Workflows", icon: Library },
     { href: "/skills", label: "Skills", icon: Sparkles },
+    { href: "/clauses", label: "Clause Library", icon: BookOpen },
+    { href: "/calculators/eos", label: "EOS Calculator", icon: Calculator },
+    { href: "/citations", label: "Citations", icon: Quote },
+    { href: "/risk", label: "Risk Scanner", icon: ShieldAlert },
+    { href: "/legal-flows", label: "Legal Flows", icon: Workflow },
     { href: "/customize", label: "Customize", icon: SlidersHorizontal },
     { href: "/referral", label: "Referral", icon: Gift },
     { href: "/settings", label: "Settings", icon: SettingsIcon },

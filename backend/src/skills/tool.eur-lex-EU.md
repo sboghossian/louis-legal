@@ -2,20 +2,27 @@
 id: tool.eur-lex-EU
 name: 'eur lex EU'
 category: tool
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [statute-lookup]
+jurisdictions: [EU]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# tool.eur-lex-EU — STUB
+Tool: EUR-Lex (EU official legal text).
 
-This skill is named in the Louis skills inventory but not yet authored.
+EU's authoritative legal database covering:
+- Treaties (TFEU, TEU)
+- Regulations, directives, decisions
+- CJEU case law
+- COM proposals, legislative procedure tracking
+- National implementing measures (per Member State)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+For MENA deals: relevant when EU GDPR / DSA / DMA / Adequacy Decisions / sanctions apply via:
+- EU customer data flowing back to MENA processor
+- EU subsidiary of MENA group
+- EU export controls (Reg 2021/821)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Search by CELEX number (e.g., 32016R0679 for GDPR), keyword, date.
+
+Pair with [[tool.legifrance-FR]] for France-specific implementation.

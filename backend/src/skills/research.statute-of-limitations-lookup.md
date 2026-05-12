@@ -2,20 +2,25 @@
 id: research.statute-of-limitations-lookup
 name: 'statute of limitations lookup'
 category: research
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [statute-of-limitations]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# research.statute-of-limitations-lookup — STUB
+Skill: Statute of limitations / prescription period lookup.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Limitation periods vary widely:
+- KSA: general 10 years (Sharia-influenced — no strict statute of limitations for some Hudud, but commercial: 5-10 yrs varies)
+- UAE: commercial claims 10 yrs, employment 1 yr from termination, civil tort 3 yrs from knowledge
+- Lebanon: 10 yrs commercial, 5 yrs employment, 30 yrs civil personal claims (varies)
+- Egypt: 15 yrs civil, 10 yrs commercial
+- France: 5 yrs civil/commercial, 2 yrs consumer
+- England: 6 yrs contract / tort, 12 yrs deed, 6 yrs personal injury (from knowledge)
+- US: state-by-state — typically 3-6 yrs contract, 2-3 yrs tort
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+Input: { jurisdiction, claimType, accrualDate, knowledgeDate (if discovery rule) }
+Output: { limitationPeriod, expiryDate, tolling/suspension events: [...], warnings }
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+CRITICAL: limitation is procedural in some jurisdictions (judge raises ex officio) and substantive in others (must be pleaded). Flag.

@@ -2,20 +2,28 @@
 id: conversation.intake-MSA
 name: 'intake MSA'
 category: conversation
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [intake]
+jurisdictions: [__multi__]
+priority: P1
+status: drafted
+version: 0.2
 ---
 
-# conversation.intake-MSA — STUB
+Skill: Intake conversation — MSA (Master Services Agreement).
 
-This skill is named in the Louis skills inventory but not yet authored.
+Guided multi-turn intake to gather MSA inputs:
+1. Parties (Provider / Customer; entity names + CR numbers)
+2. Scope (what services, statement of work appended via SOW)
+3. Term + termination + renewal
+4. Fees + payment terms + invoicing cadence + late fees
+5. Confidentiality + IP ownership (work-product, background, license-back)
+6. Warranties + service levels + remedies
+7. Indemnity + cap on liability
+8. Insurance requirements
+9. Data protection (GDPR / PDPL DPA addendum)
+10. Subcontracting + assignment
+11. Force majeure
+12. Governing law + DR + venue
+13. Notices addresses
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: structured JSON + auto-drafted MSA via [[draft.MSA]].

@@ -2,20 +2,22 @@
 id: ops.feature-flag-experiment-launcher
 name: 'feature flag experiment launcher'
 category: ops
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [feature-flag, experiment]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# ops.feature-flag-experiment-launcher — STUB
+Skill: Feature-flag experiment launcher.
 
-This skill is named in the Louis skills inventory but not yet authored.
+Given a hypothesis:
+- Define metric (primary + 2 guardrails)
+- Define cohort (% / segment / opt-in)
+- Define duration + power (sample size needed)
+- Create flag in feature-flag system
+- Wire flag in code
+- Configure PostHog event + flag-variant tracking
+- Define stop-loss (auto-revert if guardrail drops >X%)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Outputs to PostHog or LaunchDarkly. Pair with [[ops.posthog-funnel-debugger]].
