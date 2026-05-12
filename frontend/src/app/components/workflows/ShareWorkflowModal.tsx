@@ -7,7 +7,7 @@ import {
     deleteWorkflowShare,
     listWorkflowShares,
     shareWorkflow,
-} from "@/app/lib/mikeApi";
+} from "@/app/lib/louisApi";
 import { EmailPillInput } from "../shared/EmailPillInput";
 
 interface Share {

@@ -3,13 +3,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
-import { MikeIcon } from "@/components/chat/mike-icon";
+import { LouisIcon } from "@/components/chat/louis-icon";
 import { ChatInput } from "./ChatInput";
 import { SelectAssistantProjectModal } from "./SelectAssistantProjectModal";
-import type { MikeMessage } from "../shared/types";
+import type { LouisMessage } from "../shared/types";
 
 interface InitialViewProps {
-    onSubmit: (message: MikeMessage) => void;
+    onSubmit: (message: LouisMessage) => void;
 }
 
 const ICON_SIZE = 35;
@@ -56,7 +56,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                                     "transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                             }}
                         >
-                            <MikeIcon size={ICON_SIZE} />
+                            <LouisIcon size={ICON_SIZE} />
                         </div>
                         <h1
                             ref={textRef}

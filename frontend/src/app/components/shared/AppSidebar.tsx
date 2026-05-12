@@ -10,21 +10,31 @@ import {
     User,
     ChevronsUpDown,
     ChevronDown,
+    Sparkles,
+    Network,
+    Gift,
+    SlidersHorizontal,
+    FileText,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useChatHistoryContext } from "@/app/contexts/ChatHistoryContext";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { MikeIcon } from "@/components/chat/mike-icon";
+import { LouisIcon } from "@/components/chat/louis-icon";
 import { SidebarChatItem } from "@/app/components/shared/SidebarChatItem";
-import { listProjects } from "@/app/lib/mikeApi";
+import { listProjects } from "@/app/lib/louisApi";
 
 const NAV_ITEMS = [
     { href: "/assistant", label: "Assistant", icon: MessageSquare },
     { href: "/projects", label: "Projects", icon: FolderOpen },
     { href: "/tabular-reviews", label: "Tabular Review", icon: Table2 },
     { href: "/workflows", label: "Workflows", icon: Library },
+    { href: "/doc-workspace", label: "Doc Workspace", icon: FileText },
+    { href: "/drafting-board", label: "Drafting Board", icon: Network },
+    { href: "/customize", label: "Customize", icon: SlidersHorizontal },
+    { href: "/skills", label: "Skills", icon: Sparkles },
+    { href: "/referral", label: "Referral", icon: Gift },
 ];
 
 interface AppSidebarProps {
@@ -127,13 +137,13 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                             href="/assistant"
                             className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                         >
-                            <MikeIcon size={22} />
+                            <LouisIcon size={22} />
                             <span
                                 className={`text-2xl font-light font-serif ${
                                     shouldAnimate ? "sidebar-fade-in" : ""
                                 }`}
                             >
-                                Mike
+                                Louis
                             </span>
                         </Link>
                     </div>

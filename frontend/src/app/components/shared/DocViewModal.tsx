@@ -4,17 +4,17 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Download, Trash2, X } from "lucide-react";
 import { DocView } from "./DocView";
-import { getDocumentUrl } from "@/app/lib/mikeApi";
-import type { MikeDocument } from "./types";
+import { getDocumentUrl } from "@/app/lib/louisApi";
+import type { LouisDocument } from "./types";
 
 interface Props {
-    doc: MikeDocument | null;
+    doc: LouisDocument | null;
     /** Optional specific version to display. Only honoured for DOCX. */
     versionId?: string | null;
     /** Optional label suffix for the header (e.g. "V3"). */
     versionLabel?: string | null;
     onClose: () => void;
-    onDelete?: (doc: MikeDocument) => void;
+    onDelete?: (doc: LouisDocument) => void;
 }
 
 export function DocViewModal({

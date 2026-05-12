@@ -11,6 +11,9 @@ import { tabularRouter } from "./routes/tabular";
 import { workflowsRouter } from "./routes/workflows";
 import { userRouter } from "./routes/user";
 import { downloadsRouter } from "./routes/downloads";
+import { skillsRouter } from "./routes/skills";
+import { customizeRouter } from "./routes/customize";
+import { docWorkspaceRouter } from "./routes/docWorkspace";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -118,9 +121,12 @@ app.use("/workflows", workflowsRouter);
 app.use("/user", userRouter);
 app.use("/users", userRouter);
 app.use("/download", downloadsRouter);
+app.use("/api/skills", skillsRouter);
+app.use("/api/customize", customizeRouter);
+app.use("/api/doc-workspace", docWorkspaceRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 app.listen(PORT, () => {
-  console.log(`Mike backend running on port ${PORT}`);
+  console.log(`Louis backend running on port ${PORT}`);
 });

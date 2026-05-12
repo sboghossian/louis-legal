@@ -1,12 +1,12 @@
 # Safe Local Testing
 
-Mike is a young open-source legal AI project. Until you have reviewed your
+Louis is a young open-source legal AI project. Until you have reviewed your
 deployment and data flows, test it with disposable infrastructure and synthetic
 documents only.
 
 ## Use Disposable Test Resources
 
-Create separate test resources for Mike:
+Create separate test resources for Louis:
 
 - a throwaway Supabase project
 - a throwaway S3-compatible storage bucket, such as Cloudflare R2

@@ -8,8 +8,8 @@ import {
     uploadProjectDocument,
     addDocumentToProject,
     deleteDocument,
-} from "@/app/lib/mikeApi";
-import type { MikeDocument } from "./types";
+} from "@/app/lib/louisApi";
+import type { LouisDocument } from "./types";
 import { FileDirectory } from "./FileDirectory";
 import { useDirectoryData, invalidateDirectoryCache } from "./useDirectoryData";
 import { OwnerOnlyModal } from "./OwnerOnlyModal";
@@ -20,7 +20,7 @@ export { invalidateDirectoryCache };
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSelect: (documents: MikeDocument[], projectId?: string) => void;
+    onSelect: (documents: LouisDocument[], projectId?: string) => void;
     breadcrumb: string[];
     allowMultiple?: boolean;
     projectId?: string;
@@ -39,7 +39,7 @@ export function AddDocumentsModal({
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [uploading, setUploading] = useState(false);
     const [search, setSearch] = useState("");
-    const [extraUploadedDocs, setExtraUploadedDocs] = useState<MikeDocument[]>([]);
+    const [extraUploadedDocs, setExtraUploadedDocs] = useState<LouisDocument[]>([]);
     // IDs deleted in this session — hidden locally since `useDirectoryData`'s
     // cached state won't re-fetch until the modal reopens.
     const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
@@ -132,7 +132,7 @@ export function AddDocumentsModal({
     async function handleDelete(ids: string[]) {
         // Server only allows the doc creator to delete. Filter to owned
         // and warn for the rest.
-        const docsById = new Map<string, MikeDocument>();
+        const docsById = new Map<string, LouisDocument>();
         for (const d of [
             ...standaloneDocuments,
             ...extraUploadedDocs,

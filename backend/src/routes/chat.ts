@@ -10,6 +10,7 @@ import {
     runLLMStream,
     type ChatMessage,
 } from "../lib/chatTools";
+import { routeAsync as routeSkills } from "../skills/_router";
 import { completeText } from "../lib/llm";
 import { getUserApiKeys, getUserModelSettings } from "../lib/userSettings";
 import { checkProjectAccess } from "../lib/access";
@@ -530,7 +531,29 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         db,
         docIndex,
     );
-    const apiMessages = buildMessages(enrichedMessages, docAvailability);
+
+    // Skill router: derive skill IDs from the latest user message and compose
+    // the extra system prompt. See backend/src/skills/_router.ts.
+    const latestUserMessage =
+        [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
+    const routeDecision = await routeSkills({
+        message: latestUserMessage,
+        persona: "associate",
+        surface: "web",
+        hasDocuments: docAvailability.length > 0,
+        userId,
+        chatId: chatId ?? undefined,
+    });
+    devLog("[chat/stream] route decision", {
+        skills: routeDecision.skillIds.length,
+        intent: routeDecision.intent,
+    });
+
+    const apiMessages = buildMessages(
+        enrichedMessages,
+        docAvailability,
+        routeDecision.systemPromptExtra,
+    );
 
     const workflowStore = await buildWorkflowStore(userId, userEmail, db);
 

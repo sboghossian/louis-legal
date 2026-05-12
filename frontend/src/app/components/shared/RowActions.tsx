@@ -14,7 +14,7 @@ import {
     Upload,
 } from "lucide-react";
 
-const CLOSE_ROW_ACTIONS_EVENT = "mike:close-row-actions";
+const CLOSE_ROW_ACTIONS_EVENT = "louis:close-row-actions";
 
 export function closeRowActionMenus() {
     document.dispatchEvent(new Event(CLOSE_ROW_ACTIONS_EVENT));

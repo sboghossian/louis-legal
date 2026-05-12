@@ -29,14 +29,14 @@ import {
     isModelAvailable,
     type ModelProvider,
 } from "@/app/lib/modelAvailability";
-import type { MikeDocument, MikeMessage } from "../shared/types";
+import type { LouisDocument, LouisMessage } from "../shared/types";
 
 export interface ChatInputHandle {
-    addDoc: (doc: MikeDocument) => void;
+    addDoc: (doc: LouisDocument) => void;
 }
 
 interface Props {
-    onSubmit: (message: MikeMessage) => void;
+    onSubmit: (message: LouisMessage) => void;
     onCancel: () => void;
     isLoading: boolean;
     hideAddDocButton?: boolean;
@@ -60,7 +60,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     ref,
 ) {
     const [value, setValue] = useState("");
-    const [attachedDocs, setAttachedDocs] = useState<MikeDocument[]>([]);
+    const [attachedDocs, setAttachedDocs] = useState<LouisDocument[]>([]);
     const [selectedWorkflow, setSelectedWorkflow] = useState<{
         id: string;
         title: string;
@@ -75,7 +75,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         useState<ModelProvider | null>(null);
 
     useImperativeHandle(ref, () => ({
-        addDoc: (doc: MikeDocument) => {
+        addDoc: (doc: LouisDocument) => {
             setAttachedDocs((prev) => {
                 if (prev.some((d) => d.id === doc.id)) return prev;
                 return [...prev, doc];
@@ -83,7 +83,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         },
     }));
 
-    const handleAddDocFromProject = useCallback((doc: MikeDocument) => {
+    const handleAddDocFromProject = useCallback((doc: LouisDocument) => {
         setAttachedDocs((prev) => {
             if (prev.some((d) => d.id === doc.id)) return prev;
             return [...prev, doc];
@@ -91,7 +91,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     }, []);
 
     const handleAddDocsFromSelector = useCallback(
-        (selectedDocs: MikeDocument[]) => {
+        (selectedDocs: LouisDocument[]) => {
             setAttachedDocs((prev) => {
                 const existing = new Set(prev.map((d) => d.id));
                 return [

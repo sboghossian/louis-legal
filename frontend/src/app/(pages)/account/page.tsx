@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { LogOut, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
-import { deleteAccount } from "@/app/lib/mikeApi";
+import { deleteAccount } from "@/app/lib/louisApi";
 
 export default function AccountPage() {
     const router = useRouter();

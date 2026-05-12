@@ -13,6 +13,7 @@ import {
 } from "../lib/chatTools";
 import { getUserApiKeys } from "../lib/userSettings";
 import { checkProjectAccess } from "../lib/access";
+import { routeAsync as routeSkills } from "../skills/_router";
 
 const PROJECT_SYSTEM_PROMPT_EXTRA = `PROJECT CONTEXT:
 You are operating within a project folder that contains a collection of legal documents the user has organised for a single matter. The user's questions will usually refer to one or more documents in this project — your job is to find the relevant files to work on. Use list_documents to see what is available and fetch_documents / read_document to pull in any documents you need before answering.
@@ -134,6 +135,21 @@ projectChatRouter.post("/", requireAuth, async (req, res) => {
             return slug ? `- ${slug}: ${d.filename}` : `- ${d.filename}`;
         });
         systemPromptExtra += `\n\nUSER-ATTACHED DOCUMENTS FOR THIS TURN:\nThe user has attached the following document(s) directly to their latest message. Treat these as the primary focus of the request unless their message clearly says otherwise.\n${lines.join("\n")}`;
+    }
+
+    // Skill router: layer routed skills on top of the project-specific extras.
+    const latestUserMessage =
+        [...messagesForLLM].reverse().find((m) => m.role === "user")?.content ?? "";
+    const routeDecision = await routeSkills({
+        message: latestUserMessage,
+        persona: "associate",
+        surface: "web",
+        hasDocuments: docAvailability.length > 0,
+        userId,
+        projectId,
+    });
+    if (routeDecision.systemPromptExtra) {
+        systemPromptExtra += `\n\n${routeDecision.systemPromptExtra}`;
     }
 
     const apiMessages = buildMessages(

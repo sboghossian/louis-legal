@@ -1,11 +1,14 @@
 {
-  "name": "mike-backend",
+  "name": "louis-backend",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "build": "tsc && npm run copy-skills",
+    "copy-skills": "mkdir -p dist/skills && cp src/skills/*.md dist/skills/",
+    "start": "node dist/index.js",
+    "skills:registry": "tsx src/skills/_build-registry.ts",
+    "skills:import": "tsx src/skills/_import-from-inventory.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",

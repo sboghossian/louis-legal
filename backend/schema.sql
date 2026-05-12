@@ -1,4 +1,4 @@
--- Mike Supabase schema
+-- Louis Supabase schema
 -- Based on supabase-migration.sql plus the later backend/migrations/*.sql files.
 -- Use this for a fresh Supabase database. Existing deployments should continue
 -- to apply the incremental migration files instead.

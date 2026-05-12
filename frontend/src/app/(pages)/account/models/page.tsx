@@ -13,7 +13,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useUserProfile } from "@/contexts/UserProfileContext";
-import type { ApiKeyState } from "@/app/lib/mikeApi";
+import type { ApiKeyState } from "@/app/lib/louisApi";
 import { MODELS } from "@/app/components/assistant/ModelToggle";
 import {
     isModelAvailable,
@@ -84,7 +84,7 @@ export default function ModelsAndApiKeysPage() {
                 <p className="text-sm text-gray-500 mb-4 max-w-xl">
                     You must provide your own API keys for the app to work or
                     add your API keys into the .env file if you are running your
-                    own instance of Mike.
+                    own instance of Louis.
                 </p>
                 <p className="text-xs text-gray-400 mb-4 max-w-xl">
                     Title generation automatically routes to the cheapest

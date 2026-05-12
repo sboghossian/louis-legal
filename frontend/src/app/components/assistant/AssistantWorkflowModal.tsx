@@ -5,14 +5,14 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, Search, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import type { MikeWorkflow } from "../shared/types";
-import { listWorkflows } from "@/app/lib/mikeApi";
+import type { LouisWorkflow } from "../shared/types";
+import { listWorkflows } from "@/app/lib/louisApi";
 import { BUILT_IN_WORKFLOWS } from "../workflows/builtinWorkflows";
 
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSelect: (workflow: MikeWorkflow) => void;
+    onSelect: (workflow: LouisWorkflow) => void;
     projectName?: string;
     projectCmNumber?: string | null;
     initialWorkflowId?: string;
@@ -26,9 +26,9 @@ export function AssistantWorkflowModal({
     projectCmNumber,
     initialWorkflowId,
 }: Props) {
-    const [workflows, setWorkflows] = useState<MikeWorkflow[]>([]);
+    const [workflows, setWorkflows] = useState<LouisWorkflow[]>([]);
     const [loading, setLoading] = useState(false);
-    const [selected, setSelected] = useState<MikeWorkflow | null>(null);
+    const [selected, setSelected] = useState<LouisWorkflow | null>(null);
     const [search, setSearch] = useState("");
     const [rightVisible, setRightVisible] = useState(false);
 

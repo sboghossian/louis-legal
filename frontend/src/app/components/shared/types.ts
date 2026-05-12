@@ -1,6 +1,6 @@
-// Shared TypeScript types for Mike AI legal assistant
+// Shared TypeScript types for Louis AI legal assistant
 
-export interface MikeFolder {
+export interface LouisFolder {
   id: string;
   project_id: string;
   user_id: string;
@@ -10,7 +10,7 @@ export interface MikeFolder {
   updated_at: string;
 }
 
-export interface MikeProject {
+export interface LouisProject {
   id: string;
   user_id: string;
   is_owner?: boolean;
@@ -19,14 +19,14 @@ export interface MikeProject {
   shared_with: string[];
   created_at: string;
   updated_at: string;
-  documents?: MikeDocument[];
-  folders?: MikeFolder[];
+  documents?: LouisDocument[];
+  folders?: LouisFolder[];
   document_count?: number;
   chat_count?: number;
   review_count?: number;
 }
 
-export interface MikeDocument {
+export interface LouisDocument {
   id: string;
   user_id?: string;
   project_id: string | null;
@@ -53,7 +53,7 @@ export interface StructureNode {
   children: StructureNode[];
 }
 
-export interface MikeChat {
+export interface LouisChat {
   id: string;
   project_id: string | null;
   user_id: string;
@@ -61,7 +61,7 @@ export interface MikeChat {
   created_at: string;
 }
 
-export interface MikeEditAnnotation {
+export interface LouisEditAnnotation {
   type?: "edit_data";
   kind?: "edit";
   edit_id: string;
@@ -136,19 +136,19 @@ export type AssistantEvent =
         /** Per-document monotonic Vn written at emit time. */
         version_number?: number | null;
         download_url: string;
-        annotations: MikeEditAnnotation[];
+        annotations: LouisEditAnnotation[];
         error?: string;
         isStreaming?: boolean;
     }
   | { type: "content"; text: string; isStreaming?: boolean };
 
-export interface MikeMessage {
+export interface LouisMessage {
   role: "user" | "assistant";
   content: string;
   files?: { filename: string; document_id?: string }[];
   workflow?: { id: string; title: string };
   model?: string;
-  annotations?: MikeCitationAnnotation[];
+  annotations?: LouisCitationAnnotation[];
   events?: AssistantEvent[];
   /** Set when streaming failed; rendered as a red error block. */
   error?: string;
@@ -166,7 +166,7 @@ export interface CitationQuote {
  * like "41-42" and a `quote` containing the `[[PAGE_BREAK]]` sentinel at the
  * break point (text before is on page 41, text after is on page 42).
  */
-export interface MikeCitationAnnotation {
+export interface LouisCitationAnnotation {
   type: "citation_data";
   ref: number;
   doc_id: string;
@@ -186,7 +186,7 @@ const PAGE_BREAK_SENTINEL = "[[PAGE_BREAK]]";
  * cross-page citation with page "N-M" and a `[[PAGE_BREAK]]` split yields two.
  */
 export function expandCitationToEntries(
-  a: MikeCitationAnnotation,
+  a: LouisCitationAnnotation,
 ): CitationQuote[] {
   const rangeMatch =
     typeof a.page === "string"
@@ -208,13 +208,13 @@ export function expandCitationToEntries(
 }
 
 /** Format the page(s) of a citation for display, e.g. "Page 3" or "Page 41-42". */
-export function formatCitationPage(a: MikeCitationAnnotation): string {
+export function formatCitationPage(a: LouisCitationAnnotation): string {
   if (typeof a.page === "string") return `Page ${a.page}`;
   return `Page ${a.page}`;
 }
 
 /** Produce a reader-friendly version of the quote (replaces [[PAGE_BREAK]] with "..."). */
-export function displayCitationQuote(a: MikeCitationAnnotation): string {
+export function displayCitationQuote(a: LouisCitationAnnotation): string {
   return a.quote.replaceAll(PAGE_BREAK_SENTINEL, "...");
 }
 
@@ -272,7 +272,7 @@ export interface TabularCell {
 
 // Workflows
 
-export interface MikeWorkflow {
+export interface LouisWorkflow {
   id: string;
   user_id: string | null;
   title: string;
@@ -289,13 +289,13 @@ export interface MikeWorkflow {
 
 // API helpers
 
-export interface MikeChatDetailOut {
-  chat: MikeChat;
-  messages: MikeMessage[];
+export interface LouisChatDetailOut {
+  chat: LouisChat;
+  messages: LouisMessage[];
 }
 
 export interface TabularReviewDetailOut {
   review: TabularReview;
   cells: TabularCell[];
-  documents: MikeDocument[];
+  documents: LouisDocument[];
 }

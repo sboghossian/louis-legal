@@ -9,7 +9,7 @@ import Link from "next/link";
 import { SiteLogo } from "@/components/site-logo";
 import { CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { updateUserProfile } from "@/app/lib/mikeApi";
+import { updateUserProfile } from "@/app/lib/louisApi";
 
 export default function SignupPage() {
     const router = useRouter();
@@ -255,7 +255,7 @@ export default function SignupPage() {
                     <div className="mt-4 text-center text-xs text-gray-500">
                         By signing up, you agree to our{" "}
                         <Link
-                            href="https://mikeoss.com/terms"
+                            href="http://localhost:3000/terms"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:underline"
@@ -264,7 +264,7 @@ export default function SignupPage() {
                         </Link>{" "}
                         and{" "}
                         <Link
-                            href="https://mikeoss.com/privacy"
+                            href="http://localhost:3000/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:underline"
@@ -274,7 +274,7 @@ export default function SignupPage() {
                     </div>
                 </div>
                 <p className="text-center text-xs text-gray-500 leading-relaxed px-2">
-                    Mike hosted on MikeOSS.com is currently a demo service.
+                    Louis hosted on LouisOSS.com is currently a demo service.
                     Please do not upload, submit, or store sensitive,
                     confidential, privileged, client, or personally identifiable
                     documents.
