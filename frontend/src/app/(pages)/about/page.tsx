@@ -82,19 +82,71 @@ export default function AboutPage() {
                 </div>
             </div>
 
-            {/* The story */}
-            <Section icon={Info} title="The story">
+            {/* What Louis is */}
+            <Section icon={Info} title="What Louis is">
                 <p className="text-sm text-gray-700 leading-relaxed mb-3">
-                    Louis is HAQQ&apos;s open-source legal AI infrastructure. It started as a fork of <a href={UPSTREAM_URL} target="_blank" rel="noreferrer" className="text-blue-600 underline">Mike</a> (a generalist
-                    chat-with-docs assistant by <a href="https://github.com/willchen96" target="_blank" rel="noreferrer" className="text-blue-600 underline">willchen96</a>) and was rebuilt around the comfort-UI vision
-                    we developed at HAQQ: tools that feel built for lawyers — bilingual, jurisdiction-aware,
-                    transparent about what the AI is doing, and respectful of legal practice norms.
+                    Louis is <strong>AI infrastructure for legal</strong> — the
+                    open-source stack we wished existed: a chat assistant that
+                    knows lawyering, a document workspace with real
+                    tracked-change redlining, a clause + citation library, a
+                    contract risk scanner, a tabular reviewer for
+                    due-diligence batches, calculators for end-of-service
+                    benefits across MENA, and a 982-skill library that biases
+                    every turn toward how actual lawyers draft, review, and
+                    reason.
+                </p>
+                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                    It&apos;s designed to feel built for lawyers — bilingual,
+                    jurisdiction-aware, transparent about what the AI is
+                    doing (the skill router shows which skills fired on every
+                    turn), and BYO-key by default so client data never has to
+                    pass through a vendor in the middle.
                 </p>
                 <p className="text-sm text-gray-700 leading-relaxed">
-                    What ships now: a 982-skill library, a transparent skill router (you can see which skills fire on every turn),
-                    real legal infrastructure (clause library, matter management with conflict checks, citation engine across 9 styles,
-                    contract risk scanner, EOS calculator for 6 GCC jurisdictions, multi-step legal flow orchestration), and integrations
-                    with the tools lawyers actually use.
+                    Underneath it&apos;s open-source: forked from{" "}
+                    <a
+                        href={UPSTREAM_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 underline"
+                    >
+                        Mike
+                    </a>{" "}
+                    (a generalist chat-with-docs base by{" "}
+                    <a
+                        href="https://github.com/willchen96"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 underline"
+                    >
+                        willchen96
+                    </a>
+                    ) and rebuilt around the comfort-UI vision we developed
+                    at HAQQ.
+                </p>
+            </Section>
+
+            {/* Why "Louis" */}
+            <Section icon={Scale} title="Why we named it Louis">
+                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                    Some assistants are named for the founder. Some for an
+                    acronym. We named ours after a character.
+                </p>
+                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                    On <em>Suits</em>, Harvey is the closer and Mike is the
+                    self-taught savant — but{" "}
+                    <strong>Louis Litt</strong> is the one who actually
+                    <em> reads the file</em>. He&apos;s the mergers-and-
+                    acquisitions encyclopedia, the bylaws nerd, the one
+                    Donna calls when the deal needs a specialist who&apos;ll
+                    catch the thing in the footnote. If you put Harvey, Mike,
+                    and Louis in a room and asked Donna which one would
+                    actually do the work — she&apos;d pick Louis.
+                </p>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    That&apos;s the bar we set for an AI legal workbench: not
+                    the most charming and not the flashiest, but the one
+                    you&apos;d hand a contract to.
                 </p>
             </Section>
 

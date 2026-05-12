@@ -132,7 +132,10 @@ export default function LouisLayout({
                                     <Menu className="h-5 w-5" />
                                 </button>
                             </div>
-                            <main className="flex-1 overflow-y-auto md:overflow-hidden w-full h-full">
+                            {/* Pages scroll by default. Full-bleed surfaces
+                                like the assistant chat manage their own
+                                overflow with an inner overflow-y-auto. */}
+                            <main className="flex-1 overflow-y-auto w-full h-full">
                                 {children}
                             </main>
                         </div>
