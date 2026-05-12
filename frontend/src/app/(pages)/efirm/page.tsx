@@ -179,46 +179,24 @@ export default function EFirmPage() {
             )}
 
             {tab === "billing" && (
-                <div className="text-sm text-gray-600">
-                    <div className="border border-gray-200 rounded-lg p-6 mb-6">
-                        <h2 className="text-base font-semibold mb-3">This month</h2>
-                        <div className="grid grid-cols-3 gap-4">
-                            <Stat icon={DollarSign} label="Invoiced" value="$48k" />
-                            <Stat icon={Clock} label="WIP" value="$92k" />
-                            <Stat icon={AlertCircle} label="Overdue" value="$12k" highlight />
-                        </div>
-                    </div>
-                    <div className="text-xs text-gray-700 bg-blue-50 border border-blue-200 rounded p-3">
-                        Detailed billing dashboards available with Stripe + accounting integration (Settings → Integrations). Skills available: <code>efirm-finance.invoice-generator-from-time-entries</code>, <code>efirm-finance.WIP-aging-report</code>, <code>efirm-finance.collection-rate-tracker</code>.
+                <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm">
+                    <div className="text-gray-700 font-medium mb-1">Billing dashboard requires Stripe + accounting integration.</div>
+                    <div className="text-gray-500 mb-4">Once connected, this view shows invoiced / WIP / overdue with drill-down by matter, partner, and client.</div>
+                    <a href="/integrations" className="text-blue-700 underline text-sm">Connect a billing integration</a>
+                    <div className="text-[10px] text-gray-500 mt-4">
+                        Related skills:
+                        <code className="ml-1">efirm-finance.invoice-generator-from-time-entries</code>,
+                        <code className="ml-1">efirm-finance.WIP-aging-report</code>,
+                        <code className="ml-1">efirm-finance.collection-rate-tracker</code>
                     </div>
                 </div>
             )}
 
             {tab === "team" && (
-                <div className="grid grid-cols-2 gap-4">
-                    {[
-                        { name: "Lazar", role: "Partner", utilization: 92, matters: 4 },
-                        { name: "Rawad", role: "Senior Associate", utilization: 84, matters: 3 },
-                        { name: "Riva", role: "Associate", utilization: 76, matters: 2 },
-                        { name: "Antoine", role: "Paralegal", utilization: 65, matters: 5 },
-                    ].map(p => (
-                        <div key={p.name} className="border border-gray-200 rounded-lg p-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
-                                    {p.name[0]}
-                                </div>
-                                <div>
-                                    <div className="font-medium text-sm">{p.name}</div>
-                                    <div className="text-xs text-gray-500">{p.role}</div>
-                                </div>
-                                <div className="ml-auto text-right">
-                                    <div className="text-sm font-semibold">{p.utilization}%</div>
-                                    <div className="text-[10px] text-gray-500">utilization</div>
-                                </div>
-                            </div>
-                            <div className="text-xs text-gray-500 mt-2">{p.matters} active matters</div>
-                        </div>
-                    ))}
+                <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm">
+                    <div className="text-gray-700 font-medium mb-1">Team & utilization tracking requires team setup.</div>
+                    <div className="text-gray-500 mb-4">Invite teammates to share matters and surface live utilization rates (hours / target × role).</div>
+                    <a href="/settings" className="text-blue-700 underline text-sm">Set up team in Settings → Team</a>
                 </div>
             )}
         </div>

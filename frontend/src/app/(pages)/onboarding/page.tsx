@@ -6,7 +6,7 @@ import { ArrowRight, ArrowLeft, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LouisIcon } from "@/components/chat/louis-icon";
+import { LouisMark } from "@/components/brand/louis-mark";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -172,13 +172,13 @@ export default function OnboardingPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center p-6">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl">
+        <div className="min-h-screen bg-[color:var(--louis-cream)] flex items-center justify-center p-6">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl border border-[color:var(--louis-rule)]">
                 {/* Progress bar */}
                 <div className="px-8 pt-6">
                     <div className="flex items-center gap-2 mb-2">
-                        <LouisIcon size={24} />
-                        <span className="font-semibold">Louis</span>
+                        <LouisMark size={26} />
+                        <span className="font-serif text-lg">Louis</span>
                         <span className="text-xs text-gray-500 ml-auto">Step {stepIdx + 1} of {STEPS.length}</span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-1.5">

@@ -3,7 +3,7 @@
 import { Info, Github, ExternalLink, Heart, BookOpen, Sparkles, Scale, GraduationCap, ShieldCheck, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LouisIcon } from "@/components/chat/louis-icon";
+import { LouisMark } from "@/components/brand/louis-mark";
 import Link from "next/link";
 
 const VERSION = "0.8.0-louis";
@@ -66,7 +66,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-8 py-10">
             {/* Hero */}
             <div className="text-center mb-10">
-                <div className="inline-flex items-center justify-center mb-3"><LouisIcon size={56} /></div>
+                <div className="inline-flex items-center justify-center mb-3"><LouisMark size={56} /></div>
                 <h1 className="text-3xl font-semibold mb-2">Louis</h1>
                 <p className="text-gray-600 mb-2">MENA-first legal AI infrastructure for individuals, firms, and in-house teams.</p>
                 <div className="flex items-center justify-center gap-2 text-xs text-gray-500">

@@ -31,6 +31,8 @@ import {
     Plug,
     Key,
     Grid3x3,
+    Building2,
+    ChevronRight,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,33 +41,79 @@ import { useChatHistoryContext } from "@/app/contexts/ChatHistoryContext";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { LouisIcon } from "@/components/chat/louis-icon";
+import { LouisMark } from "@/components/brand/louis-mark";
 import { SidebarChatItem } from "@/app/components/shared/SidebarChatItem";
 import { listProjects } from "@/app/lib/louisApi";
 
-const NAV_ITEMS = [
-    { href: "/home", label: "Home", icon: Home },
-    { href: "/assistant", label: "Assistant", icon: MessageSquare },
-    { href: "/all-chats", label: "All Chats", icon: MessageSquareDashed },
-    { href: "/projects", label: "Projects", icon: FolderOpen },
-    { href: "/doc-workspace", label: "Doc Workspace", icon: FileText },
-    { href: "/drafting-board", label: "Drafting Board", icon: Network },
-    { href: "/efirm", label: "e-Firm", icon: Briefcase },
-    { href: "/matters", label: "Matters", icon: Briefcase },
-    { href: "/routines", label: "Routines", icon: Repeat },
-    { href: "/tabular-reviews", label: "Tabular Review", icon: Table2 },
-    { href: "/workflows", label: "Workflows", icon: Library },
-    { href: "/skills", label: "Skills", icon: Sparkles },
-    { href: "/clauses", label: "Clause Library", icon: BookOpen },
-    { href: "/calculators/eos", label: "EOS Calculator", icon: Calculator },
-    { href: "/citations", label: "Citations", icon: Quote },
-    { href: "/risk", label: "Risk Scanner", icon: ShieldAlert },
-    { href: "/legal-flows", label: "Legal Flows", icon: Workflow },
-    { href: "/integrations", label: "Integrations", icon: Plug },
-    { href: "/customize", label: "Customize", icon: SlidersHorizontal },
-    { href: "/referral", label: "Referral", icon: Gift },
-    { href: "/docs", label: "Docs", icon: BookOpenCheck },
-    { href: "/about", label: "About", icon: Info },
-    { href: "/settings", label: "Settings", icon: SettingsIcon },
+interface NavItem {
+    href: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+}
+
+interface NavGroup {
+    id: string;
+    label: string;
+    items: NavItem[];
+    /** Whether this group is collapsed by default. */
+    defaultCollapsed?: boolean;
+}
+
+// Pinned items always show (never collapsed). The first 4 daily actions.
+const PINNED: NavItem[] = [
+    { href: "/home",       label: "Home",        icon: Home },
+    { href: "/assistant",  label: "Assistant",   icon: MessageSquare },
+    { href: "/all-chats",  label: "All Chats",   icon: MessageSquareDashed },
+    { href: "/projects",   label: "Projects",    icon: FolderOpen },
+];
+
+const NAV_GROUPS: NavGroup[] = [
+    {
+        id: "workbench",
+        label: "Workbench",
+        items: [
+            { href: "/doc-workspace",     label: "Doc Workspace",   icon: FileText },
+            { href: "/drafting-board",    label: "Drafting Board",  icon: Network },
+            { href: "/clauses",           label: "Clause Library",  icon: BookOpen },
+            { href: "/risk",              label: "Risk Scanner",    icon: ShieldAlert },
+            { href: "/citations",         label: "Citations",       icon: Quote },
+            { href: "/calculators/eos",   label: "EOS Calculator",  icon: Calculator },
+            { href: "/legal-flows",       label: "Legal Flows",     icon: Workflow },
+            { href: "/tabular-reviews",   label: "Tabular Review",  icon: Table2 },
+        ],
+    },
+    {
+        id: "practice",
+        label: "Practice",
+        items: [
+            { href: "/matters",   label: "Matters",   icon: Briefcase },
+            { href: "/efirm",     label: "e-Firm",    icon: Building2 },
+            { href: "/routines",  label: "Routines",  icon: Repeat },
+        ],
+    },
+    {
+        id: "customize",
+        label: "Customize",
+        defaultCollapsed: true,
+        items: [
+            { href: "/customize",         label: "Preferences",   icon: SlidersHorizontal },
+            { href: "/skills",            label: "Skills",        icon: Sparkles },
+            { href: "/workflows",         label: "Workflows",     icon: Library },
+            { href: "/integrations",      label: "Integrations",  icon: Plug },
+            { href: "/settings/api-keys", label: "API Keys",      icon: Key },
+            { href: "/settings",          label: "Account",       icon: SettingsIcon },
+        ],
+    },
+    {
+        id: "more",
+        label: "More",
+        defaultCollapsed: true,
+        items: [
+            { href: "/docs",      label: "Docs",      icon: BookOpenCheck },
+            { href: "/referral",  label: "Referral",  icon: Gift },
+            { href: "/about",     label: "About",     icon: Info },
+        ],
+    },
 ];
 
 interface AppSidebarProps {
@@ -82,6 +130,26 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     const [shouldAnimate, setShouldAnimate] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [historyCollapsed, setHistoryCollapsed] = useState(false);
+
+    // Per-group collapsed state, persisted to localStorage
+    const [groupsCollapsed, setGroupsCollapsed] = useState<Record<string, boolean>>(() => {
+        if (typeof window === "undefined") return {};
+        try {
+            const stored = localStorage.getItem("louis.sidebar.groups");
+            if (stored) return JSON.parse(stored);
+        } catch {}
+        const init: Record<string, boolean> = {};
+        for (const g of NAV_GROUPS) init[g.id] = !!g.defaultCollapsed;
+        return init;
+    });
+
+    function toggleGroup(id: string) {
+        setGroupsCollapsed(prev => {
+            const next = { ...prev, [id]: !prev[id] };
+            try { localStorage.setItem("louis.sidebar.groups", JSON.stringify(next)); } catch {}
+            return next;
+        });
+    }
     const [projectNames, setProjectNames] = useState<Record<string, string>>(
         {},
     );
@@ -178,12 +246,12 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 {isOpen && (
                     <div className="px-2.5">
                         <Link
-                            href="/assistant"
-                            className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                            href="/home"
+                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                         >
-                            <LouisIcon size={22} />
+                            <LouisMark size={26} />
                             <span
-                                className={`text-2xl font-light font-serif ${
+                                className={`text-2xl font-light font-serif text-gray-900 ${
                                     shouldAnimate ? "sidebar-fade-in" : ""
                                 }`}
                             >
@@ -268,39 +336,65 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 </button>
             </div>
 
-            {/* Nav items */}
-            {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-                const isActive =
-                    pathname === href || pathname.startsWith(href + "/");
-                return (
-                    <div key={href} className="py-1 px-2.5">
-                        <button
-                            onClick={() => router.push(href)}
-                            title={!isOpen ? label : ""}
-                            className={`w-full h-9 flex items-center gap-3 px-2.5 py-2 rounded-md transition-colors text-left ${
-                                isActive
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "hover:bg-gray-100 text-gray-700"
-                            } ${!isOpen ? "hidden md:flex" : "flex"}`}
-                        >
-                            <Icon
-                                className={`h-4 w-4 flex-shrink-0 ${
-                                    isActive ? "text-gray-900" : "text-black"
-                                }`}
-                            />
+            {/* Nav: pinned items first */}
+            <div className="overflow-y-auto flex-1 min-h-0 pb-2">
+                {PINNED.map(({ href, label, icon: Icon }) => {
+                    const isActive = pathname === href || pathname.startsWith(href + "/");
+                    return (
+                        <div key={href} className="py-0.5 px-2.5">
+                            <button
+                                onClick={() => router.push(href)}
+                                title={!isOpen ? label : ""}
+                                className={`w-full h-9 flex items-center gap-3 px-2.5 py-2 rounded-md transition-colors text-left ${
+                                    isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
+                                } ${!isOpen ? "hidden md:flex" : "flex"}`}
+                            >
+                                <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-gray-900" : "text-black"}`} />
+                                {isOpen && (
+                                    <span className={`text-sm font-medium ${shouldAnimate ? "sidebar-fade-in-2" : ""}`}>
+                                        {label}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+                    );
+                })}
+
+                {/* Groups */}
+                {NAV_GROUPS.map(group => {
+                    const collapsed = groupsCollapsed[group.id];
+                    return (
+                        <div key={group.id} className="mt-2">
                             {isOpen && (
-                                <span
-                                    className={`text-sm font-medium ${
-                                        shouldAnimate ? "sidebar-fade-in-2" : ""
-                                    }`}
+                                <button
+                                    onClick={() => toggleGroup(group.id)}
+                                    className="w-full px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500 hover:text-gray-700 transition-colors"
                                 >
-                                    {label}
-                                </span>
+                                    <span>{group.label}</span>
+                                    <ChevronRight className={`h-3 w-3 transition-transform ${!collapsed ? "rotate-90" : ""}`} />
+                                </button>
                             )}
-                        </button>
-                    </div>
-                );
-            })}
+                            {(!collapsed || !isOpen) && group.items.map(({ href, label, icon: Icon }) => {
+                                const isActive = pathname === href || pathname.startsWith(href + "/");
+                                return (
+                                    <div key={href} className="py-0.5 px-2.5">
+                                        <button
+                                            onClick={() => router.push(href)}
+                                            title={!isOpen ? label : ""}
+                                            className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors text-left ${
+                                                isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
+                                            } ${!isOpen ? "hidden md:flex" : "flex"}`}
+                                        >
+                                            <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
+                                            {isOpen && <span className="text-[13px]">{label}</span>}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    );
+                })}
+            </div>
 
             {/* Assistant History */}
             {isOpen && pathname.startsWith("/assistant") && (

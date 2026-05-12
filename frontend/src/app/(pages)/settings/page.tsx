@@ -84,57 +84,51 @@ function ProfileTab() {
 function ModelsTab() {
     return (
         <div className="space-y-4">
-            <p className="text-sm text-gray-600">Pick the AI provider used for chat. You can override per-model in customize.</p>
-            <Card title="Default model" value="Anthropic — Claude" cta="Change" href="/account/models" />
-            <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
-                {[
-                    { provider: "Anthropic",  key: "Claude Opus / Sonnet / Haiku", state: "configured" as const },
-                    { provider: "OpenAI",      key: "GPT-4o / GPT-4.1",            state: "missing" as const },
-                    { provider: "Google",      key: "Gemini 2.5 Flash / Pro",      state: "env-default" as const },
-                ].map(p => (
-                    <div key={p.provider} className="px-4 py-3 flex items-center justify-between">
-                        <div>
-                            <div className="font-medium text-sm">{p.provider}</div>
-                            <div className="text-xs text-gray-500">{p.key}</div>
-                        </div>
-                        {p.state === "configured" && <Badge variant="secondary" className="bg-green-100 text-green-700">configured</Badge>}
-                        {p.state === "env-default" && <Badge variant="secondary" className="bg-blue-100 text-blue-700">env default</Badge>}
-                        {p.state === "missing" && <Button size="sm" variant="outline" className="h-7 text-xs">Add key</Button>}
+            <p className="text-sm text-gray-700">
+                API keys + provider management has its own dedicated page with live state, masked keys, and per-provider defaults.
+            </p>
+            <a href="/settings/api-keys" className="block border border-gray-200 rounded-lg p-4 hover:border-gray-900 transition">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <div className="font-medium text-sm">Open API Keys</div>
+                        <div className="text-xs text-gray-500">Add Claude · OpenAI · Gemini · Voyage · 9 more providers</div>
                     </div>
-                ))}
-            </div>
-            <Note>Manage keys at <code>/account/models</code>. The skills router uses Gemini Flash by default for intent classification (configurable via env <code>SKILLS_CLASSIFIER_MODEL</code>).</Note>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                </div>
+            </a>
+            <Note>
+                The skill router defaults to Gemini Flash for intent classification (cheap + fast).
+                Override via env <code>SKILLS_CLASSIFIER_MODEL</code>.
+            </Note>
         </div>
     );
 }
 
 function BillingTab() {
+    const PLANS = [
+        { name: "Free",     price: "$0",      desc: "BYO API keys · all features" },
+        { name: "Starter",  price: "$19/mo",  desc: "Hosted models · 25k credits" },
+        { name: "Pro",      price: "$49/mo",  desc: "Hosted models · 100k credits · matter mgmt" },
+        { name: "Business", price: "$199/mo", desc: "Team seats · e-Firm · SSO" },
+    ];
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-3">
-                <Card title="Plan" value="Pro" sub="$49/mo" />
-                <Card title="Credits used" value="4,213 / 50,000" />
-                <Card title="Next billing" value="Jun 12, 2026" />
-            </div>
+            <Card title="Current plan" value="Free (BYO keys)" sub="Connect a Stripe integration in /integrations to enable hosted plans" />
             <div className="border border-gray-200 rounded-lg p-4">
                 <h3 className="font-semibold text-sm mb-2">Plans</h3>
                 <div className="grid grid-cols-4 gap-3">
-                    {[
-                        { name: "Free",      price: "$0",      desc: "Limited credits"   },
-                        { name: "Starter",   price: "$9/mo",   desc: "10k credits"        },
-                        { name: "Pro",       price: "$49/mo",  desc: "50k credits",  current: true },
-                        { name: "Business",  price: "$199/mo", desc: "eFirm features"     },
-                    ].map(p => (
-                        <div key={p.name} className={`border rounded p-3 ${p.current ? "border-blue-500 bg-blue-50" : "border-gray-200"}`}>
+                    {PLANS.map(p => (
+                        <div key={p.name} className="border border-gray-200 rounded p-3">
                             <div className="font-medium text-sm">{p.name}</div>
                             <div className="text-lg font-semibold mt-1">{p.price}</div>
                             <div className="text-[10px] text-gray-500 mt-1">{p.desc}</div>
-                            {p.current && <Badge variant="secondary" className="bg-blue-100 text-blue-700 mt-2 text-[10px]">current</Badge>}
                         </div>
                     ))}
                 </div>
             </div>
-            <Note>Stripe customer portal launches in a new window when configured (see Integrations).</Note>
+            <Note>
+                When Stripe is connected, this tab shows live plan, credit balance, next billing, and an &ldquo;Open Stripe portal&rdquo; button. See <a href="/integrations" className="underline">/integrations</a>.
+            </Note>
         </div>
     );
 }
@@ -142,23 +136,12 @@ function BillingTab() {
 function TeamTab() {
     return (
         <div className="space-y-4">
-            <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
-                {[
-                    { name: "Lazar",   role: "Partner / Admin", email: "lazar@haqq.ai" },
-                    { name: "Rawad",   role: "Senior Associate", email: "rawad@haqq.ai" },
-                    { name: "Riva",    role: "Associate",        email: "riva@haqq.ai" },
-                    { name: "Antoine", role: "Paralegal",        email: "antoine@haqq.ai" },
-                ].map(m => (
-                    <div key={m.email} className="px-4 py-3 flex items-center justify-between">
-                        <div>
-                            <div className="font-medium text-sm">{m.name}</div>
-                            <div className="text-xs text-gray-500">{m.email} · {m.role}</div>
-                        </div>
-                        <Button size="sm" variant="ghost" className="h-7 text-xs">Manage</Button>
-                    </div>
-                ))}
+            <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm text-gray-500">
+                <div className="font-medium text-gray-700 mb-1">No team yet</div>
+                <div className="mb-4">Invite collaborators to share matters, skills, and routines.</div>
+                <Button size="sm" variant="outline">Invite team member</Button>
             </div>
-            <Button size="sm" variant="outline">Invite team member</Button>
+            <Note>Team + role-based permissions ship on the Business plan. Single-user is free.</Note>
         </div>
     );
 }
@@ -178,30 +161,18 @@ function DataTab() {
 function IntegrationsTab() {
     return (
         <div className="space-y-4">
-            <p className="text-sm text-gray-600">Connect Louis with the tools your firm uses.</p>
-            <div className="grid grid-cols-2 gap-3">
-                {[
-                    { name: "Linear",     desc: "Issue tracking — auto-create bugs from chat",  state: "available" },
-                    { name: "HubSpot",    desc: "CRM context for matters and clients",          state: "available" },
-                    { name: "Stripe",     desc: "Billing + subscription management",            state: "needs-setup" },
-                    { name: "Gmail",      desc: "Draft client emails from matter context",      state: "available" },
-                    { name: "Notion",     desc: "Internal KB + matter notes",                    state: "available" },
-                    { name: "Tawqi3i",    desc: "Lebanese e-signature bridge",                   state: "coming-soon" },
-                    { name: "DocuSign",   desc: "E-signature workflow",                          state: "coming-soon" },
-                    { name: "PostHog",    desc: "Usage analytics + skill telemetry",             state: "configured" },
-                ].map(i => (
-                    <div key={i.name} className="border border-gray-200 rounded p-3 flex items-center justify-between">
-                        <div>
-                            <div className="font-medium text-sm">{i.name}</div>
-                            <div className="text-[10px] text-gray-500 line-clamp-1">{i.desc}</div>
-                        </div>
-                        {i.state === "configured" && <Badge variant="secondary" className="bg-green-100 text-green-700 text-[10px]">on</Badge>}
-                        {i.state === "available" && <Button size="sm" variant="outline" className="h-6 text-[10px]">Connect</Button>}
-                        {i.state === "needs-setup" && <Button size="sm" variant="outline" className="h-6 text-[10px]">Set up</Button>}
-                        {i.state === "coming-soon" && <Badge variant="secondary" className="text-[10px]">soon</Badge>}
+            <p className="text-sm text-gray-700">
+                Connections to OpenClaw, MS Word, GitHub, MCP servers, legal-research databases, and 25+ other tools have their own dedicated page.
+            </p>
+            <a href="/integrations" className="block border border-gray-200 rounded-lg p-4 hover:border-gray-900 transition">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <div className="font-medium text-sm">Open Integrations Hub</div>
+                        <div className="text-xs text-gray-500">32 integrations · OAuth · API key · MCP URL</div>
                     </div>
-                ))}
-            </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                </div>
+            </a>
         </div>
     );
 }

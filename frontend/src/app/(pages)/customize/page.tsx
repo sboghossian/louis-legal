@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { SlidersHorizontal, Search, Check } from "lucide-react";
+import Link from "next/link";
+import { SlidersHorizontal, Search, Check, Sparkles, Library, Repeat, Plug, Key, Settings as SettingsIcon, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
@@ -143,13 +144,33 @@ export default function CustomizePage() {
         : CATEGORIES;
 
     return (
-        <div className="max-w-4xl mx-auto px-8 py-8">
+        <div className="max-w-5xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
                 <SlidersHorizontal className="w-6 h-6" />
-                <h1 className="text-2xl font-semibold">Customize</h1>
+                <h1 className="text-2xl font-serif font-semibold">Customize</h1>
+            </div>
+            <p className="text-sm text-gray-600 mb-8">
+                Configure every layer of Louis: how it thinks (Skills + Workflows), what it can reach (Integrations + API Keys),
+                what it runs on a schedule (Routines), and how it talks to you (Preferences below).
+            </p>
+
+            {/* Hub cards */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-10">
+                <HubCard href="/skills" icon={Sparkles} title="Skills" desc="982 skills · authoring + observability" />
+                <HubCard href="/workflows" icon={Library} title="Workflows" desc="Reusable multi-turn flows" />
+                <HubCard href="/routines" icon={Repeat} title="Routines" desc="Scheduled AI tasks · digests · alerts" />
+                <HubCard href="/integrations" icon={Plug} title="Integrations" desc="OpenClaw · MCP servers · 32 connectors" />
+                <HubCard href="/settings/api-keys" icon={Key} title="API Keys" desc="Bring your own Claude · GPT · Gemini · …" />
+                <HubCard href="/settings" icon={SettingsIcon} title="Account" desc="Profile · billing · team · data · security" />
+            </div>
+
+            <div className="border-t border-[color:var(--louis-rule)] my-8" />
+
+            <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-lg font-serif">Preferences</h2>
             </div>
             <p className="text-sm text-gray-600 mb-6">
-                Tailor Louis to your workflow. Personas, jurisdictions, tools, safety, and output preferences — persisted per user.
+                Personas, jurisdictions, tools, safety, and output formatting — persisted per user.
             </p>
 
             {unauthed && (
@@ -160,7 +181,7 @@ export default function CustomizePage() {
 
             <div className="relative mb-8">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search customizations…" className="pl-9" />
+                <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search preferences…" className="pl-9" />
             </div>
 
             {loading ? (
@@ -202,5 +223,21 @@ export default function CustomizePage() {
                 </div>
             )}
         </div>
+    );
+}
+
+function HubCard({ href, icon: Icon, title, desc }: { href: string; icon: React.ComponentType<{ className?: string }>; title: string; desc: string }) {
+    return (
+        <Link
+            href={href}
+            className="group relative border border-[color:var(--louis-rule)] rounded-lg p-4 bg-white hover:border-gray-900 hover:shadow-sm transition flex flex-col"
+        >
+            <div className="flex items-center gap-2 mb-1">
+                <Icon className="w-4 h-4 text-gray-700" />
+                <span className="font-medium text-sm">{title}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-gray-300 ml-auto group-hover:text-gray-900 transition" />
+            </div>
+            <span className="text-xs text-gray-500">{desc}</span>
+        </Link>
     );
 }

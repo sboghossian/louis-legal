@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Search, Zap, FileText, Briefcase, ShieldAlert, Quote, Calculator, Workflow, Sparkles, Wrench, Plug, Key, Repeat, Gift, Settings as SettingsIcon, BookA, Network } from "lucide-react";
+import { BookOpen, Search, Zap, FileText, Briefcase, ShieldAlert, Quote, Calculator, Workflow, Sparkles, Wrench, Plug, Key, Repeat, Gift, Settings as SettingsIcon, BookA, Network, Code, Brain } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -395,7 +395,446 @@ All endpoints accept \`x-user-id\` header (or auth Bearer token in production). 
 - \`PUT /api/skills/:id\` — update custom skill
 - \`DELETE /api/skills/:id\` — delete custom skill (custom only)
 `,
-        related: ["new-skill", "skill-router"],
+        related: ["new-skill", "skill-router", "api-examples"],
+    },
+    {
+        slug: "api-examples",
+        title: "API examples — curl recipes",
+        category: "developers",
+        icon: Wrench,
+        summary: "Copy-paste curl commands for every major endpoint. Useful for scripting + automation.",
+        body: `
+All examples use \`x-user-id: demo\` for the in-memory dev store. Replace with a Supabase JWT \`Authorization: Bearer <token>\` in production.
+
+**Route the skill router on a free-text message**
+\`\`\`
+curl -X POST http://localhost:3001/api/skills/route-test \\
+  -H "Content-Type: application/json" \\
+  -d '{"message":"Draft a mutual NDA between Acme (DIFC) and Globex (JAFZA)"}'
+\`\`\`
+
+**Compute UAE end-of-service for 5 years at AED 15k/mo basic**
+\`\`\`
+curl -X POST http://localhost:3001/api/calculators/eos \\
+  -H "Content-Type: application/json" \\
+  -d '{"jurisdiction":"UAE","basicSalaryMonthly":15000,"serviceDays":1825,"endedByResignation":false}'
+\`\`\`
+
+**Scan a contract for risks (DIFC)**
+\`\`\`
+curl -X POST http://localhost:3001/api/risk/scan \\
+  -H "Content-Type: application/json" \\
+  -d '{"jurisdiction":"DIFC","text":"This Agreement may be terminated at any time..."}'
+\`\`\`
+
+**Render a citation in all 9 styles**
+\`\`\`
+curl -X POST http://localhost:3001/api/citations/format-all \\
+  -H "Content-Type: application/json" \\
+  -d '{"input":{"sourceType":"case","caseName":"Smith v Jones","caseYear":2024,"court":"DIFC CFI","citation":"CFI-001-2024"}}'
+\`\`\`
+
+**Run a conflict check on prospective parties**
+\`\`\`
+curl -X POST http://localhost:3001/api/matters/conflict-check \\
+  -H "x-user-id: demo" -H "Content-Type: application/json" \\
+  -d '{"parties":[{"name":"Acme Trading LLC","role":"counterparty"}]}'
+\`\`\`
+
+**Create a custom skill (writes a .md file on disk + invalidates router cache)**
+\`\`\`
+curl -X POST http://localhost:3001/api/skills \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "id":"custom.gulf-employment-screen",
+    "name":"Gulf employment screen",
+    "category":"review",
+    "intent":["employment","gulf"],
+    "jurisdictions":["UAE","KSA"],
+    "priority":"P2",
+    "body":"Skill: screen Gulf employment contracts for EOSB, non-compete, probation..."
+  }'
+\`\`\`
+
+**Add an API key (Anthropic example)**
+\`\`\`
+curl -X POST http://localhost:3001/api/api-keys \\
+  -H "x-user-id: demo" -H "Content-Type: application/json" \\
+  -d '{"provider":"anthropic","key":"sk-ant-xxx","label":"firm","isDefault":true}'
+\`\`\`
+
+**Connect an MCP server**
+\`\`\`
+curl -X POST http://localhost:3001/api/integrations/mcp-server/connect \\
+  -H "x-user-id: demo" -H "Content-Type: application/json" \\
+  -d '{"config":{"serverUrl":"https://mcp.example.com/v1"}}'
+\`\`\`
+
+**Start a Legal Flow run (MSA negotiation)**
+\`\`\`
+curl -X POST http://localhost:3001/api/legal-flows/runs \\
+  -H "x-user-id: demo" -H "Content-Type: application/json" \\
+  -d '{"flowId":"msa-negotiate"}'
+\`\`\`
+
+**Trigger a routine run-now**
+\`\`\`
+curl -X POST http://localhost:3001/api/routines/{routineId}/run \\
+  -H "x-user-id: demo"
+\`\`\`
+`,
+        related: ["developers-api", "skill-router"],
+    },
+    {
+        slug: "mcp-integration",
+        title: "MCP — Model Context Protocol",
+        category: "developers",
+        icon: Plug,
+        summary: "Point Louis at any MCP server URL — instant tool access from chat.",
+        body: `
+The Model Context Protocol (MCP) is a vendor-neutral way to expose tools, resources, and prompts to AI assistants. Louis is an MCP **client** — connect any compliant server and its tools become callable from chat.
+
+**How to connect**
+1. Go to **/integrations**
+2. Find **MCP Server (custom)**, click **Connect**
+3. Paste the server URL (must implement MCP over HTTP / SSE)
+
+**What you get**
+- Tools exposed by the server appear as callable functions in the assistant
+- Resources are surfaced as files / RAG sources
+- Prompts can be invoked via slash commands
+
+**Self-built MCP servers**
+Examples of servers you might build for legal:
+- Internal precedent database (your firm's KB)
+- Client portal API (matter lookup, time entry)
+- Document management system (NetDocuments, iManage, Worldox)
+- Compliance feed (in-house regulatory tracker)
+
+**Public MCP servers to try**
+- Cloudflare (account management, KV, R2, D1) — \`mcp__claude_ai_Cloudflare_*\`
+- Notion (page CRUD)
+- Linear (issue tracking)
+- PostHog (analytics queries)
+- Stripe (payments + customers)
+
+**Auth**
+For api-key-protected MCP servers, pass the key in the integration config payload. For OAuth-protected servers, the OAuth flow runs in a popup.
+
+**Spec**: https://spec.modelcontextprotocol.io/
+`,
+        related: ["integrations", "developers-api"],
+    },
+    {
+        slug: "self-hosting",
+        title: "Self-hosting Louis",
+        category: "developers",
+        icon: Code,
+        summary: "Run Louis on your own infrastructure. Cloudflare Workers + Supabase + R2 stack.",
+        body: `
+Louis is MIT-licensed and self-hostable. The full stack:
+
+**Required**
+- Supabase project (Auth + Postgres) — free tier OK for dev
+- A model provider API key (Anthropic / OpenAI / Google) — at least one
+- Node.js 22+ + npm
+
+**Recommended for prod**
+- Cloudflare account (Workers, R2 for documents, KV for cache)
+- A domain + Cloudflare DNS
+- PostHog account for analytics (free tier OK)
+
+**Quickstart**
+\`\`\`
+git clone https://github.com/sboghossian/louis-legal
+cd louis-legal
+# Backend
+cd backend
+cp .env.example .env  # fill in keys
+npm install
+npm run dev
+# Frontend (new terminal)
+cd ../frontend
+cp .env.local.example .env.local  # fill in keys
+npm install
+npm run dev
+\`\`\`
+
+**Skills location**
+\`backend/src/skills/*.md\` — author / edit / delete. The loader watches the directory in dev mode and invalidates the cache on save.
+
+**Storage**
+Documents live in Cloudflare R2 (S3-compatible) by default. Switch via \`STORAGE_PROVIDER=supabase\` to use Supabase Storage.
+
+**Production checklist**
+- Set \`NODE_ENV=production\`
+- Enable rate limiting (already wired)
+- Set \`DOWNLOAD_SIGNING_SECRET\` (32+ random bytes)
+- Set \`USER_API_KEYS_ENCRYPTION_SECRET\` for at-rest API key encryption
+- Enable Supabase RLS on \`api_keys\`, \`matters\`, \`onboarding_profiles\` tables
+- Configure Supabase OAuth providers (Google, Microsoft) — see /docs/oauth-setup
+`,
+    },
+    {
+        slug: "oauth-setup",
+        title: "Setting up Google + Microsoft OAuth",
+        category: "developers",
+        icon: Key,
+        summary: "Wire up Supabase OAuth providers — 10-minute setup.",
+        body: `
+The Louis login + signup pages have Google + Microsoft buttons. To make them work, enable the providers in your Supabase project.
+
+**Google**
+1. Go to https://console.cloud.google.com/apis/credentials
+2. Create a new OAuth 2.0 Client ID (type: Web application)
+3. Authorized redirect URI: \`https://<your-supabase-project>.supabase.co/auth/v1/callback\`
+4. Copy the Client ID + Secret
+5. In Supabase Dashboard → Authentication → Providers → Google:
+   - Enable
+   - Paste Client ID + Secret
+   - Save
+
+**Microsoft (Azure AD / Entra ID)**
+1. Go to https://entra.microsoft.com → App registrations → New registration
+2. Name: "Louis"
+3. Supported account types: Accounts in any organizational directory + personal Microsoft accounts
+4. Redirect URI (Web): \`https://<your-supabase-project>.supabase.co/auth/v1/callback\`
+5. Create a Client Secret (Certificates & secrets → New client secret)
+6. In Supabase Dashboard → Authentication → Providers → Azure:
+   - Enable
+   - Application (client) ID = the Azure app ID
+   - Secret Value = the secret you just created
+   - Tenant = \`common\` (for multi-tenant) or your specific tenant ID
+
+**Redirect URLs in Supabase**
+Authentication → URL Configuration → Redirect URLs:
+\`\`\`
+http://localhost:3000/auth/callback
+https://your-domain.com/auth/callback
+\`\`\`
+
+That&apos;s it — the buttons on /login + /signup will work immediately.
+
+**Troubleshooting**
+- "No session returned" → provider not enabled in Supabase
+- "Redirect URI mismatch" → check the callback URL in both Google/Azure and Supabase Redirect URLs list
+- Microsoft account types mismatch → set to "Accounts in any organizational directory and personal Microsoft accounts"
+`,
+        related: ["api-keys"],
+    },
+    {
+        slug: "security",
+        title: "Security & data handling",
+        category: "developers",
+        icon: ShieldAlert,
+        summary: "How Louis treats your data: encryption, isolation, no-training defaults, audit logs.",
+        body: `
+**Data isolation**
+Each tenant is row-isolated in Supabase Postgres via RLS. Cross-tenant queries are physically impossible in the application layer.
+
+**API keys**
+Plaintext keys live only in-process for the duration of a request. At rest (when SQL migration ships) they&apos;re encrypted with AES-256-GCM using \`USER_API_KEYS_ENCRYPTION_SECRET\`. Reads return only the masked form (\`sk-a•••7890\`).
+
+**Documents**
+Stored in Cloudflare R2 (or Supabase Storage) with signed-URL access only. Download tokens are HMAC-signed with \`DOWNLOAD_SIGNING_SECRET\` and expire in 5 minutes.
+
+**Model providers**
+Louis sends only the user-message + the routed skills' system-prompt to the model API. It does NOT train the model with your data — providers (Anthropic, OpenAI, Google) all offer a no-training mode, which Louis uses by default.
+
+**Privileged content**
+Louis does not assert attorney-client privilege over its conversations. Lawyers using Louis for client matters should:
+- Disclose AI use in the engagement letter ([[safety-compliance.AI-not-privileged-disclaimer-US]])
+- Use enterprise-grade providers with no-training
+- Keep matter-linked content tenant-isolated
+
+**Audit log**
+Every model call, skill route decision, and integration use is logged. View under /skills → Router for skill decisions; full audit log requires Business plan.
+
+**Cross-border transfers**
+EU users can opt into EU-only data residency. GCC region launches 2026 Q2. See [[safety.cross-border-data-transfer-GCC-EU]] for the legal framework.
+`,
+    },
+    {
+        slug: "architecture",
+        title: "Architecture overview",
+        category: "developers",
+        icon: Network,
+        summary: "How the skill router, model orchestration, and matter context fit together.",
+        body: `
+**Request lifecycle (chat turn)**
+1. User message arrives at \`POST /chat\`
+2. Auth middleware verifies Supabase JWT
+3. Skill router (\`backend/src/skills/_router.ts\`) classifies intent + jurisdiction + practice area
+4. Picks 8-13 skills based on score (priority + intent match + jurisdiction match)
+5. Composes system prompt: concatenated skill bodies + customize toggles
+6. Selects model: user&apos;s default API key for chosen provider (falls back to env default)
+7. Streams response via SSE
+8. Logs decision to in-memory ring buffer for observability
+
+**Skill router internals**
+Two layers:
+- **Keyword router** — fast, deterministic. Always fires.
+- **LLM fallback** — Gemini Flash with 3s timeout. Soft-fails to keyword-only.
+
+The router&apos;s output is just a list of skill IDs + their composed prompt. Look at \`/skills → Router\` tab for live decisions.
+
+**No fine-tuning bet**
+We don&apos;t fine-tune custom models. Frontier models + retrieval + skill composition + per-user customize is a more durable bet — every model upgrade gives us a free quality lift. See [[eng.architectural-bet-no-fine-tuning]].
+
+**Document handling**
+- Upload → R2 storage with signed-URL
+- OCR (if needed) via pdfjs-dist + Vision API
+- AST extraction: clauses tagged with anchors
+- Embeddings via Voyage-2-large into per-tenant index
+- RAG over user docs + public corpus when matter-bound
+
+**Matter context binding**
+When a chat is bound to a matter, every system prompt includes matter metadata (parties, jurisdictions, status, recent events). Skills can reference matter context via \`{{matter.*}}\` template vars (planned for v1.0).
+
+**Frontend stack**
+Next.js 16 / React 19 / Tailwind / Shadcn UI. Server Components for static pages, Client Components for interactive surfaces. SSE streaming for chat.
+
+**Backend stack**
+Express + TypeScript + Supabase Postgres + Cloudflare R2 + Anthropic / Gemini / OpenAI clients.
+`,
+        related: ["skill-router", "self-hosting"],
+    },
+    {
+        slug: "roadmap",
+        title: "Roadmap",
+        category: "getting-started",
+        icon: Zap,
+        summary: "What's shipping next + what we're considering. Open to community input.",
+        body: `
+**Q2 2026 — shipping now**
+- Google + Microsoft OAuth ✓
+- Custom skills editor (UI) ✓
+- API keys management (13 providers) ✓
+- Integrations hub (32 connectors) ✓
+- Onboarding wizard ✓
+- App launcher (HAQQ products) ✓
+- Sidebar reorganization with collapsible groups ✓
+
+**Q3 2026 — planned**
+- Stripe billing integration (live plan + credit balance + portal)
+- Team management with role-based permissions (Business plan)
+- MENA-region data residency (Saudi + UAE)
+- Word add-in (Office365 sideload)
+- Tawqi3i e-signature bridge (KSA)
+- DocuSign integration
+- Skills GitHub-repo sync (custom skills as PRs)
+- Citation auto-detect + bulk-conversion
+- Multi-doc compare (3+ documents side-by-side)
+
+**Q4 2026 — exploring**
+- Justinian deep integration (cross-product user identity)
+- Local-first mode (browser-only, no backend)
+- Skill marketplace (community + paid)
+- DIFC + ADGM Courts judgment ingestion (auto-fed from official sources)
+- Voice-mode (Arabic + English + French)
+- Mobile apps (iOS + Android)
+- On-prem self-hosting guide for firms with strict residency
+
+**2027 — directional**
+- Custom model fine-tuning option (opt-in per tenant)
+- Native MCP server for Louis (so other AI tools can call Louis)
+- Federated skill libraries (firm-private + shared)
+- Real-time co-authoring in Doc Workspace
+
+**Get involved**
+- File feature requests / bug reports: GitHub Issues
+- Contribute skills: see /docs/new-skill — open a PR
+- Translation help (Arabic, French): get in touch
+- Beta testing programs: starting Q2
+`,
+    },
+    {
+        slug: "compare",
+        title: "Louis vs. alternatives",
+        category: "getting-started",
+        icon: Brain,
+        summary: "Honest comparison with Harvey, CoCounsel, Spellbook, Genie AI, Robin AI.",
+        body: `
+**Louis wins on**
+- MENA jurisdictions (DIFC / ADGM / KSA / UAE / LB / EG)
+- Arabic-native bilingual contracts
+- Skill router transparency (you see every decision)
+- Open source (MIT — self-hostable)
+- BYO API keys (lower cost; provider-of-choice)
+- 982 skills shipped — composable, editable, versionable
+- Custom skill authoring without redeploys
+- MCP-first integration approach
+
+**Harvey wins on**
+- US BigLaw integration depth
+- Allen & Overy / Kirkland / Skadden firm-specific styling
+- Premier client list / proven enterprise sales
+
+**CoCounsel wins on**
+- Westlaw / Practical Law citation depth
+- Existing Thomson Reuters enterprise license overlap
+- US case-law research
+
+**Spellbook wins on**
+- Word-add-in polish (early mover)
+- Mid-market US firms
+
+**Genie AI wins on**
+- Consumer / SMB pricing
+- Template library scale
+
+**Robin AI wins on**
+- Specific contract-type workflows (NDA, employment, services)
+
+**Honest weaknesses of Louis (today)**
+- US case-law depth is shallower than Westlaw / Lexis
+- BigLaw enterprise sales motion is nascent
+- Word add-in shipping Q3 2026 (not today)
+- Self-hosting docs are thin (we&apos;re working on it)
+
+The honest pitch: pick Louis if you operate in MENA, value transparency + open source, or want to bring your own model keys. Pick the others if your needs are squarely US/UK BigLaw or you need an established enterprise vendor.
+`,
+    },
+    {
+        slug: "contribute",
+        title: "Contribute to Louis",
+        category: "developers",
+        icon: BookA,
+        summary: "How to add skills, fix bugs, or build entire features. PRs welcome.",
+        body: `
+**Areas where we&apos;d love help**
+
+**1. Skills authoring (highest leverage)**
+Each skill is a markdown file. Adding a high-quality skill for your practice area takes ~30 min and benefits every Louis user. See \`/docs/new-skill\` for the format.
+
+**2. Jurisdiction packs**
+We have 982 skills but coverage is uneven. If you practice in a jurisdiction we&apos;re weak in (Egypt, Jordan, Morocco, Tunisia, Algeria, Kuwait, Oman, Qatar, Bahrain), open a PR adding kb.* skills.
+
+**3. Integrations**
+MCP-server adapters for tools your firm uses. Each adapter = ~100 lines of TS.
+
+**4. UI polish**
+Find a rough edge → open an issue or a PR. Bonus points for keyboard shortcuts + accessibility.
+
+**5. Translation**
+Localize the UI to Arabic + French. The skills are bilingual; the UI is currently English-first.
+
+**6. Tests**
+Skill router tests, calculator tests, citation engine tests. Coverage is patchy.
+
+**How to contribute**
+1. Fork [github.com/sboghossian/louis-legal](https://github.com/sboghossian/louis-legal)
+2. Create a branch: \`git checkout -b skill/your-name\`
+3. Make your change + run \`npm run typecheck\` (both backend + frontend)
+4. Open a PR with a clear description + screenshots for UI changes
+
+**Code of conduct**
+Be kind. No PR is too small. No question is dumb.
+
+**Recognition**
+Top contributors are featured on /about. Skill authors get attribution in the skill frontmatter.
+`,
+        related: ["new-skill", "self-hosting"],
     },
 ];
 
