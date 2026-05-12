@@ -8,7 +8,8 @@
     "copy-skills": "mkdir -p dist/skills && cp src/skills/*.md dist/skills/",
     "start": "node dist/index.js",
     "skills:registry": "tsx src/skills/_build-registry.ts",
-    "skills:import": "tsx src/skills/_import-from-inventory.ts"
+    "skills:import": "tsx src/skills/_import-from-inventory.ts",
+    "migrate": "tsx scripts/migrate.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
@@ -16,6 +17,7 @@
     "@aws-sdk/s3-request-presigner": "^3.787.0",
     "@google/genai": "^1.50.1",
     "@supabase/supabase-js": "^2.49.4",
+    "@types/pg": "^8.20.0",
     "cors": "^2.8.5",
     "docx": "^9.5.0",
     "dotenv": "^17.4.1",
@@ -29,6 +31,7 @@
     "mammoth": "^1.9.0",
     "multer": "^1.4.5-lts.2",
     "pdfjs-dist": "^4.10.38",
+    "pg": "^8.20.0",
     "resend": "^4.5.1"
   },
   "devDependencies": {
