@@ -1,21 +1,25 @@
 ---
 id: eval.rubric.completeness
-name: 'rubric · completeness'
+name: Eval Rubric — Completeness
 category: eval
-priority: P3
-status: stub
+intent: [__eval__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Score completeness — did the output address the question fully?
 
-# eval.rubric.completeness — STUB
+# Scoring (0-5)
+- **5**: All material aspects addressed; relevant edge cases / alternative views surfaced; structured for the answer type (IRAC if analysis, full doc if draft, structured table if comparison).
+- **4**: Addresses the question fully with minor gaps.
+- **3**: Substantive but with a 1-2 notable gaps (e.g., missing one major consideration).
+- **2**: Partial answer; misses important dimension.
+- **1**: Largely incomplete.
+- **0**: Empty or off-topic.
 
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Sub-criteria
+- For a draft: all standard clauses present per [[review.missing-clauses]]?
+- For analysis: IRAC complete?
+- For comparison: relevant axes covered?
+- For research: primary sources cited?
+- Recommendations / next steps offered?

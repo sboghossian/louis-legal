@@ -33,7 +33,7 @@ interface BoardNode {
     actor: ActorKind;
 }
 
-const NODES: BoardNode[] = [
+const INITIAL_NODES: BoardNode[] = [
     { id: "n1", kind: "client",    title: "Client brief",        subtitle: "Acme x Globex M&A — discovery call notes", x: 80,  y: 60,  actor: "human" },
     { id: "n2", kind: "termsheet", title: "Term sheet draft v0", subtitle: "Agent · 2 min · Anthropic Opus",          x: 380, y: 60,  actor: "agent" },
     { id: "n3", kind: "precedent", title: "Precedent search",    subtitle: "Agent · pulled 4 similar deals",          x: 80,  y: 260, actor: "agent" },
@@ -105,6 +105,36 @@ function DraftingBoardInner() {
     const [filter, setFilter] = useState<"all" | ActorKind>("all");
     const [selected, setSelected] = useState<string | null>(null);
     const [incomingSuggestions, setIncomingSuggestions] = useState<IncomingSuggestion[]>([]);
+    const [nodes, setNodes] = useState<BoardNode[]>(INITIAL_NODES);
+    const [dragId, setDragId] = useState<string | null>(null);
+    const dragOriginRef = (typeof window !== "undefined" ? (window as unknown as { __louisDrag?: { x: number; y: number; ox: number; oy: number } }).__louisDrag = (window as unknown as { __louisDrag?: { x: number; y: number; ox: number; oy: number } }).__louisDrag ?? { x: 0, y: 0, ox: 0, oy: 0 } : { x: 0, y: 0, ox: 0, oy: 0 });
+
+    function onNodeMouseDown(e: React.MouseEvent, id: string) {
+        // Don't drag from interactive elements
+        const t = e.target as HTMLElement;
+        if (t.closest("button, a, input, textarea")) return;
+        const node = nodes.find(n => n.id === id);
+        if (!node) return;
+        e.preventDefault();
+        setDragId(id);
+        dragOriginRef.x = e.clientX;
+        dragOriginRef.y = e.clientY;
+        dragOriginRef.ox = node.x;
+        dragOriginRef.oy = node.y;
+
+        const onMove = (ev: MouseEvent) => {
+            const dx = ev.clientX - dragOriginRef.x;
+            const dy = ev.clientY - dragOriginRef.y;
+            setNodes(prev => prev.map(n => n.id === id ? { ...n, x: dragOriginRef.ox + dx, y: dragOriginRef.oy + dy } : n));
+        };
+        const onUp = () => {
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", onUp);
+            setDragId(null);
+        };
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", onUp);
+    }
 
     // If we arrived from /doc-workspace with ?suggestions=ids, hydrate them as
     // pending board nodes (drawn under the timeline as "incoming from doc").
@@ -125,7 +155,7 @@ function DraftingBoardInner() {
         })();
     }, [docId, sugIds]);
 
-    const selectedNode = selected ? NODES.find(n => n.id === selected) : null;
+    const selectedNode = selected ? nodes.find(n => n.id === selected) : null;
     const filteredTimeline = TIMELINE.filter(e => filter === "all" || e.actor === filter);
 
     return (
@@ -137,8 +167,9 @@ function DraftingBoardInner() {
                     {/* Links */}
                     <svg className="absolute inset-0 pointer-events-none" width={1100} height={600}>
                         {LINKS.map(([from, to], i) => {
-                            const a = NODES.find(n => n.id === from)!;
-                            const b = NODES.find(n => n.id === to)!;
+                            const a = nodes.find(n => n.id === from);
+                            const b = nodes.find(n => n.id === to);
+                            if (!a || !b) return null;
                             return (
                                 <line
                                     key={i}
@@ -152,15 +183,19 @@ function DraftingBoardInner() {
                         })}
                     </svg>
                     {/* Nodes */}
-                    {NODES.map(n => {
+                    {nodes.map(n => {
                         const Icon = NODE_ICONS[n.kind];
                         const ActorIcon = ACTOR_ICONS[n.actor];
+                        const isDragging = dragId === n.id;
                         return (
-                            <button
+                            <div
                                 key={n.id}
+                                role="button"
+                                tabIndex={0}
+                                onMouseDown={e => onNodeMouseDown(e, n.id)}
                                 onClick={() => setSelected(n.id)}
-                                className={`absolute w-60 rounded-lg border-2 ${ACTOR_COLORS[n.actor]} p-3 text-left shadow-sm hover:shadow-md transition-shadow ${selected === n.id ? "ring-2 ring-offset-2 ring-gray-900" : ""}`}
-                                style={{ left: n.x, top: n.y }}
+                                className={`absolute w-60 rounded-lg border-2 ${ACTOR_COLORS[n.actor]} p-3 text-left shadow-sm hover:shadow-md transition-shadow ${selected === n.id ? "ring-2 ring-offset-2 ring-gray-900" : ""} ${isDragging ? "cursor-grabbing opacity-90 shadow-lg" : "cursor-grab"}`}
+                                style={{ left: n.x, top: n.y, zIndex: isDragging ? 100 : 1, userSelect: "none" }}
                             >
                                 <div className="flex items-center gap-2 mb-1.5">
                                     <Icon className="w-4 h-4" />
@@ -168,7 +203,7 @@ function DraftingBoardInner() {
                                     <ActorIcon className="w-3.5 h-3.5 opacity-70" />
                                 </div>
                                 <div className="text-xs opacity-70 truncate">{n.subtitle}</div>
-                            </button>
+                            </div>
                         );
                     })}
                 </div>

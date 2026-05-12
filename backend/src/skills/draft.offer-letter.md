@@ -1,21 +1,40 @@
 ---
 id: draft.offer-letter
-name: 'offer letter'
+name: Job Offer Letter
 category: draft
-priority: P3
-status: stub
+practice_area: employment
+intent: ['offer letter', 'employment offer']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Draft an offer letter — short-form acceptance document before the full employment contract.
 
-# draft.offer-letter — STUB
+# Required inputs
+- Employer + Candidate
+- Role, start date, location
+- Compensation: base + variable + equity (if any)
+- Reporting line
+- Standard contingencies (background check, references, regulatory clearance)
+- Acceptance deadline
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Pattern (1-2 pages)
+1. Greeting + role offer headline
+2. Position details (title, reporting, start date, location, schedule)
+3. Compensation breakdown
+4. Benefits (high-level — full details in handbook)
+5. Conditions: background check, work eligibility, signing of full employment contract within X days
+6. At-will / employment-at-pleasure clause where applicable (common-law jx)
+7. Confidentiality of offer terms
+8. Acceptance: signature + return-by deadline
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Jurisdictional notes
+- **UAE federal**: offer letters often serve as the binding pre-contract under MOHRE process; formal contract follows
+- **KSA**: offer + Qiwa registered contract pattern
+- **LB**: offer letter common but doesn't substitute for the formal contract per Labor Code
+- **DIFC/ADGM**: full common-law conventions; at-will less common
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Common mistakes to flag
+- Promising equity without describing the plan + vesting (creates ambiguity)
+- Stating salary without specifying currency and frequency
+- Missing the "subject to" conditions creates a binding contract where one wasn't intended

@@ -1,21 +1,38 @@
 ---
 id: efirm.matter-creation-flow
-name: 'matter creation flow'
+name: eFirm: Matter Creation Flow
 category: efirm
-priority: P3
-status: stub
+intent: ['create matter', 'new matter']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Standardize matter creation in eFirm.
 
-# efirm.matter-creation-flow — STUB
+# Required at intake
+1. **Client identification** — existing client (lookup) or new (intake form)
+2. **Matter type** — corporate / dispute / IP / employment / regulatory / personal
+3. **Matter description** — short title + objective
+4. **Responsible partner** — assigned, with associate / paralegal team
+5. **Fee structure** — hourly / fixed / contingency / hybrid (see [[efirm.fee-quote-builder]])
+6. **Conflict check** — automated run + manual review (see [[efirm.conflict-check]])
+7. **Engagement letter** — drafted via [[efirm.engagement-letter-draft]]
+8. **Matter number** — auto-generated using firm's numbering scheme
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Optional / configurable
+- Custom fields per matter type
+- Confidentiality level (standard / enhanced / privileged-only)
+- Estimated budget + alerting threshold
+- Deadline / SLA awareness
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Output to downstream
+- Matter record in eFirm DB
+- Auto-create folder in document management
+- Auto-grant access to assigned team
+- Audit log entry
+- Push notification to responsible partner
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Why this matters
+- **Conflict checks** are bar-rule mandatory — automating + recording protects the firm
+- **Engagement letter** is fee-dispute insurance — must exist before substantive work
+- **Matter coding** drives billing, reporting, and KM tagging

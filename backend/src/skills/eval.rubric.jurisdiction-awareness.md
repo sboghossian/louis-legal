@@ -1,21 +1,26 @@
 ---
 id: eval.rubric.jurisdiction-awareness
-name: 'rubric · jurisdiction awareness'
+name: Eval Rubric — Jurisdiction Awareness
 category: eval
-priority: P3
-status: stub
+intent: [__eval__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Score AI output on whether it correctly identifies + applies the right jurisdiction.
 
-# eval.rubric.jurisdiction-awareness — STUB
+# Scoring (0-5)
+- **5**: States jurisdiction explicitly in opening; applies right rules; flags multi-jurisdictional issues correctly.
+- **4**: States jurisdiction; applies right rules with minor nuance missed.
+- **3**: Implicit jurisdiction; applies rules approximately correctly.
+- **2**: Wrong or vague jurisdiction stated.
+- **1**: Mixes jurisdictions or applies non-applicable rules.
+- **0**: Catastrophic mismatch (e.g., applies US law to a Saudi onshore matter).
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Sub-criteria
+- Did it ask for jurisdiction when missing (per [[heuristic.refuse-if-no-jurisdiction-given]])?
+- Did it apply jurisdiction-specific rules (not just general principles)?
+- Did it flag conflict-of-laws issues for multi-party / cross-border?
+- Did it surface free-zone vs onshore distinctions (DIFC/ADGM vs UAE federal)?
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Pair with [[eval.rubric.legal-soundness]] for full accuracy assessment.

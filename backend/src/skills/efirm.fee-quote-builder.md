@@ -1,21 +1,44 @@
 ---
 id: efirm.fee-quote-builder
-name: 'fee quote builder'
+name: eFirm: Fee Quote Builder
 category: efirm
-priority: P3
-status: stub
+intent: ['fee quote', 'billing structure']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Build a fee quote / fee proposal.
 
-# efirm.fee-quote-builder — STUB
+# Structures
+1. **Hourly** — rates by seniority; estimate + ceiling
+2. **Fixed fee** — single sum for defined deliverable; scope tightly defined
+3. **Contingency** — % of recovery; only on litigation/recovery work; bar-rule restrictions in many jurisdictions
+4. **Capped fee** — hourly up to a cap; exposes firm to overrun risk
+5. **Collared fee** — hourly with floor + ceiling (risk-sharing)
+6. **Milestone-based** — installments tied to deliverable milestones
+7. **Subscription** — monthly retainer for ongoing advisory work
+8. **Hybrid** — fixed for routine + hourly for non-routine
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Quote contents
+1. Matter scope (precise, with in/out items)
+2. Fee structure choice + rationale
+3. Estimate (with assumptions + scope limits)
+4. Out-of-pocket expenses pass-through
+5. Trust / retainer requirements
+6. Billing cadence
+7. Tax (VAT) treatment
+8. Adjustment mechanism for scope changes
+9. Validity (offer expires)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Anti-patterns
+- "Hourly, see attached rate card" with no estimate — clients hate this
+- Fixed fees without tight scope — creates disputes
+- Promising specific outcomes — bar rules
+- Contingency without checking jurisdiction rules
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Saudi / MENA-specific
+- KSA: contingency disfavoured for many matters
+- UAE: client funds in escrow rules apply to retainers
+- LB: bar caps on certain fee structures
+
+See [[efirm.engagement-letter-draft]] for the contract that documents the agreed quote.

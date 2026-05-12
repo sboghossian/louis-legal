@@ -1,21 +1,43 @@
 ---
 id: draft.sublease
-name: 'sublease'
+name: Sublease Agreement
 category: draft
-priority: P3
-status: stub
+practice_area: real-estate
+intent: [sublease, subletting]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Draft a Sublease — original tenant (Sublessor) re-lets the premises to a Sublessee.
 
-# draft.sublease — STUB
+# Required inputs
+- Sublessor (must be the original tenant under the head lease)
+- Sublessee
+- Premises (precise description)
+- Sub-term (must end no later than head lease)
+- Sub-rent (commonly tied to or less than head rent)
+- Conditions: head landlord consent (CRITICAL)
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Critical: head landlord consent
+- Most leases prohibit subletting without prior written landlord consent
+- Sublease without consent: head lease termination risk
+- Always make the sublease conditional on consent — attach the landlord consent as a schedule
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Pattern
+1. Recitals — head lease reference + landlord consent reference
+2. Sub-premises (may be partial — entire unit or sub-section)
+3. Term (must end ≤ head lease end)
+4. Sub-rent + payment mechanics
+5. Use clause (typically narrower than head lease)
+6. Obligations under head lease — Sublessee complies with head lease terms
+7. Insurance
+8. Default + remedies
+9. Cooperation in returning premises at term end
+10. Governing law
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Jurisdictional notes
+- **LB old-rent-law**: subletting tightly restricted; landlord protections strong
+- **UAE-Dubai (RERA)**: subletting registered with RERA Ejari; landlord NOC typically required
+- **KSA (Ejar)**: subletting must be reflected in Ejar registration
+
+Pair with formal landlord consent letter.

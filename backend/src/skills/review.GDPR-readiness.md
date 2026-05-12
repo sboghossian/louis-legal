@@ -1,21 +1,42 @@
 ---
 id: review.GDPR-readiness
-name: 'GDPR readiness'
+name: GDPR Readiness Review
 category: review
-priority: P3
-status: stub
+intent: ['gdpr readiness', 'gdpr audit']
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Conduct a GDPR readiness review of an organization's data practices.
 
-# review.GDPR-readiness — STUB
+# Inputs
+- Organization description (sector, employee count, geographic scope)
+- Data flows (what's collected, from whom, for what, where stored, who has access)
+- Existing policies (privacy notice, retention, security)
+- Vendor list (subprocessors)
+- Breach history
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Review framework (10 areas)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+1. **Lawful basis** — is there a documented lawful basis for each processing activity?
+2. **Privacy notice** — present, accurate, accessible?
+3. **Consent mechanism** — granular, easily withdrawable?
+4. **Records of processing** (Art 30) — maintained?
+5. **DPIAs** — completed for high-risk processing?
+6. **DPO** — appointed if required?
+7. **DSR handling** — process for access/rectification/erasure requests within 1 month?
+8. **Breach response** — 72-hour notification capability?
+9. **International transfers** — SCCs or other mechanism in place?
+10. **Vendor management** — DPAs with all processors? sub-processor approval flow?
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Output
+For each area: 🟢 / 🟡 / 🔴 with findings + recommendations.
+
+Maturity score: percentage of areas at 🟢.
+
+# Risk prioritization
+- 🔴 = regulatory + reputational risk; fix within 30 days
+- 🟡 = improvement opportunity; 90-day plan
+- 🟢 = continued monitoring
+
+See [[kb.data-privacy-GDPR]] for full reference.

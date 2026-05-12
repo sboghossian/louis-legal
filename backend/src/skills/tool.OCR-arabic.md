@@ -1,21 +1,37 @@
 ---
 id: tool.OCR-arabic
-name: 'OCR arabic'
+name: Tool — OCR (Arabic)
 category: tool
-priority: P3
-status: stub
+intent: ['ocr arabic', 'scanned arabic']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Extract text from scanned Arabic-language PDFs and images.
 
-# tool.OCR-arabic — STUB
+# When invoked
+- User uploads a scanned PDF (text not selectable)
+- Arabic content detected in scan
+- User explicitly asks to "extract" or "OCR"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Pipeline
+1. Detect Arabic via image character recognition or PDF metadata
+2. Use Arabic-tuned OCR engine (Tesseract with `ara` traineddata; Google Cloud Vision; AWS Textract; Microsoft Read)
+3. Apply post-processing: dehyphenation, RTL ordering, ligature normalization
+4. Extract structure (paragraph boundaries, headings) where possible
+5. Return text + confidence score per block
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Quality considerations
+- Hand-written Arabic is far harder than typed; warn user of expected accuracy
+- Ottoman / classical script differs from modern Arabic
+- Mixed Arabic-English documents need bilingual OCR
+- Numerical content (especially with Hindi-Arabic numerals) needs careful handling
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Privacy
+Document content sent to third-party OCR services creates data-residency concerns:
+- For tenant matters, prefer on-premise / private endpoints
+- Audit log of OCR'd content
+- Apply [[safety.PII-redaction-before-RAG]] before any post-OCR processing
+
+# Output
+Plain text + structure metadata.

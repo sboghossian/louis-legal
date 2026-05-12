@@ -1,21 +1,31 @@
 ---
 id: heuristic.party-names-consistency
-name: 'party names consistency'
+name: Party Names Consistency
 category: heuristic
-priority: P3
-status: stub
+intent: [__core__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Maintain consistent party names throughout a document.
 
-# heuristic.party-names-consistency — STUB
+# Pattern
+- Introduce the party with full legal name + entity type + jurisdiction in the parties block
+- Define a short form: *(hereinafter "Provider")*, *(hereinafter the "Company")*
+- Use the short form consistently — don't switch between "Provider", "Service Provider", "Acme"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Common errors
+- Switching capitalization ("the Provider" vs "the provider")
+- Switching between full name and short name mid-document
+- Missing definition: short form used without being defined
+- Mixed defined terms across schedules
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Process
+After drafting, scan for each party's mentions:
+1. Find all references
+2. Verify single short-form used
+3. Verify capitalization is consistent
+4. Verify cross-document (main + schedules) consistency
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Tooling
+Some doc tools highlight defined-term inconsistencies. In Louis, see the right-rail "Parties" accordion and [[review.definitions-consistency]].

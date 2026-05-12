@@ -46,6 +46,30 @@ interface ServerSuggestion {
     createdAt: string;
 }
 
+interface ServerVersion {
+    id: string;
+    versionNumber: number | null;
+    displayName: string;
+    source: string;
+    createdAt: string;
+    summary: string | null;
+}
+
+interface ServerComment {
+    id: string;
+    author: string;
+    role: string;
+    text: string;
+    createdAt: string;
+}
+
+interface ServerBlock {
+    id: string;
+    heading?: string;
+    text?: string;
+    changed?: boolean;
+}
+
 // SCAFFOLD ported from haqq-prototype: renderDocEditor / renderDocRailV3 / renderCompareToolbar.
 // Top bar (title/save/tone/wordcount), left pane (tabs), center (view modes), right rail (5 accordions).
 // Real doc CRUD wiring is next-session work; this page renders against in-memory fixtures.
@@ -58,7 +82,7 @@ type Suggestion = ServerSuggestion;
 interface DocBlock {
     id: string;
     heading?: string;
-    text: string;
+    text?: string;
     changed?: boolean;
 }
 
@@ -147,7 +171,24 @@ function DocWorkspaceInner() {
     const [view, setView] = useState<DocView>("edit");
     const [leftCollapsed, setLeftCollapsed] = useState(false);
     const [rightOpen, setRightOpen] = useState(true);
-    const [tone, setTone] = useState(50);
+    const [tone, setToneState] = useState(50);
+
+    // Persist tone via /api/customize using key doc.tone (debounced)
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            const headers = await authHeaders();
+            if (!headers.Authorization) return;
+            await fetch(`${API_BASE}/api/customize/doc.tone`, {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                // /api/customize stores booleans by design, so we encode tone into the key suffix
+                body: JSON.stringify({ enabled: tone >= 50 }),
+            }).catch(() => {});
+        }, 600);
+        return () => clearTimeout(timer);
+    }, [tone]);
+
+    function setTone(v: number) { setToneState(v); }
     const [accOpen, setAccOpen] = useState({
         risk: true,
         parties: true,
@@ -158,10 +199,13 @@ function DocWorkspaceInner() {
 
     const [meta, setMeta] = useState<DocMetadata | null>(null);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [versions, setVersions] = useState<ServerVersion[]>([]);
+    const [comments, setComments] = useState<ServerComment[]>([]);
+    const [contentBlocks, setContentBlocks] = useState<ServerBlock[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
 
-    // Load metadata + suggestions
+    // Load all the things in parallel
     useEffect(() => {
         let cancelled = false;
         (async () => {
@@ -169,17 +213,19 @@ function DocWorkspaceInner() {
             setLoadError(null);
             try {
                 const headers = await authHeaders();
-                const [mr, sr] = await Promise.all([
-                    fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/metadata`, { headers, cache: "no-store" }),
+                const [mr, sr, vr, cr, br] = await Promise.all([
+                    fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/metadata`,    { headers, cache: "no-store" }),
                     fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/suggestions`, { headers, cache: "no-store" }),
+                    fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/versions`,    { headers, cache: "no-store" }),
+                    fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/comments`,    { headers, cache: "no-store" }),
+                    fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/content`,     { headers, cache: "no-store" }),
                 ]);
                 if (cancelled) return;
-                if (mr.ok) setMeta(await mr.json());
-                else setLoadError(`metadata: HTTP ${mr.status}`);
-                if (sr.ok) {
-                    const json = await sr.json();
-                    setSuggestions(json.suggestions ?? []);
-                }
+                if (mr.ok) setMeta(await mr.json()); else setLoadError(`metadata: HTTP ${mr.status}`);
+                if (sr.ok) setSuggestions((await sr.json()).suggestions ?? []);
+                if (vr.ok) setVersions((await vr.json()).versions ?? []);
+                if (cr.ok) setComments((await cr.json()).comments ?? []);
+                if (br.ok) setContentBlocks((await br.json()).blocks ?? []);
             } catch (e) {
                 if (!cancelled) setLoadError((e as Error).message);
             } finally {
@@ -188,6 +234,28 @@ function DocWorkspaceInner() {
         })();
         return () => { cancelled = true; };
     }, [docId]);
+
+    async function postComment(text: string) {
+        const headers = await authHeaders();
+        const r = await fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/comments`, {
+            method: "POST",
+            headers: { ...headers, "Content-Type": "application/json" },
+            body: JSON.stringify({ text }),
+        });
+        if (r.ok) {
+            const json = await r.json();
+            setComments(prev => [json.comment, ...prev]);
+        }
+    }
+
+    async function deleteComment(commentId: string) {
+        setComments(prev => prev.filter(c => c.id !== commentId));
+        const headers = await authHeaders();
+        await fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/comments/${encodeURIComponent(commentId)}`, {
+            method: "DELETE",
+            headers,
+        });
+    }
 
     async function updateSuggestion(sugId: string, state: Suggestion["state"]) {
         // Optimistic
@@ -212,10 +280,12 @@ function DocWorkspaceInner() {
 
     const toneLabel = tone < 33 ? "plain" : tone < 67 ? "balanced" : "formal";
 
+    // Use real content if loaded; otherwise fall back to the fixture
+    const blocksForRender = contentBlocks.length ? contentBlocks : DOC_BLOCKS;
     const visibleBlocks = useMemo(() => {
-        if (view === "compare") return DOC_BLOCKS.filter(b => b.changed);
-        return DOC_BLOCKS;
-    }, [view]);
+        if (view === "compare") return blocksForRender.filter(b => b.changed);
+        return blocksForRender;
+    }, [view, blocksForRender]);
 
     const title = meta?.title || DOC_DEFAULT.title;
     const wordCount = meta?.wordCount ?? DOC_DEFAULT.wordCount;
@@ -296,7 +366,7 @@ function DocWorkspaceInner() {
                                 <DocTabBtn icon={ListChecks}     label="Suggestions" active={tab === "suggestions"} onClick={() => setTab("suggestions")} badge={suggestions.length} />
                                 <DocTabBtn icon={History}        label="Versions"    active={tab === "versions"}    onClick={() => setTab("versions")} />
                                 <DocTabBtn icon={ListOrdered}    label="Outline"     active={tab === "outline"}     onClick={() => setTab("outline")} />
-                                <DocTabBtn icon={MessageCircle}  label="Comments"    active={tab === "comments"}    onClick={() => setTab("comments")} badge={DOC_COMMENTS.length} />
+                                <DocTabBtn icon={MessageCircle}  label="Comments"    active={tab === "comments"}    onClick={() => setTab("comments")} badge={comments.length} />
                             </div>
                         )}
                         <button onClick={() => setLeftCollapsed(c => !c)} className="text-gray-500 hover:text-gray-900 ml-auto">
@@ -316,9 +386,9 @@ function DocWorkspaceInner() {
                                     onReopen={(id) => updateSuggestion(id, "open")}
                                 />
                             )}
-                            {tab === "versions" && <VersionsTab />}
-                            {tab === "outline" && <OutlineTab />}
-                            {tab === "comments" && <CommentsTab />}
+                            {tab === "versions" && <VersionsTab versions={versions} />}
+                            {tab === "outline" && <OutlineTab blocks={blocksForRender} />}
+                            {tab === "comments" && <CommentsTab comments={comments} onPost={postComment} onDelete={deleteComment} />}
                         </div>
                     )}
                 </div>
@@ -454,17 +524,113 @@ function DocBlockView({ block, view }: { block: DocBlock; view: DocView }) {
 }
 
 function ChatTab({ docId }: { docId: string }) {
+    const [input, setInput] = useState("");
+    const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+    const [sending, setSending] = useState(false);
+
+    const examples = [
+        "Tighten Section 4 IP language for Provider-favourable position",
+        "What's the typical liability cap for this contract type in DIFC?",
+        "Generate a counter-proposal email summarizing my asks",
+    ];
+
+    async function send(text: string) {
+        if (!text.trim() || sending) return;
+        setMessages(m => [...m, { role: "user", content: text }]);
+        setInput("");
+        setSending(true);
+        try {
+            const headers = await authHeaders();
+            const r = await fetch(`${API_BASE}/chat/stream`, {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: [
+                        { role: "user", content: `[About document ${docId}]\n\n${text}` },
+                    ],
+                }),
+            });
+            if (!r.ok || !r.body) {
+                setMessages(m => [...m, { role: "assistant", content: `Error: HTTP ${r.status}` }]);
+                return;
+            }
+            // Stream parsing (SSE-style "data: {json}\n\n")
+            const reader = r.body.getReader();
+            const dec = new TextDecoder();
+            let buffer = "";
+            let assistantText = "";
+            setMessages(m => [...m, { role: "assistant", content: "" }]);
+            const updateLast = (delta: string) => {
+                assistantText += delta;
+                setMessages(m => {
+                    const copy = [...m];
+                    copy[copy.length - 1] = { role: "assistant", content: assistantText };
+                    return copy;
+                });
+            };
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                buffer += dec.decode(value, { stream: true });
+                let idx;
+                while ((idx = buffer.indexOf("\n\n")) >= 0) {
+                    const ev = buffer.slice(0, idx).trim();
+                    buffer = buffer.slice(idx + 2);
+                    if (!ev.startsWith("data:")) continue;
+                    try {
+                        const payload = JSON.parse(ev.slice(5).trim());
+                        if (payload.type === "text_delta" && payload.text) updateLast(payload.text);
+                        else if (payload.type === "text" && payload.text) updateLast(payload.text);
+                    } catch { /* non-JSON keepalive */ }
+                }
+            }
+        } catch (e) {
+            setMessages(m => [...m, { role: "assistant", content: `Error: ${(e as Error).message}` }]);
+        } finally {
+            setSending(false);
+        }
+    }
+
     return (
-        <div className="p-4 text-sm text-gray-600">
-            <div className="mb-3 text-gray-900 font-medium">In-doc chat</div>
-            <p className="text-xs">Ask Louis about this document. Examples:</p>
-            <ul className="mt-2 space-y-1.5 text-xs">
-                <li className="px-2 py-1.5 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">&ldquo;Tighten Section 4 IP language for Provider-favourable position&rdquo;</li>
-                <li className="px-2 py-1.5 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">&ldquo;What&apos;s the typical liability cap for this contract type in DIFC?&rdquo;</li>
-                <li className="px-2 py-1.5 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">&ldquo;Generate a counter-proposal email summarizing my asks&rdquo;</li>
-            </ul>
-            <div className="mt-6 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded p-2">
-                <strong>Scaffold:</strong> wire chat input to <code>POST /chat</code> with docId={docId} in context. The skills router auto-routes review-intent skills for this doc.
+        <div className="p-3 flex flex-col h-full">
+            <div className="flex-1 overflow-y-auto mb-3 space-y-2">
+                {messages.length === 0 && (
+                    <div className="text-xs text-gray-600">
+                        <div className="mb-2 text-gray-900 font-medium text-sm">In-doc chat</div>
+                        <p className="mb-2">Ask Louis about this document:</p>
+                        <ul className="space-y-1.5">
+                            {examples.map((ex, i) => (
+                                <li key={i} onClick={() => send(ex)} className="px-2 py-1.5 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+                                    &ldquo;{ex}&rdquo;
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                {messages.map((m, i) => (
+                    <div key={i} className={`px-3 py-2 rounded-lg text-xs ${m.role === "user" ? "bg-blue-50 text-blue-900 ml-6" : "bg-gray-50 text-gray-800 mr-6"}`}>
+                        <div className="text-[10px] text-gray-500 uppercase mb-0.5">{m.role}</div>
+                        <div className="whitespace-pre-wrap">{m.content || <span className="opacity-50">…</span>}</div>
+                    </div>
+                ))}
+            </div>
+            <div className="border-t border-gray-200 pt-2">
+                <textarea
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(input); }}
+                    rows={2}
+                    placeholder="Ask about this doc… (⌘↩ to send)"
+                    className="w-full text-xs border border-gray-300 rounded p-2 resize-none"
+                    disabled={sending}
+                />
+                <div className="flex justify-between items-center mt-1">
+                    <span className="text-[10px] text-gray-500">routed via skills system</span>
+                    <Button size="sm" onClick={() => send(input)} disabled={sending || !input.trim()} className="h-7 text-xs">
+                        {sending ? "sending…" : "Send"}
+                    </Button>
+                </div>
             </div>
         </div>
     );
@@ -516,16 +682,29 @@ function SuggestionsTab({ suggestions, loading, onAccept, onReject, onReopen }: 
     );
 }
 
-function VersionsTab() {
+function VersionsTab({ versions }: { versions: ServerVersion[] }) {
+    if (!versions.length) {
+        return <div className="p-3 text-xs text-gray-500">no versions yet</div>;
+    }
+    const labelFor = (s: string) =>
+        s === "user_upload" ? "user upload" :
+        s === "assistant_edit" ? "AI edits" :
+        s === "user_accept" ? "user accept" :
+        s === "user_reject" ? "user reject" :
+        s === "generated" ? "generated" :
+        s;
     return (
         <div className="p-3">
-            {DOC_VERSIONS.map(v => (
+            {versions.map((v, idx) => (
                 <div key={v.id} className="px-3 py-3 mb-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
                     <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{v.label}</span>
-                        <span className="text-[10px] text-gray-500">{v.when}</span>
+                        <span className="font-medium text-sm">{v.displayName}{idx === 0 ? " (current)" : ""}</span>
+                        <span className="text-[10px] text-gray-500">{new Date(v.createdAt).toLocaleString()}</span>
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">{v.author} · {v.summary}</div>
+                    <div className="text-xs text-gray-600 mt-1">
+                        <span className="font-mono text-[10px] bg-gray-100 px-1 rounded">{labelFor(v.source)}</span>
+                        {v.summary && <> · {v.summary}</>}
+                    </div>
                 </div>
             ))}
             <div className="mt-3 text-[10px] text-gray-500">Click a version to view, restore, or compare.</div>
@@ -533,11 +712,13 @@ function VersionsTab() {
     );
 }
 
-function OutlineTab() {
+function OutlineTab({ blocks }: { blocks: ServerBlock[] }) {
+    const headings = blocks.filter(b => b.heading);
+    if (!headings.length) return <div className="p-3 text-xs text-gray-500">no headings detected in this doc</div>;
     return (
         <div className="p-3">
             <ul className="text-sm space-y-1">
-                {DOC_BLOCKS.filter(b => b.heading).map(b => (
+                {headings.map(b => (
                     <li key={b.id} className="px-2 py-1 rounded hover:bg-gray-50 cursor-pointer">{b.heading}</li>
                 ))}
             </ul>
@@ -545,18 +726,47 @@ function OutlineTab() {
     );
 }
 
-function CommentsTab() {
+function CommentsTab({ comments, onPost, onDelete }: {
+    comments: ServerComment[];
+    onPost: (text: string) => Promise<void>;
+    onDelete: (id: string) => Promise<void>;
+}) {
+    const [text, setText] = useState("");
+    const [posting, setPosting] = useState(false);
+    async function submit() {
+        if (!text.trim() || posting) return;
+        setPosting(true);
+        try { await onPost(text); setText(""); } finally { setPosting(false); }
+    }
     return (
-        <div className="p-3">
-            {DOC_COMMENTS.map((c, i) => (
-                <div key={i} className="px-3 py-3 mb-2 rounded-lg border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{c.author} <span className="text-gray-500 font-normal">{c.role}</span></span>
-                        <span className="text-[10px] text-gray-500">{c.when}</span>
+        <div className="p-3 flex flex-col h-full">
+            <div className="flex-1 overflow-y-auto mb-3">
+                {!comments.length && <div className="text-xs text-gray-500">no comments yet</div>}
+                {comments.map(c => (
+                    <div key={c.id} className="px-3 py-3 mb-2 rounded-lg border border-gray-200 group">
+                        <div className="flex items-center justify-between">
+                            <span className="font-medium text-sm">{c.author} <span className="text-gray-500 font-normal">{c.role}</span></span>
+                            <span className="text-[10px] text-gray-500">{new Date(c.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div className="text-xs text-gray-700 mt-1 whitespace-pre-wrap">{c.text}</div>
+                        <button onClick={() => onDelete(c.id)} className="text-[10px] text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 mt-1">delete</button>
                     </div>
-                    <div className="text-xs text-gray-700 mt-1">{c.text}</div>
+                ))}
+            </div>
+            <div className="border-t border-gray-200 pt-2">
+                <textarea
+                    value={text}
+                    onChange={e => setText(e.target.value)}
+                    rows={2}
+                    placeholder="Add a comment…"
+                    className="w-full text-xs border border-gray-300 rounded p-2 resize-none"
+                />
+                <div className="flex justify-end mt-1">
+                    <Button size="sm" onClick={submit} disabled={posting || !text.trim()} className="h-7 text-xs">
+                        {posting ? "posting…" : "Post"}
+                    </Button>
                 </div>
-            ))}
+            </div>
         </div>
     );
 }

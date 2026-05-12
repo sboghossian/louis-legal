@@ -15,7 +15,14 @@ import {
     Gift,
     SlidersHorizontal,
     FileText,
+    Home,
+    MessageSquareDashed,
+    Repeat,
+    Briefcase,
+    Settings as SettingsIcon,
+    Bell,
 } from "lucide-react";
+import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useChatHistoryContext } from "@/app/contexts/ChatHistoryContext";
@@ -26,15 +33,20 @@ import { SidebarChatItem } from "@/app/components/shared/SidebarChatItem";
 import { listProjects } from "@/app/lib/louisApi";
 
 const NAV_ITEMS = [
+    { href: "/home", label: "Home", icon: Home },
     { href: "/assistant", label: "Assistant", icon: MessageSquare },
+    { href: "/all-chats", label: "All Chats", icon: MessageSquareDashed },
     { href: "/projects", label: "Projects", icon: FolderOpen },
-    { href: "/tabular-reviews", label: "Tabular Review", icon: Table2 },
-    { href: "/workflows", label: "Workflows", icon: Library },
     { href: "/doc-workspace", label: "Doc Workspace", icon: FileText },
     { href: "/drafting-board", label: "Drafting Board", icon: Network },
-    { href: "/customize", label: "Customize", icon: SlidersHorizontal },
+    { href: "/efirm", label: "e-Firm", icon: Briefcase },
+    { href: "/routines", label: "Routines", icon: Repeat },
+    { href: "/tabular-reviews", label: "Tabular Review", icon: Table2 },
+    { href: "/workflows", label: "Workflows", icon: Library },
     { href: "/skills", label: "Skills", icon: Sparkles },
+    { href: "/customize", label: "Customize", icon: SlidersHorizontal },
     { href: "/referral", label: "Referral", icon: Gift },
+    { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 
 interface AppSidebarProps {
@@ -115,9 +127,14 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
         return profile.tier || "Free";
     };
 
+    const [notifOpen, setNotifOpen] = useState(false);
+
     if (!user) return null;
 
     return (
+        <>
+        <NotificationsDrawer open={notifOpen} onClose={() => setNotifOpen(false)} />
+
         <div
             className={`${
                 isOpen
@@ -147,6 +164,16 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                             </span>
                         </Link>
                     </div>
+                )}
+                {isOpen && (
+                    <button
+                        onClick={() => setNotifOpen(true)}
+                        className="relative h-9 w-9 p-2.5 items-center flex hover:bg-gray-100 rounded-md transition-colors"
+                        title="Notifications"
+                    >
+                        <Bell className="h-4 w-4" />
+                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+                    </button>
                 )}
                 <button
                     onClick={onToggle}
@@ -317,5 +344,6 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 )}
             </div>
         </div>
+        </>
     );
 }

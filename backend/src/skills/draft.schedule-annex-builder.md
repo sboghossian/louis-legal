@@ -1,21 +1,50 @@
 ---
 id: draft.schedule-annex-builder
-name: 'schedule annex builder'
+name: Schedule / Annex Builder
 category: draft
-priority: P3
-status: stub
+intent: [schedule, annex, exhibit, 'schedule template']
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Build schedules / annexes for contracts. Schedules house material that's voluminous, fact-specific, or likely to change without re-execution.
 
-# draft.schedule-annex-builder — STUB
+# Common schedules per contract type
 
-This skill is named in the Louis skills inventory but not yet authored.
+## MSA / SOW
+- Schedule 1: SOW template
+- Schedule 2: Pricing
+- Schedule 3: SLA
+- Schedule 4: Security measures
+- Schedule 5: Approved sub-contractors
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+## Share Purchase Agreement
+- Disclosure schedule (against reps & warranties) — the heart of the deal
+- Capitalization schedule
+- Working capital target
+- Schedule of material contracts
+- IP schedule
+- Real estate schedule
+- Employees schedule (top employees, severance exposure)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+## Lease
+- Premises plans / floor plans
+- Inventory + condition report
+- Permitted use
+- Service charge methodology
+
+## Employment
+- Job description
+- Compensation breakdown
+- Benefits summary
+- Restrictive covenant scope
+
+# Drafting principles
+1. **Number consecutively**: Schedule 1, Schedule 2…
+2. **Cross-reference precisely**: "As set out in Schedule 3"
+3. **Define schedule contents in the body** so the schedule's role is unambiguous
+4. **Update mechanism**: how can the schedule be amended? (Usually mutual written agreement; sometimes unilateral with notice)
+5. **Conflicts**: if schedule contradicts body, which prevails? State explicitly
+
+# Anti-pattern
+"To be agreed" placeholders — these are not binding until completed. If material, finalize before signing.

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T09:34:02.131Z",
+  "generated_at": "2026-05-12T10:11:53.314Z",
   "total": 973,
   "entries": [
     {
@@ -865,10 +865,15 @@
     },
     {
       "id": "draft.arbitration-request",
-      "name": "arbitration request",
+      "name": "Request for Arbitration",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "arbitration request",
+        "request for arbitration"
+      ],
+      "practice_area": "litigation",
       "filename": "draft.arbitration-request.md"
     },
     {
@@ -1029,10 +1034,14 @@
     },
     {
       "id": "draft.cookie-policy",
-      "name": "cookie policy",
+      "name": "Cookie Policy",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "cookie policy"
+      ],
+      "practice_area": "data-privacy",
       "filename": "draft.cookie-policy.md"
     },
     {
@@ -1118,18 +1127,34 @@
     },
     {
       "id": "draft.DPA-KSA-PDPL",
-      "name": "DPA KSA PDPL",
+      "name": "Data Processing Agreement (KSA PDPL)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "dpa ksa",
+        "data processing saudi"
+      ],
+      "practice_area": "data-privacy",
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "draft.DPA-KSA-PDPL.md"
     },
     {
       "id": "draft.DPA-UAE-PDPL",
-      "name": "DPA UAE PDPL",
+      "name": "Data Processing Agreement (UAE PDPL)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "dpa uae",
+        "data processing emirates"
+      ],
+      "practice_area": "data-privacy",
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "draft.DPA-UAE-PDPL.md"
     },
     {
@@ -1333,10 +1358,15 @@
     },
     {
       "id": "draft.IP-licensing",
-      "name": "IP licensing",
+      "name": "IP Licensing Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "ip license",
+        "licensing agreement"
+      ],
+      "practice_area": "ip",
       "filename": "draft.IP-licensing.md"
     },
     {
@@ -1510,18 +1540,28 @@
     },
     {
       "id": "draft.offer-letter",
-      "name": "offer letter",
+      "name": "Job Offer Letter",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "offer letter",
+        "employment offer"
+      ],
+      "practice_area": "employment",
       "filename": "draft.offer-letter.md"
     },
     {
       "id": "draft.patent-cover-letter",
-      "name": "patent cover letter",
+      "name": "Patent Application Cover Letter",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "patent application",
+        "patent cover letter"
+      ],
+      "practice_area": "ip",
       "filename": "draft.patent-cover-letter.md"
     },
     {
@@ -1569,10 +1609,15 @@
     },
     {
       "id": "draft.promissory-note",
-      "name": "promissory note",
+      "name": "Promissory Note",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "promissory note",
+        "iou"
+      ],
+      "practice_area": "banking",
       "filename": "draft.promissory-note.md"
     },
     {
@@ -1633,10 +1678,16 @@
     },
     {
       "id": "draft.schedule-annex-builder",
-      "name": "schedule annex builder",
+      "name": "Schedule / Annex Builder",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "schedule",
+        "annex",
+        "exhibit",
+        "schedule template"
+      ],
       "filename": "draft.schedule-annex-builder.md"
     },
     {
@@ -1735,18 +1786,29 @@
     },
     {
       "id": "draft.statement-of-defense",
-      "name": "statement of defense",
+      "name": "Statement of Defense",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "statement of defense",
+        "answer to complaint",
+        "defense filing"
+      ],
+      "practice_area": "litigation",
       "filename": "draft.statement-of-defense.md"
     },
     {
       "id": "draft.sublease",
-      "name": "sublease",
+      "name": "Sublease Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "sublease",
+        "subletting"
+      ],
+      "practice_area": "real-estate",
       "filename": "draft.sublease.md"
     },
     {
@@ -1785,10 +1847,15 @@
     },
     {
       "id": "draft.termination-letter",
-      "name": "termination letter",
+      "name": "Termination Letter",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "termination letter",
+        "dismissal letter"
+      ],
+      "practice_area": "employment",
       "filename": "draft.termination-letter.md"
     },
     {
@@ -1979,10 +2046,13 @@
     },
     {
       "id": "efirm.conflict-check",
-      "name": "conflict check",
+      "name": "eFirm: Conflict Check",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "conflict check"
+      ],
       "filename": "efirm.conflict-check.md"
     },
     {
@@ -2003,18 +2073,25 @@
     },
     {
       "id": "efirm.engagement-letter-draft",
-      "name": "engagement letter draft",
+      "name": "eFirm: Engagement Letter Draft",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "engagement letter efirm"
+      ],
       "filename": "efirm.engagement-letter-draft.md"
     },
     {
       "id": "efirm.fee-quote-builder",
-      "name": "fee quote builder",
+      "name": "eFirm: Fee Quote Builder",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "fee quote",
+        "billing structure"
+      ],
       "filename": "efirm.fee-quote-builder.md"
     },
     {
@@ -2027,10 +2104,14 @@
     },
     {
       "id": "efirm.matter-creation-flow",
-      "name": "matter creation flow",
+      "name": "eFirm: Matter Creation Flow",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "create matter",
+        "new matter"
+      ],
       "filename": "efirm.matter-creation-flow.md"
     },
     {
@@ -2267,10 +2348,13 @@
     },
     {
       "id": "eval.dataset.employment-prompts-30",
-      "name": "dataset · employment prompts 30",
+      "name": "Eval Dataset — Employment prompts (30)",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.dataset.employment-prompts-30.md"
     },
     {
@@ -2283,10 +2367,13 @@
     },
     {
       "id": "eval.dataset.NDA-prompts-30",
-      "name": "dataset · NDA prompts 30",
+      "name": "Eval Dataset — NDA prompts (30)",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.dataset.NDA-prompts-30.md"
     },
     {
@@ -2345,10 +2432,13 @@
     },
     {
       "id": "eval.rubric.completeness",
-      "name": "rubric · completeness",
+      "name": "Eval Rubric — Completeness",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.rubric.completeness.md"
     },
     {
@@ -2372,10 +2462,13 @@
     },
     {
       "id": "eval.rubric.jurisdiction-awareness",
-      "name": "rubric · jurisdiction awareness",
+      "name": "Eval Rubric — Jurisdiction Awareness",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.rubric.jurisdiction-awareness.md"
     },
     {
@@ -2554,10 +2647,13 @@
     },
     {
       "id": "heuristic.governing-law-must-match-forum",
-      "name": "governing law must match forum",
+      "name": "Governing Law Must Match Forum (or be explicit)",
       "category": "heuristic",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "heuristic.governing-law-must-match-forum.md"
     },
     {
@@ -2592,10 +2688,13 @@
     },
     {
       "id": "heuristic.party-names-consistency",
-      "name": "party names consistency",
+      "name": "Party Names Consistency",
       "category": "heuristic",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "heuristic.party-names-consistency.md"
     },
     {
@@ -3446,10 +3545,17 @@
     },
     {
       "id": "kb.arbitration-DIAC",
-      "name": "arbitration DIAC",
+      "name": "Knowledge Pack — DIAC Arbitration",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE",
+        "DIFC"
+      ],
       "filename": "kb.arbitration-DIAC.md"
     },
     {
@@ -3638,10 +3744,17 @@
     },
     {
       "id": "kb.data-privacy-GDPR",
-      "name": "data privacy GDPR",
+      "name": "Knowledge Pack — GDPR",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "EU",
+        "UK"
+      ],
       "filename": "kb.data-privacy-GDPR.md"
     },
     {
@@ -3678,26 +3791,44 @@
     },
     {
       "id": "kb.employment-law-KSA",
-      "name": "employment law KSA",
+      "name": "Knowledge Pack — KSA Labor Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.employment-law-KSA.md"
     },
     {
       "id": "kb.employment-law-LB",
-      "name": "employment law LB",
+      "name": "Knowledge Pack — Lebanon Employment Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "LB"
+      ],
       "filename": "kb.employment-law-LB.md"
     },
     {
       "id": "kb.employment-law-UAE",
-      "name": "employment law UAE",
+      "name": "Knowledge Pack — UAE Federal Employment Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.employment-law-UAE.md"
     },
     {
@@ -7317,10 +7448,14 @@
     },
     {
       "id": "review.GDPR-readiness",
-      "name": "GDPR readiness",
+      "name": "GDPR Readiness Review",
       "category": "review",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "gdpr readiness",
+        "gdpr audit"
+      ],
       "filename": "review.GDPR-readiness.md"
     },
     {
@@ -8235,10 +8370,14 @@
     },
     {
       "id": "tool.OCR-arabic",
-      "name": "OCR arabic",
+      "name": "Tool — OCR (Arabic)",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "ocr arabic",
+        "scanned arabic"
+      ],
       "filename": "tool.OCR-arabic.md"
     },
     {
@@ -8336,10 +8475,14 @@
     },
     {
       "id": "tool.web-search-orchestrator",
-      "name": "web search orchestrator",
+      "name": "Tool — Web Search Orchestrator",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "web search",
+        "search the web"
+      ],
       "filename": "tool.web-search-orchestrator.md"
     },
     {
@@ -8984,18 +9127,25 @@
     },
     {
       "id": "workflow.GDPR-implementation-pack",
-      "name": "GDPR implementation pack",
+      "name": "Workflow — GDPR Implementation Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "gdpr implementation"
+      ],
       "filename": "workflow.GDPR-implementation-pack.md"
     },
     {
       "id": "workflow.hire-employee-pack",
-      "name": "hire employee pack",
+      "name": "Workflow — Hire Employee Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "hire pack",
+        "onboard employee"
+      ],
       "filename": "workflow.hire-employee-pack.md"
     },
     {
