@@ -111,6 +111,8 @@ export interface AppearanceSettings {
     font?: AppearanceFont;
     density?: AppearanceDensity;
     fontScale?: number;
+    /** BCP-47 short tag of the user's preferred UI language. */
+    language?: string;
 }
 
 export interface FeedTopic {

@@ -24,6 +24,9 @@ export type AppearanceSettings = {
     | "system";
   density?: "comfortable" | "compact";
   fontScale?: number; // 0.85 – 1.25
+  // BCP-47 short tag of the user's preferred UI language. See
+  // frontend/src/contexts/LocaleContext.tsx for the supported set.
+  language?: string;
 };
 
 export type FeedTopic = {
@@ -62,6 +65,19 @@ const VALID_FONTS = new Set([
   "system",
 ]);
 const VALID_DENSITIES = new Set(["comfortable", "compact"]);
+const VALID_LANGUAGES = new Set([
+  "en",
+  "fr",
+  "ar",
+  "es",
+  "de",
+  "it",
+  "pt",
+  "zh",
+  "ja",
+  "ru",
+  "tr",
+]);
 
 function sanitizeAppearance(
   value: unknown,
@@ -99,6 +115,15 @@ function sanitizeAppearance(
     }
     const clamped = Math.min(1.25, Math.max(0.85, raw.fontScale));
     out.fontScale = Math.round(clamped * 100) / 100;
+  }
+  if ("language" in raw && raw.language !== undefined) {
+    if (
+      typeof raw.language !== "string" ||
+      !VALID_LANGUAGES.has(raw.language)
+    ) {
+      return { ok: false, detail: "Unsupported appearance.language" };
+    }
+    out.language = raw.language;
   }
   return { ok: true, appearance: out };
 }

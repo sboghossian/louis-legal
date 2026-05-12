@@ -7,10 +7,13 @@ import {
     THEMES,
     useAppearance,
 } from "@/contexts/AppearanceContext";
+import { LOCALES, useLocale } from "@/contexts/LocaleContext";
+import type { Locale } from "@/i18n/dictionaries";
 
 export function AppearanceTab() {
     const { appearance, setTheme, setFont, setDensity, setFontScale, reset } =
         useAppearance();
+    const { locale, setLocale, t } = useLocale();
 
     return (
         <div className="max-w-2xl space-y-8">
@@ -21,7 +24,30 @@ export function AppearanceTab() {
             </p>
 
             <section>
-                <h3 className="text-sm font-semibold mb-1">Theme</h3>
+                <h3 className="text-sm font-semibold mb-1">
+                    {t("appearance.language")}
+                </h3>
+                <p className="text-xs text-gray-500 mb-3">
+                    {t("appearance.language.description")}
+                </p>
+                <select
+                    value={locale}
+                    onChange={(e) => setLocale(e.target.value as Locale)}
+                    className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-200 w-full sm:w-auto"
+                >
+                    {LOCALES.map((l) => (
+                        <option key={l.code} value={l.code}>
+                            {l.native}
+                            {l.label !== l.native ? ` — ${l.label}` : ""}
+                        </option>
+                    ))}
+                </select>
+            </section>
+
+            <section>
+                <h3 className="text-sm font-semibold mb-1">
+                    {t("appearance.theme")}
+                </h3>
                 <p className="text-xs text-gray-500 mb-3">
                     The base palette for the workbench surface.
                 </p>
@@ -51,7 +77,9 @@ export function AppearanceTab() {
             </section>
 
             <section>
-                <h3 className="text-sm font-semibold mb-1">Font</h3>
+                <h3 className="text-sm font-semibold mb-1">
+                    {t("appearance.font")}
+                </h3>
                 <p className="text-xs text-gray-500 mb-3">
                     Applies everywhere the interface reads from{" "}
                     <code className="px-1 rounded bg-gray-100">
@@ -87,7 +115,9 @@ export function AppearanceTab() {
             </section>
 
             <section>
-                <h3 className="text-sm font-semibold mb-1">Density</h3>
+                <h3 className="text-sm font-semibold mb-1">
+                    {t("appearance.density")}
+                </h3>
                 <p className="text-xs text-gray-500 mb-3">
                     Tightens or relaxes vertical spacing on flexible
                     containers.
@@ -112,7 +142,9 @@ export function AppearanceTab() {
             </section>
 
             <section>
-                <h3 className="text-sm font-semibold mb-1">Text size</h3>
+                <h3 className="text-sm font-semibold mb-1">
+                    {t("appearance.text_size")}
+                </h3>
                 <p className="text-xs text-gray-500 mb-3">
                     Scales the base font size from 85% to 125%. Affects every
                     surface.
@@ -136,7 +168,9 @@ export function AppearanceTab() {
             </section>
 
             <section className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <h3 className="text-sm font-semibold mb-1">Preview</h3>
+                <h3 className="text-sm font-semibold mb-1">
+                    {t("appearance.preview")}
+                </h3>
                 <p className="text-xs text-gray-500 mb-3">
                     Updates as you change settings above.
                 </p>
@@ -164,7 +198,7 @@ export function AppearanceTab() {
                     className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-400"
                 >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    Reset to defaults
+                    {t("appearance.reset")}
                 </button>
             </div>
         </div>

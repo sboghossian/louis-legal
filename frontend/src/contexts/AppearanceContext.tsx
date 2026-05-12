@@ -70,7 +70,15 @@ export const DENSITIES: { id: AppearanceDensity; label: string }[] = [
     { id: "compact", label: "Compact" },
 ];
 
-function applyToDom(value: Required<AppearanceSettings>) {
+// `language` is intentionally not part of the AppearanceContext domain —
+// it's owned by LocaleContext. We narrow the type so adding optional
+// fields like `language` to AppearanceSettings doesn't break the
+// strict-required tuple of theme/font/density/fontScale here.
+type AppearanceCore = Required<
+    Pick<AppearanceSettings, "theme" | "font" | "density" | "fontScale">
+>;
+
+function applyToDom(value: AppearanceCore) {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
     root.setAttribute("data-theme", value.theme);
@@ -102,8 +110,8 @@ function writeLocal(value: AppearanceSettings) {
 
 function merge(
     ...sources: (AppearanceSettings | undefined)[]
-): Required<AppearanceSettings> {
-    const result = { ...APPEARANCE_DEFAULTS } as Required<AppearanceSettings>;
+): AppearanceCore {
+    const result = { ...APPEARANCE_DEFAULTS } as AppearanceCore;
     for (const s of sources) {
         if (!s) continue;
         if (s.theme) result.theme = s.theme;
@@ -120,7 +128,7 @@ function merge(
 }
 
 interface AppearanceContextValue {
-    appearance: Required<AppearanceSettings>;
+    appearance: AppearanceCore;
     setTheme: (theme: AppearanceTheme) => void;
     setFont: (font: AppearanceFont) => void;
     setDensity: (density: AppearanceDensity) => void;
@@ -137,7 +145,7 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     const { isAuthenticated } = useAuth();
 
     // Seed from localStorage so first render has the user's choices.
-    const [appearance, setAppearance] = useState<Required<AppearanceSettings>>(
+    const [appearance, setAppearance] = useState<AppearanceCore>(
         () => merge(readLocal()),
     );
 
@@ -154,7 +162,7 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     }, [isAuthenticated, profile?.appearance]);
 
     const persist = useCallback(
-        async (next: Required<AppearanceSettings>) => {
+        async (next: AppearanceCore) => {
             if (!isAuthenticated) return;
             try {
                 await updateUserProfile({ appearance: next });
@@ -167,7 +175,7 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     );
 
     const update = useCallback(
-        (partial: Partial<Required<AppearanceSettings>>) => {
+        (partial: Partial<AppearanceCore>) => {
             setAppearance((prev) => {
                 const next = { ...prev, ...partial };
                 void persist(next);

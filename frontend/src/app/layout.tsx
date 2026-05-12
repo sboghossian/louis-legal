@@ -3,6 +3,7 @@ import { Inter, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { APPEARANCE_BOOT_SCRIPT } from "@/contexts/AppearanceContext";
+import { LOCALE_BOOT_SCRIPT } from "@/contexts/LocaleContext";
 
 const inter = Inter({
     variable: "--font-inter",
@@ -65,6 +66,13 @@ export default function RootLayout({
                 <script
                     dangerouslySetInnerHTML={{
                         __html: APPEARANCE_BOOT_SCRIPT,
+                    }}
+                />
+                {/* Same for locale: set lang + dir attributes before the
+                    React tree paints so RTL layouts don't flash LTR. */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: LOCALE_BOOT_SCRIPT,
                     }}
                 />
             </head>

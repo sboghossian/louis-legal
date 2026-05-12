@@ -44,6 +44,7 @@ import {
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useChatHistoryContext } from "@/app/contexts/ChatHistoryContext";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
@@ -54,13 +55,15 @@ import { listProjects } from "@/app/lib/louisApi";
 
 interface NavItem {
     href: string;
-    label: string;
+    label: string;       // English fallback (also the translation source-of-truth)
+    labelKey: string;    // translation key — see src/i18n/dictionaries.ts
     icon: React.ComponentType<{ className?: string }>;
 }
 
 interface NavGroup {
     id: string;
     label: string;
+    labelKey: string;
     items: NavItem[];
     /** Whether this group is collapsed by default. */
     defaultCollapsed?: boolean;
@@ -68,71 +71,76 @@ interface NavGroup {
 
 // Pinned items always show (never collapsed). Top-of-mind daily actions.
 const PINNED: NavItem[] = [
-    { href: "/home",       label: "Home",        icon: Home },
-    { href: "/assistant",  label: "Assistant",   icon: MessageSquare },
-    { href: "/feed",       label: "Newsfeed",    icon: Rss },
-    { href: "/inbox",      label: "Inbox",       icon: Inbox },
-    { href: "/all-chats",  label: "All Chats",   icon: MessageSquareDashed },
-    { href: "/projects",   label: "Projects",    icon: FolderOpen },
+    { href: "/home",       label: "Home",      labelKey: "nav.home",      icon: Home },
+    { href: "/assistant",  label: "Assistant", labelKey: "nav.assistant", icon: MessageSquare },
+    { href: "/feed",       label: "Newsfeed",  labelKey: "nav.newsfeed",  icon: Rss },
+    { href: "/inbox",      label: "Inbox",     labelKey: "nav.inbox",     icon: Inbox },
+    { href: "/all-chats",  label: "All Chats", labelKey: "nav.all_chats", icon: MessageSquareDashed },
+    { href: "/projects",   label: "Projects",  labelKey: "nav.projects",  icon: FolderOpen },
 ];
 
 const NAV_GROUPS: NavGroup[] = [
     {
         id: "workbench",
         label: "Workbench",
+        labelKey: "nav.workbench",
         items: [
-            { href: "/doc-workspace",     label: "Doc Workspace",   icon: FileText },
-            { href: "/drafting-board",    label: "Drafting Board",  icon: Network },
-            { href: "/clauses",           label: "Clause Library",  icon: BookOpen },
-            { href: "/risk",              label: "Risk Scanner",    icon: ShieldAlert },
-            { href: "/citations",         label: "Citations",       icon: Quote },
-            { href: "/calculators/eos",   label: "EOS Calculator",  icon: Calculator },
-            { href: "/legal-flows",       label: "Legal Flows",     icon: Workflow },
-            { href: "/tabular-reviews",   label: "Tabular Review",  icon: Table2 },
-            { href: "/prompt-library",    label: "Prompt Library",  icon: BookMarked },
+            { href: "/doc-workspace",     label: "Doc Workspace",   labelKey: "nav.doc_workspace",   icon: FileText },
+            { href: "/drafting-board",    label: "Drafting Board",  labelKey: "nav.drafting_board",  icon: Network },
+            { href: "/clauses",           label: "Clause Library",  labelKey: "nav.clause_library",  icon: BookOpen },
+            { href: "/risk",              label: "Risk Scanner",    labelKey: "nav.risk_scanner",    icon: ShieldAlert },
+            { href: "/citations",         label: "Citations",       labelKey: "nav.citations",       icon: Quote },
+            { href: "/calculators/eos",   label: "EOS Calculator",  labelKey: "nav.eos_calculator",  icon: Calculator },
+            { href: "/legal-flows",       label: "Legal Flows",     labelKey: "nav.legal_flows",     icon: Workflow },
+            { href: "/tabular-reviews",   label: "Tabular Review",  labelKey: "nav.tabular_review",  icon: Table2 },
+            { href: "/prompt-library",    label: "Prompt Library",  labelKey: "nav.prompt_library",  icon: BookMarked },
         ],
     },
     {
         id: "practice",
         label: "Practice",
+        labelKey: "nav.practice",
         items: [
-            { href: "/matters",   label: "Matters",   icon: Briefcase },
-            { href: "/efirm",     label: "e-Firm",    icon: Building2 },
-            { href: "/routines",  label: "Routines",  icon: Repeat },
+            { href: "/matters",   label: "Matters",   labelKey: "nav.matters",   icon: Briefcase },
+            { href: "/efirm",     label: "e-Firm",    labelKey: "nav.efirm",     icon: Building2 },
+            { href: "/routines",  label: "Routines",  labelKey: "nav.routines",  icon: Repeat },
         ],
     },
     {
         id: "customize",
         label: "Customize",
+        labelKey: "nav.customize",
         defaultCollapsed: true,
         items: [
-            { href: "/customize",         label: "Preferences",   icon: SlidersHorizontal },
-            { href: "/skills",            label: "Skills",        icon: Sparkles },
-            { href: "/workflows",         label: "Workflows",     icon: Library },
-            { href: "/integrations",      label: "Integrations",  icon: Plug },
-            { href: "/settings/api-keys", label: "API Keys",      icon: Key },
+            { href: "/customize",         label: "Preferences",   labelKey: "nav.preferences",   icon: SlidersHorizontal },
+            { href: "/skills",            label: "Skills",        labelKey: "nav.skills",        icon: Sparkles },
+            { href: "/workflows",         label: "Workflows",     labelKey: "nav.workflows",     icon: Library },
+            { href: "/integrations",      label: "Integrations",  labelKey: "nav.integrations",  icon: Plug },
+            { href: "/settings/api-keys", label: "API Keys",      labelKey: "nav.api_keys",      icon: Key },
         ],
     },
     {
         id: "admin",
         label: "Admin",
+        labelKey: "nav.admin",
         defaultCollapsed: true,
         items: [
-            { href: "/billing",    label: "Billing",   icon: CreditCard },
-            { href: "/upgrade",    label: "Upgrade",   icon: Zap },
-            { href: "/team",       label: "Team",      icon: Users },
-            { href: "/settings",   label: "Account",   icon: SettingsIcon },
+            { href: "/billing",    label: "Billing",   labelKey: "nav.billing",   icon: CreditCard },
+            { href: "/upgrade",    label: "Upgrade",   labelKey: "nav.upgrade",   icon: Zap },
+            { href: "/team",       label: "Team",      labelKey: "nav.team",      icon: Users },
+            { href: "/settings",   label: "Account",   labelKey: "nav.account",   icon: SettingsIcon },
         ],
     },
     {
         id: "more",
         label: "More",
+        labelKey: "nav.more",
         defaultCollapsed: true,
         items: [
-            { href: "/help",      label: "Help",      icon: HelpCircle },
-            { href: "/docs",      label: "Docs",      icon: BookOpenCheck },
-            { href: "/referral",  label: "Referral",  icon: Gift },
-            { href: "/about",     label: "About",     icon: Info },
+            { href: "/help",      label: "Help",      labelKey: "nav.help",      icon: HelpCircle },
+            { href: "/docs",      label: "Docs",      labelKey: "nav.docs",      icon: BookOpenCheck },
+            { href: "/referral",  label: "Referral",  labelKey: "nav.referral",  icon: Gift },
+            { href: "/about",     label: "About",     labelKey: "nav.about",     icon: Info },
         ],
     },
 ];
@@ -145,6 +153,7 @@ interface AppSidebarProps {
 export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     const { user } = useAuth();
     const { profile } = useUserProfile();
+    const { t } = useLocale();
     const { chats, currentChatId, setCurrentChatId } = useChatHistoryContext();
     const router = useRouter();
     const pathname = usePathname();
@@ -359,13 +368,14 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
 
             {/* Nav: pinned items first */}
             <div className="overflow-y-auto flex-1 min-h-0 pb-2">
-                {PINNED.map(({ href, label, icon: Icon }) => {
+                {PINNED.map(({ href, label, labelKey, icon: Icon }) => {
+                    const text = t(labelKey) || label;
                     const isActive = pathname === href || pathname.startsWith(href + "/");
                     return (
                         <div key={href} className="py-0.5 px-2.5">
                             <button
                                 onClick={() => router.push(href)}
-                                title={!isOpen ? label : ""}
+                                title={!isOpen ? text : ""}
                                 className={`w-full h-9 flex items-center gap-3 px-2.5 py-2 rounded-md transition-colors text-left ${
                                     isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
                                 } ${!isOpen ? "hidden md:flex" : "flex"}`}
@@ -373,7 +383,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-gray-900" : "text-black"}`} />
                                 {isOpen && (
                                     <span className={`text-sm font-medium ${shouldAnimate ? "sidebar-fade-in-2" : ""}`}>
-                                        {label}
+                                        {text}
                                     </span>
                                 )}
                             </button>
@@ -391,23 +401,24 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     onClick={() => toggleGroup(group.id)}
                                     className="w-full px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500 hover:text-gray-700 transition-colors"
                                 >
-                                    <span>{group.label}</span>
+                                    <span>{t(group.labelKey) || group.label}</span>
                                     <ChevronRight className={`h-3 w-3 transition-transform ${!collapsed ? "rotate-90" : ""}`} />
                                 </button>
                             )}
-                            {(!collapsed || !isOpen) && group.items.map(({ href, label, icon: Icon }) => {
+                            {(!collapsed || !isOpen) && group.items.map(({ href, label, labelKey, icon: Icon }) => {
+                                const text = t(labelKey) || label;
                                 const isActive = pathname === href || pathname.startsWith(href + "/");
                                 return (
                                     <div key={href} className="py-0.5 px-2.5">
                                         <button
                                             onClick={() => router.push(href)}
-                                            title={!isOpen ? label : ""}
+                                            title={!isOpen ? text : ""}
                                             className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors text-left ${
                                                 isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
                                             } ${!isOpen ? "hidden md:flex" : "flex"}`}
                                         >
                                             <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
-                                            {isOpen && <span className="text-[13px]">{label}</span>}
+                                            {isOpen && <span className="text-[13px]">{text}</span>}
                                         </button>
                                     </div>
                                 );
