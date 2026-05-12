@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Search, Activity, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Sparkles, Search, Activity, RefreshCw, Plus, Pencil, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -61,6 +62,7 @@ interface RouteStats {
 }
 
 export default function SkillsPage() {
+    const router = useRouter();
     const [view, setView] = useState<"library" | "observability">("library");
     const [entries, setEntries] = useState<RegistryEntry[]>([]);
     const [loading, setLoading] = useState(true);
@@ -199,6 +201,10 @@ export default function SkillsPage() {
                             <Activity className="w-3.5 h-3.5 mr-1" />
                             Router
                         </Button>
+                        <Button size="sm" className="h-7 text-xs" onClick={() => router.push("/skills/new")}>
+                            <Plus className="w-3.5 h-3.5 mr-1" />
+                            New
+                        </Button>
                     </div>
                     <div className="relative">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -296,6 +302,12 @@ export default function SkillsPage() {
                             <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(selected.frontmatter.id as string)}>
                                 Copy ID
                             </Button>
+                            <Button variant="outline" size="sm" onClick={() => router.push(`/skills/${encodeURIComponent(selected.frontmatter.id as string)}/edit`)}>
+                                <Pencil className="w-3.5 h-3.5 mr-1" /> Edit
+                            </Button>
+                            {!!(selected.frontmatter as unknown as Record<string, unknown>).custom && (
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-700 self-center">custom</Badge>
+                            )}
                         </div>
                     </div>
                 )}

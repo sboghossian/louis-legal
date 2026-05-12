@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChatHistoryProvider } from "@/app/contexts/ChatHistoryContext";
 import { SidebarContext } from "@/app/contexts/SidebarContext";
 import { AppSidebar } from "@/app/components/shared/AppSidebar";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+// Paths that don't require completed onboarding
+const ONBOARDING_EXEMPT = ["/onboarding", "/about", "/docs", "/login", "/signup"];
 
 export default function LouisLayout({
     children,
@@ -15,6 +20,8 @@ export default function LouisLayout({
 }) {
     const { isAuthenticated, authLoading } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
+    const [onboardingChecked, setOnboardingChecked] = useState(false);
 
     const [isSidebarOpenDesktop, setIsSidebarOpenDesktop] = useState(() => {
         if (typeof window !== "undefined") {
@@ -63,6 +70,35 @@ export default function LouisLayout({
             router.push("/login");
         }
     }, [authLoading, isAuthenticated, router]);
+
+    // Onboarding gating: check if user has completed onboarding; if not + on a non-exempt path, redirect.
+    useEffect(() => {
+        if (authLoading || !isAuthenticated) return;
+        if (onboardingChecked) return;
+        if (ONBOARDING_EXEMPT.some(p => pathname?.startsWith(p))) {
+            setOnboardingChecked(true);
+            return;
+        }
+        // Fast-path: localStorage flag set on completion
+        if (typeof window !== "undefined" && localStorage.getItem("louis.onboarded") === "true") {
+            setOnboardingChecked(true);
+            return;
+        }
+        (async () => {
+            try {
+                const r = await fetch(`${API_BASE}/api/onboarding/me`, { headers: { "x-user-id": "demo" } });
+                if (r.ok) {
+                    const j = await r.json();
+                    if (!j.complete) {
+                        router.push("/onboarding");
+                    } else if (typeof window !== "undefined") {
+                        localStorage.setItem("louis.onboarded", "true");
+                    }
+                }
+            } catch { /* backend offline — allow */ }
+            setOnboardingChecked(true);
+        })();
+    }, [authLoading, isAuthenticated, pathname, router, onboardingChecked]);
 
     if (authLoading) {
         return (

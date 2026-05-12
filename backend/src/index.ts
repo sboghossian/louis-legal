@@ -22,6 +22,9 @@ import { riskRouter } from "./routes/risk";
 import { legalFlowsRouter } from "./routes/legalFlows";
 import { routinesRouter } from "./routes/routines";
 import { referralRouter } from "./routes/referral";
+import { onboardingRouter } from "./routes/onboarding";
+import { apiKeysRouter } from "./routes/apiKeys";
+import { integrationsRouter } from "./routes/integrations";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -140,6 +143,9 @@ app.use("/api/risk", riskRouter);
 app.use("/api/legal-flows", legalFlowsRouter);
 app.use("/api/routines", routinesRouter);
 app.use("/api/referral", referralRouter);
+app.use("/api/onboarding", onboardingRouter);
+app.use("/api/api-keys", apiKeysRouter);
+app.use("/api/integrations", integrationsRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 

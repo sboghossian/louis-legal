@@ -26,6 +26,11 @@ import {
     Quote,
     ShieldAlert,
     Workflow,
+    Info,
+    BookOpenCheck,
+    Plug,
+    Key,
+    Grid3x3,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -55,8 +60,11 @@ const NAV_ITEMS = [
     { href: "/citations", label: "Citations", icon: Quote },
     { href: "/risk", label: "Risk Scanner", icon: ShieldAlert },
     { href: "/legal-flows", label: "Legal Flows", icon: Workflow },
+    { href: "/integrations", label: "Integrations", icon: Plug },
     { href: "/customize", label: "Customize", icon: SlidersHorizontal },
     { href: "/referral", label: "Referral", icon: Gift },
+    { href: "/docs", label: "Docs", icon: BookOpenCheck },
+    { href: "/about", label: "About", icon: Info },
     { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 
@@ -139,6 +147,14 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     };
 
     const [notifOpen, setNotifOpen] = useState(false);
+    const [launcherOpen, setLauncherOpen] = useState(false);
+
+    useEffect(() => {
+        if (!launcherOpen) return;
+        const close = () => setLauncherOpen(false);
+        document.addEventListener("click", close);
+        return () => document.removeEventListener("click", close);
+    }, [launcherOpen]);
 
     if (!user) return null;
 
@@ -174,6 +190,63 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 Louis
                             </span>
                         </Link>
+                    </div>
+                )}
+                {isOpen && (
+                    <div className="relative">
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setLauncherOpen(o => !o); }}
+                            className="relative h-9 w-9 p-2.5 items-center flex hover:bg-gray-100 rounded-md transition-colors"
+                            title="HAQQ products"
+                        >
+                            <Grid3x3 className="h-4 w-4" />
+                        </button>
+                        {launcherOpen && (
+                            <div className="absolute left-0 top-full mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2" onClick={e => e.stopPropagation()}>
+                                <div className="text-[10px] uppercase tracking-wide font-semibold text-gray-500 px-2 py-1">HAQQ products</div>
+                                <a href="https://louis.haqq.ai" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-blue-50 text-sm">
+                                    <div className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-blue-700 text-[10px] font-bold">L</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-medium">Louis</div>
+                                        <div className="text-[10px] text-gray-500">Legal AI · you are here</div>
+                                    </div>
+                                </a>
+                                <a href="https://justinian.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                    <div className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-purple-700 text-[10px] font-bold">J</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-medium">Justinian</div>
+                                        <div className="text-[10px] text-gray-500">Legal education</div>
+                                    </div>
+                                </a>
+                                <a href="https://justice.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                    <div className="w-6 h-6 rounded bg-emerald-100 flex items-center justify-center text-emerald-700 text-[10px] font-bold">J</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-medium">Justice</div>
+                                        <div className="text-[10px] text-gray-500">Access to law</div>
+                                    </div>
+                                </a>
+                                <a href="https://openclaw.org" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                    <div className="w-6 h-6 rounded bg-amber-100 flex items-center justify-center text-amber-700 text-[10px] font-bold">O</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-medium">OpenClaw</div>
+                                        <div className="text-[10px] text-gray-500">Open-source case management</div>
+                                    </div>
+                                </a>
+                                <div className="border-t border-gray-100 my-1" />
+                                <Link href="/settings/api-keys" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                    <Key className="w-3.5 h-3.5" /> API keys
+                                </Link>
+                                <Link href="/integrations" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                    <Plug className="w-3.5 h-3.5" /> Integrations
+                                </Link>
+                                <Link href="/docs" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                    <BookOpenCheck className="w-3.5 h-3.5" /> Docs
+                                </Link>
+                                <Link href="/about" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                    <Info className="w-3.5 h-3.5" /> About Louis
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 )}
                 {isOpen && (
