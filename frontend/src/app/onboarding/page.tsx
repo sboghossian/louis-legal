@@ -7,6 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LouisMark } from "@/components/brand/louis-mark";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+
+async function authHeaders(): Promise<Record<string, string>> {
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    return session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -116,18 +127,31 @@ export default function OnboardingPage() {
     const [language, setLanguage] = useState<string>("en");
     const [submitting, setSubmitting] = useState(false);
 
+    const { user } = useAuth();
+
     // Check if already onboarded; if so, redirect to home
     useEffect(() => {
         (async () => {
             try {
-                const r = await fetch(`${API_BASE}/api/onboarding/me`, { headers: { "x-user-id": "demo" } });
+                const headers = await authHeaders();
+                if (!headers.Authorization) return; // not signed in
+                const r = await fetch(`${API_BASE}/api/onboarding/me`, {
+                    headers,
+                });
+                if (!r.ok) return;
                 const j = await r.json();
                 if (j.complete) {
+                    if (user?.id && typeof window !== "undefined") {
+                        localStorage.setItem(
+                            `louis.onboarded:${user.id}`,
+                            "true",
+                        );
+                    }
                     router.replace("/home");
                 }
             } catch { /* not signed in or backend offline — proceed */ }
         })();
-    }, [router]);
+    }, [router, user?.id]);
 
     const stepIdx = STEPS.indexOf(step);
     const progress = Math.round((stepIdx / (STEPS.length - 1)) * 100);
@@ -149,9 +173,10 @@ export default function OnboardingPage() {
     async function complete() {
         setSubmitting(true);
         try {
+            const headers = await authHeaders();
             await fetch(`${API_BASE}/api/onboarding/me/complete`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { "Content-Type": "application/json", ...headers },
                 body: JSON.stringify({
                     referralSource: source,
                     role,
@@ -162,8 +187,8 @@ export default function OnboardingPage() {
                     preferredLanguage: language,
                 }),
             });
-            if (typeof window !== "undefined") {
-                localStorage.setItem("louis.onboarded", "true");
+            if (user?.id && typeof window !== "undefined") {
+                localStorage.setItem(`louis.onboarded:${user.id}`, "true");
             }
             router.replace("/home");
         } finally {

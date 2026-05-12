@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ChatHistoryProvider } from "@/app/contexts/ChatHistoryContext";
 import { SidebarContext } from "@/app/contexts/SidebarContext";
 import { AppSidebar } from "@/app/components/shared/AppSidebar";
+import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -19,7 +20,7 @@ export default function LouisLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { isAuthenticated, authLoading } = useAuth();
+    const { isAuthenticated, authLoading, user } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const [onboardingChecked, setOnboardingChecked] = useState(false);
@@ -74,32 +75,46 @@ export default function LouisLayout({
 
     // Onboarding gating: check if user has completed onboarding; if not + on a non-exempt path, redirect.
     useEffect(() => {
-        if (authLoading || !isAuthenticated) return;
+        if (authLoading || !isAuthenticated || !user?.id) return;
         if (onboardingChecked) return;
         if (ONBOARDING_EXEMPT.some(p => pathname?.startsWith(p))) {
             setOnboardingChecked(true);
             return;
         }
-        // Fast-path: localStorage flag set on completion
-        if (typeof window !== "undefined" && localStorage.getItem("louis.onboarded") === "true") {
+        // Fast-path: per-user localStorage flag. Namespaced by user id so a
+        // shared device doesn't leak one user's "onboarded" state to the next.
+        const flagKey = `louis.onboarded:${user.id}`;
+        if (typeof window !== "undefined" && localStorage.getItem(flagKey) === "true") {
             setOnboardingChecked(true);
             return;
         }
         (async () => {
             try {
-                const r = await fetch(`${API_BASE}/api/onboarding/me`, { headers: { "x-user-id": "demo" } });
+                const { data: { session } } = await supabase.auth.getSession();
+                const token = session?.access_token;
+                if (!token) {
+                    // Auth context says we're signed in but there's no
+                    // active token — let the user proceed (the backend
+                    // will reject anything that requires a real session
+                    // and the rest of the app handles that path).
+                    setOnboardingChecked(true);
+                    return;
+                }
+                const r = await fetch(`${API_BASE}/api/onboarding/me`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
                 if (r.ok) {
                     const j = await r.json();
                     if (!j.complete) {
                         router.push("/onboarding");
                     } else if (typeof window !== "undefined") {
-                        localStorage.setItem("louis.onboarded", "true");
+                        localStorage.setItem(flagKey, "true");
                     }
                 }
             } catch { /* backend offline — allow */ }
             setOnboardingChecked(true);
         })();
-    }, [authLoading, isAuthenticated, pathname, router, onboardingChecked]);
+    }, [authLoading, isAuthenticated, user?.id, pathname, router, onboardingChecked]);
 
     if (authLoading) {
         return (

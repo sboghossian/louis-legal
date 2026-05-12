@@ -1,25 +1,34 @@
 import { Router, Request, Response } from "express";
 import { getProfile, upsertProfile, isComplete, listProfiles } from "../onboarding/_store";
+import { requireAuth } from "../middleware/auth";
 
 export const onboardingRouter = Router();
 
+// Prefer the verified JWT userId (set by requireAuth). The legacy
+// `x-user-id` header is honored only when no token was attached, so
+// authenticated calls always key on the real Supabase user id and not
+// the shared "demo" placeholder.
 function userIdFrom(req: Request, res: Response): string {
-  return (req.headers["x-user-id"] as string) || (res.locals?.userId as string) || "demo";
+  return (
+    (res.locals?.userId as string) ||
+    (req.headers["x-user-id"] as string) ||
+    "demo"
+  );
 }
 
-onboardingRouter.get("/me", (req: Request, res: Response) => {
+onboardingRouter.get("/me", requireAuth, (req: Request, res: Response) => {
   const userId = userIdFrom(req, res);
   const profile = getProfile(userId);
   res.json({ profile: profile || null, complete: !!profile?.completedAt });
 });
 
-onboardingRouter.patch("/me", (req: Request, res: Response) => {
+onboardingRouter.patch("/me", requireAuth, (req: Request, res: Response) => {
   const userId = userIdFrom(req, res);
   const profile = upsertProfile(userId, req.body ?? {});
   res.json({ profile, complete: !!profile.completedAt });
 });
 
-onboardingRouter.post("/me/complete", (req: Request, res: Response) => {
+onboardingRouter.post("/me/complete", requireAuth, (req: Request, res: Response) => {
   const userId = userIdFrom(req, res);
   const profile = upsertProfile(userId, { ...(req.body ?? {}), completedAt: new Date().toISOString() });
   res.json({ profile, complete: true });
