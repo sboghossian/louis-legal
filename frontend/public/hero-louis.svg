@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Louis hero illustration">
+  <!--
+    Hero artwork for the Louis landing page.
+
+    Inspired by Mike's hot-linked Monet — but rendered as a self-
+    contained SVG so the landing has no external image dependency. The
+    palette is the Louis brand:
+      cream  #fbf8f2  (background)
+      paper  #f3ead4  (mid sheet)
+      ink    #1f2937  (silhouettes)
+      gold   #c9a961  (accent rule + dust)
+      soft   #e7e2d6  (rule, divider)
+
+    Composition reads as a stylized law library at dusk — pillars,
+    arched windows behind, an open codex centered, a gold-leaf rule
+    encircling a serif "L" crest. The user can drop in a real
+    AI-generated hero image by replacing this file.
+  -->
+
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#faf6ea"/>
+      <stop offset="55%" stop-color="#f3ead4"/>
+      <stop offset="100%" stop-color="#e7d6a8"/>
+    </linearGradient>
+
+    <radialGradient id="glow" cx="78%" cy="22%" r="55%">
+      <stop offset="0%" stop-color="#fff3c1" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="#fff3c1" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#fff3c1" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="floor" cx="50%" cy="100%" r="80%">
+      <stop offset="0%" stop-color="#d9c794"/>
+      <stop offset="100%" stop-color="#bfa56b" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffaf0"/>
+      <stop offset="100%" stop-color="#f0e3bf"/>
+    </linearGradient>
+
+    <linearGradient id="pageShadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f2937" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#1f2937" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="paper" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="noise"/>
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 0.12   0 0 0 0 0.10   0 0 0 0 0.06   0 0 0 0.05 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
+    </filter>
+  </defs>
+
+  <!-- Sky / wall -->
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+
+  <!-- Top-right warm glow -->
+  <rect width="1600" height="1000" fill="url(#glow)"/>
+
+  <!-- Paper grain overlay -->
+  <rect width="1600" height="1000" filter="url(#paper)" opacity="0.7"/>
+
+  <!-- Floor warm pool -->
+  <rect y="650" width="1600" height="350" fill="url(#floor)"/>
+
+  <!-- Distant arched windows behind pillars -->
+  <g opacity="0.32" fill="#1f2937">
+    <path d="M 230 220 q 0 -110 110 -110 q 110 0 110 110 v 270 h -220 z"/>
+    <path d="M 660 220 q 0 -110 110 -110 q 110 0 110 110 v 270 h -220 z"/>
+    <path d="M 1090 220 q 0 -110 110 -110 q 110 0 110 110 v 270 h -220 z"/>
+  </g>
+
+  <!-- Window highlights (soft inner glow) -->
+  <g opacity="0.42" fill="#fff3c1">
+    <path d="M 250 240 q 0 -90 90 -90 q 90 0 90 90 v 250 h -180 z"/>
+    <path d="M 680 240 q 0 -90 90 -90 q 90 0 90 90 v 250 h -180 z"/>
+    <path d="M 1110 240 q 0 -90 90 -90 q 90 0 90 90 v 250 h -180 z"/>
+  </g>
+
+  <!-- Foreground pillars (dark silhouettes) -->
+  <g fill="#1f2937" opacity="0.62">
+    <rect x="80"   y="60"  width="60" height="780" rx="2"/>
+    <rect x="510"  y="60"  width="60" height="780" rx="2"/>
+    <rect x="940"  y="60"  width="60" height="780" rx="2"/>
+    <rect x="1370" y="60"  width="60" height="780" rx="2"/>
+    <!-- pillar bases -->
+    <rect x="60"   y="820" width="100" height="22" rx="3"/>
+    <rect x="490"  y="820" width="100" height="22" rx="3"/>
+    <rect x="920"  y="820" width="100" height="22" rx="3"/>
+    <rect x="1350" y="820" width="100" height="22" rx="3"/>
+    <!-- pillar caps -->
+    <rect x="60"   y="50"  width="100" height="18" rx="3"/>
+    <rect x="490"  y="50"  width="100" height="18" rx="3"/>
+    <rect x="920"  y="50"  width="100" height="18" rx="3"/>
+    <rect x="1350" y="50"  width="100" height="18" rx="3"/>
+  </g>
+
+  <!-- Floor table / lectern (dark plank running across) -->
+  <rect x="0" y="730" width="1600" height="14" fill="#3b3025"/>
+  <rect x="0" y="744" width="1600" height="6"  fill="#1f1611"/>
+
+  <!-- Open codex (book) centered on the lectern -->
+  <g transform="translate(560, 530)">
+    <!-- Book shadow on floor -->
+    <ellipse cx="240" cy="220" rx="290" ry="18" fill="#1f2937" opacity="0.18" filter="url(#softShadow)"/>
+
+    <!-- Cover beneath pages -->
+    <path d="M 0 70 L 240 50 L 480 70 L 480 220 L 240 200 L 0 220 Z" fill="#5b3a1a"/>
+    <path d="M 0 70 L 240 50 L 480 70 L 480 90 L 240 70 L 0 90 Z" fill="#7a4f24"/>
+
+    <!-- Left page -->
+    <path d="M 4 76 L 240 56 L 240 200 L 4 220 Z" fill="url(#page)"/>
+    <!-- Right page -->
+    <path d="M 240 56 L 476 76 L 476 220 L 240 200 Z" fill="url(#page)"/>
+    <!-- page crease shadow -->
+    <path d="M 236 56 L 240 56 L 240 200 L 236 200 Z" fill="url(#pageShadow)"/>
+    <path d="M 240 56 L 244 56 L 244 200 L 240 200 Z" fill="url(#pageShadow)"/>
+
+    <!-- Page rules (serif text suggestion) -->
+    <g stroke="#7c6233" stroke-width="1.2" opacity="0.55">
+      <line x1="20"  y1="90"  x2="220" y2="76"/>
+      <line x1="20"  y1="106" x2="220" y2="92"/>
+      <line x1="20"  y1="122" x2="220" y2="108"/>
+      <line x1="20"  y1="138" x2="220" y2="124"/>
+      <line x1="20"  y1="154" x2="220" y2="140"/>
+      <line x1="20"  y1="170" x2="220" y2="156"/>
+      <line x1="20"  y1="186" x2="220" y2="172"/>
+      <line x1="260" y1="76"  x2="460" y2="90"/>
+      <line x1="260" y1="92"  x2="460" y2="106"/>
+      <line x1="260" y1="108" x2="460" y2="122"/>
+      <line x1="260" y1="124" x2="460" y2="138"/>
+      <line x1="260" y1="140" x2="460" y2="154"/>
+      <line x1="260" y1="156" x2="460" y2="170"/>
+      <line x1="260" y1="172" x2="460" y2="186"/>
+    </g>
+
+    <!-- Drop cap "L" on left page -->
+    <text x="40" y="100" font-family="EB Garamond, Garamond, Georgia, serif" font-size="48" font-weight="600" fill="#7a4f24">L</text>
+  </g>
+
+  <!-- Gold-leaf rule encircling the Louis crest -->
+  <g transform="translate(800, 380)">
+    <circle r="170" fill="none" stroke="#c9a961" stroke-width="1.5" opacity="0.85"/>
+    <circle r="180" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.5"/>
+    <circle r="190" fill="none" stroke="#c9a961" stroke-width="0.3" opacity="0.3"/>
+    <!-- four cardinal serifs -->
+    <g fill="#c9a961" opacity="0.85">
+      <rect x="-2" y="-198" width="4" height="10"/>
+      <rect x="-2" y="188"  width="4" height="10"/>
+      <rect x="-198" y="-2" width="10" height="4"/>
+      <rect x="188"  y="-2" width="10" height="4"/>
+    </g>
+  </g>
+
+  <!-- Louis crest (serif L in hairline circle) -->
+  <g transform="translate(800, 380) scale(4)">
+    <circle cx="0" cy="0" r="28" fill="#fbf8f2" stroke="#1f2937" stroke-width="1.25"/>
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#c9a961" stroke-width="0.6" opacity="0.85"/>
+    <g fill="#1f2937">
+      <path d="M -8 -14 L -8 12 L -6.4 12 L -6.4 -14 Z"/>
+      <path d="M -10.6 -14 L -10.6 -12.8 L -3.8 -12.8 L -3.8 -14 Z" opacity="0.95"/>
+      <path d="M -10.6 10.8 L -10.6 12 L -6.4 12 L -6.4 10.8 Z" opacity="0.95"/>
+      <path d="M -8 10.8 L 10.4 10.8 L 10.4 12 L -8 12 Z"/>
+      <path d="M 10.4 9.6 L 10.4 13.2 L 11.4 13.2 L 11.4 9.6 Z" opacity="0.9"/>
+      <circle cx="10.4" cy="-12" r="1.2" opacity="0.8"/>
+    </g>
+  </g>
+
+  <!-- Dust / particles — soft gold motes -->
+  <g fill="#c9a961" opacity="0.4">
+    <circle cx="160"  cy="180" r="2"/>
+    <circle cx="300"  cy="120" r="1.5"/>
+    <circle cx="420"  cy="220" r="2.5"/>
+    <circle cx="980"  cy="160" r="2"/>
+    <circle cx="1100" cy="240" r="1.5"/>
+    <circle cx="1240" cy="120" r="2"/>
+    <circle cx="1340" cy="300" r="2.5"/>
+    <circle cx="240"  cy="400" r="1.5"/>
+    <circle cx="1480" cy="200" r="2"/>
+    <circle cx="180"  cy="600" r="1.5"/>
+    <circle cx="1300" cy="540" r="2"/>
+    <circle cx="1480" cy="440" r="1.5"/>
+  </g>
+
+  <!-- Subtle vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
+    <stop offset="60%" stop-color="#000000" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#000000" stop-opacity="0.18"/>
+  </radialGradient>
+  <rect width="1600" height="1000" fill="url(#vignette)"/>
+</svg>
