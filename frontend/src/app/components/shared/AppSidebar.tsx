@@ -38,6 +38,7 @@ import {
     CreditCard,
     Users,
     Zap,
+    LogOut,
     Rss,
     Star,
 } from "lucide-react";
@@ -185,7 +186,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const { profile } = useUserProfile();
     const { t } = useLocale();
     const { chats, currentChatId, setCurrentChatId } = useChatHistoryContext();
@@ -686,7 +687,51 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
                                 >
                                     <User className="h-4 w-4" />
-                                    Account Settings
+                                    {t("nav.account") || "Account Settings"}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        router.push("/settings");
+                                        setIsDropdownOpen(false);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
+                                >
+                                    <SettingsIcon className="h-4 w-4" />
+                                    {t("nav.settings") || "Settings"}
+                                </button>
+                                <div className="my-1 h-px bg-gray-100" />
+                                <button
+                                    onClick={async () => {
+                                        setIsDropdownOpen(false);
+                                        try {
+                                            await signOut();
+                                        } catch (e) {
+                                            console.error(
+                                                "[sidebar] signOut failed",
+                                                e,
+                                            );
+                                        }
+                                        // Drop the per-device fast-path so the
+                                        // next account on this browser doesn't
+                                        // inherit the onboarding-skip flag.
+                                        if (
+                                            typeof window !== "undefined" &&
+                                            user?.id
+                                        ) {
+                                            try {
+                                                window.localStorage.removeItem(
+                                                    `louis.onboarded:${user.id}`,
+                                                );
+                                            } catch {
+                                                /* ignore */
+                                            }
+                                        }
+                                        router.push("/login");
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-md"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    {t("action.sign_out") || "Sign out"}
                                 </button>
                             </div>
                         )}

@@ -346,28 +346,56 @@ export default function CustomizePage() {
                 console.error(e);
             }
 
-            // Skills: load a curated subset from the registry — heuristic +
-            // persona + safety + drafting top-level toggles. Falls back to
-            // a small static list if the registry endpoint is unreachable.
+            // Skills: load a curated subset for the toggles hub. Every skill
+            // in the registry is currently at status="drafted" (the
+            // "shipped" label is reserved for a later editorial pass), so
+            // we DON'T filter by status — that was leaving the hub empty.
+            // Instead we sort by priority (P0/P1 first), prefer the
+            // top-level routing categories (heuristic/persona/safety/
+            // output/draft/review), and cap at the 48 highest-leverage
+            // entries — matching the count shown in the HAQQ screenshot.
             try {
-                const r = await fetch(`${API_BASE}/api/skills?status=shipped`);
+                const r = await fetch(`${API_BASE}/api/skills`);
                 if (r.ok) {
                     const json = await r.json();
-                    const top: CustomizeItem[] = (json.entries ?? [])
+                    const entries = (json.entries ?? []) as {
+                        id: string;
+                        name: string;
+                        category: string;
+                        priority?: string;
+                    }[];
+                    const TOP_CATS = new Set([
+                        "heuristic",
+                        "persona",
+                        "safety",
+                        "output",
+                        "draft",
+                        "review",
+                        "research",
+                        "conversation",
+                    ]);
+                    const PRIO_RANK: Record<string, number> = {
+                        P0: 0,
+                        P1: 1,
+                        P2: 2,
+                        P3: 3,
+                    };
+                    const ranked = entries
+                        .map((e) => ({
+                            entry: e,
+                            score:
+                                (PRIO_RANK[e.priority ?? "P3"] ?? 3) * 10 +
+                                (TOP_CATS.has(e.category) ? 0 : 5),
+                        }))
+                        .sort((a, b) => a.score - b.score)
                         .slice(0, 48)
-                        .map(
-                            (e: {
-                                id: string;
-                                name: string;
-                                category: string;
-                            }) => ({
-                                key: `skill.${e.id}`,
-                                label: e.name || e.id,
-                                description: `${e.category} skill`,
-                                icon: Sparkles,
-                            }),
-                        );
-                    if (top.length) setSkills(top);
+                        .map(({ entry }) => ({
+                            key: `skill.${entry.id}`,
+                            label: entry.name || entry.id,
+                            description: `${entry.category} skill`,
+                            icon: Sparkles,
+                        }));
+                    setSkills(ranked);
                 }
             } catch {
                 /* registry unreachable — leave empty */
