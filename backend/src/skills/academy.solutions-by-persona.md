@@ -2,20 +2,13 @@
 id: academy.solutions-by-persona
 name: 'solutions by persona'
 category: academy
+intent: [__customer-facing__]
+jurisdictions: [__multi__]
 priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+status: drafted
+version: 0.2
 ---
 
-# academy.solutions-by-persona — STUB
+Persona-tailored solution catalog: BigLaw partner, in-house counsel, solo practitioner, paralegal, law student, court clerk, journalist, citizen with a legal question.
 
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Each gets a tailored landing page with the most-relevant features.

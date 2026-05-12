@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T11:59:04.680Z",
+  "generated_at": "2026-05-12T12:06:40.474Z",
   "total": 982,
   "entries": [
     {
@@ -7,7 +7,13 @@
       "name": "ai feature explainer",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.ai-feature-explainer.md"
     },
     {
@@ -15,7 +21,13 @@
       "name": "career pitch",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.career-pitch.md"
     },
     {
@@ -23,7 +35,13 @@
       "name": "clause library explainer",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.clause-library-explainer.md"
     },
     {
@@ -31,7 +49,13 @@
       "name": "company bio",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.company-bio.md"
     },
     {
@@ -39,7 +63,13 @@
       "name": "feature explainer",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.feature-explainer.md"
     },
     {
@@ -47,7 +77,13 @@
       "name": "justinian tutor",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.justinian-tutor.md"
     },
     {
@@ -55,7 +91,13 @@
       "name": "learn legal with ai curriculum",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.learn-legal-with-ai-curriculum.md"
     },
     {
@@ -63,7 +105,13 @@
       "name": "legal ai skills catalog",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.legal-ai-skills-catalog.md"
     },
     {
@@ -71,7 +119,13 @@
       "name": "legal document library explainer",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.legal-document-library-explainer.md"
     },
     {
@@ -79,7 +133,13 @@
       "name": "litigation game coach",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.litigation-game-coach.md"
     },
     {
@@ -87,7 +147,13 @@
       "name": "partnership pitch",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.partnership-pitch.md"
     },
     {
@@ -95,7 +161,13 @@
       "name": "prompt library recommender",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.prompt-library-recommender.md"
     },
     {
@@ -103,7 +175,13 @@
       "name": "solutions by persona",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.solutions-by-persona.md"
     },
     {
@@ -111,7 +189,13 @@
       "name": "startup program pitch",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.startup-program-pitch.md"
     },
     {
@@ -119,7 +203,13 @@
       "name": "students program",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.students-program.md"
     },
     {
@@ -127,7 +217,13 @@
       "name": "team bio lookup",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.team-bio-lookup.md"
     },
     {
@@ -135,7 +231,13 @@
       "name": "tools catalog",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.tools-catalog.md"
     },
     {
@@ -143,7 +245,13 @@
       "name": "use case explainer",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.use-case-explainer.md"
     },
     {
@@ -151,7 +259,13 @@
       "name": "vc program pitch",
       "category": "academy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "academy.vc-program-pitch.md"
     },
     {
@@ -325,80 +439,140 @@
       "id": "connector.apple-notes",
       "name": "apple notes",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.apple-notes.md"
     },
     {
       "id": "connector.calendar",
       "name": "calendar",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.calendar.md"
     },
     {
       "id": "connector.cloudflare",
       "name": "cloudflare",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.cloudflare.md"
     },
     {
       "id": "connector.cocounsel-thomson-reuters",
       "name": "cocounsel thomson reuters",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.cocounsel-thomson-reuters.md"
     },
     {
       "id": "connector.companies-house-UK",
       "name": "companies house UK",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.companies-house-UK.md"
     },
     {
       "id": "connector.eur-lex",
       "name": "eur lex",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.eur-lex.md"
     },
     {
       "id": "connector.figma",
       "name": "figma",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.figma.md"
     },
     {
       "id": "connector.firecrawl",
       "name": "firecrawl",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.firecrawl.md"
     },
     {
       "id": "connector.gmail",
       "name": "gmail",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.gmail.md"
     },
     {
       "id": "connector.google-drive",
       "name": "google drive",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.google-drive.md"
     },
     {
@@ -416,16 +590,28 @@
       "id": "connector.legal-data-hunter",
       "name": "legal data hunter",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.legal-data-hunter.md"
     },
     {
       "id": "connector.legifrance",
       "name": "legifrance",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.legifrance.md"
     },
     {
@@ -443,40 +629,70 @@
       "id": "connector.notion",
       "name": "notion",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.notion.md"
     },
     {
       "id": "connector.OFAC-sanctions",
       "name": "OFAC sanctions",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.OFAC-sanctions.md"
     },
     {
       "id": "connector.posthog",
       "name": "posthog",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.posthog.md"
     },
     {
       "id": "connector.scheduled-tasks",
       "name": "scheduled tasks",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.scheduled-tasks.md"
     },
     {
       "id": "connector.SEC-EDGAR",
       "name": "SEC EDGAR",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.SEC-EDGAR.md"
     },
     {
@@ -494,8 +710,14 @@
       "id": "connector.WIPO-trademark",
       "name": "WIPO trademark",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "connector.WIPO-trademark.md"
     },
     {
@@ -782,192 +1004,336 @@
       "id": "docs.audit-log-export",
       "name": "audit log export",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.audit-log-export.md"
     },
     {
       "id": "docs.billing-and-credits",
       "name": "billing and credits",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.billing-and-credits.md"
     },
     {
       "id": "docs.case-study.legal-ontology",
-      "name": "case study · legal ontology",
+      "name": "case study legal ontology",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.case-study.legal-ontology.md"
     },
     {
       "id": "docs.changelog-reader",
       "name": "changelog reader",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.changelog-reader.md"
     },
     {
       "id": "docs.compare-us",
       "name": "compare us",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.compare-us.md"
     },
     {
       "id": "docs.cookie-policy-summary",
       "name": "cookie policy summary",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.cookie-policy-summary.md"
     },
     {
       "id": "docs.data-residency-MENA",
       "name": "data residency MENA",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.data-residency-MENA.md"
     },
     {
       "id": "docs.dev-hub-API-reference",
       "name": "dev hub API reference",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.dev-hub-API-reference.md"
     },
     {
       "id": "docs.enterprise-deployment",
       "name": "enterprise deployment",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.enterprise-deployment.md"
     },
     {
       "id": "docs.faq-pack",
       "name": "faq pack",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.faq-pack.md"
     },
     {
       "id": "docs.legal-ai-workspace-guide",
       "name": "legal ai workspace guide",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.legal-ai-workspace-guide.md"
     },
     {
       "id": "docs.legal-os-overview",
       "name": "legal os overview",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.legal-os-overview.md"
     },
     {
       "id": "docs.mobile-app-onboarding",
       "name": "mobile app onboarding",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.mobile-app-onboarding.md"
     },
     {
       "id": "docs.practice-management-guide",
       "name": "practice management guide",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.practice-management-guide.md"
     },
     {
       "id": "docs.ROI-calculator",
       "name": "ROI calculator",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.ROI-calculator.md"
     },
     {
       "id": "docs.security-overview",
       "name": "security overview",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.security-overview.md"
     },
     {
       "id": "docs.SSO-SAML-setup",
       "name": "SSO SAML setup",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.SSO-SAML-setup.md"
     },
     {
       "id": "docs.status-page-reader",
       "name": "status page reader",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.status-page-reader.md"
     },
     {
       "id": "docs.team-roles-permissions",
       "name": "team roles permissions",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.team-roles-permissions.md"
     },
     {
       "id": "docs.tenant-isolation-explainer",
       "name": "tenant isolation explainer",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.tenant-isolation-explainer.md"
     },
     {
       "id": "docs.terms-of-service-summary",
       "name": "terms of service summary",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.terms-of-service-summary.md"
     },
     {
       "id": "docs.whitepaper-general",
       "name": "whitepaper general",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.whitepaper-general.md"
     },
     {
       "id": "docs.whitepaper-legal-ai-index",
       "name": "whitepaper legal ai index",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.whitepaper-legal-ai-index.md"
     },
     {
       "id": "docs.word-plugin-setup",
       "name": "word plugin setup",
       "category": "docs",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__docs__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "docs.word-plugin-setup.md"
     },
     {
@@ -2569,8 +2935,14 @@
       "id": "efirm.document-versioning-rule",
       "name": "document versioning rule",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.document-versioning-rule.md"
     },
     {
@@ -2600,8 +2972,14 @@
       "id": "efirm.knowledge-base-curation",
       "name": "knowledge base curation",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.knowledge-base-curation.md"
     },
     {
@@ -2620,208 +2998,364 @@
       "id": "efirm.matter-summary-for-billing",
       "name": "matter summary for billing",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.matter-summary-for-billing.md"
     },
     {
       "id": "efirm.partner-review-routing",
       "name": "partner review routing",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.partner-review-routing.md"
     },
     {
       "id": "efirm.precedent-finder-internal",
       "name": "precedent finder internal",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.precedent-finder-internal.md"
     },
     {
       "id": "efirm.team-handoff-summary",
       "name": "team handoff summary",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.team-handoff-summary.md"
     },
     {
       "id": "efirm.template-library-firm-branded",
       "name": "template library firm branded",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.template-library-firm-branded.md"
     },
     {
       "id": "efirm.time-entry-from-chat",
       "name": "time entry from chat",
       "category": "efirm",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__efirm__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "efirm.time-entry-from-chat.md"
     },
     {
       "id": "eng.audit-log-schema",
       "name": "audit log schema",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.audit-log-schema.md"
     },
     {
       "id": "eng.context-cache-key-design",
       "name": "context cache key design",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.context-cache-key-design.md"
     },
     {
       "id": "eng.cost-per-message-tracker",
       "name": "cost per message tracker",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.cost-per-message-tracker.md"
     },
     {
       "id": "eng.embedding-model-choice-legal",
       "name": "embedding model choice legal",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.embedding-model-choice-legal.md"
     },
     {
       "id": "eng.fallback-model-cascade",
       "name": "fallback model cascade",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.fallback-model-cascade.md"
     },
     {
       "id": "eng.feature-flag-rollout-skills",
       "name": "feature flag rollout skills",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.feature-flag-rollout-skills.md"
     },
     {
       "id": "eng.langfuse-eval-runner",
       "name": "langfuse eval runner",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.langfuse-eval-runner.md"
     },
     {
       "id": "eng.langfuse-trace-inspector",
       "name": "langfuse trace inspector",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.langfuse-trace-inspector.md"
     },
     {
       "id": "eng.latency-SLO-by-skill",
       "name": "latency SLO by skill",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.latency-SLO-by-skill.md"
     },
     {
       "id": "eng.MCP-tool-registry",
       "name": "MCP tool registry",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.MCP-tool-registry.md"
     },
     {
       "id": "eng.PII-redaction-preprocessor",
       "name": "PII redaction preprocessor",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.PII-redaction-preprocessor.md"
     },
     {
       "id": "eng.posthog-event-naming-convention",
       "name": "posthog event naming convention",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.posthog-event-naming-convention.md"
     },
     {
       "id": "eng.RAG-chunking-rules-legal-docs",
       "name": "RAG chunking rules legal docs",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.RAG-chunking-rules-legal-docs.md"
     },
     {
       "id": "eng.remotion-explainer-video-generator",
       "name": "remotion explainer video generator",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.remotion-explainer-video-generator.md"
     },
     {
       "id": "eng.streaming-response-rules-mobile",
       "name": "streaming response rules mobile",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.streaming-response-rules-mobile.md"
     },
     {
       "id": "eng.supabase-edge-functions-patterns",
       "name": "supabase edge functions patterns",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.supabase-edge-functions-patterns.md"
     },
     {
       "id": "eng.supabase-index-knowledge-pipeline",
       "name": "supabase index knowledge pipeline",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.supabase-index-knowledge-pipeline.md"
     },
     {
       "id": "eng.supabase-prerender-blog-pipeline",
       "name": "supabase prerender blog pipeline",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.supabase-prerender-blog-pipeline.md"
     },
     {
       "id": "eng.tenant-isolation-row-level-security",
       "name": "tenant isolation row level security",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.tenant-isolation-row-level-security.md"
     },
     {
       "id": "eng.token-budget-by-tier",
       "name": "token budget by tier",
       "category": "eng",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eng__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eng.token-budget-by-tier.md"
     },
     {
@@ -2848,10 +3382,16 @@
     },
     {
       "id": "eval.dataset.competitor-comparison-set",
-      "name": "dataset · competitor comparison set",
+      "name": "dataset competitor comparison set",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.dataset.competitor-comparison-set.md"
     },
     {
@@ -2913,8 +3453,14 @@
       "id": "eval.leaderboard-updater",
       "name": "leaderboard updater",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.leaderboard-updater.md"
     },
     {
@@ -2963,10 +3509,16 @@
     },
     {
       "id": "eval.rubric.format-structure",
-      "name": "rubric · format structure",
+      "name": "rubric format structure",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.rubric.format-structure.md"
     },
     {
@@ -2993,18 +3545,30 @@
     },
     {
       "id": "eval.rubric.language-quality-AR",
-      "name": "rubric · language quality AR",
+      "name": "rubric language quality AR",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.rubric.language-quality-AR.md"
     },
     {
       "id": "eval.rubric.language-quality-EN",
-      "name": "rubric · language quality EN",
+      "name": "rubric language quality EN",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.rubric.language-quality-EN.md"
     },
     {
@@ -3020,18 +3584,30 @@
     },
     {
       "id": "eval.rubric.safety-no-bad-advice",
-      "name": "rubric · safety no bad advice",
+      "name": "rubric safety no bad advice",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.rubric.safety-no-bad-advice.md"
     },
     {
       "id": "eval.rubric.tone-fit-persona",
-      "name": "rubric · tone fit persona",
+      "name": "rubric tone fit persona",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "eval.rubric.tone-fit-persona.md"
     },
     {
@@ -3039,7 +3615,13 @@
       "name": "blog RSS",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.blog-RSS.md"
     },
     {
@@ -3047,7 +3629,13 @@
       "name": "case law new publications",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.case-law-new-publications.md"
     },
     {
@@ -3055,7 +3643,13 @@
       "name": "changelog watcher",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.changelog-watcher.md"
     },
     {
@@ -3063,7 +3657,13 @@
       "name": "gazettes watcher",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.gazettes-watcher.md"
     },
     {
@@ -3071,7 +3671,13 @@
       "name": "HAQQ press releases",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.HAQQ-press-releases.md"
     },
     {
@@ -3079,7 +3685,13 @@
       "name": "legal news MENA",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.legal-news-MENA.md"
     },
     {
@@ -3087,7 +3699,13 @@
       "name": "regulator bulletins MENA",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.regulator-bulletins-MENA.md"
     },
     {
@@ -3095,7 +3713,13 @@
       "name": "status incident watcher",
       "category": "feed",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__feed__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "feed.status-incident-watcher.md"
     },
     {
@@ -3290,7 +3914,13 @@
       "name": "assignation refere communication associe",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.assignation-refere-communication-associe.md"
     },
     {
@@ -3298,7 +3928,13 @@
       "name": "assignation refere recouvrement creance",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.assignation-refere-recouvrement-creance.md"
     },
     {
@@ -3306,7 +3942,13 @@
       "name": "canned responses anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.canned-responses-anthropic.md"
     },
     {
@@ -3314,7 +3956,13 @@
       "name": "compliance anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.compliance-anthropic.md"
     },
     {
@@ -3322,7 +3970,13 @@
       "name": "contract review anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.contract-review-anthropic.md"
     },
     {
@@ -3330,7 +3984,13 @@
       "name": "docx processing anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.docx-processing-anthropic.md"
     },
     {
@@ -3338,7 +3998,13 @@
       "name": "dpia sentinel",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.dpia-sentinel.md"
     },
     {
@@ -3346,7 +4012,13 @@
       "name": "gdpr breach sentinel",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.gdpr-breach-sentinel.md"
     },
     {
@@ -3354,7 +4026,13 @@
       "name": "gdpr privacy notice eu",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.gdpr-privacy-notice-eu.md"
     },
     {
@@ -3362,7 +4040,13 @@
       "name": "legal risk assessment anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.legal-risk-assessment-anthropic.md"
     },
     {
@@ -3370,7 +4054,13 @@
       "name": "legal risk assessment zacharie laik",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.legal-risk-assessment-zacharie-laik.md"
     },
     {
@@ -3378,7 +4068,13 @@
       "name": "legal simulation patrick munro",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.legal-simulation-patrick-munro.md"
     },
     {
@@ -3386,7 +4082,13 @@
       "name": "mediation dispute analysis jinzhe tan",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.mediation-dispute-analysis-jinzhe-tan.md"
     },
     {
@@ -3394,7 +4096,13 @@
       "name": "meeting briefing anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.meeting-briefing-anthropic.md"
     },
     {
@@ -3402,7 +4110,13 @@
       "name": "nda review jamie tso",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.nda-review-jamie-tso.md"
     },
     {
@@ -3410,7 +4124,13 @@
       "name": "nda triage anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.nda-triage-anthropic.md"
     },
     {
@@ -3418,7 +4138,13 @@
       "name": "nil contract analysis samir patel",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.nil-contract-analysis-samir-patel.md"
     },
     {
@@ -3426,7 +4152,13 @@
       "name": "notification licenciement",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.notification-licenciement.md"
     },
     {
@@ -3434,7 +4166,13 @@
       "name": "outlook emails lawvable",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.outlook-emails-lawvable.md"
     },
     {
@@ -3442,7 +4180,13 @@
       "name": "pdf processing anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.pdf-processing-anthropic.md"
     },
     {
@@ -3450,7 +4194,13 @@
       "name": "politique confidentialite FR",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.politique-confidentialite-FR.md"
     },
     {
@@ -3458,7 +4208,13 @@
       "name": "politique cookies FR",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.politique-cookies-FR.md"
     },
     {
@@ -3466,7 +4222,13 @@
       "name": "politique lanceur alerte FR",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.politique-lanceur-alerte-FR.md"
     },
     {
@@ -3474,7 +4236,13 @@
       "name": "pptx processing anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.pptx-processing-anthropic.md"
     },
     {
@@ -3482,7 +4250,13 @@
       "name": "red team verifier patrick munro",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.red-team-verifier-patrick-munro.md"
     },
     {
@@ -3490,7 +4264,13 @@
       "name": "requete CPH licenciement faute grave",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.requete-CPH-licenciement-faute-grave.md"
     },
     {
@@ -3498,7 +4278,13 @@
       "name": "security review openai",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.security-review-openai.md"
     },
     {
@@ -3506,7 +4292,13 @@
       "name": "skill creator anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.skill-creator-anthropic.md"
     },
     {
@@ -3514,7 +4306,13 @@
       "name": "skill creator openai",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.skill-creator-openai.md"
     },
     {
@@ -3522,7 +4320,13 @@
       "name": "skill optimizer lawvable",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.skill-optimizer-lawvable.md"
     },
     {
@@ -3530,7 +4334,13 @@
       "name": "statute analysis rafal fryc",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.statute-analysis-rafal-fryc.md"
     },
     {
@@ -3538,7 +4348,13 @@
       "name": "tabular review lawvable",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.tabular-review-lawvable.md"
     },
     {
@@ -3546,7 +4362,13 @@
       "name": "tech contract negotiation patrick munro",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.tech-contract-negotiation-patrick-munro.md"
     },
     {
@@ -3554,7 +4376,13 @@
       "name": "vendor due diligence patrick munro",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.vendor-due-diligence-patrick-munro.md"
     },
     {
@@ -3562,7 +4390,13 @@
       "name": "vscode extension builder lawvable",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.vscode-extension-builder-lawvable.md"
     },
     {
@@ -3570,15 +4404,27 @@
       "name": "xlsx processing anthropic",
       "category": "import",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__import__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "import.xlsx-processing-anthropic.md"
     },
     {
       "id": "inst.EG-bar-syndicate",
       "name": "EG bar syndicate",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__institutional__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "inst.EG-bar-syndicate.md"
     },
     {
@@ -3640,8 +4486,14 @@
       "id": "inst.OM-MOJ-integration",
       "name": "OM MOJ integration",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__institutional__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "inst.OM-MOJ-integration.md"
     },
     {
@@ -3858,26 +4710,44 @@
     },
     {
       "id": "justice.intent.career-application",
-      "name": "intent · career application",
+      "name": "intent career application",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.career-application.md"
     },
     {
       "id": "justice.intent.changelog-status",
-      "name": "intent · changelog status",
+      "name": "intent changelog status",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.changelog-status.md"
     },
     {
       "id": "justice.intent.chitchat",
-      "name": "intent · chitchat",
+      "name": "intent chitchat",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.chitchat.md"
     },
     {
@@ -3893,10 +4763,16 @@
     },
     {
       "id": "justice.intent.developer-API",
-      "name": "intent · developer API",
+      "name": "intent developer API",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.developer-API.md"
     },
     {
@@ -3912,10 +4788,16 @@
     },
     {
       "id": "justice.intent.how-to",
-      "name": "intent · how to",
+      "name": "intent how to",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.how-to.md"
     },
     {
@@ -3931,10 +4813,16 @@
     },
     {
       "id": "justice.intent.legal-research",
-      "name": "intent · legal research",
+      "name": "intent legal research",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.legal-research.md"
     },
     {
@@ -3950,10 +4838,16 @@
     },
     {
       "id": "justice.intent.press-media",
-      "name": "intent · press media",
+      "name": "intent press media",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.press-media.md"
     },
     {
@@ -3980,26 +4874,44 @@
     },
     {
       "id": "justice.intent.security-compliance",
-      "name": "intent · security compliance",
+      "name": "intent security compliance",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.security-compliance.md"
     },
     {
       "id": "justice.intent.student-program",
-      "name": "intent · student program",
+      "name": "intent student program",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.student-program.md"
     },
     {
       "id": "justice.intent.support",
-      "name": "intent · support",
+      "name": "intent support",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.intent.support.md"
     },
     {
@@ -4033,10 +4945,16 @@
     },
     {
       "id": "justice.product-demo.deep-link",
-      "name": "product demo · deep link",
+      "name": "product demo deep link",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "justice.product-demo.deep-link.md"
     },
     {
@@ -4284,8 +5202,14 @@
       "id": "kb.advertising-marketing-law",
       "name": "advertising marketing law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.advertising-marketing-law.md"
     },
     {
@@ -4321,24 +5245,42 @@
       "id": "kb.arbitration-DIFC-LCIA",
       "name": "arbitration DIFC LCIA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.arbitration-DIFC-LCIA.md"
     },
     {
       "id": "kb.arbitration-ICC",
       "name": "arbitration ICC",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.arbitration-ICC.md"
     },
     {
       "id": "kb.arbitration-LCIA",
       "name": "arbitration LCIA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.arbitration-LCIA.md"
     },
     {
@@ -4429,32 +5371,56 @@
       "id": "kb.consumer-protection-MENA",
       "name": "consumer protection MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.consumer-protection-MENA.md"
     },
     {
       "id": "kb.corporate-law-DE",
       "name": "corporate law DE",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.corporate-law-DE.md"
     },
     {
       "id": "kb.corporate-law-EG",
       "name": "corporate law EG",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.corporate-law-EG.md"
     },
     {
       "id": "kb.corporate-law-FR",
       "name": "corporate law FR",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.corporate-law-FR.md"
     },
     {
@@ -4503,32 +5469,56 @@
       "id": "kb.corporate-law-UK",
       "name": "corporate law UK",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.corporate-law-UK.md"
     },
     {
       "id": "kb.criminal-procedure-KSA",
       "name": "criminal procedure KSA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.criminal-procedure-KSA.md"
     },
     {
       "id": "kb.criminal-procedure-LB",
       "name": "criminal procedure LB",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.criminal-procedure-LB.md"
     },
     {
       "id": "kb.criminal-procedure-UAE",
       "name": "criminal procedure UAE",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.criminal-procedure-UAE.md"
     },
     {
@@ -4563,8 +5553,14 @@
       "id": "kb.data-privacy-Egypt",
       "name": "data privacy Egypt",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.data-privacy-Egypt.md"
     },
     {
@@ -4586,32 +5582,56 @@
       "id": "kb.data-privacy-KSA-PDPL",
       "name": "data privacy KSA PDPL",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.data-privacy-KSA-PDPL.md"
     },
     {
       "id": "kb.data-privacy-UAE-PDPL",
       "name": "data privacy UAE PDPL",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.data-privacy-UAE-PDPL.md"
     },
     {
       "id": "kb.employment-law-ADGM",
       "name": "employment law ADGM",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.employment-law-ADGM.md"
     },
     {
       "id": "kb.employment-law-DIFC",
       "name": "employment law DIFC",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.employment-law-DIFC.md"
     },
     {
@@ -4660,8 +5680,14 @@
       "id": "kb.energy-oil-gas-MENA",
       "name": "energy oil gas MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.energy-oil-gas-MENA.md"
     },
     {
@@ -4710,8 +5736,14 @@
       "id": "kb.fintech-licensing-ADGM",
       "name": "fintech licensing ADGM",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.fintech-licensing-ADGM.md"
     },
     {
@@ -4746,8 +5778,14 @@
       "id": "kb.gaming-gambling-MENA",
       "name": "gaming gambling MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.gaming-gambling-MENA.md"
     },
     {
@@ -4768,32 +5806,56 @@
       "id": "kb.immigration-KSA-iqama",
       "name": "immigration KSA iqama",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.immigration-KSA-iqama.md"
     },
     {
       "id": "kb.immigration-LB",
       "name": "immigration LB",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.immigration-LB.md"
     },
     {
       "id": "kb.immigration-residency-UAE-golden-visa",
       "name": "immigration residency UAE golden visa",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.immigration-residency-UAE-golden-visa.md"
     },
     {
       "id": "kb.insurance-takaful-MENA",
       "name": "insurance takaful MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.insurance-takaful-MENA.md"
     },
     {
@@ -4814,8 +5876,14 @@
       "id": "kb.IP-WIPO",
       "name": "IP WIPO",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.IP-WIPO.md"
     },
     {
@@ -4919,8 +5987,14 @@
       "id": "kb.tax-LB",
       "name": "tax LB",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "kb.tax-LB.md"
     },
     {
@@ -4996,128 +6070,224 @@
       "id": "messaging.compliance-checker",
       "name": "compliance checker",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.compliance-checker.md"
     },
     {
       "id": "messaging.hard-rule.bible-signoff-required",
-      "name": "hard rule · bible signoff required",
+      "name": "hard rule bible signoff required",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.hard-rule.bible-signoff-required.md"
     },
     {
       "id": "messaging.hard-rule.preapproved-press-quotes-only",
-      "name": "hard rule · preapproved press quotes only",
+      "name": "hard rule preapproved press quotes only",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.hard-rule.preapproved-press-quotes-only.md"
     },
     {
       "id": "messaging.outcome-claims-allowed",
       "name": "outcome claims allowed",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.outcome-claims-allowed.md"
     },
     {
       "id": "messaging.outcome-claims-banned",
       "name": "outcome claims banned",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.outcome-claims-banned.md"
     },
     {
       "id": "messaging.pricing-framing-B2C",
       "name": "pricing framing B2C",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.pricing-framing-B2C.md"
     },
     {
       "id": "messaging.surface-rule.haqq-ai-homepage",
-      "name": "surface rule · haqq ai homepage",
+      "name": "surface rule haqq ai homepage",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.haqq-ai-homepage.md"
     },
     {
       "id": "messaging.surface-rule.in-app-lawyer-fork",
-      "name": "surface rule · in app lawyer fork",
+      "name": "surface rule in app lawyer fork",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.in-app-lawyer-fork.md"
     },
     {
       "id": "messaging.surface-rule.in-app-non-lawyer-fork",
-      "name": "surface rule · in app non lawyer fork",
+      "name": "surface rule in app non lawyer fork",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.in-app-non-lawyer-fork.md"
     },
     {
       "id": "messaging.surface-rule.influencer-brief",
-      "name": "surface rule · influencer brief",
+      "name": "surface rule influencer brief",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.influencer-brief.md"
     },
     {
       "id": "messaging.surface-rule.landing-page-AB",
-      "name": "surface rule · landing page AB",
+      "name": "surface rule landing page AB",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.landing-page-AB.md"
     },
     {
       "id": "messaging.surface-rule.linkedin-launch-post",
-      "name": "surface rule · linkedin launch post",
+      "name": "surface rule linkedin launch post",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.linkedin-launch-post.md"
     },
     {
       "id": "messaging.surface-rule.meta-IG-ads",
-      "name": "surface rule · meta IG ads",
+      "name": "surface rule meta IG ads",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.meta-IG-ads.md"
     },
     {
       "id": "messaging.surface-rule.newsletter-mixed-audience",
-      "name": "surface rule · newsletter mixed audience",
+      "name": "surface rule newsletter mixed audience",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.newsletter-mixed-audience.md"
     },
     {
       "id": "messaging.surface-rule.press-release",
-      "name": "surface rule · press release",
+      "name": "surface rule press release",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.press-release.md"
     },
     {
       "id": "messaging.surface-rule.waitlist-email",
-      "name": "surface rule · waitlist email",
+      "name": "surface rule waitlist email",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "messaging.surface-rule.waitlist-email.md"
     },
     {
@@ -5202,8 +6372,14 @@
       "id": "onboarding.template-of-the-day",
       "name": "template of the day",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "onboarding.template-of-the-day.md"
     },
     {
@@ -5511,8 +6687,14 @@
       "id": "output.citation-format-civil-law-FR",
       "name": "citation format civil law FR",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__output__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "output.citation-format-civil-law-FR.md"
     },
     {
@@ -5530,8 +6712,14 @@
       "id": "output.citation-MENA-conventions",
       "name": "citation MENA conventions",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__output__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "output.citation-MENA-conventions.md"
     },
     {
@@ -5684,8 +6872,14 @@
       "id": "output.voice-friendly-short",
       "name": "voice friendly short",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__output__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "output.voice-friendly-short.md"
     },
     {
@@ -5693,7 +6887,13 @@
       "name": "backlink PR campaign",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.backlink-PR-campaign.md"
     },
     {
@@ -5701,7 +6901,13 @@
       "name": "blog preview renderer",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.blog-preview-renderer.md"
     },
     {
@@ -5709,7 +6915,13 @@
       "name": "growth agent runner",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.growth-agent-runner.md"
     },
     {
@@ -5717,7 +6929,13 @@
       "name": "haqq ai viz",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.haqq-ai-viz.md"
     },
     {
@@ -5725,7 +6943,13 @@
       "name": "inbox scan",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.inbox-scan.md"
     },
     {
@@ -5733,7 +6957,13 @@
       "name": "payment recovery flow",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.payment-recovery-flow.md"
     },
     {
@@ -5741,7 +6971,13 @@
       "name": "press list enriched",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.press-list-enriched.md"
     },
     {
@@ -5749,7 +6985,13 @@
       "name": "press list Europe",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.press-list-Europe.md"
     },
     {
@@ -5757,7 +6999,13 @@
       "name": "press list MENA",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.press-list-MENA.md"
     },
     {
@@ -5765,7 +7013,13 @@
       "name": "userflow analyzer",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.userflow-analyzer.md"
     },
     {
@@ -5773,7 +7027,13 @@
       "name": "video asset library",
       "category": "outreach",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__outreach__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "outreach.video-asset-library.md"
     },
     {
@@ -6075,10 +7335,16 @@
     },
     {
       "id": "pa-workflow.transactional.contract-redline-20min",
-      "name": "transactional · contract redline 20min",
+      "name": "transactional contract redline 20min",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__pa-workflow__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pa-workflow.transactional.contract-redline-20min.md"
     },
     {
@@ -6105,10 +7371,16 @@
     },
     {
       "id": "pa-workflow.transactional.NDA-triage-red-yellow-green",
-      "name": "transactional · NDA triage red yellow green",
+      "name": "transactional NDA triage red yellow green",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__pa-workflow__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pa-workflow.transactional.NDA-triage-red-yellow-green.md"
     },
     {
@@ -6126,8 +7398,14 @@
       "id": "persona.associate",
       "name": "associate",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "persona.associate.md"
     },
     {
@@ -6156,8 +7434,14 @@
       "id": "persona.in-house-counsel",
       "name": "in house counsel",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "persona.in-house-counsel.md"
     },
     {
@@ -6186,8 +7470,14 @@
       "id": "persona.junior",
       "name": "junior",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "persona.junior.md"
     },
     {
@@ -6238,8 +7528,14 @@
       "id": "persona.partner",
       "name": "partner",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "persona.partner.md"
     },
     {
@@ -6269,7 +7565,13 @@
       "name": "architectural bet no fine tuning",
       "category": "pillar",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pillar.architectural-bet-no-fine-tuning.md"
     },
     {
@@ -6277,7 +7579,13 @@
       "name": "context across apps",
       "category": "pillar",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pillar.context-across-apps.md"
     },
     {
@@ -6285,7 +7593,13 @@
       "name": "document comprehension structural",
       "category": "pillar",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pillar.document-comprehension-structural.md"
     },
     {
@@ -6293,7 +7607,13 @@
       "name": "legal skills authoring",
       "category": "pillar",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pillar.legal-skills-authoring.md"
     },
     {
@@ -6301,7 +7621,13 @@
       "name": "live data MCP",
       "category": "pillar",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "pillar.live-data-MCP.md"
     },
     {
@@ -8508,7 +9834,13 @@
       "name": "competitor output comparison weekly",
       "category": "report",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "report.competitor-output-comparison-weekly.md"
     },
     {
@@ -8516,7 +9848,13 @@
       "name": "hallucination rate tracker",
       "category": "report",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "report.hallucination-rate-tracker.md"
     },
     {
@@ -8524,7 +9862,13 @@
       "name": "jurisdiction coverage matrix",
       "category": "report",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "report.jurisdiction-coverage-matrix.md"
     },
     {
@@ -8532,7 +9876,13 @@
       "name": "skill adoption by tier",
       "category": "report",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "report.skill-adoption-by-tier.md"
     },
     {
@@ -8540,7 +9890,13 @@
       "name": "weekly AI quality trend",
       "category": "report",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "report.weekly-AI-quality-trend.md"
     },
     {
@@ -9532,7 +10888,13 @@
       "name": "ai feature router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.ai-feature-router.md"
     },
     {
@@ -9540,7 +10902,13 @@
       "name": "clause router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.clause-router.md"
     },
     {
@@ -9548,7 +10916,13 @@
       "name": "compare us router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.compare-us-router.md"
     },
     {
@@ -9556,7 +10930,13 @@
       "name": "feature router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.feature-router.md"
     },
     {
@@ -9564,7 +10944,13 @@
       "name": "legal document router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.legal-document-router.md"
     },
     {
@@ -9572,7 +10958,13 @@
       "name": "marketplace router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.marketplace-router.md"
     },
     {
@@ -9580,7 +10972,13 @@
       "name": "prompt library suggester",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.prompt-library-suggester.md"
     },
     {
@@ -9588,7 +10986,13 @@
       "name": "SEO canonical citer",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.SEO-canonical-citer.md"
     },
     {
@@ -9607,7 +11011,13 @@
       "name": "tools router",
       "category": "site",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "site.tools-router.md"
     },
     {
@@ -9626,7 +11036,13 @@
       "name": "competitors",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.competitors.md"
     },
     {
@@ -9634,7 +11050,13 @@
       "name": "customers",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.customers.md"
     },
     {
@@ -9642,7 +11064,13 @@
       "name": "fundraising",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.fundraising.md"
     },
     {
@@ -9650,7 +11078,13 @@
       "name": "growth strategy",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.growth-strategy.md"
     },
     {
@@ -9658,7 +11092,13 @@
       "name": "legal market deep dive",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.legal-market-deep-dive.md"
     },
     {
@@ -9666,7 +11106,13 @@
       "name": "llmo update for lovable",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.llmo-update-for-lovable.md"
     },
     {
@@ -9674,7 +11120,13 @@
       "name": "markets",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.markets.md"
     },
     {
@@ -9682,7 +11134,13 @@
       "name": "messaging bible",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.messaging-bible.md"
     },
     {
@@ -9690,7 +11148,13 @@
       "name": "partnerships",
       "category": "strategy",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "strategy.partnerships.md"
     },
     {
@@ -9829,8 +11293,14 @@
       "id": "tool.courtlistener-US",
       "name": "courtlistener US",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.courtlistener-US.md"
     },
     {
@@ -9953,16 +11423,28 @@
       "id": "tool.genie-ai-templates",
       "name": "genie ai templates",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.genie-ai-templates.md"
     },
     {
       "id": "tool.google-scholar-legal",
       "name": "google scholar legal",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.google-scholar-legal.md"
     },
     {
@@ -9983,8 +11465,14 @@
       "id": "tool.HubSpot-CRM-context",
       "name": "HubSpot CRM context",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.HubSpot-CRM-context.md"
     },
     {
@@ -10021,8 +11509,14 @@
       "id": "tool.legal-data-hunter",
       "name": "legal data hunter",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.legal-data-hunter.md"
     },
     {
@@ -10141,16 +11635,28 @@
       "id": "tool.RAG-personal-knowledge",
       "name": "RAG personal knowledge",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.RAG-personal-knowledge.md"
     },
     {
       "id": "tool.RAG-public-legal-corpus",
       "name": "RAG public legal corpus",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.RAG-public-legal-corpus.md"
     },
     {
@@ -10171,8 +11677,14 @@
       "id": "tool.signature-detector",
       "name": "signature detector",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.signature-detector.md"
     },
     {
@@ -10236,16 +11748,28 @@
       "id": "tool.web-search-source-allowlist",
       "name": "web search source allowlist",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.web-search-source-allowlist.md"
     },
     {
       "id": "tool.WhatsApp-handoff",
       "name": "WhatsApp handoff",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__tool__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "tool.WhatsApp-handoff.md"
     },
     {
@@ -10267,8 +11791,14 @@
       "id": "unlock.case-study-relevant-to-user",
       "name": "case study relevant to user",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.case-study-relevant-to-user.md"
     },
     {
@@ -10286,16 +11816,28 @@
       "id": "unlock.cross-product-bridge",
       "name": "cross product bridge",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.cross-product-bridge.md"
     },
     {
       "id": "unlock.empty-state-suggestions",
       "name": "empty state suggestions",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.empty-state-suggestions.md"
     },
     {
@@ -10313,24 +11855,42 @@
       "id": "unlock.first-week-progressive-tour",
       "name": "first week progressive tour",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.first-week-progressive-tour.md"
     },
     {
       "id": "unlock.partner-marketplace",
       "name": "partner marketplace",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.partner-marketplace.md"
     },
     {
       "id": "unlock.power-user-shortcuts",
       "name": "power user shortcuts",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.power-user-shortcuts.md"
     },
     {
@@ -10348,16 +11908,28 @@
       "id": "unlock.template-of-the-week",
       "name": "template of the week",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.template-of-the-week.md"
     },
     {
       "id": "unlock.whitepaper-when-evaluating",
       "name": "whitepaper when evaluating",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__customer-facing__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "unlock.whitepaper-when-evaluating.md"
     },
     {
@@ -10485,16 +12057,32 @@
       "id": "voice.image-of-contract-page-handler",
       "name": "image of contract page handler",
       "category": "voice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__voice__",
+        "ocr",
+        "multimodal"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "voice.image-of-contract-page-handler.md"
     },
     {
       "id": "voice.scanned-PDF-handler",
       "name": "scanned PDF handler",
       "category": "voice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__voice__",
+        "ocr",
+        "multimodal"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "voice.scanned-PDF-handler.md"
     },
     {
@@ -10512,8 +12100,16 @@
       "id": "voice.signature-page-detector",
       "name": "signature page detector",
       "category": "voice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__voice__",
+        "ocr",
+        "multimodal"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "voice.signature-page-detector.md"
     },
     {
@@ -10532,7 +12128,13 @@
       "name": "ai",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.ai.md"
     },
     {
@@ -10540,7 +12142,13 @@
       "name": "ai and llms",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.ai-and-llms.md"
     },
     {
@@ -10548,7 +12156,13 @@
       "name": "ai labs",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.ai-labs.md"
     },
     {
@@ -10556,7 +12170,13 @@
       "name": "blockchain",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.blockchain.md"
     },
     {
@@ -10564,7 +12184,13 @@
       "name": "career growth",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.career-growth.md"
     },
     {
@@ -10572,7 +12198,13 @@
       "name": "content",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.content.md"
     },
     {
@@ -10580,7 +12212,13 @@
       "name": "data",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.data.md"
     },
     {
@@ -10588,7 +12226,13 @@
       "name": "design",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.design.md"
     },
     {
@@ -10596,7 +12240,13 @@
       "name": "dev design",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.dev-design.md"
     },
     {
@@ -10604,7 +12254,13 @@
       "name": "engineering",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.engineering.md"
     },
     {
@@ -10612,7 +12268,13 @@
       "name": "finance",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.finance.md"
     },
     {
@@ -10620,7 +12282,13 @@
       "name": "frontend",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.frontend.md"
     },
     {
@@ -10628,7 +12296,13 @@
       "name": "fundraising",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.fundraising.md"
     },
     {
@@ -10636,7 +12310,13 @@
       "name": "geopolitics",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.geopolitics.md"
     },
     {
@@ -10644,7 +12324,13 @@
       "name": "growth",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.growth.md"
     },
     {
@@ -10652,7 +12338,13 @@
       "name": "growth marketing",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.growth-marketing.md"
     },
     {
@@ -10660,7 +12352,13 @@
       "name": "haqq product",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.haqq-product.md"
     },
     {
@@ -10668,7 +12366,13 @@
       "name": "health",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.health.md"
     },
     {
@@ -10676,7 +12380,13 @@
       "name": "hiring",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.hiring.md"
     },
     {
@@ -10684,7 +12394,13 @@
       "name": "leadership people",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.leadership-people.md"
     },
     {
@@ -10692,7 +12408,13 @@
       "name": "legal",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.legal.md"
     },
     {
@@ -10700,7 +12422,13 @@
       "name": "legal tech",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.legal-tech.md"
     },
     {
@@ -10708,7 +12436,13 @@
       "name": "market",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.market.md"
     },
     {
@@ -10716,7 +12450,13 @@
       "name": "medium",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.medium.md"
     },
     {
@@ -10724,7 +12464,13 @@
       "name": "memory",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.memory.md"
     },
     {
@@ -10732,7 +12478,13 @@
       "name": "mental health wellbeing",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.mental-health-wellbeing.md"
     },
     {
@@ -10740,7 +12492,13 @@
       "name": "newsletters",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.newsletters.md"
     },
     {
@@ -10748,7 +12506,13 @@
       "name": "personal",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.personal.md"
     },
     {
@@ -10756,7 +12520,13 @@
       "name": "personal finance real estate",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.personal-finance-real-estate.md"
     },
     {
@@ -10764,7 +12534,13 @@
       "name": "pricing",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.pricing.md"
     },
     {
@@ -10772,7 +12548,13 @@
       "name": "product",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.product.md"
     },
     {
@@ -10780,7 +12562,13 @@
       "name": "product mgmt",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.product-mgmt.md"
     },
     {
@@ -10788,7 +12576,13 @@
       "name": "productivity time management",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.productivity-time-management.md"
     },
     {
@@ -10796,7 +12590,13 @@
       "name": "real estate",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.real-estate.md"
     },
     {
@@ -10804,7 +12604,13 @@
       "name": "reddit",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.reddit.md"
     },
     {
@@ -10812,7 +12618,13 @@
       "name": "research",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.research.md"
     },
     {
@@ -10820,7 +12632,13 @@
       "name": "sales",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.sales.md"
     },
     {
@@ -10828,7 +12646,13 @@
       "name": "skill",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.skill.md"
     },
     {
@@ -10836,7 +12660,13 @@
       "name": "space",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.space.md"
     },
     {
@@ -10844,7 +12674,13 @@
       "name": "startup",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.startup.md"
     },
     {
@@ -10852,7 +12688,13 @@
       "name": "strategy",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.strategy.md"
     },
     {
@@ -10860,7 +12702,13 @@
       "name": "tech",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.tech.md"
     },
     {
@@ -10868,7 +12716,13 @@
       "name": "testing",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.testing.md"
     },
     {
@@ -10876,7 +12730,13 @@
       "name": "topic",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.topic.md"
     },
     {
@@ -10884,7 +12744,13 @@
       "name": "vc startups",
       "category": "wiki",
       "priority": "P3",
-      "status": "stub",
+      "status": "drafted",
+      "intent": [
+        "__wiki__"
+      ],
+      "jurisdictions": [
+        "__multi__"
+      ],
       "filename": "wiki.vc-startups.md"
     },
     {

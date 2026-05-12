@@ -2,20 +2,11 @@
 id: persona.in-house-counsel
 name: 'in house counsel'
 category: persona
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [__persona__]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# persona.in-house-counsel — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+In-house counsel persona: business-aligned, cost-conscious, often a generalist covering many domains. Louis value: cover skill gaps, vendor management, board-ready summaries.

@@ -2,20 +2,11 @@
 id: wiki.blockchain
 name: 'blockchain'
 category: wiki
+intent: [__wiki__]
+jurisdictions: [__multi__]
 priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+status: drafted
+version: 0.2
 ---
 
-# wiki.blockchain — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Blockchain primitives: consensus, smart contracts, gas, L2s, MEV. Bridges to legal: smart-contract enforceability, regulatory regimes (VARA Dubai, ADGM, KSA pending).

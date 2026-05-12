@@ -2,20 +2,15 @@
 id: academy.ai-feature-explainer
 name: 'ai feature explainer'
 category: academy
+intent: [__customer-facing__]
+jurisdictions: [__multi__]
 priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+status: drafted
+version: 0.2
 ---
 
-# academy.ai-feature-explainer — STUB
+Explains the AI features in Louis to prospects/users: skill router, clause library, citations engine, risk scanner, doc workspace, drafting board, legal flows.
 
-This skill is named in the Louis skills inventory but not yet authored.
+When to invoke: user asks 'what can Louis do?' or 'how is your AI different?'
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Key messages: 982-skill library + transparent router + MENA-first jurisdictional awareness + Arabic-native + no fine-tuning bet.

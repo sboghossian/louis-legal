@@ -2,20 +2,13 @@
 id: output.citation-format-civil-law-FR
 name: 'citation format civil law FR'
 category: output
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [__output__]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# output.citation-format-civil-law-FR — STUB
+Civil-law French citation style (Dalloz / JurisClasseur): Cass. com., 7 mars 2018, n° 16-23.000, D. 2018, p. 700.
 
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Use for francophone MENA (LB, FR-influenced TN, MA).

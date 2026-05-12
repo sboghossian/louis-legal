@@ -2,20 +2,13 @@
 id: docs.security-overview
 name: 'security overview'
 category: docs
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [__docs__]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# docs.security-overview — STUB
+Security overview: SOC 2 Type II (target 2026), ISO 27001 (target 2026), encryption AES-256 at rest + TLS 1.3 in transit, pentest annually.
 
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Tenant isolation, no-training default, zero-trust access.

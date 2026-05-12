@@ -2,20 +2,13 @@
 id: output.citation-MENA-conventions
 name: 'citation MENA conventions'
 category: output
-priority: P3
-status: stub
-version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+intent: [__output__]
+jurisdictions: [__multi__]
+priority: P2
+status: drafted
+version: 0.2
 ---
 
-# output.citation-MENA-conventions — STUB
+When citing MENA sources, use jurisdiction-appropriate format: KSA Royal Decree M/N (year), UAE FDL N/year, Lebanon Loi N/year, Egypt Law N/year.
 
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+See [[research.regulation-lookup]] for canonical references.
