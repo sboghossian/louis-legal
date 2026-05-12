@@ -1,21 +1,18 @@
 ---
 id: pa-workflow.transactional.deal-point-analysis
-name: 'transactional · deal point analysis'
+name: Deal Point Analysis
 category: pa-workflow
-priority: P3
-status: stub
+intent: [__workflow__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Top-level deal-point analysis for M&A:
+- Purchase price + adjustment
+- Reps & warranties
+- Indemnification (cap, basket, survival)
+- Closing conditions
+- Termination rights
+- Non-compete + non-solicit
 
-# pa-workflow.transactional.deal-point-analysis — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Output: deal-point matrix vs precedent + market norms.

@@ -1,21 +1,39 @@
 ---
 id: messaging.bridge-line
-name: 'bridge line'
+name: Messaging — Bridge Line
 category: messaging
-priority: P3
-status: stub
+intent: [__messaging__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+The HAQQ / Louis Bridge Line — the messaging compass:
 
-# messaging.bridge-line — STUB
+> *"Louis makes legal understanding accessible to everyone — and makes legal work faster for the professionals who practice it."*
 
-This skill is named in the Louis skills inventory but not yet authored.
+This single line bridges B2C and B2B audiences without compromising either.
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Why this line
+- **"Legal understanding"** (not "legal advice") → allowed for consumers
+- **"Accessible to everyone"** → consumer-friendly
+- **"Faster for professionals"** → respects + serves lawyers
+- **"Practice it"** → reaffirms lawyer's privileged role
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Use it
+- All public-facing copy
+- Investor + partnership decks
+- Press releases
+- Influencer briefs
+- New-product launches
+
+# What this line does NOT say
+- "Replaces lawyers" ❌
+- "DIY legal" ❌
+- "Cheaper than lawyers" ❌
+- "Skip legal fees" ❌
+- "Win your case" ❌
+
+# Compliance
+This line is your guardrail. If a piece of copy would contradict it, the copy is wrong.
+
+See [[messaging.allowed-claims-consumer]], [[messaging.banned-claims-consumer]], [[messaging.allowed-claims-lawyer]].

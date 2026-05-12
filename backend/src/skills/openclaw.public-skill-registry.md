@@ -1,21 +1,16 @@
 ---
 id: openclaw.public-skill-registry
-name: 'public skill registry'
+name: OpenClaw — Public Skill Registry
 category: openclaw
-priority: P3
-status: stub
+intent: [__openclaw__]
+priority: P2
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# openclaw.public-skill-registry — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Public registry of legal skills:
+- Authored by community + verified by lawyers
+- Versioned + reviewed
+- Free to use; attribution to authors
+- Quality-tier markers
+- HAQQ contributes seed library
+- Industry adoption goal

@@ -1,21 +1,19 @@
 ---
 id: ref.verification
-name: 'verification'
+name: Reference — Verification Checklist
 category: ref
-priority: P3
-status: stub
+intent: [__ref__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Verification before sending AI output:
+- Are all cited statutes real? (verify article number)
+- Are all cited cases real? (verify caption + pin-cite)
+- Is the jurisdiction correct?
+- Are all numbers + dates correct?
+- Has currency been validated?
+- Is the conclusion supported by the analysis?
+- Does the answer satisfy the question asked?
 
-# ref.verification — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Never skip verification on high-stakes outputs.

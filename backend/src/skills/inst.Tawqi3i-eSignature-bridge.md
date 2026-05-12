@@ -1,21 +1,14 @@
 ---
 id: inst.Tawqi3i-eSignature-bridge
-name: 'Tawqi3i eSignature bridge'
+name: Inst — Tawqi3i E-Signature Bridge
 category: inst
-priority: P3
-status: stub
+intent: [__inst__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# inst.Tawqi3i-eSignature-bridge — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Tawqi3i integration for cross-border e-signature:
+- Direct sign flow within Louis
+- Apostille auto-request
+- Saudi + LB + UAE recognition
+- Audit trail preserved

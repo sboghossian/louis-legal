@@ -1,21 +1,47 @@
 ---
 id: safety.bar-rule-5.5-UPL-AI
-name: 'bar rule 5 · 5 UPL AI'
+name: Bar Rule 5.5 — UPL + AI
 category: safety
-priority: P3
-status: stub
+intent: [__core__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+ABA Model Rule 5.5 (and MENA analogs): unauthorized practice of law.
 
-# safety.bar-rule-5.5-UPL-AI — STUB
+# AI-specific UPL concerns
+1. **AI directly advising consumers** — could constitute UPL by the AI provider in some jurisdictions
+2. **AI representing in court** — clear UPL; AI cannot file pleadings, appear as counsel
+3. **AI providing legal advice without lawyer supervision** — varies by jurisdiction
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Louis stance
+- **Information, not advice** — see [[safety.no-legal-advice-disclaimer-rules]]
+- **No court appearance** — AI doesn't file pleadings as counsel
+- **No client representation** — AI doesn't establish attorney-client relationship
+- **Lawyer supervision** — eFirm tier supervised by licensed attorneys
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# What's permitted
+- General legal information
+- Drafting templates (final review by licensed attorney recommended)
+- Research + analysis (lawyer reviews + adopts)
+- Procedural information
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# What's NOT permitted
+- Representing user in court
+- Filing pleadings on user's behalf as their counsel
+- Establishing attorney-client privilege relationship
+- Giving binding legal advice in jurisdiction requiring license
+
+# Variation by jurisdiction
+- **US states**: each has own UPL definition; some narrow, some broad
+- **LB / KSA / UAE**: bar admission required for court representation; AI tools clearly informational
+- **DIFC / ADGM**: similar; admission required
+- **UK**: SRA Code of Conduct; legal services regulated
+
+# Practical
+- Consumer surface: keep clearly informational
+- Lawyer surface (eFirm): lawyer-supervised, lawyer signs all output
+- Public tools: limited scope, clearly templated
+- Bar disclosure when relevant
+
+See [[safety.unauthorized-practice-of-law-LB-KSA-UAE]] and [[conversation.refusal-policy]].

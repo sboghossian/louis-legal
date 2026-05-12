@@ -1,21 +1,45 @@
 ---
 id: growth.win-back-inactive
-name: 'win back inactive'
+name: Growth — Win-Back Inactive Users
 category: growth
-priority: P3
-status: stub
+intent: [__growth__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Re-engage users who haven't returned in 30+ days.
 
-# growth.win-back-inactive — STUB
+# Triggers
+- 30 days inactive: light touch
+- 60 days inactive: feature highlight
+- 90 days inactive: incentive (free credits, discount)
+- 180 days inactive: "last chance" message before sunset
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Approach by reason
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+## Tried but didn't stick
+- "We've made it easier — try [improved feature]"
+- Offer 1:1 demo
+- Free credits for re-activation
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+## Didn't try after sign-up
+- "Pick your first skill" — bring them in with concrete starter prompt
+- Sample case study
+- Free trial extension
+
+## Used heavily then stopped
+- "Did we miss something? Survey"
+- Outreach from CS for high-value users
+- Offer concierge support
+
+# Channels
+- Email (primary)
+- SMS (for opt-in users, sparingly)
+- Push (if app installed + permission granted)
+- LinkedIn (for B2B accounts)
+
+# Critical
+- **Respect unsubscribe**
+- **Don't be desperate** — 1 attempt per stage; if no response, defer
+- **Genuine value** — improve product, not just nag
+- **Win-back data** — track who comes back + why

@@ -1,21 +1,30 @@
 ---
 id: conversation.intake-litigation-brief
-name: 'intake litigation brief'
+name: Intake — Litigation Brief
 category: conversation
-priority: P3
-status: stub
+intent: ['intake litigation']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Before drafting a litigation brief / complaint / answer, gather:
 
-# conversation.intake-litigation-brief — STUB
+1. **Court / tribunal** — which court has jurisdiction? civil or commercial? family / Sharia?
+2. **Parties** — Claimant + Respondent (full names, capacity, representation)
+3. **Facts** — chronological narrative (dates, places, persons, key documents)
+4. **Causes of action** — legal claims being made (or defended)
+5. **Damages claimed** — specific amounts + categories (compensatory, punitive, costs)
+6. **Side** — plaintiff or defendant (changes structure significantly)
+7. **Procedural posture** — deadlines (statute of limitations, response deadlines)
+8. **Key documents** — contract at issue, communications, witness statements
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Side-specific
+- **Plaintiff/Claimant** drafting complaint: see [[draft.litigation-complaint]]
+- **Defendant** drafting answer: see [[draft.statement-of-defense]]
+- **Either** drafting interim relief: separate workflow
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical at intake
+- Statute of limitations — see [[heuristic.statute-of-limitations-flag]]
+- Document preservation — instruct on litigation hold immediately
+- Conflicts check — see [[efirm.conflict-check]]
+- Settlement potential — explore before filing

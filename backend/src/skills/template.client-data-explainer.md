@@ -1,21 +1,22 @@
 ---
 id: template.client-data-explainer
-name: 'client data explainer'
+name: Template — Client Data Explainer
 category: template
-priority: P3
-status: stub
+intent: [__template__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+What HAQQ does with client data — explainer for procurement reviews.
 
-# template.client-data-explainer — STUB
+**Storage**: Supabase Postgres (EU region available)
+**Processing**: AI model invocation per tenant
+**Retention**: per-tenant configurable (default: 7 years for matter docs)
+**Sharing**: never cross-tenant; subprocessors per DPA
+**Training**: AI providers do NOT train on tenant data (per provider TOS)
+**Encryption**: at rest + in transit
+**Access**: RLS-enforced; tenant-scoped only
+**Audit**: full audit trail accessible on request
+**Deletion**: tenant-deletion = full data purge within 30 days
 
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+For formal questionnaires, see [[template.vendor-security-questionnaire-responses]].

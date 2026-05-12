@@ -1,21 +1,18 @@
 ---
 id: draft.KYC-procedure
-name: 'KYC procedure'
+name: Draft — KYC Procedure
 category: draft
-priority: P3
-status: stub
+intent: [__draft__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# draft.KYC-procedure — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Customer KYC procedure:
+1. Identification (ID verification)
+2. Verification (independent sources)
+3. Beneficial ownership ≥25%
+4. Purpose of relationship
+5. Source of funds (high-risk)
+6. Sanctions screening
+7. Periodic refresh (annual for low-risk; more frequent for high-risk)
+8. Adverse media + PEP screening

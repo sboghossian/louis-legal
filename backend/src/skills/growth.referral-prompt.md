@@ -1,21 +1,50 @@
 ---
 id: growth.referral-prompt
-name: 'referral prompt'
+name: Growth — Referral Prompts
 category: growth
-priority: P3
-status: stub
+intent: [__growth__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Prompt happy users to refer others.
 
-# growth.referral-prompt — STUB
+# When to ask
+- After a successful drafting / review session
+- After NPS score 9-10
+- After 30 days active usage
+- After paid plan upgrade
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Don't ask
+- After error / refund / negative experience
+- Within 24h of distress matter
+- Repeatedly (cap: once per 30 days)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Prompt patterns
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+## Soft (in-chat)
+> "If Louis is saving you time, share with a colleague? You'll both get +50% credits."
+> [Share link] [Maybe later]
+
+## Email
+- Subject: "Know a lawyer who'd love Louis?"
+- Personalized referral link
+- Reward explanation
+- Optional pre-written share copy
+
+## In-app modal
+- Triggered post-successful-task
+- Visual: gift icon + reward
+- Tooltip explaining mutual benefit
+
+# Reward structures
+- **AI tier (consumer)**: +50% credits each, on first paid month
+- **eFirm tier (B2B)**: free month each, on first month after signup
+- **Cumulative**: cap at 6 referrals / year
+
+# Critical
+- **Mutual benefit** matters — referral recipient also gets value
+- **Easy share path** — pre-written copy + link in 1 tap
+- **Track referrals** — see [[/referral]] page
+
+See [[/referral]] for the page + [[unlock.contextual-upsell]] for related patterns.

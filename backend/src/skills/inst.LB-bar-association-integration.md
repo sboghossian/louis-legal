@@ -1,21 +1,17 @@
 ---
 id: inst.LB-bar-association-integration
-name: 'LB bar association integration'
+name: Inst — LB Bar Association Integration
 category: inst
-priority: P3
-status: stub
+intent: [__inst__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Beirut Bar Association integration:
+- CLE credit for Louis use
+- Member discount (HAQQ Pioneers program)
+- Co-hosted webinars
+- Bar advisory committee for HAQQ
+- Lawyer-of-the-month features
 
-# inst.LB-bar-association-integration — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Goal: deepen lawyer adoption + bar legitimacy.

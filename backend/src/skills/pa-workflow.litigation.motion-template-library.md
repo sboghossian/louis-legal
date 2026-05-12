@@ -1,21 +1,17 @@
 ---
 id: pa-workflow.litigation.motion-template-library
-name: 'litigation · motion template library'
+name: Motion Template Library
 category: pa-workflow
-priority: P3
-status: stub
+intent: [__workflow__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Library of motion templates by type + jurisdiction:
+- Motion to dismiss
+- Motion for summary judgment
+- Motion to compel
+- Motion in limine
+- Motion for sanctions
 
-# pa-workflow.litigation.motion-template-library — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Adapted per jurisdiction's rules.

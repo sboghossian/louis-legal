@@ -1,21 +1,16 @@
 ---
 id: pa-workflow.transactional.clause-library-check
-name: 'transactional · clause library check'
+name: Clause Library Check
 category: pa-workflow
-priority: P3
-status: stub
+intent: [__workflow__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# pa-workflow.transactional.clause-library-check — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Verify document uses firm's preferred clauses + flag deviations.
+# Steps
+1. Parse document clauses
+2. Map to firm's clause library
+3. Highlight non-standard clauses
+4. Suggest replacement with library version
+5. Track which clauses get deviated frequently (KB feedback loop).

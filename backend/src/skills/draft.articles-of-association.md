@@ -1,21 +1,23 @@
 ---
 id: draft.articles-of-association
-name: 'articles of association'
+name: Draft — Articles of Association
 category: draft
-priority: P3
-status: stub
+intent: [__draft__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+practice_area: corporate
 ---
+Articles of Association (charter document):
+- Company name + registered office
+- Objects clause (broad usually)
+- Share capital structure
+- Share classes + rights
+- Transfer restrictions
+- Director appointment / removal
+- Board procedures
+- Shareholder meeting procedures
+- Dividend distribution
+- Winding up
 
-# draft.articles-of-association — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Jurisdiction-specific standard forms common.

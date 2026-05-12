@@ -1,21 +1,20 @@
 ---
 id: voice-brand.press-release-tone
-name: 'press release tone'
+name: Voice — Press Release Tone
 category: voice-brand
-priority: P3
-status: stub
+intent: [__voice-brand__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Press release standard format:
+- Factual headline (not clickbait)
+- Dateline (city, date)
+- Lead paragraph: what + who + when
+- Quote from CEO or relevant exec
+- Background on company
+- Boilerplate at bottom
+- Contact info
 
-# voice-brand.press-release-tone — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Tone: professional, factual, third-person.
+Length: 400-600 words.

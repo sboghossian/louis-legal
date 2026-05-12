@@ -1,21 +1,19 @@
 ---
 id: ref.setup-checklist
-name: 'setup checklist'
+name: Reference — Setup Checklist
 category: ref
-priority: P3
-status: stub
+intent: [__ref__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# ref.setup-checklist — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Setting up Louis for a new firm:
+- Tenant creation in Supabase
+- DPA signed
+- AML compliance overview
+- Conflict-check seed data
+- Firm KB ingest (precedents)
+- Branded engagement letter template
+- User onboarding for partners + associates
+- Customize per firm preferences
+- Integration setup (Linear / HubSpot / Stripe)

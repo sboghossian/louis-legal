@@ -1,21 +1,13 @@
 ---
 id: pa-workflow.regulatory.cross-jurisdiction-tracker
-name: 'regulatory · cross jurisdiction tracker'
+name: Regulatory — Cross-Jurisdiction Tracker
 category: pa-workflow
-priority: P3
-status: stub
+intent: [__workflow__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# pa-workflow.regulatory.cross-jurisdiction-tracker — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Track regulatory changes across multiple jurisdictions for multi-national clients:
+- Comparative table updated weekly
+- Impact assessment per jurisdiction
+- Implementation timeline recommendations

@@ -1,21 +1,17 @@
 ---
 id: intel.in-house-legal-shift
-name: 'in house legal shift'
+name: In-House Legal Shift
 category: intel
-priority: P3
-status: stub
+intent: [__intel__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+49% of in-house legal departments restructured in last 3 years (ACC + Thomson Reuters surveys).
+Drivers:
+- Cost pressure
+- AI tools enabling smaller teams
+- Legal ops emergence as discipline
+- Vendor consolidation
 
-# intel.in-house-legal-shift — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+In-house team size declining for first time in decades.

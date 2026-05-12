@@ -1,21 +1,40 @@
 ---
 id: conversation.intake-incorporation
-name: 'intake incorporation'
+name: Intake — Incorporation
 category: conversation
-priority: P3
-status: stub
+intent: ['intake incorporation']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Before incorporating a new entity, gather:
 
-# conversation.intake-incorporation — STUB
+1. **Founders + shareholders** — identification, equity split
+2. **Business activity** — what will the company do? (affects license requirements)
+3. **Jurisdiction choice** — see [[research.jurisdiction-comparison]]:
+   - Onshore (LB, KSA, UAE federal): for local operations
+   - DIFC: VC-backed tech, common-law, English-language
+   - ADGM: crypto, digital assets, regulated
+   - Delaware: US-bound startups, VC-friendly
+   - Singapore: Asia-focused
+4. **Entity type**:
+   - LLC (most common for startups + SMEs)
+   - JSC (for larger, fundraising entities)
+   - Partnership (for professional services)
+   - Free zone entity (UAE FZ-LLC etc.)
+5. **Capital**:
+   - Initial share capital
+   - Class structure (common only? preferred too?)
+   - Option pool size
+6. **Office space + tenancy** (required for some jurisdictions)
+7. **Bank account** + initial funding source
+8. **Tax structure** — group structure, IP holding, etc.
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Critical
+- Jurisdiction choice has long-term implications (re-domicile is expensive)
+- Founder agreement + vesting before incorporation if multi-founder
+- IP assignment from founders critical at day 1
+- Bank account opening can take weeks — start early
+- Beneficial ownership disclosure mandatory
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+See [[workflow.startup-incorporation-pack]] for the document deliverables.

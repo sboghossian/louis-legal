@@ -1,21 +1,42 @@
 ---
 id: justice.intent.competitor-comparison
-name: 'intent · competitor comparison'
+name: Justice Intent — Competitor Comparison
 category: justice
-priority: P3
-status: stub
+intent: [__justice__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Detect when user asks how Louis compares to competitors.
 
-# justice.intent.competitor-comparison — STUB
+# Patterns
+- "How does Louis compare to Harvey?"
+- "vs Spellbook / Legora / CoCounsel"
+- "Why Louis instead of ChatGPT?"
+- "Difference between Louis and [competitor]"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Response actions
+- Route to `/compare-us` for canonical comparison
+- Provide brief positioning vs named competitor
+- Surface MENA-specific advantages (jurisdictional coverage, Arabic support, local KB)
+- Avoid disparaging competitors directly
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Key positioning points
+- **vs Harvey**: Harvey strong on AmLaw100; Louis strong on MENA + multi-jurisdiction + cost-effective
+- **vs Legora**: Legora EU-focused; Louis MENA + Arabic
+- **vs Spellbook**: Spellbook Word-plugin focused; Louis full workbench + workspace
+- **vs CoCounsel**: CoCounsel TR-affiliated, US-focused; Louis independent, MENA-rooted
+- **vs ChatGPT / Claude raw**: Louis pre-loaded with legal skills, jurisdictional knowledge, doc workspace
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Honest differentiation
+- We focus on MENA — strongest there
+- Multi-language including Arabic
+- Built-with-lawyer + bar-rule aware
+- Skills-system architecture (modular, customizable)
+
+# Banned moves
+- Don't fabricate competitor weaknesses
+- Don't claim functional parity if it doesn't exist
+- Don't bash — focus on positioning
+
+See [[messaging.bridge-line]] for tone framework.

@@ -1,21 +1,18 @@
 ---
 id: ref.skill-authoring
-name: 'skill authoring'
+name: Reference — Skill Authoring Guide
 category: ref
-priority: P3
-status: stub
+intent: [__ref__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# ref.skill-authoring — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Authoring new Louis skills:
+1. Identify gap (not covered by existing skill)
+2. Choose category (matches `_types.ts`)
+3. Define intent keywords (for router pickup)
+4. Set priority (P0-P3)
+5. Write frontmatter + body
+6. Reference related skills with `[[id]]`
+7. Test routing: does router pick this up?
+8. Iterate based on eval results

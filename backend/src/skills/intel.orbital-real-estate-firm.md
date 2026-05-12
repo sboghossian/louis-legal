@@ -1,21 +1,13 @@
 ---
 id: intel.orbital-real-estate-firm
-name: 'orbital real estate firm'
+name: Orbital — AI Real Estate Firm
 category: intel
-priority: P3
-status: stub
+intent: [__intel__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# intel.orbital-real-estate-firm — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Orbital launched as the first explicitly 'AI-native' legal firm (2024) — focused on real estate.
+Model: lawyers + AI tools deeply integrated; pricing per outcome not hour.
+Growth: rapid in first year.
+Implication: AI-native firm models are viable + scaling.

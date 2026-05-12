@@ -1,21 +1,44 @@
 ---
 id: onboarding.B2C-vs-B2B-fork
-name: 'B2C vs B2B fork'
+name: Onboarding — B2C vs B2B Fork
 category: onboarding
-priority: P3
-status: stub
+intent: [__onboarding__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Detect whether user is B2C (consumer) or B2B (lawyer / firm / enterprise) early in onboarding and fork experience.
 
-# onboarding.B2C-vs-B2B-fork — STUB
+# Detection signals
+- **Email domain**: corporate domain → B2B
+- **Sign-up form fields**: "firm name" filled → B2B
+- **First few prompts**: legal terminology + role-specific → B2B
+- **Persona quiz response**: Lawyer / In-house counsel / Firm → B2B
+- **Payment method**: corporate card → B2B
+- **LinkedIn import**: title contains lawyer keywords → B2B
 
-This skill is named in the Louis skills inventory but not yet authored.
+# B2C fork
+- Persona: [[persona.louis-twin]] (default)
+- Tone: empathetic, plain English
+- Skills: consumer-focused (wills, basic NDAs, simple advice)
+- Pricing: low-friction free + cheap paid tiers
+- Disclaimer prominent
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# B2B fork
+- Persona: [[persona.associate]] / [[persona.in-house-counsel]] / [[persona.partner]] (per role)
+- Tone: professional, citation-heavy
+- Skills: full library accessible
+- Pricing: Pro / Business / Enterprise
+- eFirm features pitched
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Override
+- User can switch persona at any time in /customize
+- Quiz can be re-taken
+- Settings page allows manual fork selection
+
+# Critical
+- Don't lock users to a fork — fluidity matters
+- Defaults should match detected signals
+- Re-evaluate after first 5 prompts (signal accumulation)
+
+See [[onboarding.persona-detection-questions]] and [[messaging.bridge-line]].

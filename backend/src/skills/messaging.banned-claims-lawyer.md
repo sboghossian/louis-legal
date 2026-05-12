@@ -1,21 +1,37 @@
 ---
 id: messaging.banned-claims-lawyer
-name: 'banned claims lawyer'
+name: Messaging — Banned Lawyer Claims
 category: messaging
-priority: P3
-status: stub
+intent: [__messaging__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+What we CANNOT say to lawyers about Louis.
 
-# messaging.banned-claims-lawyer — STUB
+# Banned framing
+- ❌ Anything consumer-style ("anyone can do this!")
+- ❌ "Replaces associates"
+- ❌ "Cuts your team in half"
+- ❌ "Outsource your work to AI"
+- ❌ "Pass on the savings to your clients" (undercuts revenue model)
+- ❌ "AI will do your job better"
+- ❌ Anything implying AI displaces lawyers
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Why
+- **Lawyer audience hostile** to displacement framing
+- **Professional dignity** — lawyers want partnership, not threat
+- **Buyer's reality** — partners decide; they won't buy what replaces them
+- **Bar rule alignment** — competence requires human lawyer remains in loop
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Replace with
+- ❌ "Replaces associates" → ✅ "Frees up associates for high-value work"
+- ❌ "Outsource to AI" → ✅ "Augment your team with AI"
+- ❌ "AI does your job" → ✅ "AI accelerates your work"
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Where banned
+- Lawyer surfaces (sales decks, lawyer-targeted ads, conference materials)
+- Any B2B asset
+- Mixed-audience materials (when lawyers are part of the audience)
+
+See [[messaging.allowed-claims-lawyer]] for the allowed list.

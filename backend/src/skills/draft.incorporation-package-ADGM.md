@@ -1,21 +1,18 @@
 ---
 id: draft.incorporation-package-ADGM
-name: 'incorporation package ADGM'
+name: Draft — Incorporation Package (ADGM)
 category: draft
-priority: P3
-status: stub
+intent: [__draft__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
+practice_area: corporate
 ---
-
-# draft.incorporation-package-ADGM — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+ADGM company incorporation:
+- ADGM Registrar + ARES (Authorized Registration Establishment Service)
+- LTD / Private Company structure
+- Common-law jurisdiction
+- ADGM Courts
+- Office space (or business center)
+- Strong crypto / digital asset framework
+- Capital: AED-equivalent USD 50K minimum

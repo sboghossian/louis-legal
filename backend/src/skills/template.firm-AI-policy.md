@@ -1,21 +1,29 @@
 ---
 id: template.firm-AI-policy
-name: 'firm AI policy'
+name: Template — Firm AI Policy
 category: template
-priority: P3
-status: stub
+intent: [__template__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+What associates can / cannot do with Louis or other AI:
 
-# template.firm-AI-policy — STUB
+**Permitted**:
+- Research support (with verification of citations)
+- Drafting first drafts (with attorney review)
+- Document summarization
+- Pre-litigation document organization
+- Translation drafts
 
-This skill is named in the Louis skills inventory but not yet authored.
+**Prohibited**:
+- Submitting AI output as final without attorney review
+- Pasting client-confidential info without firm-approved tooling
+- Court filing as 'AI-generated' without disclosure
+- Establishing attorney-client relationship via AI
+- Sending privileged content to non-firm-approved AI tools
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+**Required**:
+- Verify all citations
+- Document AI use in matter file
+- Comply with bar rules (see [[safety.bar-rule-1.1-competence-AI]])

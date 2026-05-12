@@ -1,21 +1,36 @@
 ---
 id: site.use-case-router
-name: 'use case router'
+name: Site — Use Case Router
 category: site
-priority: P3
-status: stub
+intent: [__site__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Route to `/use-cases/:slug` based on user's job-to-be-done.
 
-# site.use-case-router — STUB
+# Common use-case pages
+- `/use-cases/contract-drafting`
+- `/use-cases/contract-review`
+- `/use-cases/legal-research`
+- `/use-cases/m-and-a-due-diligence`
+- `/use-cases/employment-law`
+- `/use-cases/litigation-prep`
+- `/use-cases/regulatory-compliance`
+- `/use-cases/startup-incorporation`
+- `/use-cases/data-privacy`
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Routing logic
+- Detect intent + practice area from user message
+- Match to corresponding use-case page
+- Deep-link from chat to relevant marketing page
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Use within Louis
+- Onboarding: "What brings you here today?" → use-case page
+- After successful task: "Want to learn more about [related use case]?"
+- Sales-intent conversations: surface relevant use-case page
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+- Pages should show real product capabilities for that use case
+- Include case studies + ROI metrics where available
+- Don't promise features not yet built

@@ -548,6 +548,33 @@ export function ChatView({
                                     </div>
                                 ));
                             })()}
+
+                            {/* Prototype-style follow-up chips after the last assistant message */}
+                            {messages.length > 0 &&
+                                messages[messages.length - 1].role === "assistant" &&
+                                !isResponseLoading && (
+                                <div className="max-w-3xl mx-auto px-4 mb-4">
+                                    <p className="text-[10px] uppercase tracking-wide text-gray-400 mb-2">Try next</p>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {[
+                                            "Draft a counter-proposal",
+                                            "Translate this to Arabic",
+                                            "Summarize in 5 bullets",
+                                            "Compare with another jurisdiction",
+                                            "Generate the redline",
+                                        ].map(p => (
+                                            <button
+                                                key={p}
+                                                onClick={() => handleChat({ role: "user", content: p })}
+                                                className="px-2.5 py-1 text-xs bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-full border border-gray-200 transition-colors"
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div ref={messagesEndRef} />
                         </div>
                     </div>

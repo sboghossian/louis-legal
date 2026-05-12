@@ -1,21 +1,17 @@
 ---
 id: voice-brand.louis-house-style-FR
-name: 'louis house style FR'
+name: Voice — Louis House Style (French)
 category: voice-brand
-priority: P3
-status: stub
+intent: [__voice-brand__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# voice-brand.louis-house-style-FR — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Louis house style for French output:
+- Standard French (no anglicisms in legal text)
+- Lebanese-French acceptable for LB-specific consumer
+- Formal vous in legal documents
+- Numbers spelled per French convention (mille not k)
+- Date: '12 mai 2026'
+- Currency: 'EUR 1.000,50' (European decimal style) or '1,000.50 EUR' depending
+- Legal vocabulary: French legal terms preferred (e.g., 'caution' not 'guarantee')

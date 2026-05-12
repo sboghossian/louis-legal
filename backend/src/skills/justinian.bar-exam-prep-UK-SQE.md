@@ -1,21 +1,49 @@
 ---
 id: justinian.bar-exam-prep-UK-SQE
-name: 'bar exam prep UK SQE'
+name: Justinian — UK SQE Prep
 category: justinian
-priority: P3
-status: stub
+intent: [sqe, 'uk bar prep']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+UK SQE (Solicitors Qualifying Examination) preparation.
 
-# justinian.bar-exam-prep-UK-SQE — STUB
+# Overview
+- **SQE1**: Functioning Legal Knowledge (FLK) — two MCQ exams of ~180 questions each
+- **SQE2**: Skills assessments — interviewing, drafting, advocacy, legal research, writing
+- Pass both to qualify as solicitor in England + Wales
+- Replaces old LPC route (transition complete)
 
-This skill is named in the Louis skills inventory but not yet authored.
+# SQE1 coverage
+- **FLK1**: Business law + practice, Dispute resolution, Contract, Tort, Legal system
+- **FLK2**: Property, Wills + administration of estates, Solicitors' accounts, Trusts, Land law, Criminal law
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# SQE2 skills
+- Client interview (with live actor + written record)
+- Advocacy (case analysis + advocacy presentation)
+- Case + matter analysis (written brief)
+- Legal research (research-write task)
+- Legal writing (memo, letter)
+- Legal drafting (contract or pleading)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Study approach
+- Multiple-choice technique critical for SQE1
+- Practical scenarios for SQE2 — practice with actors / mock clients
+- Time pressure: ~1.5 minutes per MCQ
+
+# Pass rate context
+- SQE1 pass rate: ~50-60%
+- SQE2 pass rate: higher (~75%)
+- Re-sit possible
+
+# Justinian-specific support
+- MCQ practice with explanations
+- Scenario-based skills coaching
+- Time-management training
+- Past-paper-style questions
+
+# Qualifying work experience
+- 2 years of qualifying work experience required separately
+- Can be done in any combination of legal contexts
+- SQE alone insufficient for admission

@@ -1,21 +1,14 @@
 ---
 id: pa-workflow.inhouse.commercial-team-clause-explainer
-name: 'inhouse · commercial team clause explainer'
+name: In-House — Clause Explainer for Commercial Team
 category: pa-workflow
-priority: P3
-status: stub
+intent: [__workflow__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# pa-workflow.inhouse.commercial-team-clause-explainer — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Explain contract clauses to commercial / sales teams:
+- What does this clause mean?
+- What's the commercial impact?
+- What should sales push back on?
+- When to escalate to legal?

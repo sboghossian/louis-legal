@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-12T10:45:30.762Z",
-  "total": 975,
+  "generated_at": "2026-05-12T11:06:19.406Z",
+  "total": 982,
   "entries": [
     {
       "id": "academy.ai-feature-explainer",
@@ -212,50 +212,68 @@
     },
     {
       "id": "community.bar-association-co-host-webinar",
-      "name": "bar association co host webinar",
+      "name": "Community — Bar Association Webinar",
       "category": "community",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__community__"
+      ],
       "filename": "community.bar-association-co-host-webinar.md"
     },
     {
       "id": "community.influencer-collab-brief",
-      "name": "influencer collab brief",
+      "name": "Community — Influencer Collaboration Brief",
       "category": "community",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__community__"
+      ],
       "filename": "community.influencer-collab-brief.md"
     },
     {
       "id": "community.NVIDIA-Inception-co-marketing",
-      "name": "NVIDIA Inception co marketing",
+      "name": "Community — NVIDIA Inception",
       "category": "community",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__community__"
+      ],
       "filename": "community.NVIDIA-Inception-co-marketing.md"
     },
     {
       "id": "community.partner-deal-templates",
-      "name": "partner deal templates",
+      "name": "Community — Partner Deal Templates",
       "category": "community",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__community__"
+      ],
       "filename": "community.partner-deal-templates.md"
     },
     {
       "id": "community.pioneers-ai-lab-onboarding",
-      "name": "pioneers ai lab onboarding",
+      "name": "Community — Pioneers AI Lab Onboarding",
       "category": "community",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__community__"
+      ],
       "filename": "community.pioneers-ai-lab-onboarding.md"
     },
     {
       "id": "community.station-F-residency-applications",
-      "name": "station F residency applications",
+      "name": "Community — Station F Residency",
       "category": "community",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__community__"
+      ],
       "filename": "community.station-F-residency-applications.md"
     },
     {
@@ -340,10 +358,13 @@
     },
     {
       "id": "connector.hubspot-CRM",
-      "name": "hubspot CRM",
+      "name": "Connector — HubSpot CRM",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
       "filename": "connector.hubspot-CRM.md"
     },
     {
@@ -364,10 +385,13 @@
     },
     {
       "id": "connector.linear",
-      "name": "linear",
+      "name": "Connector — Linear",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
       "filename": "connector.linear.md"
     },
     {
@@ -412,10 +436,13 @@
     },
     {
       "id": "connector.stripe",
-      "name": "stripe",
+      "name": "Connector — Stripe",
       "category": "connector",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__connector__"
+      ],
       "filename": "connector.stripe.md"
     },
     {
@@ -472,10 +499,13 @@
     },
     {
       "id": "conversation.intake-arbitration",
-      "name": "intake arbitration",
+      "name": "Intake — Arbitration",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "intake arbitration"
+      ],
       "filename": "conversation.intake-arbitration.md"
     },
     {
@@ -507,10 +537,13 @@
     },
     {
       "id": "conversation.intake-incorporation",
-      "name": "intake incorporation",
+      "name": "Intake — Incorporation",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "intake incorporation"
+      ],
       "filename": "conversation.intake-incorporation.md"
     },
     {
@@ -526,10 +559,13 @@
     },
     {
       "id": "conversation.intake-litigation-brief",
-      "name": "intake litigation brief",
+      "name": "Intake — Litigation Brief",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "intake litigation"
+      ],
       "filename": "conversation.intake-litigation-brief.md"
     },
     {
@@ -597,10 +633,13 @@
     },
     {
       "id": "conversation.long-thread-compression",
-      "name": "long thread compression",
+      "name": "Long-Thread Compression",
       "category": "conversation",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "conversation.long-thread-compression.md"
     },
     {
@@ -841,18 +880,26 @@
     },
     {
       "id": "draft.agency-agreement",
-      "name": "agency agreement",
+      "name": "Draft — Agency Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.agency-agreement.md"
     },
     {
       "id": "draft.AGM-minutes",
-      "name": "AGM minutes",
+      "name": "Draft — AGM Minutes",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.AGM-minutes.md"
     },
     {
@@ -883,10 +930,14 @@
     },
     {
       "id": "draft.articles-of-association",
-      "name": "articles of association",
+      "name": "Draft — Articles of Association",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.articles-of-association.md"
     },
     {
@@ -950,18 +1001,26 @@
     },
     {
       "id": "draft.bylaws",
-      "name": "bylaws",
+      "name": "Draft — Bylaws",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.bylaws.md"
     },
     {
       "id": "draft.cap-table-resolution",
-      "name": "cap table resolution",
+      "name": "Draft — Cap Table Resolution",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.cap-table-resolution.md"
     },
     {
@@ -992,10 +1051,13 @@
     },
     {
       "id": "draft.compliance-manual",
-      "name": "compliance manual",
+      "name": "Draft — Compliance Manual",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
       "filename": "draft.compliance-manual.md"
     },
     {
@@ -1060,10 +1122,14 @@
     },
     {
       "id": "draft.copyright-assignment",
-      "name": "copyright assignment",
+      "name": "Draft — Copyright Assignment",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.copyright-assignment.md"
     },
     {
@@ -1076,10 +1142,13 @@
     },
     {
       "id": "draft.debt-restructuring",
-      "name": "debt restructuring",
+      "name": "Draft — Debt Restructuring Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
       "filename": "draft.debt-restructuring.md"
     },
     {
@@ -1117,6 +1186,18 @@
       ],
       "practice_area": "corporate",
       "filename": "draft.distribution-agreement.md"
+    },
+    {
+      "id": "draft.distribution-agreement-MENA-extension",
+      "name": "Draft — MENA Distribution Variants",
+      "category": "draft",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
+      "filename": "draft.distribution-agreement-MENA-extension.md"
     },
     {
       "id": "draft.divorce-petition",
@@ -1303,10 +1384,14 @@
     },
     {
       "id": "draft.franchise-agreement",
-      "name": "franchise agreement",
+      "name": "Draft — Franchise Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.franchise-agreement.md"
     },
     {
@@ -1332,50 +1417,74 @@
     },
     {
       "id": "draft.incorporation-package-ADGM",
-      "name": "incorporation package ADGM",
+      "name": "Draft — Incorporation Package (ADGM)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.incorporation-package-ADGM.md"
     },
     {
       "id": "draft.incorporation-package-DIFC",
-      "name": "incorporation package DIFC",
+      "name": "Draft — Incorporation Package (DIFC)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.incorporation-package-DIFC.md"
     },
     {
       "id": "draft.incorporation-package-KSA",
-      "name": "incorporation package KSA",
+      "name": "Draft — Incorporation Package (KSA)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.incorporation-package-KSA.md"
     },
     {
       "id": "draft.incorporation-package-LB",
-      "name": "incorporation package LB",
+      "name": "Draft — Incorporation Package (LB)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.incorporation-package-LB.md"
     },
     {
       "id": "draft.incorporation-package-UAE-freezone",
-      "name": "incorporation package UAE freezone",
+      "name": "Draft — Incorporation Package (UAE Free Zone)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.incorporation-package-UAE-freezone.md"
     },
     {
       "id": "draft.incorporation-package-UAE-mainland",
-      "name": "incorporation package UAE mainland",
+      "name": "Draft — Incorporation Package (UAE Mainland)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.incorporation-package-UAE-mainland.md"
     },
     {
@@ -1419,10 +1528,13 @@
     },
     {
       "id": "draft.KYC-procedure",
-      "name": "KYC procedure",
+      "name": "Draft — KYC Procedure",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
       "filename": "draft.KYC-procedure.md"
     },
     {
@@ -1445,6 +1557,18 @@
       "priority": "P3",
       "status": "stub",
       "filename": "draft.licensing-agreement.md"
+    },
+    {
+      "id": "draft.licensing-agreement-software",
+      "name": "Draft — Software License",
+      "category": "draft",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
+      "filename": "draft.licensing-agreement-software.md"
     },
     {
       "id": "draft.litigation-complaint",
@@ -1491,10 +1615,13 @@
     },
     {
       "id": "draft.mortgage",
-      "name": "mortgage",
+      "name": "Draft — Mortgage",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
       "filename": "draft.mortgage.md"
     },
     {
@@ -1510,6 +1637,18 @@
       ],
       "practice_area": "corporate",
       "filename": "draft.MSA.md"
+    },
+    {
+      "id": "draft.MSA-extension",
+      "name": "Draft — MSA Variants",
+      "category": "draft",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
+      "filename": "draft.MSA-extension.md"
     },
     {
       "id": "draft.NDA-mutual",
@@ -1693,10 +1832,14 @@
     },
     {
       "id": "draft.reseller-agreement",
-      "name": "reseller agreement",
+      "name": "Draft — Reseller Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.reseller-agreement.md"
     },
     {
@@ -1795,10 +1938,14 @@
     },
     {
       "id": "draft.shareholder-resolution",
-      "name": "shareholder resolution",
+      "name": "Draft — Shareholder Resolution",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.shareholder-resolution.md"
     },
     {
@@ -1839,6 +1986,18 @@
       ],
       "practice_area": "corporate",
       "filename": "draft.SOW.md"
+    },
+    {
+      "id": "draft.SOW-extension",
+      "name": "Draft — SOW Variants",
+      "category": "draft",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__draft__"
+      ],
+      "practice_area": "corporate",
+      "filename": "draft.SOW-extension.md"
     },
     {
       "id": "draft.statement-of-defense",
@@ -2673,50 +2832,68 @@
     },
     {
       "id": "growth.case-study-asker",
-      "name": "case study asker",
+      "name": "Growth — Case Study Asker",
       "category": "growth",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__growth__"
+      ],
       "filename": "growth.case-study-asker.md"
     },
     {
       "id": "growth.email-onboarding-sequence",
-      "name": "email onboarding sequence",
+      "name": "Growth — Email Onboarding Sequence",
       "category": "growth",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__growth__"
+      ],
       "filename": "growth.email-onboarding-sequence.md"
     },
     {
       "id": "growth.NPS-prompt",
-      "name": "NPS prompt",
+      "name": "Growth — NPS Prompt",
       "category": "growth",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__growth__"
+      ],
       "filename": "growth.NPS-prompt.md"
     },
     {
       "id": "growth.push-notif-templates",
-      "name": "push notif templates",
+      "name": "Growth — Push Notification Templates",
       "category": "growth",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__growth__"
+      ],
       "filename": "growth.push-notif-templates.md"
     },
     {
       "id": "growth.referral-prompt",
-      "name": "referral prompt",
+      "name": "Growth — Referral Prompts",
       "category": "growth",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__growth__"
+      ],
       "filename": "growth.referral-prompt.md"
     },
     {
       "id": "growth.win-back-inactive",
-      "name": "win back inactive",
+      "name": "Growth — Win-Back Inactive Users",
       "category": "growth",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__growth__"
+      ],
       "filename": "growth.win-back-inactive.md"
     },
     {
@@ -2732,10 +2909,13 @@
     },
     {
       "id": "heuristic.bilingual-AR-EN-mirror-clauses",
-      "name": "bilingual AR EN mirror clauses",
+      "name": "Bilingual AR-EN Mirror Clauses",
       "category": "heuristic",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "heuristic.bilingual-AR-EN-mirror-clauses.md"
     },
     {
@@ -2828,10 +3008,13 @@
     },
     {
       "id": "heuristic.translation-certified-vs-sworn",
-      "name": "translation certified vs sworn",
+      "name": "Certified vs Sworn Translation",
       "category": "heuristic",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "heuristic.translation-certified-vs-sworn.md"
     },
     {
@@ -3132,42 +3315,57 @@
     },
     {
       "id": "inst.gov-procurement-mode",
-      "name": "gov procurement mode",
+      "name": "Inst — Government Procurement",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.gov-procurement-mode.md"
     },
     {
       "id": "inst.KSA-MOJ-integration",
-      "name": "KSA MOJ integration",
+      "name": "Inst — KSA MOJ Integration",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.KSA-MOJ-integration.md"
     },
     {
       "id": "inst.LB-bar-association-integration",
-      "name": "LB bar association integration",
+      "name": "Inst — LB Bar Association Integration",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.LB-bar-association-integration.md"
     },
     {
       "id": "inst.legal-aid-routing",
-      "name": "legal aid routing",
+      "name": "Inst — Legal Aid Routing",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.legal-aid-routing.md"
     },
     {
       "id": "inst.notary-integration-MENA",
-      "name": "notary integration MENA",
+      "name": "Inst — MENA Notary Integration",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.notary-integration-MENA.md"
     },
     {
@@ -3180,138 +3378,189 @@
     },
     {
       "id": "inst.Tawqi3i-eSignature-bridge",
-      "name": "Tawqi3i eSignature bridge",
+      "name": "Inst — Tawqi3i E-Signature Bridge",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.Tawqi3i-eSignature-bridge.md"
     },
     {
       "id": "inst.UAE-MOJ-integration",
-      "name": "UAE MOJ integration",
+      "name": "Inst — UAE MOJ Integration",
       "category": "inst",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__inst__"
+      ],
       "filename": "inst.UAE-MOJ-integration.md"
     },
     {
       "id": "intel.A2J-gap",
-      "name": "A2J gap",
+      "name": "Intel — Access to Justice Gap",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.A2J-gap.md"
     },
     {
       "id": "intel.AFA-adoption",
-      "name": "AFA adoption",
+      "name": "Alternative Fee Arrangement Adoption",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.AFA-adoption.md"
     },
     {
       "id": "intel.anthropic-claude-for-word",
-      "name": "anthropic claude for word",
+      "name": "Anthropic Claude for Word",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.anthropic-claude-for-word.md"
     },
     {
       "id": "intel.axiom-x-harvey-deal",
-      "name": "axiom x harvey deal",
+      "name": "Axiom × Harvey Deal",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.axiom-x-harvey-deal.md"
     },
     {
       "id": "intel.billable-hour-paradox",
-      "name": "billable hour paradox",
+      "name": "Billable Hour Paradox",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.billable-hour-paradox.md"
     },
     {
       "id": "intel.harvey-spectre-agent-update",
-      "name": "harvey spectre agent update",
+      "name": "Harvey Spectre Agent",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.harvey-spectre-agent-update.md"
     },
     {
       "id": "intel.in-house-legal-shift",
-      "name": "in house legal shift",
+      "name": "In-House Legal Shift",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.in-house-legal-shift.md"
     },
     {
       "id": "intel.law-firm-economics",
-      "name": "law firm economics",
+      "name": "Law Firm Economics",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.law-firm-economics.md"
     },
     {
       "id": "intel.legal-AI-CAGR",
-      "name": "legal AI CAGR",
+      "name": "Intel — Legal AI CAGR",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.legal-AI-CAGR.md"
     },
     {
       "id": "intel.legal-tech-funding-2025",
-      "name": "legal tech funding 2025",
+      "name": "Legal Tech Funding (2025)",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.legal-tech-funding-2025.md"
     },
     {
       "id": "intel.market-segmentation",
-      "name": "market segmentation",
+      "name": "Market Segmentation",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.market-segmentation.md"
     },
     {
       "id": "intel.market-size-global",
-      "name": "market size global",
+      "name": "Intel — Global Legal Market Size",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.market-size-global.md"
     },
     {
       "id": "intel.MENA-legal-market-sizing",
-      "name": "MENA legal market sizing",
+      "name": "MENA Legal Market Sizing",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.MENA-legal-market-sizing.md"
     },
     {
       "id": "intel.orbital-real-estate-firm",
-      "name": "orbital real estate firm",
+      "name": "Orbital — AI Real Estate Firm",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.orbital-real-estate-firm.md"
     },
     {
       "id": "intel.us-court-AI-chats-not-privileged-Heppner",
-      "name": "us court AI chats not privileged Heppner",
+      "name": "US Court — AI Chats Not Privileged (Heppner)",
       "category": "intel",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__intel__"
+      ],
       "filename": "intel.us-court-AI-chats-not-privileged-Heppner.md"
     },
     {
@@ -3359,10 +3608,13 @@
     },
     {
       "id": "justice.intent.competitor-comparison",
-      "name": "intent · competitor comparison",
+      "name": "Justice Intent — Competitor Comparison",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.competitor-comparison.md"
     },
     {
@@ -3375,10 +3627,13 @@
     },
     {
       "id": "justice.intent.feature-question",
-      "name": "intent · feature question",
+      "name": "Justice Intent — Feature Question",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.feature-question.md"
     },
     {
@@ -3391,10 +3646,13 @@
     },
     {
       "id": "justice.intent.investor-inquiry",
-      "name": "intent · investor inquiry",
+      "name": "Justice Intent — Investor Inquiry",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.investor-inquiry.md"
     },
     {
@@ -3407,10 +3665,13 @@
     },
     {
       "id": "justice.intent.partnership-inquiry",
-      "name": "intent · partnership inquiry",
+      "name": "Justice Intent — Partnership Inquiry",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.partnership-inquiry.md"
     },
     {
@@ -3423,10 +3684,13 @@
     },
     {
       "id": "justice.intent.product-demo-request",
-      "name": "intent · product demo request",
+      "name": "Justice Intent — Product Demo Request",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.product-demo-request.md"
     },
     {
@@ -3530,10 +3794,13 @@
     },
     {
       "id": "justinian.bar-exam-prep-LB",
-      "name": "bar exam prep LB",
+      "name": "Justinian — Lebanon Bar Prep",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "bar prep lebanon"
+      ],
       "filename": "justinian.bar-exam-prep-LB.md"
     },
     {
@@ -3546,10 +3813,14 @@
     },
     {
       "id": "justinian.bar-exam-prep-UK-SQE",
-      "name": "bar exam prep UK SQE",
+      "name": "Justinian — UK SQE Prep",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "sqe",
+        "uk bar prep"
+      ],
       "filename": "justinian.bar-exam-prep-UK-SQE.md"
     },
     {
@@ -3562,18 +3833,26 @@
     },
     {
       "id": "justinian.case-explainer-socratic",
-      "name": "case explainer socratic",
+      "name": "Justinian — Socratic Case Explainer",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "case explainer",
+        "socratic"
+      ],
       "filename": "justinian.case-explainer-socratic.md"
     },
     {
       "id": "justinian.curriculum-builder",
-      "name": "curriculum builder",
+      "name": "Justinian — Curriculum Builder",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "curriculum",
+        "learning path"
+      ],
       "filename": "justinian.curriculum-builder.md"
     },
     {
@@ -3586,18 +3865,26 @@
     },
     {
       "id": "justinian.flashcards-from-statute",
-      "name": "flashcards from statute",
+      "name": "Justinian — Flashcards from Statute",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "flashcards",
+        "spaced repetition"
+      ],
       "filename": "justinian.flashcards-from-statute.md"
     },
     {
       "id": "justinian.IRAC-coach",
-      "name": "IRAC coach",
+      "name": "Justinian — IRAC Coach",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "irac",
+        "essay practice"
+      ],
       "filename": "justinian.IRAC-coach.md"
     },
     {
@@ -3610,10 +3897,13 @@
     },
     {
       "id": "justinian.legal-essay-grader",
-      "name": "legal essay grader",
+      "name": "Justinian — Legal Essay Grader",
       "category": "justinian",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "essay grading"
+      ],
       "filename": "justinian.legal-essay-grader.md"
     },
     {
@@ -3642,10 +3932,16 @@
     },
     {
       "id": "kb.AML-FATF-MENA",
-      "name": "AML FATF MENA",
+      "name": "Knowledge Pack — AML / FATF in MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.AML-FATF-MENA.md"
     },
     {
@@ -3689,50 +3985,86 @@
     },
     {
       "id": "kb.aviation-MENA",
-      "name": "aviation MENA",
+      "name": "Knowledge Pack — Aviation Law MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.aviation-MENA.md"
     },
     {
       "id": "kb.banking-regulation-BDL",
-      "name": "banking regulation BDL",
+      "name": "Knowledge Pack — BDL Banking Regulation",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "LB"
+      ],
       "filename": "kb.banking-regulation-BDL.md"
     },
     {
       "id": "kb.banking-regulation-CBUAE",
-      "name": "banking regulation CBUAE",
+      "name": "Knowledge Pack — CBUAE Banking Regulation",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.banking-regulation-CBUAE.md"
     },
     {
       "id": "kb.banking-regulation-SAMA",
-      "name": "banking regulation SAMA",
+      "name": "Knowledge Pack — SAMA Banking Regulation",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.banking-regulation-SAMA.md"
     },
     {
       "id": "kb.competition-law-MENA",
-      "name": "competition law MENA",
+      "name": "Knowledge Pack — Competition Law MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.competition-law-MENA.md"
     },
     {
       "id": "kb.construction-FIDIC-MENA",
-      "name": "construction FIDIC MENA",
+      "name": "Knowledge Pack — FIDIC Construction Contracts in MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.construction-FIDIC-MENA.md"
     },
     {
@@ -3769,26 +4101,44 @@
     },
     {
       "id": "kb.corporate-law-KSA",
-      "name": "corporate law KSA",
+      "name": "Knowledge Pack — KSA Corporate Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.corporate-law-KSA.md"
     },
     {
       "id": "kb.corporate-law-LB",
-      "name": "corporate law LB",
+      "name": "Knowledge Pack — Lebanon Corporate Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "LB"
+      ],
       "filename": "kb.corporate-law-LB.md"
     },
     {
       "id": "kb.corporate-law-UAE",
-      "name": "corporate law UAE",
+      "name": "Knowledge Pack — UAE Corporate Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.corporate-law-UAE.md"
     },
     {
@@ -3825,18 +4175,30 @@
     },
     {
       "id": "kb.crypto-ADGM",
-      "name": "crypto ADGM",
+      "name": "Knowledge Pack — ADGM Crypto Asset Framework",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.crypto-ADGM.md"
     },
     {
       "id": "kb.crypto-VARA-Dubai",
-      "name": "crypto VARA Dubai",
+      "name": "Knowledge Pack — VARA (Dubai Virtual Assets)",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.crypto-VARA-Dubai.md"
     },
     {
@@ -3946,26 +4308,44 @@
     },
     {
       "id": "kb.family-law-KSA",
-      "name": "family law KSA",
+      "name": "Knowledge Pack — KSA Family Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.family-law-KSA.md"
     },
     {
       "id": "kb.family-law-LB-personal-status",
-      "name": "family law LB personal status",
+      "name": "Knowledge Pack — Lebanon Personal Status Law",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "LB"
+      ],
       "filename": "kb.family-law-LB-personal-status.md"
     },
     {
       "id": "kb.family-law-UAE-civil-personal-status",
-      "name": "family law UAE civil personal status",
+      "name": "Knowledge Pack — UAE Civil Personal Status (Federal 41/2022)",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.family-law-UAE-civil-personal-status.md"
     },
     {
@@ -3978,18 +4358,30 @@
     },
     {
       "id": "kb.fintech-licensing-CMA-KSA",
-      "name": "fintech licensing CMA KSA",
+      "name": "Knowledge Pack — KSA Fintech (CMA + SAMA)",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.fintech-licensing-CMA-KSA.md"
     },
     {
       "id": "kb.fintech-licensing-DIFC",
-      "name": "fintech licensing DIFC",
+      "name": "Knowledge Pack — DIFC Fintech Licensing",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.fintech-licensing-DIFC.md"
     },
     {
@@ -4002,10 +4394,16 @@
     },
     {
       "id": "kb.healthcare-regulation-MENA",
-      "name": "healthcare regulation MENA",
+      "name": "Knowledge Pack — Healthcare Regulation MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.healthcare-regulation-MENA.md"
     },
     {
@@ -4042,10 +4440,16 @@
     },
     {
       "id": "kb.IP-MENA",
-      "name": "IP MENA",
+      "name": "Knowledge Pack — IP Law in MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.IP-MENA.md"
     },
     {
@@ -4058,26 +4462,44 @@
     },
     {
       "id": "kb.maritime-MENA",
-      "name": "maritime MENA",
+      "name": "Knowledge Pack — Maritime Law MENA",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "MENA"
+      ],
       "filename": "kb.maritime-MENA.md"
     },
     {
       "id": "kb.real-estate-KSA",
-      "name": "real estate KSA",
+      "name": "Knowledge Pack — KSA Real Estate",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.real-estate-KSA.md"
     },
     {
       "id": "kb.real-estate-LB",
-      "name": "real estate LB",
+      "name": "Knowledge Pack — Lebanon Real Estate",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "LB"
+      ],
       "filename": "kb.real-estate-LB.md"
     },
     {
@@ -4093,6 +4515,17 @@
         "UAE"
       ],
       "filename": "kb.real-estate-UAE.md"
+    },
+    {
+      "id": "kb.real-estate-UAE-stub-replace",
+      "name": "(superseded)",
+      "category": "kb",
+      "priority": "P3",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "filename": "kb.real-estate-UAE-stub-replace.md"
     },
     {
       "id": "kb.shariah-finance-AAOIFI",
@@ -4148,42 +4581,57 @@
     },
     {
       "id": "messaging.allowed-claims-consumer",
-      "name": "allowed claims consumer",
+      "name": "Messaging — Allowed Consumer Claims",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
       "filename": "messaging.allowed-claims-consumer.md"
     },
     {
       "id": "messaging.allowed-claims-lawyer",
-      "name": "allowed claims lawyer",
+      "name": "Messaging — Allowed Lawyer Claims",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
       "filename": "messaging.allowed-claims-lawyer.md"
     },
     {
       "id": "messaging.banned-claims-consumer",
-      "name": "banned claims consumer",
+      "name": "Messaging — Banned Consumer Claims",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
       "filename": "messaging.banned-claims-consumer.md"
     },
     {
       "id": "messaging.banned-claims-lawyer",
-      "name": "banned claims lawyer",
+      "name": "Messaging — Banned Lawyer Claims",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
       "filename": "messaging.banned-claims-lawyer.md"
     },
     {
       "id": "messaging.bridge-line",
-      "name": "bridge line",
+      "name": "Messaging — Bridge Line",
       "category": "messaging",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__messaging__"
+      ],
       "filename": "messaging.bridge-line.md"
     },
     {
@@ -4339,10 +4787,13 @@
     },
     {
       "id": "onboarding.B2C-vs-B2B-fork",
-      "name": "B2C vs B2B fork",
+      "name": "Onboarding — B2C vs B2B Fork",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
       "filename": "onboarding.B2C-vs-B2B-fork.md"
     },
     {
@@ -4399,42 +4850,57 @@
     },
     {
       "id": "onboarding.upgrade-prompt-when-credits-low",
-      "name": "upgrade prompt when credits low",
+      "name": "Onboarding — Upgrade Prompt When Credits Low",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
       "filename": "onboarding.upgrade-prompt-when-credits-low.md"
     },
     {
       "id": "openclaw.contrib-template",
-      "name": "contrib template",
+      "name": "OpenClaw — Contribution Template",
       "category": "openclaw",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__openclaw__"
+      ],
       "filename": "openclaw.contrib-template.md"
     },
     {
       "id": "openclaw.eval-harness-shared",
-      "name": "eval harness shared",
+      "name": "OpenClaw — Shared Eval Harness",
       "category": "openclaw",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__openclaw__"
+      ],
       "filename": "openclaw.eval-harness-shared.md"
     },
     {
       "id": "openclaw.public-skill-registry",
-      "name": "public skill registry",
+      "name": "OpenClaw — Public Skill Registry",
       "category": "openclaw",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__openclaw__"
+      ],
       "filename": "openclaw.public-skill-registry.md"
     },
     {
       "id": "openclaw.skill-portability-Claude-Codex-Gemini",
-      "name": "skill portability Claude Codex Gemini",
+      "name": "OpenClaw — Skill Portability",
       "category": "openclaw",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P2",
+      "status": "drafted",
+      "intent": [
+        "__openclaw__"
+      ],
       "filename": "openclaw.skill-portability-Claude-Codex-Gemini.md"
     },
     {
@@ -4447,10 +4913,13 @@
     },
     {
       "id": "ops.bug-report-collector",
-      "name": "bug report collector",
+      "name": "Ops — Bug Report Collector",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__ops__"
+      ],
       "filename": "ops.bug-report-collector.md"
     },
     {
@@ -4503,10 +4972,13 @@
     },
     {
       "id": "ops.feature-request-collector",
-      "name": "feature request collector",
+      "name": "Ops — Feature Request Collector",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ops__"
+      ],
       "filename": "ops.feature-request-collector.md"
     },
     {
@@ -4527,10 +4999,13 @@
     },
     {
       "id": "ops.linear-triage-from-chat-bug-report",
-      "name": "linear triage from chat bug report",
+      "name": "Ops — Linear Triage from Chat",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ops__"
+      ],
       "filename": "ops.linear-triage-from-chat-bug-report.md"
     },
     {
@@ -4543,10 +5018,13 @@
     },
     {
       "id": "ops.posthog-cohort-builder",
-      "name": "posthog cohort builder",
+      "name": "Ops — PostHog Cohort Builder",
       "category": "ops",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ops__"
+      ],
       "filename": "ops.posthog-cohort-builder.md"
     },
     {
@@ -4627,18 +5105,24 @@
     },
     {
       "id": "output.CREAC-structure",
-      "name": "CREAC structure",
+      "name": "CREAC Structure",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.CREAC-structure.md"
     },
     {
       "id": "output.docx-export-style",
-      "name": "docx export style",
+      "name": "DOCX Export Style",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.docx-export-style.md"
     },
     {
@@ -4712,18 +5196,24 @@
     },
     {
       "id": "output.pdf-export-style",
-      "name": "pdf export style",
+      "name": "PDF Export Style",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.pdf-export-style.md"
     },
     {
       "id": "output.source-attribution-block",
-      "name": "source attribution block",
+      "name": "Source Attribution Block",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.source-attribution-block.md"
     },
     {
@@ -4846,218 +5336,299 @@
     },
     {
       "id": "pa-workflow.inhouse.board-deck-legal-section",
-      "name": "inhouse · board deck legal section",
+      "name": "In-House — Board Deck Legal Section",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.inhouse.board-deck-legal-section.md"
     },
     {
       "id": "pa-workflow.inhouse.commercial-team-clause-explainer",
-      "name": "inhouse · commercial team clause explainer",
+      "name": "In-House — Clause Explainer for Commercial Team",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.inhouse.commercial-team-clause-explainer.md"
     },
     {
       "id": "pa-workflow.inhouse.contract-intake-routing",
-      "name": "inhouse · contract intake routing",
+      "name": "In-House — Contract Intake Routing",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.inhouse.contract-intake-routing.md"
     },
     {
       "id": "pa-workflow.inhouse.cross-functional-translation",
-      "name": "inhouse · cross functional translation",
+      "name": "In-House — Cross-Functional Translation",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.inhouse.cross-functional-translation.md"
     },
     {
       "id": "pa-workflow.inhouse.friday-newsletter-status-synthesis",
-      "name": "inhouse · friday newsletter status synthesis",
+      "name": "In-House — Friday Newsletter",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.inhouse.friday-newsletter-status-synthesis.md"
     },
     {
       "id": "pa-workflow.IP.claim-drafting-from-disclosure",
-      "name": "IP · claim drafting from disclosure",
+      "name": "IP — Claim Drafting",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.IP.claim-drafting-from-disclosure.md"
     },
     {
       "id": "pa-workflow.IP.docketing-system-MCP-bridge",
-      "name": "IP · docketing system MCP bridge",
+      "name": "IP — Docketing System Bridge",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.IP.docketing-system-MCP-bridge.md"
     },
     {
       "id": "pa-workflow.IP.office-action-response-drafter",
-      "name": "IP · office action response drafter",
+      "name": "IP — Office Action Response",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.IP.office-action-response-drafter.md"
     },
     {
       "id": "pa-workflow.IP.opposition-procedure-EPO",
-      "name": "IP · opposition procedure EPO",
+      "name": "IP — EPO Opposition",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.IP.opposition-procedure-EPO.md"
     },
     {
       "id": "pa-workflow.IP.patent-prioritization",
-      "name": "IP · patent prioritization",
+      "name": "IP — Patent Prioritization",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.IP.patent-prioritization.md"
     },
     {
       "id": "pa-workflow.IP.prior-art-search-orchestrator",
-      "name": "IP · prior art search orchestrator",
+      "name": "IP — Prior Art Search",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.IP.prior-art-search-orchestrator.md"
     },
     {
       "id": "pa-workflow.litigation.brief-cite-checker",
-      "name": "litigation · brief cite checker",
+      "name": "Brief Cite Checker",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.brief-cite-checker.md"
     },
     {
       "id": "pa-workflow.litigation.case-theory-simulator",
-      "name": "litigation · case theory simulator",
+      "name": "Case Theory Simulator",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.case-theory-simulator.md"
     },
     {
       "id": "pa-workflow.litigation.deposition-binder-builder",
-      "name": "litigation · deposition binder builder",
+      "name": "Deposition Binder Builder",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.deposition-binder-builder.md"
     },
     {
       "id": "pa-workflow.litigation.discovery-first-pass-tagging",
-      "name": "litigation · discovery first pass tagging",
+      "name": "Discovery First-Pass Tagging",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.discovery-first-pass-tagging.md"
     },
     {
       "id": "pa-workflow.litigation.expert-witness-prep-memo",
-      "name": "litigation · expert witness prep memo",
+      "name": "Expert Witness Prep Memo",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.expert-witness-prep-memo.md"
     },
     {
       "id": "pa-workflow.litigation.motion-template-library",
-      "name": "litigation · motion template library",
+      "name": "Motion Template Library",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.motion-template-library.md"
     },
     {
       "id": "pa-workflow.litigation.privilege-log-drafting",
-      "name": "litigation · privilege log drafting",
+      "name": "Privilege Log Drafting",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.privilege-log-drafting.md"
     },
     {
       "id": "pa-workflow.litigation.real-time-trial-assist-API",
-      "name": "litigation · real time trial assist API",
+      "name": "Real-Time Trial Assist API",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.real-time-trial-assist-API.md"
     },
     {
       "id": "pa-workflow.litigation.transcript-search-Q-and-A-indexing",
-      "name": "litigation · transcript search Q and A indexing",
+      "name": "Litigation — Transcript Search",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.transcript-search-Q-and-A-indexing.md"
     },
     {
       "id": "pa-workflow.litigation.witness-contradiction-finder",
-      "name": "litigation · witness contradiction finder",
+      "name": "Witness Contradiction Finder",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.litigation.witness-contradiction-finder.md"
     },
     {
       "id": "pa-workflow.regulatory.client-alert-drafter-firm-voice",
-      "name": "regulatory · client alert drafter firm voice",
+      "name": "Regulatory — Client Alerts",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.regulatory.client-alert-drafter-firm-voice.md"
     },
     {
       "id": "pa-workflow.regulatory.compliance-gap-matrix",
-      "name": "regulatory · compliance gap matrix",
+      "name": "Regulatory — Compliance Gap Matrix",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.regulatory.compliance-gap-matrix.md"
     },
     {
       "id": "pa-workflow.regulatory.cross-jurisdiction-tracker",
-      "name": "regulatory · cross jurisdiction tracker",
+      "name": "Regulatory — Cross-Jurisdiction Tracker",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.regulatory.cross-jurisdiction-tracker.md"
     },
     {
       "id": "pa-workflow.regulatory.daily-digest-publisher",
-      "name": "regulatory · daily digest publisher",
+      "name": "Regulatory — Daily Digest",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.regulatory.daily-digest-publisher.md"
     },
     {
       "id": "pa-workflow.regulatory.enforcement-likelihood-scorer",
-      "name": "regulatory · enforcement likelihood scorer",
+      "name": "Regulatory — Enforcement Likelihood",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.regulatory.enforcement-likelihood-scorer.md"
     },
     {
       "id": "pa-workflow.transactional.clause-library-check",
-      "name": "transactional · clause library check",
+      "name": "Clause Library Check",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.transactional.clause-library-check.md"
     },
     {
@@ -5070,18 +5641,24 @@
     },
     {
       "id": "pa-workflow.transactional.deal-point-analysis",
-      "name": "transactional · deal point analysis",
+      "name": "Deal Point Analysis",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.transactional.deal-point-analysis.md"
     },
     {
       "id": "pa-workflow.transactional.MSA-against-firm-playbook",
-      "name": "transactional · MSA against firm playbook",
+      "name": "MSA Against Firm Playbook",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.transactional.MSA-against-firm-playbook.md"
     },
     {
@@ -5094,10 +5671,13 @@
     },
     {
       "id": "pa-workflow.transactional.PIA-privacy-impact-assessment",
-      "name": "transactional · PIA privacy impact assessment",
+      "name": "Transactional — PIA",
       "category": "pa-workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__workflow__"
+      ],
       "filename": "pa-workflow.transactional.PIA-privacy-impact-assessment.md"
     },
     {
@@ -5121,10 +5701,13 @@
     },
     {
       "id": "persona.HR",
-      "name": "HR",
+      "name": "Persona: HR Mode",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
       "filename": "persona.HR.md"
     },
     {
@@ -5148,10 +5731,13 @@
     },
     {
       "id": "persona.investor",
-      "name": "investor",
+      "name": "Persona: Investor Mode",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
       "filename": "persona.investor.md"
     },
     {
@@ -5175,10 +5761,13 @@
     },
     {
       "id": "persona.law-student",
-      "name": "law student",
+      "name": "Persona: Law Student Mode (Justinian)",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
       "filename": "persona.law-student.md"
     },
     {
@@ -5194,10 +5783,13 @@
     },
     {
       "id": "persona.paralegal",
-      "name": "paralegal",
+      "name": "Persona: Paralegal Mode",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
       "filename": "persona.paralegal.md"
     },
     {
@@ -5221,10 +5813,13 @@
     },
     {
       "id": "persona.SME-founder",
-      "name": "SME founder",
+      "name": "Persona: SME Founder Mode",
       "category": "persona",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__persona__"
+      ],
       "filename": "persona.SME-founder.md"
     },
     {
@@ -7317,66 +7912,90 @@
     },
     {
       "id": "ref.anti-patterns",
-      "name": "anti patterns",
+      "name": "Reference — Anti-Patterns",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.anti-patterns.md"
     },
     {
       "id": "ref.long-documents-50pp",
-      "name": "long documents 50pp",
+      "name": "Reference — Long Documents (50+ pages)",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.long-documents-50pp.md"
     },
     {
       "id": "ref.mcp-hardening",
-      "name": "mcp hardening",
+      "name": "Reference — MCP Hardening",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.mcp-hardening.md"
     },
     {
       "id": "ref.privilege-layers",
-      "name": "privilege layers",
+      "name": "Reference — Privilege Layers",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.privilege-layers.md"
     },
     {
       "id": "ref.setup-checklist",
-      "name": "setup checklist",
+      "name": "Reference — Setup Checklist",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.setup-checklist.md"
     },
     {
       "id": "ref.skill-authoring",
-      "name": "skill authoring",
+      "name": "Reference — Skill Authoring Guide",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.skill-authoring.md"
     },
     {
       "id": "ref.verification",
-      "name": "verification",
+      "name": "Reference — Verification Checklist",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.verification.md"
     },
     {
       "id": "ref.vocabulary",
-      "name": "vocabulary",
+      "name": "Reference — Legal + AI Vocabulary",
       "category": "ref",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__ref__"
+      ],
       "filename": "ref.vocabulary.md"
     },
     {
@@ -7993,26 +8612,35 @@
     },
     {
       "id": "safety.bar-rule-1.1-competence-AI",
-      "name": "bar rule 1 · 1 competence AI",
+      "name": "Bar Rule 1.1 — Competence + AI",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "safety.bar-rule-1.1-competence-AI.md"
     },
     {
       "id": "safety.bar-rule-1.6-confidentiality-AI",
-      "name": "bar rule 1 · 6 confidentiality AI",
+      "name": "Bar Rule 1.6 — Confidentiality + AI",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "safety.bar-rule-1.6-confidentiality-AI.md"
     },
     {
       "id": "safety.bar-rule-5.5-UPL-AI",
-      "name": "bar rule 5 · 5 UPL AI",
+      "name": "Bar Rule 5.5 — UPL + AI",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "safety.bar-rule-5.5-UPL-AI.md"
     },
     {
@@ -8220,10 +8848,13 @@
     },
     {
       "id": "site.solutions-router",
-      "name": "solutions router",
+      "name": "Site — Solutions Router",
       "category": "site",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
       "filename": "site.solutions-router.md"
     },
     {
@@ -8236,10 +8867,13 @@
     },
     {
       "id": "site.use-case-router",
-      "name": "use case router",
+      "name": "Site — Use Case Router",
       "category": "site",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__site__"
+      ],
       "filename": "site.use-case-router.md"
     },
     {
@@ -8316,26 +8950,35 @@
     },
     {
       "id": "template.client-data-explainer",
-      "name": "client data explainer",
+      "name": "Template — Client Data Explainer",
       "category": "template",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__template__"
+      ],
       "filename": "template.client-data-explainer.md"
     },
     {
       "id": "template.firm-AI-policy",
-      "name": "firm AI policy",
+      "name": "Template — Firm AI Policy",
       "category": "template",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__template__"
+      ],
       "filename": "template.firm-AI-policy.md"
     },
     {
       "id": "template.vendor-security-questionnaire-responses",
-      "name": "vendor security questionnaire responses",
+      "name": "Template — Vendor Security Questionnaire",
       "category": "template",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__template__"
+      ],
       "filename": "template.vendor-security-questionnaire-responses.md"
     },
     {
@@ -8437,10 +9080,14 @@
     },
     {
       "id": "tool.docx-extractor",
-      "name": "docx extractor",
+      "name": "Tool — DOCX Extractor",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "docx extract",
+        "parse docx"
+      ],
       "filename": "tool.docx-extractor.md"
     },
     {
@@ -8585,10 +9232,14 @@
     },
     {
       "id": "tool.pdf-extractor",
-      "name": "pdf extractor",
+      "name": "Tool — PDF Extractor",
       "category": "tool",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "pdf extract",
+        "parse pdf"
+      ],
       "filename": "tool.pdf-extractor.md"
     },
     {
@@ -8706,10 +9357,13 @@
     },
     {
       "id": "unlock.contextual-upsell",
-      "name": "contextual upsell",
+      "name": "Unlock — Contextual Upsell",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__unlock__"
+      ],
       "filename": "unlock.contextual-upsell.md"
     },
     {
@@ -8730,10 +9384,13 @@
     },
     {
       "id": "unlock.feature-discovery-by-persona",
-      "name": "feature discovery by persona",
+      "name": "Unlock — Feature Discovery by Persona",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__unlock__"
+      ],
       "filename": "unlock.feature-discovery-by-persona.md"
     },
     {
@@ -8762,10 +9419,13 @@
     },
     {
       "id": "unlock.skill-of-the-day",
-      "name": "skill of the day",
+      "name": "Unlock — Skill of the Day",
       "category": "unlock",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__unlock__"
+      ],
       "filename": "unlock.skill-of-the-day.md"
     },
     {
@@ -8786,82 +9446,112 @@
     },
     {
       "id": "voice-brand.email-cold-outreach-MENA",
-      "name": "email cold outreach MENA",
+      "name": "Voice — MENA Cold Outreach",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.email-cold-outreach-MENA.md"
     },
     {
       "id": "voice-brand.email-investor-update",
-      "name": "email investor update",
+      "name": "Voice — Investor Update",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.email-investor-update.md"
     },
     {
       "id": "voice-brand.linkedin-post-stephane",
-      "name": "linkedin post stephane",
+      "name": "Voice — LinkedIn Post (Stephane)",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.linkedin-post-stephane.md"
     },
     {
       "id": "voice-brand.louis-house-style-AR",
-      "name": "louis house style AR",
+      "name": "Voice — Louis House Style (Arabic)",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.louis-house-style-AR.md"
     },
     {
       "id": "voice-brand.louis-house-style-EN",
-      "name": "louis house style EN",
+      "name": "Voice — Louis House Style (EN)",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.louis-house-style-EN.md"
     },
     {
       "id": "voice-brand.louis-house-style-FR",
-      "name": "louis house style FR",
+      "name": "Voice — Louis House Style (French)",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.louis-house-style-FR.md"
     },
     {
       "id": "voice-brand.podcast-show-notes",
-      "name": "podcast show notes",
+      "name": "Voice — Podcast Show Notes",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.podcast-show-notes.md"
     },
     {
       "id": "voice-brand.press-release-tone",
-      "name": "press release tone",
+      "name": "Voice — Press Release Tone",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.press-release-tone.md"
     },
     {
       "id": "voice-brand.tweet-thread-launch",
-      "name": "tweet thread launch",
+      "name": "Voice — Tweet Thread Launch",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.tweet-thread-launch.md"
     },
     {
       "id": "voice-brand.youtube-video-description",
-      "name": "youtube video description",
+      "name": "Voice — YouTube Video Description",
       "category": "voice-brand",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__voice-brand__"
+      ],
       "filename": "voice-brand.youtube-video-description.md"
     },
     {
@@ -8909,6 +9599,17 @@
       "priority": "P3",
       "status": "stub",
       "filename": "voice.signature-page-detector.md"
+    },
+    {
+      "id": "voice.voice-friendly-short",
+      "name": "Voice-Friendly Short Output",
+      "category": "voice",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
+      "filename": "voice.voice-friendly-short.md"
     },
     {
       "id": "wiki.ai",
@@ -9272,10 +9973,14 @@
     },
     {
       "id": "workflow.brand-protection-pack",
-      "name": "brand protection pack",
+      "name": "Workflow — Brand Protection Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "brand protection",
+        "tm enforcement"
+      ],
       "filename": "workflow.brand-protection-pack.md"
     },
     {
@@ -9291,6 +9996,17 @@
       "filename": "workflow.contract-redline-20min.md"
     },
     {
+      "id": "workflow.contract-redline-20min-stub-fix",
+      "name": "(superseded)",
+      "category": "workflow",
+      "priority": "P3",
+      "status": "drafted",
+      "intent": [
+        "__internal__"
+      ],
+      "filename": "workflow.contract-redline-20min-stub-fix.md"
+    },
+    {
       "id": "workflow.dispute-pre-litigation-pack",
       "name": "Workflow — Dispute Pre-Litigation Pack",
       "category": "workflow",
@@ -9304,10 +10020,14 @@
     },
     {
       "id": "workflow.fire-employee-pack",
-      "name": "fire employee pack",
+      "name": "Workflow — Fire / Terminate Employee Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "fire pack",
+        "terminate pack"
+      ],
       "filename": "workflow.fire-employee-pack.md"
     },
     {
@@ -9359,10 +10079,14 @@
     },
     {
       "id": "workflow.lease-negotiation-pack",
-      "name": "lease negotiation pack",
+      "name": "Workflow — Lease Negotiation Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "lease negotiation",
+        "rental negotiation"
+      ],
       "filename": "workflow.lease-negotiation-pack.md"
     },
     {

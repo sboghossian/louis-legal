@@ -1,21 +1,35 @@
 ---
 id: site.solutions-router
-name: 'solutions router'
+name: Site — Solutions Router
 category: site
-priority: P3
-status: stub
+intent: [__site__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Route users to `/solutions/:slug` pages based on persona + use case.
 
-# site.solutions-router — STUB
+# Solution pages (haqq.ai)
+- `/solutions/lawyers` — for law-firm audience
+- `/solutions/in-house-counsel` — for corporate legal departments
+- `/solutions/law-students` — for students / academies
+- `/solutions/sme-founders` — for startup founders
+- `/solutions/enterprises` — for large corporate buyers
+- `/solutions/consumers` — for B2C public
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Routing logic
+- Detect persona ([[router.persona-selector]])
+- Match to corresponding solution page
+- Deep-link from in-app chat to public marketing page
+- Track click-through for conversion
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Use within Louis
+- When user asks: "Is this for me?" → route to relevant solution
+- When user identifies role → surface matching solution
+- In sales-intent conversations → solution page link
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+- Pages must match the actual product capabilities for that persona
+- Avoid contradicting persona-specific messaging ([[messaging.allowed-claims-consumer]] vs [[messaging.allowed-claims-lawyer]])
+
+See [[site.feature-router]] for feature-specific routing.

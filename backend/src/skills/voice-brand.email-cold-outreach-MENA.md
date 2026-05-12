@@ -1,21 +1,18 @@
 ---
 id: voice-brand.email-cold-outreach-MENA
-name: 'email cold outreach MENA'
+name: Voice — MENA Cold Outreach
 category: voice-brand
-priority: P3
-status: stub
+intent: [__voice-brand__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# voice-brand.email-cold-outreach-MENA — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Cold outreach for MENA business audience:
+- Subject: specific + benefit-focused (not 'quick question')
+- Open: personal + specific (referenced a recent action they took)
+- Body: 3-4 sentences max in initial email
+- CTA: specific + low-friction ('15 min next week')
+- Tone: respectful + professional, not overly formal
+- Avoid: hard sales tactics, fake urgency, generic templates
+- Bilingual: send English; Arabic version if recipient prefers
+- Follow-up: 2nd email after 1 week if no response; cease after 3 attempts

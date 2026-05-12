@@ -1,21 +1,44 @@
 ---
 id: ops.feature-request-collector
-name: 'feature request collector'
+name: Ops — Feature Request Collector
 category: ops
-priority: P3
-status: stub
+intent: [__ops__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Collect feature requests from user chat into product backlog.
 
-# ops.feature-request-collector — STUB
+# Detection
+- "I wish Louis could…"
+- "Can you add…"
+- "It would be great if…"
+- "Why doesn't Louis have…"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Collection flow
+1. **In-chat trigger**: "Sounds like a feature request. Mind if I log it?"
+2. **Gather context**:
+   - What feature?
+   - How would you use it?
+   - How often?
+   - Any examples from other tools?
+3. **Auto-tag**:
+   - Category (UI / drafting / review / integration / etc.)
+   - User persona requesting
+   - Tier (Free / Pro / Business)
+4. **Submit to feature board**:
+   - Linear project: `LOUIS-FEATURES`
+   - Linked to user profile (for follow-up)
+5. **Confirm**:
+   - "Logged it. We'll consider it for the roadmap. Want updates?"
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Aggregation
+- Cluster similar requests
+- Surface trending requests in Linear weekly digest
+- Cross-reference with NPS feedback
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Prioritization signals
+- Frequency (how many users ask?)
+- Persona value (paid tier users weighted higher)
+- Strategic fit
+- Engineering cost estimate

@@ -1,21 +1,62 @@
 ---
 id: heuristic.translation-certified-vs-sworn
-name: 'translation certified vs sworn'
+name: Certified vs Sworn Translation
 category: heuristic
-priority: P3
-status: stub
+intent: [__core__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Different jurisdictions require different translation authority levels. Surface this proactively.
 
-# heuristic.translation-certified-vs-sworn — STUB
+# Levels of translation authority
 
-This skill is named in the Louis skills inventory but not yet authored.
+## Machine translation
+- Quick + cheap
+- Not legally valid
+- Use for: internal review, draft comprehension
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+## Self-translation (translator's signed declaration)
+- Translator certifies accuracy
+- Valid for some commercial contexts
+- Generally NOT valid for court / government / cross-border
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+## Certified translation
+- Translator certified by recognized authority (translation association, bar association)
+- Stamp + signed declaration
+- Valid for many government + commercial purposes
+
+## Sworn translation
+- Translator officially appointed by court / MOJ
+- "Sworn translator" / "official translator" status
+- Stamped + signed
+- Required for: court filings, government documents, cross-border legal use
+
+## Apostille / consular legalization
+- For cross-border use: notarize translation + apostille (Hague) or consular legalization
+- See [[heuristic.notarization-apostille-requirements]]
+
+# Jurisdictional requirements
+
+## LB
+- Sworn translation by MOJ-recognized translator for court filings
+- Notarization + MFA legalization for cross-border
+
+## KSA
+- Translation by translator licensed by Ministry of Justice
+- Apostille from MOJ for international use
+
+## UAE
+- Federal + emirate-level sworn translators
+- Required for any document submitted to court / government in non-Arabic
+- Often required for non-court business documents too
+
+## EU
+- Sworn translator per member state
+- Apostille for use abroad
+
+# Practical
+- Identify END USE before commissioning translation
+- Match translation authority to use
+- Budget cost + timeline (sworn translation slower + more expensive)
+- Keep original + translation together

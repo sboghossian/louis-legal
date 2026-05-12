@@ -1,21 +1,21 @@
 ---
 id: template.vendor-security-questionnaire-responses
-name: 'vendor security questionnaire responses'
+name: Template — Vendor Security Questionnaire
 category: template
-priority: P3
-status: stub
+intent: [__template__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Standard responses to enterprise security questionnaires:
 
-# template.vendor-security-questionnaire-responses — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+**Q: SOC 2?** — In progress (Type II expected 2026 Q3)
+**Q: ISO 27001?** — In progress (2026 H2)
+**Q: GDPR compliant?** — Yes; DPA available; EU region available
+**Q: Penetration testing?** — Annual third-party pentest
+**Q: Vulnerability disclosure?** — Yes; security@haqq.ai
+**Q: Tenant isolation?** — Yes; RLS at storage layer
+**Q: Data residency?** — Configurable; EU available; KSA + UAE roadmap
+**Q: Encryption?** — TLS 1.2+ in transit; AES-256 at rest
+**Q: Audit logs?** — Full audit trail; tenant accessible
+**Q: Data export?** — JSON archive available on request

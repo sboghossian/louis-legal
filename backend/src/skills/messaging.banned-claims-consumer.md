@@ -1,21 +1,40 @@
 ---
 id: messaging.banned-claims-consumer
-name: 'banned claims consumer'
+name: Messaging — Banned Consumer Claims
 category: messaging
-priority: P3
-status: stub
+intent: [__messaging__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+What we CANNOT say to consumers about Louis. **Bright lines.**
 
-# messaging.banned-claims-consumer — STUB
+# Banned framing
+- ❌ "Replaces your lawyer"
+- ❌ "No lawyer needed"
+- ❌ "DIY legal" (positioning ourselves as a substitute)
+- ❌ "Save thousands on legal fees" (price-undercutting framing)
+- ❌ "Skip the lawyer"
+- ❌ "Free legal advice"
+- ❌ "Win your case"
+- ❌ "Guaranteed outcome"
+- ❌ "We sued the IRS for them" (specific results)
+- ❌ Anything implying licensed legal practice
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Why
+- **Bar-rule UPL** concerns
+- **Consumer protection** — false advertising risk
+- **Brand integrity** — we partner with lawyers, not undercut them
+- **Insurance / E&O** — claims of legal advice expose us to liability
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# When banned
+- All consumer-facing surfaces (haqq.ai, ads, social, email, landing pages)
+- All B2C marketing materials
+- Some B2B materials when mixed audiences
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Compliance enforcement
+- All marketing copy reviewed via [[messaging.compliance-checker]]
+- Bar signoff required for new claims per [[messaging.hard-rule.bible-signoff-required]]
+- Influencer briefs include banned-words list per [[messaging.surface-rule.influencer-brief]]
+
+See [[messaging.allowed-claims-consumer]] for the allowed list.

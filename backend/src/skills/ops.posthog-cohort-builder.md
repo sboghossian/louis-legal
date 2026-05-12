@@ -1,21 +1,52 @@
 ---
 id: ops.posthog-cohort-builder
-name: 'posthog cohort builder'
+name: Ops — PostHog Cohort Builder
 category: ops
-priority: P3
-status: stub
+intent: [__ops__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Build PostHog cohorts for user segmentation + targeted product analysis.
 
-# ops.posthog-cohort-builder — STUB
+# Common cohorts
 
-This skill is named in the Louis skills inventory but not yet authored.
+## Activation
+- **New users**: signed up in last 7 days
+- **Activated**: completed 1st substantive prompt
+- **Power users**: 5+ sessions per week
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+## Retention
+- **Returning Week 1**: signed up >7 days ago, active in last 7
+- **Returning Week 4**: signed up >28 days ago, active in last 28
+- **Dormant**: no activity in 30 days
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+## Persona
+- **Lawyers**: email domain matches firm pattern
+- **In-house**: corporate domain + role indicator
+- **Students**: .edu / specific university domains
+- **Consumers**: gmail / hotmail / yahoo
+
+## Tier
+- **Free**: no Stripe customer
+- **Starter / Pro / Business / Enterprise**: by Stripe plan
+
+## Feature usage
+- **Heavy doc workspace**: 5+ doc-workspace sessions/week
+- **Skills observability tab**: any session
+- **Drafting board users**: 1+ session
+
+# Cohort use cases
+- A/B testing target audience
+- Feature rollout audiences
+- Push notification targeting
+- Email campaign segmentation
+- Retention deep-dives
+
+# Critical
+- **Tenant boundaries respected** in queries
+- **Privacy compliance** — anonymize PII in cohort tracking
+- **Cohort overlap analysis** — don't double-count
+- **Definition documentation** — clear criteria, version-tracked
+
+See [[connector.posthog]] for the tool integration.

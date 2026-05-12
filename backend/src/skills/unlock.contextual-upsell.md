@@ -1,21 +1,46 @@
 ---
 id: unlock.contextual-upsell
-name: 'contextual upsell'
+name: Unlock — Contextual Upsell
 category: unlock
-priority: P3
-status: stub
+intent: [__unlock__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Surface contextual upsell prompts when user encounters paid features or tier-limited capabilities.
 
-# unlock.contextual-upsell — STUB
+# When to surface
+- User on free tier tries:
+  - Deep research feature → "Available on Pro"
+  - More than X queries/day → "Upgrade for higher limits"
+  - eFirm features → "Available on Business plan"
+  - Word plugin → "Pro+ feature"
+- User on Starter approaches credit limit
+- User on Pro approaches business-feature usage
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Pattern
+> [Feature you wanted] is available on [Plan]. Get [X benefit] for $[Y]/mo. [Upgrade] [See plans] [Maybe later]
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Calibration
+- **Don't push during distress** — see [[conversation.empathy-B2C]]
+- **Don't push immediately after sign-up** — give value first
+- **Don't push more than once per day**
+- **Respect "Maybe later"** for that session
+- **Show real ROI** — "Avg Pro user saves 5h/week"
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Conversion triggers
+- High value demonstrated (just drafted 12-page MSA — pitch automation features)
+- Repeated tier-limit hits in single session
+- Heavy usage day
+
+# A/B test
+- Different copy variants
+- Discount % offered
+- "Try Pro free for 14 days" offer
+
+# Critical
+- **Lead with value**, not feature lists
+- **Specific to context** (the feature they just tried)
+- **Clear next step** — upgrade button works
+
+See [[onboarding.upgrade-prompt-when-credits-low]] and [[growth.referral-prompt]].

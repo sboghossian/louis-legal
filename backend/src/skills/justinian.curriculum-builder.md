@@ -1,21 +1,42 @@
 ---
 id: justinian.curriculum-builder
-name: 'curriculum builder'
+name: Justinian — Curriculum Builder
 category: justinian
-priority: P3
-status: stub
+intent: [curriculum, 'learning path']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Build a personalized legal-education curriculum for law students or bar candidates.
 
-# justinian.curriculum-builder — STUB
+# Inputs
+- Student's level (1L / 2L / 3L / bar candidate)
+- Target jurisdiction (LB / KSA / UAE / FR / UK / US)
+- Target bar exam (if applicable)
+- Specific weaknesses / goals
+- Time available (months remaining, hours per week)
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Curriculum components
+1. **Core doctrinal subjects** — contracts, torts, property, criminal, civil procedure, constitutional law (jurisdiction-specific)
+2. **Practice-area depth** — student's specialization interest
+3. **Skills training** — IRAC, legal writing, oral advocacy
+4. **Bar preparation** — practice questions, simulated exams
+5. **Practical exposure** — case law reading, real-world application
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Approach
+- **Spaced repetition** — flashcards from statutes + cases
+- **Case method** — read landmark cases + extract holdings
+- **Issue spotting** — practice problems
+- **Essay practice** — IRAC-structured responses to fact patterns
+- **MCQ practice** — for bar formats requiring it
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Output
+Weekly curriculum:
+- Topics covered + readings
+- Practice problems
+- Simulated exam scoring
+- Progress tracking
+- Adjustments based on performance
+
+# Pair with
+[[justinian.bar-exam-prep-LB]] / [[justinian.bar-exam-prep-KSA]] / [[justinian.bar-exam-prep-UAE]] / [[justinian.bar-exam-prep-FR-CRFPA]] / [[justinian.bar-exam-prep-UK-SQE]] / [[justinian.bar-exam-prep-US-bar]] — specific exam tracks.

@@ -1,21 +1,18 @@
 ---
 id: voice-brand.linkedin-post-stephane
-name: 'linkedin post stephane'
+name: Voice — LinkedIn Post (Stephane)
 category: voice-brand
-priority: P3
-status: stub
+intent: [__voice-brand__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# voice-brand.linkedin-post-stephane — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Stephane's LinkedIn voice for HAQQ content:
+- First-person, conversational
+- One key insight per post
+- Mix of observation + opinion
+- Mention specific case studies / customers
+- Tag relevant people (with permission)
+- Avoid: corporate-speak, salesy CTAs, generic hot-takes
+- Always: substantive value, even if the post promotes HAQQ
+- Hashtags: minimal, focused (#LegalAI #MENA #LegalTech)

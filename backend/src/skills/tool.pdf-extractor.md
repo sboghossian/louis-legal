@@ -1,21 +1,39 @@
 ---
 id: tool.pdf-extractor
-name: 'pdf extractor'
+name: Tool — PDF Extractor
 category: tool
-priority: P3
-status: stub
+intent: ['pdf extract', 'parse pdf']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Extract text from PDF documents.
 
-# tool.pdf-extractor — STUB
+# Library used
+- **pdfjs-dist** (Mozilla PDF.js) — primary
+- Fallback: pdfminer-six for OCR-needed cases
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Extraction modes
+1. **Text-layer extraction** (default) — fast, for PDFs with selectable text
+2. **OCR fallback** — for scanned PDFs (see [[tool.OCR-english]], [[tool.OCR-arabic]])
+3. **Structured extraction** — preserve paragraphs + headings where possible
+4. **Table extraction** — separate handling for tabular data
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Output
+- Plain text + page boundaries
+- Optional: heading detection
+- Optional: paragraph structure
+- Per-page text for citation purposes
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+- **PII redaction** before sending to LLM if applicable (see [[safety.PII-redaction-before-RAG]])
+- **Page mapping** preserved for citations
+- **Large files** chunked for memory
+- **Multi-language** detection (Arabic / English / French)
+
+# Anti-pattern
+- Sending raw PDF bytes to LLM (wastes tokens)
+- OCR'ing PDFs that have a text layer
+- Losing page mapping
+
+See [[multimodal.scanned-PDF-handler]] for scanned-only path.

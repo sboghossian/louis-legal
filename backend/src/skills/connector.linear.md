@@ -1,21 +1,41 @@
 ---
 id: connector.linear
-name: 'linear'
+name: Connector — Linear
 category: connector
-priority: P3
-status: stub
+intent: [__connector__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Linear (issue tracker) integration.
 
-# connector.linear — STUB
+# Capabilities
+- Read issues by ID
+- Search issues by query, label, assignee
+- Create new issues (bug reports, feature requests)
+- Update issue status
+- List teams + projects
+- Watch issues for status changes
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Use cases
+1. **Auto bug reports** from chat ([[ops.bug-report-collector]])
+2. **Feature request collection** ([[ops.feature-request-collector]])
+3. **Sprint planning** integration
+4. **Status dashboards**
+5. **Pull request linking**
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Setup
+- OAuth or PAT-based authentication
+- Workspace + team selection
+- Webhook subscriptions for updates
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Permissions
+- Read access for chat queries
+- Write access for issue creation (with user confirmation)
+- Admin access only for senior users
+
+# Audit
+All chat-driven Linear actions logged with user ID + timestamp.
+
+# Tenant isolation
+Each tenant connects their own Linear workspace; cross-tenant prohibited.

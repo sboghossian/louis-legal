@@ -1,21 +1,21 @@
 ---
 id: ref.vocabulary
-name: 'vocabulary'
+name: Reference — Legal + AI Vocabulary
 category: ref
-priority: P3
-status: stub
+intent: [__ref__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
-
-# ref.vocabulary — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Shared lexicon for legal + AI work:
+- **Prompt** — input to the AI model
+- **System prompt** — prepended instructions (the 'skill')
+- **Context window** — token capacity for prompt + response
+- **Hallucination** — fabricated content (cases, statutes)
+- **RAG** — retrieval-augmented generation (search-then-generate)
+- **Tool call** — model invokes external function
+- **Agent** — multi-step model with tool use + memory
+- **Eval** — benchmark assessment
+- **Rubric** — grading criteria
+- **Skill** — modular system-prompt fragment
+- **Router** — intent classifier picking skills

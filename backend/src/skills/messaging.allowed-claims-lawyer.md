@@ -1,21 +1,44 @@
 ---
 id: messaging.allowed-claims-lawyer
-name: 'allowed claims lawyer'
+name: Messaging — Allowed Lawyer Claims
 category: messaging
-priority: P3
-status: stub
+intent: [__messaging__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+What we CAN say to lawyers about Louis.
 
-# messaging.allowed-claims-lawyer — STUB
+# Allowed framing
+- "10x productivity on routine drafting"
+- "Built with lawyers, for lawyers"
+- "Mobile + desktop workbench"
+- "Save hours on contract review"
+- "Generate first drafts in minutes"
+- "Find precedents in seconds"
+- "Multi-jurisdictional coverage"
+- "Compatible with your existing workflow"
+- "Available wherever you are (mobile, desktop, Word plug-in)"
+- "Per-firm customization (firm playbooks, templates)"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Allowed outcomes for lawyers
+- Productivity gains
+- Quality consistency (catch issues human reviewers miss)
+- Speed (research, drafting, review faster)
+- Better client communication (faster status, clearer memos)
+- Mobile workflow (work from anywhere)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Tone for lawyer marketing
+- Professional + competent
+- Specific (with metrics, comparisons)
+- Respects lawyer's expertise (we augment, not replace)
+- Bar-rule aware
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Channels
+- **LinkedIn**: thought leadership, case studies
+- **Bar associations**: partnerships + CLE programs
+- **Conferences**: legal tech expos
+- **Direct sales**: enterprise outreach
+- **Word-of-mouth**: lawyer-to-lawyer
+
+See [[messaging.banned-claims-lawyer]] for what's off-limits.

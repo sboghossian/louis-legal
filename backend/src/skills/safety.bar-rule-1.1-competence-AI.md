@@ -1,21 +1,38 @@
 ---
 id: safety.bar-rule-1.1-competence-AI
-name: 'bar rule 1 · 1 competence AI'
+name: Bar Rule 1.1 — Competence + AI
 category: safety
-priority: P3
-status: stub
+intent: [__core__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+ABA Model Rule 1.1 (and analogs in MENA + EU + UK bar codes): lawyer must provide competent representation, including understanding the technology used in delivering legal services.
 
-# safety.bar-rule-1.1-competence-AI — STUB
+# What this means for AI use
+1. **Lawyer must understand the tool** — capabilities + limitations
+2. **Lawyer remains responsible** for output verification
+3. **Lawyer must understand AI risks** — hallucination, privilege, confidentiality
+4. **Continuing education** on tech increasingly explicit
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Application to Louis
+- Lawyer using Louis cannot delegate competence — Louis is a tool, lawyer reviews + signs off
+- Hallucinations are lawyer's responsibility if cited in a brief
+- Cannot rely on AI-generated cases / statutes without verification
+- Privilege concerns (see [[safety.AI-not-privileged-disclaimer-US-Heppner]]) must be understood
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Practical
+- Use Louis as research / drafting / triage tool
+- Verify all citations independently
+- Maintain skepticism on jurisdictionally novel questions
+- Document AI use in matter files (some bars require disclosure)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Penalties for failure
+- Malpractice claims
+- Bar discipline (suspension, disbarment for serious failures)
+- Court sanctions (e.g., Mata v Avianca — fabricated cases led to sanctions)
+
+# Practitioner takeaway
+Use AI to enhance practice, not replace judgment. Verify, calibrate, and document.
+
+See [[safety.bar-rule-1.6-confidentiality-AI]] and [[safety.bar-rule-5.5-UPL-AI]].

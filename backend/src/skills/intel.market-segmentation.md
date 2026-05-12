@@ -1,21 +1,18 @@
 ---
 id: intel.market-segmentation
-name: 'market segmentation'
+name: Market Segmentation
 category: intel
-priority: P3
-status: stub
+intent: [__intel__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Global legal services market segmented by:
+- BigLaw (AmLaw 100): $150B; $1,000-1,500 partner rates
+- Midsize firms (101-500): $200B; $500-800 rates
+- Boutique + solo: significant fragmentation; $200-400 rates
+- In-house counsel: $100B+; embedded in business
+- ALSPs (alternative legal service providers): $25B fastest-growing
+- Legal AI: $3-5B 2024; $30B by 2030 projected
 
-# intel.market-segmentation — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+MENA: ~$8-12B market; growth in DIFC, ADGM, Vision 2030 KSA, Egypt expansion.

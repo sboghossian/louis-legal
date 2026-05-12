@@ -1,21 +1,40 @@
 ---
 id: tool.docx-extractor
-name: 'docx extractor'
+name: Tool — DOCX Extractor
 category: tool
-priority: P3
-status: stub
+intent: ['docx extract', 'parse docx']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Extract text + structure from DOCX (Microsoft Word) files.
 
-# tool.docx-extractor — STUB
+# Library
+- **mammoth** — primary (preserves structure, handles tracked changes)
+- Fallback: docx parsing library for specific structural needs
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Extraction modes
+1. **Plain text** — fastest, for prompt context
+2. **Structured (Markdown)** — preserves headings, bold/italic, lists
+3. **HTML** — for browser display
+4. **Tracked changes** — accept/reject + change history
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Output
+- Plain text + structure metadata
+- Track-change marks (when present)
+- Footnotes + comments (when present)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+- **Tracked changes** preserved when present (important for redline workflows)
+- **Comments** extracted separately
+- **Tables** handled separately
+- **Embedded images** — alt text extracted; images stored separately
+
+# Use cases
+- Doc workspace `/content` endpoint ([[/api/doc-workspace/:docId/content]])
+- Chat tool `read_document`
+- Contract review pipelines
+
+# Anti-pattern
+- Losing tracked-change history
+- Treating comments as inline text

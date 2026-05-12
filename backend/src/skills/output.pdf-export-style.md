@@ -1,21 +1,47 @@
 ---
 id: output.pdf-export-style
-name: 'pdf export style'
+name: PDF Export Style
 category: output
-priority: P3
-status: stub
+intent: [__format__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+When generating PDF exports, follow these conventions.
 
-# output.pdf-export-style — STUB
+# Generation path
+1. Markdown → DOCX (or directly to PDF via headless renderer)
+2. DOCX → PDF via LibreOffice or Word
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Style requirements
+- Embed fonts (avoid missing-font display issues)
+- Maintain pagination
+- Embed metadata (title, author, subject)
+- Preserve hyperlinks (statutes, defined-term cross-refs)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Security options
+- Optional password protection
+- Optional restrictions: no copy, no print, no edit
+- Digital signature (for signed documents)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Accessibility
+- Tag headings for screen readers
+- Alt text for any images / diagrams
+- Reading order preserved
+
+# Legal-specific
+- Confidentiality watermark (diagonal, transparent)
+- Bates numbering for litigation documents
+- Page-of-pages footer
+
+# Filing-grade PDF
+For court filings:
+- PDF/A archival format
+- Specific font + spacing per court rules
+- No internal hyperlinks (some courts strip these)
+- Margin annotations stripped
+
+# Critical
+Test the PDF render before relying on it — auto-formatting can introduce subtle issues (page breaks mid-clause, missing rendering).
+
+See [[output.docx-export-style]].

@@ -1,21 +1,36 @@
 ---
 id: output.source-attribution-block
-name: 'source attribution block'
+name: Source Attribution Block
 category: output
-priority: P3
-status: stub
+intent: [__format__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+End-of-document source listing for memos + research.
 
-# output.source-attribution-block — STUB
+# Pattern
+```
+---
+Sources
 
-This skill is named in the Louis skills inventory but not yet authored.
+1. UAE Federal Decree-Law 33/2021 (Employment Relations Law) — art 10, 51
+2. Cabinet Decision 1/2022 (Non-Compete Implementation)
+3. Khoury v. Acme [2024] DIFC CFI 47 (DIFC Court of First Instance)
+4. SAMA AML Rules 2024 — section 4.2
+5. Stephane Boghossian, "Non-Compete Enforceability in MENA," Louis Skills Library (2026), [[kb.employment-law-UAE]]
+```
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Categories to include
+- Primary sources (statutes, regulations, cases) — must be real + verified
+- Secondary sources (treatises, top-tier legal publications)
+- Internal references (firm KB, prior matter)
+- Louis skills cited (with `[[id]]` notation for internal traceability)
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+- **Verify every citation**
+- **Include URL or full citation** for external sources
+- **Mark uncertainty**: `[citation needed]` for unsourced assertions
+- **Reflective**: only include sources actually used in the analysis
+
+See [[output.inline-citations-with-pinpoints]] for in-text citation format.

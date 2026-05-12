@@ -1,21 +1,18 @@
 ---
 id: openclaw.contrib-template
-name: 'contrib template'
+name: OpenClaw — Contribution Template
 category: openclaw
-priority: P3
-status: stub
+intent: [__openclaw__]
+priority: P2
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+How to contribute a skill:
+1. Fork registry repo
+2. Use skill template (frontmatter + body)
+3. Submit PR
+4. Lawyer review (within applicable jurisdiction)
+5. Merge + version
+6. Author credit in registry
 
-# openclaw.contrib-template — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+CC-BY-SA license for community skills.

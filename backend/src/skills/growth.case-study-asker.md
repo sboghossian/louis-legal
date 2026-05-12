@@ -1,21 +1,50 @@
 ---
 id: growth.case-study-asker
-name: 'case study asker'
+name: Growth — Case Study Asker
 category: growth
-priority: P3
-status: stub
+intent: [__growth__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Collect testimonials + case studies from happy users for marketing use.
 
-# growth.case-study-asker — STUB
+# When to ask
+- After NPS 10
+- After significant time-savings task (drafted full SPA, reviewed M&A docs)
+- After paid plan upgrade
+- After 90 days continuous active usage
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Approach
+- Subtle in-chat prompt: "Loving Louis? Mind sharing how you use it?"
+- Email outreach: short questionnaire
+- Personal outreach (Stephane / CS) for big accounts
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Case study format
+1. **User intro** — role, firm, jurisdiction (with permission for naming)
+2. **Use case** — what problem Louis solved
+3. **Process** — how they integrated Louis into workflow
+4. **Outcome** — quantified savings (time, money, quality)
+5. **Quote** — pull-quote suitable for marketing
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Permissions
+- **Anonymous** (default for first ask): "A senior partner at a Beirut firm…"
+- **Firm-named, person-anonymized**: "[Firm name] uses Louis…"
+- **Fully named**: "Lazar Saliba, Partner at [Firm], says…"
+- **Logo use**: separate permission
+
+# Compensation
+- Free month / credits as thank you
+- Featured in case study (PR opportunity)
+- Invitation to advisory program
+
+# Use
+- `/case-study/[slug]` page
+- Marketing materials
+- Investor updates
+- Sales pitch decks
+
+# Critical
+- **Verify permission** before any public use
+- **Don't pressure** — no quid pro quo for use
+- **Source attribution** — always include lawyer's name + firm (with consent)

@@ -1,21 +1,18 @@
 ---
 id: intel.MENA-legal-market-sizing
-name: 'MENA legal market sizing'
+name: MENA Legal Market Sizing
 category: intel
-priority: P3
-status: stub
+intent: [__intel__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+MENA legal services market: ~$8-12B (2024 estimates).
+Key drivers:
+- KSA Vision 2030 — infrastructure + privatization legal needs
+- UAE DIFC + ADGM — financial centers grow legal services
+- Egypt — Investment + IPO activity
+- LB — historically large, distressed post-2019
+- Cross-border M&A + dispute uplift
 
-# intel.MENA-legal-market-sizing — STUB
-
-This skill is named in the Louis skills inventory but not yet authored.
-
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+CAGR estimated 8-12% (higher than global ~3-5%).
