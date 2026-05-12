@@ -1,0 +1,13 @@
+{
+  "name": "louis-legal",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Convenience scripts for the Louis monorepo (frontend + backend + deploy).",
+  "scripts": {
+    "tunnel": "./deploy/cloudflared/run.sh",
+    "frontend": "cd frontend && npm run dev",
+    "backend": "cd backend && npm run dev",
+    "dev": "concurrently -k -n frontend,backend -c green,blue 'npm run frontend' 'npm run backend'",
+    "typecheck": "cd backend && npx tsc --noEmit && cd ../frontend && npx tsc --noEmit"
+  }
+}

@@ -1,0 +1,44 @@
+# Cloudflare Tunnel — Louis (louis-legal repo).
+#
+# Routes legal.dashable.dev to the local Next.js frontend and
+# api.legal.dashable.dev to the local Express backend.
+#
+# Quick start (run once):
+#   brew install cloudflared
+#   cloudflared tunnel login
+#   cloudflared tunnel create louis-legal
+#   cloudflared tunnel route dns louis-legal legal.dashable.dev
+#   cloudflared tunnel route dns louis-legal api.legal.dashable.dev
+#
+# Then fill in the `tunnel:` UUID and `credentials-file:` path below
+# (cloudflared prints both on `create`), and run:
+#   ./deploy/cloudflared/run.sh
+# or:
+#   npm run tunnel
+
+tunnel: REPLACE_WITH_TUNNEL_UUID
+credentials-file: /Users/stephanemacmini/.cloudflared/REPLACE_WITH_TUNNEL_UUID.json
+
+# Logs at $TMPDIR/cloudflared.log when run.sh is used.
+loglevel: info
+transport-loglevel: warn
+
+# Increase the read timeout because /chat streams SSE.
+originRequest:
+  noTLSVerify: false
+  connectTimeout: 30s
+  tlsTimeout: 10s
+  tcpKeepAlive: 30s
+  keepAliveConnections: 100
+  keepAliveTimeout: 90s
+  # SSE streams from /chat can run for ~60s+; give them headroom.
+  httpHostHeader: ""
+  disableChunkedEncoding: false
+
+ingress:
+  - hostname: legal.dashable.dev
+    service: http://localhost:3000
+  - hostname: api.legal.dashable.dev
+    service: http://localhost:3001
+  # Required catch-all.
+  - service: http_status:404

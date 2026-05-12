@@ -77,6 +77,46 @@ skillsRouter.get("/registry", (_req, res) => {
 });
 
 /**
+ * GET /api/skills/prompt-library
+ * Returns enriched prompt-pack entries for the dedicated browse page:
+ *   { id, name, practice_area, intent[], description, template }
+ *
+ * `template` is the first markdown blockquote under "Prompt template" (the
+ * bracketed-fields prompt the user inserts into the composer). When that
+ * section isn't found, we fall back to the first non-frontmatter paragraph.
+ *
+ * Declared above /:id so the literal segment wins routing.
+ */
+skillsRouter.get("/prompt-library", (_req, res) => {
+  const skills = [...loadAllSkills().values()].filter(
+    (s) => s.frontmatter.category === "prompt-pack",
+  );
+  const entries = skills.map((s) => {
+    const body = s.prompt;
+    const tplMatch = body.match(
+      /##\s*Prompt template\s*\n+\s*>\s*([\s\S]*?)(?:\n{2,}|\n##|$)/i,
+    );
+    const template = (tplMatch?.[1] ?? "")
+      .replace(/^>\s*/gm, "")
+      .trim();
+    const headerMatch = body.match(/^#\s+(.+)$/m);
+    const typeMatch = body.match(/^\*\*Type:\*\*\s*(.+)$/m);
+    return {
+      id: s.frontmatter.id,
+      name: s.frontmatter.name || headerMatch?.[1] || s.frontmatter.id,
+      practice_area: s.frontmatter.practice_area ?? null,
+      intent: s.frontmatter.intent ?? [],
+      description:
+        (s.frontmatter as unknown as { description?: string }).description ??
+        typeMatch?.[1] ??
+        null,
+      template,
+    };
+  });
+  res.json({ total: entries.length, entries });
+});
+
+/**
  * GET /api/skills/route-debug
  * Returns the in-memory ring buffer of recent router decisions.
  * Query: ?limit=50

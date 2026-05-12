@@ -22,6 +22,7 @@ import {
     Settings as SettingsIcon,
     Bell,
     BookOpen,
+    BookMarked,
     Calculator,
     Quote,
     ShieldAlert,
@@ -84,6 +85,7 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/calculators/eos",   label: "EOS Calculator",  icon: Calculator },
             { href: "/legal-flows",       label: "Legal Flows",     icon: Workflow },
             { href: "/tabular-reviews",   label: "Tabular Review",  icon: Table2 },
+            { href: "/prompt-library",    label: "Prompt Library",  icon: BookMarked },
         ],
     },
     {
