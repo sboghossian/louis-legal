@@ -10,13 +10,13 @@ Mac on a long-lived outbound HTTP/2 connection.
 | Host                       | Local target           | Purpose          |
 | -------------------------- | ---------------------- | ---------------- |
 | `legal.dashable.dev`       | `http://localhost:3000` | Next.js frontend |
-| `api.legal.dashable.dev`   | `http://localhost:3001` | Express backend  |
+| `legal-api.dashable.dev`   | `http://localhost:3001` | Express backend  |
 
 For the frontend to actually talk to the tunneled backend, set in
 `frontend/.env.local`:
 
 ```
-NEXT_PUBLIC_API_BASE_URL=https://api.legal.dashable.dev
+NEXT_PUBLIC_API_BASE_URL=https://legal-api.dashable.dev
 ```
 
 And add the public origin to the backend's CORS allow-list in
@@ -33,7 +33,7 @@ brew install cloudflared
 cloudflared tunnel login                                    # browser-auth
 cloudflared tunnel create louis-legal                       # writes ~/.cloudflared/<uuid>.json
 cloudflared tunnel route dns louis-legal legal.dashable.dev
-cloudflared tunnel route dns louis-legal api.legal.dashable.dev
+cloudflared tunnel route dns louis-legal legal-api.dashable.dev
 ```
 
 After `tunnel create`, `cloudflared` prints the tunnel UUID and the path to
@@ -67,7 +67,7 @@ copy it across.)
 ## Smoke test
 
 ```bash
-curl -s https://api.legal.dashable.dev/health
+curl -s https://legal-api.dashable.dev/health
 # → {"ok":true}
 
 open https://legal.dashable.dev

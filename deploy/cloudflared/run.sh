@@ -8,7 +8,7 @@
 #   cloudflared tunnel login
 #   cloudflared tunnel create louis-legal
 #   cloudflared tunnel route dns louis-legal legal.dashable.dev
-#   cloudflared tunnel route dns louis-legal api.legal.dashable.dev
+#   cloudflared tunnel route dns louis-legal legal-api.dashable.dev
 #   (then fill in tunnel/credentials-file in config.yml)
 #
 # Assumes the local frontend (port 3000) and backend (port 3001) are running.

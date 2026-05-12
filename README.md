@@ -152,7 +152,7 @@ brew install cloudflared
 cloudflared tunnel login
 cloudflared tunnel create louis-legal
 cloudflared tunnel route dns louis-legal legal.dashable.dev
-cloudflared tunnel route dns louis-legal api.legal.dashable.dev
+cloudflared tunnel route dns louis-legal legal-api.dashable.dev
 
 # fill in tunnel UUID + credentials path in deploy/cloudflared/config.yml
 npm run tunnel
@@ -163,9 +163,9 @@ This routes:
 | Host                       | →   | Local port              |
 | -------------------------- | --- | ----------------------- |
 | `legal.dashable.dev`       | →   | `localhost:3000` (Next) |
-| `api.legal.dashable.dev`   | →   | `localhost:3001` (API)  |
+| `legal-api.dashable.dev`   | →   | `localhost:3001` (API)  |
 
-Don't forget to set `NEXT_PUBLIC_API_BASE_URL=https://api.legal.dashable.dev`
+Don't forget to set `NEXT_PUBLIC_API_BASE_URL=https://legal-api.dashable.dev`
 in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
 `backend/.env` once you've pointed the tunnel.
 
@@ -225,7 +225,7 @@ npm run lint  --prefix frontend
   restart the backend so `soffice` is on `PATH`.
 - **SSE chat hangs over the tunnel.** Don't put a buffering reverse
   proxy in front of `cloudflared` — it'll silently break streaming.
-  `NEXT_PUBLIC_API_BASE_URL` should point at `api.legal.dashable.dev`
+  `NEXT_PUBLIC_API_BASE_URL` should point at `legal-api.dashable.dev`
   directly.
 - **CORS errors after deploying.** `FRONTEND_URL` in `backend/.env` must
   match the public origin exactly.

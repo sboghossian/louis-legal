@@ -108,9 +108,16 @@ app.use(
   }),
 );
 
+// FRONTEND_URL may list multiple comma-separated origins so the same
+// backend can serve both localhost dev and a public tunneled origin
+// (e.g. "http://localhost:3000,https://legal.dashable.dev").
+const corsOrigins = (process.env.FRONTEND_URL ?? "http://localhost:3000")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? "http://localhost:3000",
+    origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
     credentials: true,
   }),
 );

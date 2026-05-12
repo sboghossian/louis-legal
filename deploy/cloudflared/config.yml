@@ -1,14 +1,14 @@
 # Cloudflare Tunnel — Louis (louis-legal repo).
 #
 # Routes legal.dashable.dev to the local Next.js frontend and
-# api.legal.dashable.dev to the local Express backend.
+# legal-api.dashable.dev to the local Express backend.
 #
 # Quick start (run once):
 #   brew install cloudflared
 #   cloudflared tunnel login
 #   cloudflared tunnel create louis-legal
 #   cloudflared tunnel route dns louis-legal legal.dashable.dev
-#   cloudflared tunnel route dns louis-legal api.legal.dashable.dev
+#   cloudflared tunnel route dns louis-legal legal-api.dashable.dev
 #
 # Then fill in the `tunnel:` UUID and `credentials-file:` path below
 # (cloudflared prints both on `create`), and run:
@@ -38,7 +38,7 @@ originRequest:
 ingress:
   - hostname: legal.dashable.dev
     service: http://localhost:3000
-  - hostname: api.legal.dashable.dev
+  - hostname: legal-api.dashable.dev
     service: http://localhost:3001
   # Required catch-all.
   - service: http_status:404
