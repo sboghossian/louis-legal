@@ -747,3 +747,65 @@ html:not([data-density]) {
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0);
     }
 }
+
+
+/* ---------- Marketing animations (landing + feature mocks) ---------- */
+@keyframes louisPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.4); }
+}
+.louis-pulse { animation: louisPulse 1.6s ease-in-out infinite; }
+
+@keyframes louisShimmer {
+  0%   { opacity: 0.3; transform: translateX(-4%); }
+  50%  { opacity: 0.85; transform: translateX(0); }
+  100% { opacity: 0.3; transform: translateX(4%); }
+}
+.louis-shimmer { animation: louisShimmer 2.2s ease-in-out infinite; }
+
+@keyframes louisRise {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.louis-rise { animation: louisRise 0.55s ease-out both; }
+
+@keyframes louisCaret {
+  0%, 49%  { opacity: 1; }
+  50%, 100%{ opacity: 0; }
+}
+.louis-caret {
+  display: inline-block;
+  margin-left: 1px;
+  color: #1f2937;
+  animation: louisCaret 1.05s steps(2) infinite;
+}
+
+@keyframes louisSpinSlow {
+  to { transform: rotate(360deg); }
+}
+.louis-spin-slow { animation: louisSpinSlow 14s linear infinite; }
+
+@keyframes louisFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.louis-float { animation: louisFloat 6s ease-in-out infinite; }
+
+@keyframes louisOrbDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  33%  { transform: translate3d(20px, -10px, 0) scale(1.05); }
+  66%  { transform: translate3d(-10px, 12px, 0) scale(0.98); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+.louis-orb { animation: louisOrbDrift 18s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .louis-pulse,
+  .louis-shimmer,
+  .louis-rise,
+  .louis-caret,
+  .louis-spin-slow,
+  .louis-float,
+  .louis-orb { animation: none !important; }
+}
+

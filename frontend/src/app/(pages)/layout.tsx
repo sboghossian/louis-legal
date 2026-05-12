@@ -9,6 +9,7 @@ import { SidebarContext } from "@/app/contexts/SidebarContext";
 import { AppSidebar } from "@/app/components/shared/AppSidebar";
 import { CommandPalette } from "@/app/components/shared/CommandPalette";
 import { MobileBottomNav } from "@/app/components/shared/MobileBottomNav";
+import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
@@ -16,6 +17,12 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001"
 // Paths inside (pages)/ that don't gate on onboarding completion.
 // Note: /onboarding lives outside (pages)/ now, so this layout doesn't apply there.
 const ONBOARDING_EXEMPT = ["/about", "/docs", "/academy", "/help"];
+
+// Paths inside (pages)/ that are publicly readable — no auth required.
+// Used by anyone browsing the marketing/learning surfaces. Signed-in users
+// still see them inside the normal app chrome; signed-out users see them
+// wrapped in the marketing shell (top nav + footer).
+const PUBLIC_PATHS = ["/academy", "/about"];
 
 export default function LouisLayout({
     children,
@@ -69,11 +76,13 @@ export default function LouisLayout({
         }
     };
 
+    const isPublicPath = PUBLIC_PATHS.some((p) => pathname?.startsWith(p));
+
     useEffect(() => {
-        if (!authLoading && !isAuthenticated) {
+        if (!authLoading && !isAuthenticated && !isPublicPath) {
             router.push("/login");
         }
-    }, [authLoading, isAuthenticated, router]);
+    }, [authLoading, isAuthenticated, router, isPublicPath]);
 
     // Onboarding gating: check if user has completed onboarding; if not + on a non-exempt path, redirect.
     useEffect(() => {
@@ -117,6 +126,20 @@ export default function LouisLayout({
             setOnboardingChecked(true);
         })();
     }, [authLoading, isAuthenticated, user?.id, pathname, router, onboardingChecked]);
+
+    // Public paths (academy, about) render content immediately so the
+    // initial HTML carries SEO-relevant copy and we don't gate them
+    // behind a session lookup. Once auth resolves, signed-in visitors
+    // see the marketing chrome around the content (they can still hop
+    // back into the app via the top nav); signed-out visitors are
+    // already in the right state.
+    if (isPublicPath) {
+        return (
+            <MarketingShell>
+                <main className="pt-24 md:pt-28">{children}</main>
+            </MarketingShell>
+        );
+    }
 
     if (authLoading) {
         return (

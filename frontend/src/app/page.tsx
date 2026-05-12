@@ -1,17 +1,17 @@
 /**
  * Marketing landing page for legal.dashable.dev (the root URL).
  *
- * Server-rendered for SEO + faster FCP. The "if signed in, jump to
- * /assistant" check runs in a small client island (LandingAuthRedirect)
- * so the hero, headlines, and feature copy ship in the initial HTML
- * even before JS hydrates.
+ * Server-rendered for SEO + faster FCP. A small client island
+ * (LandingAuthRedirect) routes already-signed-in visitors to /assistant
+ * once hydration completes — the hero, headlines, and feature copy still
+ * ship in the initial HTML.
  *
- * The hero illustration lives at /public/hero-louis.svg. To replace it
- * with an AI-generated image, drop a new file at the same path (jpg/png
- * fine — just keep the aspect ratio close to 16:10 so the layout holds).
+ * The hero illustration is rendered inline via <HeroMock />: an animated
+ * SVG/HTML composite of the Louis workbench (no external asset, no jpg
+ * to refresh). Each feature card has its own inline mock so visitors can
+ * see what each surface looks like before signing up — Mike-style.
  */
 
-import Image from "next/image";
 import Link from "next/link";
 import {
     Github,
@@ -21,19 +21,32 @@ import {
     Table2,
     Network,
     Library,
-    BookOpenCheck,
+    BookMarked,
+    Briefcase,
+    Rss,
+    Lock,
     ShieldCheck,
     KeyRound,
     Server,
     GitBranch,
     Eye,
-    Rss,
-    BookMarked,
-    Lock,
-    Briefcase,
+    BookOpenCheck,
+    type LucideIcon,
 } from "lucide-react";
-import { LouisMark, LouisWordmark } from "@/components/brand/louis-mark";
+import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { LandingAuthRedirect } from "./_LandingAuthRedirect";
+import {
+    HeroMock,
+    AssistantMock,
+    MattersMock,
+    DocWorkspaceMock,
+    DraftingBoardMock,
+    TabularReviewMock,
+    WorkflowsMock,
+    PromptLibraryMock,
+    VaultMock,
+    NewsfeedMock,
+} from "@/components/marketing/feature-mocks";
 
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
 
@@ -45,100 +58,16 @@ export const metadata = {
 
 export default function LandingPage() {
     return (
-        <main className="relative min-h-dvh bg-[#fbf8f2] text-[#1f2937]">
-            {/* Client-only redirect — server-rendered HTML still ships first. */}
+        <>
             <LandingAuthRedirect />
-            <TopNav />
-            <Hero />
-            <Features />
-            <WhyOpenSource />
-            <FinalCta />
-            <Footer />
-        </main>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Top nav (Mike-style floating capsule)
-// ---------------------------------------------------------------------------
-
-function TopNav() {
-    return (
-        <nav className="fixed inset-x-0 top-5 z-50 flex justify-center px-4">
-            <div className="relative w-full max-w-6xl">
-                <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -inset-x-6 -inset-y-2 rounded-full bg-white/30 blur-2xl"
-                />
-                <div
-                    className="relative flex items-center justify-between gap-2 rounded-full border border-white/40 pl-1.5 pr-2 py-2 backdrop-blur-lg backdrop-saturate-150"
-                    style={{
-                        background:
-                            "linear-gradient(135deg, rgba(251,248,242,0.7) 0%, rgba(231,226,214,0.55) 100%)",
-                        boxShadow:
-                            "0 1px 0 0 rgba(255,255,255,0.5) inset, 0 -1px 0 0 rgba(0,0,0,0.03) inset, 0 1px 2px rgba(17,24,39,0.04), 0 12px 32px -8px rgba(17,24,39,0.08)",
-                    }}
-                >
-                    <Link
-                        href="/"
-                        aria-label="Louis home"
-                        className="flex items-center gap-2 pl-2 pr-1"
-                    >
-                        <LouisWordmark size={22} />
-                    </Link>
-                    <div className="hidden md:flex items-center gap-1 text-sm text-gray-700">
-                        <NavLink href="#features">Features</NavLink>
-                        <NavLink href="#open-source">Why open source</NavLink>
-                        <NavLink href="/academy">Academy</NavLink>
-                        <NavLink href={REPO_URL} external>
-                            GitHub
-                        </NavLink>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Link
-                            href="/login"
-                            className="px-3.5 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-full"
-                        >
-                            Log in
-                        </Link>
-                        <Link
-                            href="/signup"
-                            className="px-3.5 py-1.5 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 rounded-full transition-colors"
-                        >
-                            Sign up
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    );
-}
-
-function NavLink({
-    href,
-    children,
-    external = false,
-}: {
-    href: string;
-    children: React.ReactNode;
-    external?: boolean;
-}) {
-    return external ? (
-        <a
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            className="px-3 py-1.5 rounded-full hover:bg-white/40 transition-colors"
-        >
-            {children}
-        </a>
-    ) : (
-        <Link
-            href={href}
-            className="px-3 py-1.5 rounded-full hover:bg-white/40 transition-colors"
-        >
-            {children}
-        </Link>
+            <MarketingShell>
+                <Hero />
+                <SocialProofStrip />
+                <Features />
+                <WhyOpenSource />
+                <FinalCta />
+            </MarketingShell>
+        </>
     );
 }
 
@@ -148,28 +77,34 @@ function NavLink({
 
 function Hero() {
     return (
-        <section className="relative pt-32 md:pt-40 pb-16 md:pb-24 px-6">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12 items-center">
+        <section className="relative pt-32 md:pt-40 pb-12 md:pb-20 px-6 overflow-hidden">
+            {/* Decorative gold-leaf orbs */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber-200/30 blur-3xl louis-orb"
+            />
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute top-20 right-0 w-[28rem] h-[28rem] rounded-full bg-[#c9a961]/15 blur-3xl louis-orb"
+                style={{ animationDelay: "5s" }}
+            />
+
+            <div className="relative max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12 items-center">
                 <div className="md:col-span-6">
                     <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-5">
                         <span className="h-px w-6 bg-amber-700" />
-                        Open source legal AI
+                        Open source · MIT licensed
                     </span>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-light leading-[1.05] tracking-tight">
-                        The legal AI workbench, in an open codebase your firm
-                        owns.
+                        The legal AI workbench, in a codebase your firm owns.
                     </h1>
                     <p className="mt-6 text-base md:text-lg text-gray-600 leading-relaxed max-w-xl font-serif">
-                        Drafting, redlining, tabular review, citation, risk,
-                        982 expert skills, MENA-first jurisdictions, and a
-                        comfort-UI built for the way lawyers actually work.
-                        Bring your own Claude · Gemini · OpenAI keys.
-                        Self-host inside your perimeter.
+                        Draft contracts, redline against playbooks, review hundreds of documents at once, run agentic legal workflows. 982 expert skills, MENA-first jurisdictions. Bring your own Claude · Gemini · OpenAI keys. Self-host inside your perimeter.
                     </p>
                     <div className="mt-8 flex flex-wrap items-center gap-3">
                         <Link
                             href="/signup"
-                            className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors"
+                            className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors shadow-sm"
                         >
                             Sign up free
                             <ArrowRight className="h-4 w-4" />
@@ -191,9 +126,12 @@ function Hero() {
                         </Link>
                     </div>
                     <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
-                        <span>MIT licensed</span>
+                        <span className="inline-flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            MIT licensed
+                        </span>
                         <span className="text-gray-300">·</span>
-                        <span>BYO API keys (Claude · Gemini · OpenAI)</span>
+                        <span>BYO API keys</span>
                         <span className="text-gray-300">·</span>
                         <span>982 authored skills</span>
                         <span className="text-gray-300">·</span>
@@ -202,19 +140,11 @@ function Hero() {
                 </div>
 
                 <div className="md:col-span-6">
-                    <div className="relative rounded-2xl overflow-hidden border border-[#e7e2d6] shadow-[0_24px_60px_-20px_rgba(31,41,55,0.25)] bg-[#f3ead4]">
-                        <Image
-                            src="/hero-louis.svg"
-                            alt="Louis — open-source legal AI workbench"
-                            width={1600}
-                            height={1000}
-                            priority
-                            className="block w-full h-auto"
-                        />
+                    <div className="louis-float">
+                        <HeroMock />
                     </div>
                     <p className="mt-3 text-[11px] text-gray-500 text-center italic">
-                        Louis crest — a serif L in a hairline circle of gold
-                        leaf. Replace <code className="bg-gray-100 px-1 py-0.5 rounded font-mono">public/hero-louis.svg</code> with your own generated image.
+                        Real surfaces, no marketing screenshot — what you sign in to.
                     </p>
                 </div>
             </div>
@@ -223,63 +153,113 @@ function Hero() {
 }
 
 // ---------------------------------------------------------------------------
-// Features grid
+// Social proof strip — quiet brand line (open source, fork count, etc.)
 // ---------------------------------------------------------------------------
 
-function Features() {
-    const features = [
-        {
-            icon: MessageSquare,
-            title: "Assistant",
-            body: "Streaming chat that reads your documents, cites verbatim, surfaces its reasoning, runs multi-step skills, and drafts contracts end-to-end. Plug in your own Claude / Gemini / OpenAI keys.",
-        },
-        {
-            icon: Briefcase,
-            title: "Matters & Projects",
-            body: "Matter-scoped workspaces with conflict checks. Upload SPAs, leases, diligence packs into a project — the assistant keeps full context across every conversation and every doc.",
-        },
-        {
-            icon: FileText,
-            title: "Doc Workspace",
-            body: "Per-document editor with versions, accept/reject suggestions, side-by-side compare, tone slider, in-line tracked-change redline export.",
-        },
-        {
-            icon: Network,
-            title: "Drafting Board",
-            body: "Visual workspace for agentic legal workflows. Templates for M&A, Employment, Due Diligence, Contract Review. Lanes view groups by Human / Agent / Gate.",
-        },
-        {
-            icon: Table2,
-            title: "Tabular Review",
-            body: "Spreadsheet-style extraction across hundreds of documents in parallel. Every cell is verifiably cited back to a page and a quote — no hallucinated answers.",
-        },
-        {
-            icon: Library,
-            title: "Workflows & Routines",
-            body: "Save proven prompts as reusable workflows your juniors run in one click. Schedule recurring routines (daily digests, deadline reminders, watch lists).",
-        },
-        {
-            icon: BookMarked,
-            title: "Prompt Library",
-            body: "152 expert-crafted prompts spanning drafting, review, research, compliance, strategy. Filter by use case + practice area. One click sends a template to the composer.",
-        },
-        {
-            icon: Lock,
-            title: "Vault",
-            body: "Encrypted matter storage. AES-256 at rest, privilege-aware skill routing, audit log per access, per-client isolation, expiring shares.",
-        },
-        {
-            icon: Rss,
-            title: "Newsfeed",
-            body: "Reddit-backed legal industry stream — drafting, big law, legal AI launches, regulator news. Add your own topics; Louis aggregates into one feed.",
-        },
+function SocialProofStrip() {
+    const items = [
+        "Fork-friendly",
+        "Self-hostable",
+        "Streaming reasoning",
+        "Per-message feedback",
+        "Verifiable citations",
+        "Privilege-aware vault",
     ];
-
     return (
-        <section
-            id="features"
-            className="relative py-20 md:py-28 px-6 bg-white border-y border-[#e7e2d6]"
-        >
+        <section className="px-6 py-8 border-y border-[#e7e2d6] bg-white/60 backdrop-blur-sm">
+            <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[11px] uppercase tracking-[0.25em] text-gray-500">
+                {items.map((t, i) => (
+                    <span key={t} className="inline-flex items-center gap-3">
+                        {i > 0 && <span className="text-gray-300">·</span>}
+                        {t}
+                    </span>
+                ))}
+            </div>
+        </section>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Features grid — each card has its own animated mock
+// ---------------------------------------------------------------------------
+
+interface FeatureSpec {
+    icon: LucideIcon;
+    title: string;
+    body: string;
+    Mock: React.ComponentType<{ className?: string }>;
+    href?: string;
+}
+
+const FEATURES: FeatureSpec[] = [
+    {
+        icon: MessageSquare,
+        title: "Streaming assistant with reasoning",
+        body: "Watch the model think before it writes. Reasoning shows by default for Claude, Gemini, and OpenAI. Per-message thumbs up/down feeds the team review.",
+        Mock: AssistantMock,
+        href: "/assistant",
+    },
+    {
+        icon: Briefcase,
+        title: "Matters & projects",
+        body: "Matter-scoped workspaces with conflict checks. Upload SPAs, leases, diligence packs — the assistant keeps full context across every doc.",
+        Mock: MattersMock,
+        href: "/projects",
+    },
+    {
+        icon: FileText,
+        title: "Doc workspace + redlines",
+        body: "Per-document editor with versions, accept/reject suggestions, side-by-side compare, tone slider, in-line tracked-change redline export.",
+        Mock: DocWorkspaceMock,
+        href: "/doc-workspace",
+    },
+    {
+        icon: Network,
+        title: "Drafting Board",
+        body: "Visual workspace for agentic legal workflows. Templates for M&A, Employment, Due Diligence, Contract Review. Human/agent/gate lanes.",
+        Mock: DraftingBoardMock,
+        href: "/drafting-board",
+    },
+    {
+        icon: Table2,
+        title: "Tabular review",
+        body: "Spreadsheet-style extraction across hundreds of documents in parallel. Every cell verifiably cited back to a page and a quote.",
+        Mock: TabularReviewMock,
+        href: "/tabular-reviews",
+    },
+    {
+        icon: Library,
+        title: "Workflows & routines",
+        body: "Save proven prompts as reusable workflows. Schedule recurring routines — daily digests, deadline reminders, watch lists, regulator sweeps.",
+        Mock: WorkflowsMock,
+        href: "/routines",
+    },
+    {
+        icon: BookMarked,
+        title: "Prompt library",
+        body: "152 expert-crafted prompts spanning drafting, review, research, compliance, strategy. Filter by use case + practice area, one-click to composer.",
+        Mock: PromptLibraryMock,
+        href: "/prompt-library",
+    },
+    {
+        icon: Lock,
+        title: "Vault",
+        body: "Encrypted matter storage. AES-256 at rest, privilege-aware skill routing, audit log per access, per-client isolation, expiring shares.",
+        Mock: VaultMock,
+        href: "/vault",
+    },
+    {
+        icon: Rss,
+        title: "Newsfeed",
+        body: "Reddit-backed legal industry stream — drafting, big law, legal AI launches, regulator news. Add your own topics; Louis aggregates one feed.",
+        Mock: NewsfeedMock,
+        href: "/feed",
+    },
+];
+
+function Features() {
+    return (
+        <section id="features" className="relative py-20 md:py-28 px-6 bg-white">
             <div className="max-w-6xl mx-auto">
                 <div className="max-w-2xl mb-12 md:mb-16">
                     <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
@@ -287,24 +267,37 @@ function Features() {
                         Features
                     </span>
                     <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight leading-tight">
-                        Everything the incumbents ship, in a codebase your firm
-                        can read line by line.
+                        Everything the incumbents ship — visible, hackable, in a codebase you can read line by line.
                     </h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    {features.map(({ icon: Icon, title, body }) => (
-                        <div
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                    {FEATURES.map(({ icon: Icon, title, body, Mock, href }) => (
+                        <article
                             key={title}
-                            className="rounded-2xl border border-[#e7e2d6] bg-[#fbf8f2] p-5 md:p-6 hover:shadow-sm transition-shadow"
+                            className="group rounded-2xl border border-[#e7e2d6] bg-[#fbf8f2] p-4 md:p-5 transition-all hover:shadow-md hover:-translate-y-0.5"
                         >
-                            <div className="w-9 h-9 rounded-lg border border-[#e7e2d6] bg-white flex items-center justify-center mb-3">
-                                <Icon className="w-4 h-4 text-amber-700" />
+                            <Mock className="mb-4 group-hover:shadow-sm transition-shadow" />
+                            <div className="flex items-start gap-2 mb-1.5">
+                                <div className="w-7 h-7 rounded-lg border border-[#e7e2d6] bg-white flex items-center justify-center shrink-0">
+                                    <Icon className="w-3.5 h-3.5 text-amber-700" />
+                                </div>
+                                <h3 className="font-serif text-lg leading-tight pt-0.5">
+                                    {title}
+                                </h3>
                             </div>
-                            <h3 className="font-serif text-lg mb-1.5">{title}</h3>
                             <p className="text-sm text-gray-600 leading-relaxed">
                                 {body}
                             </p>
-                        </div>
+                            {href && (
+                                <Link
+                                    href={href}
+                                    className="mt-3 inline-flex items-center gap-1 text-xs text-amber-800 hover:text-amber-900 font-medium"
+                                >
+                                    See it live
+                                    <ArrowRight className="w-3 h-3" />
+                                </Link>
+                            )}
+                        </article>
                     ))}
                 </div>
             </div>
@@ -321,7 +314,7 @@ function WhyOpenSource() {
         {
             icon: KeyRound,
             title: "Zero license cost",
-            body: "No vendor lock-in. No per-seat pricing that rises every year. You pay only the model API costs — at whatever rate your provider charges you.",
+            body: "No vendor lock-in. No per-seat pricing that climbs every year. You pay only the model API costs — at whatever rate your provider charges you.",
         },
         {
             icon: Server,
@@ -336,7 +329,7 @@ function WhyOpenSource() {
         {
             icon: Eye,
             title: "Audit every line",
-            body: "No black boxes around how prompts are built, how citations are parsed, or how data flows. The skill files are plain markdown — read every system prompt.",
+            body: "No black boxes around how prompts are built, how citations are parsed, or how data flows. Skill files are plain markdown — read every system prompt.",
         },
         {
             icon: ShieldCheck,
@@ -351,10 +344,7 @@ function WhyOpenSource() {
     ];
 
     return (
-        <section
-            id="open-source"
-            className="relative py-20 md:py-28 px-6 bg-[#fbf8f2]"
-        >
+        <section id="open-source" className="relative py-20 md:py-28 px-6 bg-[#fbf8f2] border-y border-[#e7e2d6]">
             <div className="max-w-6xl mx-auto">
                 <div className="max-w-2xl mb-12 md:mb-16">
                     <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
@@ -372,12 +362,8 @@ function WhyOpenSource() {
                                 <Icon className="w-4 h-4 text-amber-700" />
                             </div>
                             <div>
-                                <h3 className="font-serif text-lg mb-1">
-                                    {title}
-                                </h3>
-                                <p className="text-sm text-gray-600 leading-relaxed">
-                                    {body}
-                                </p>
+                                <h3 className="font-serif text-lg mb-1">{title}</h3>
+                                <p className="text-sm text-gray-600 leading-relaxed">{body}</p>
                             </div>
                         </div>
                     ))}
@@ -393,15 +379,13 @@ function WhyOpenSource() {
 
 function FinalCta() {
     return (
-        <section className="relative py-20 md:py-28 px-6 border-y border-[#e7e2d6] bg-white">
+        <section className="relative py-20 md:py-28 px-6 bg-white">
             <div className="max-w-3xl mx-auto text-center">
                 <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight leading-tight mb-4">
                     Start in the cloud. Or clone the repo.
                 </h2>
                 <p className="text-base md:text-lg text-gray-600 font-serif mb-8 max-w-xl mx-auto">
-                    A working substitute for Harvey, Legora, and CoCounsel —
-                    available as a hosted demo or to self-deploy from source
-                    in ten minutes.
+                    A working substitute for Harvey, Legora, and CoCounsel — available as a hosted demo or to self-deploy from source in ten minutes.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                     <Link
@@ -423,68 +407,5 @@ function FinalCta() {
                 </div>
             </div>
         </section>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Footer
-// ---------------------------------------------------------------------------
-
-function Footer() {
-    return (
-        <footer className="px-6 py-10 bg-[#fbf8f2]">
-            <div className="max-w-6xl mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-6 pb-6 border-b border-[#e7e2d6]">
-                    <Link href="/" aria-label="Louis home" className="inline-flex">
-                        <LouisWordmark size={22} />
-                    </Link>
-                    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-600">
-                        <Link href="/academy" className="hover:text-gray-900">
-                            Academy
-                        </Link>
-                        <Link href="/about" className="hover:text-gray-900">
-                            About
-                        </Link>
-                        <a
-                            href={REPO_URL}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 hover:text-gray-900"
-                        >
-                            <Github className="h-3.5 w-3.5" />
-                            GitHub
-                        </a>
-                        <Link href="/login" className="hover:text-gray-900">
-                            Log in
-                        </Link>
-                        <Link
-                            href="/signup"
-                            className="hover:text-gray-900 font-medium"
-                        >
-                            Sign up
-                        </Link>
-                    </div>
-                </div>
-                <div className="flex flex-wrap items-center justify-between gap-4 pt-6 text-xs text-gray-500">
-                    <span>
-                        © {new Date().getFullYear()} Louis. MIT licensed.
-                        Forked from{" "}
-                        <a
-                            href="https://github.com/willchen96/mike"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="underline hover:text-gray-900"
-                        >
-                            Mike
-                        </a>
-                        .
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                        <LouisMark size={14} />
-                        <span>Made in Beirut + Dubai</span>
-                    </span>
-                </div>
-            </div>
-        </footer>
     );
 }

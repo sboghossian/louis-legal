@@ -28,31 +28,34 @@ export function OAuthButtons({ mode = "signin" }: { mode?: "signin" | "signup" }
         // success path redirects away — no need to clear loading state
     }
 
+    const verb = mode === "signup" ? "Sign up" : "Sign in";
     return (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
             <button
                 onClick={() => go("google")}
                 disabled={!!loading}
-                className="w-full flex items-center justify-center gap-2 h-10 px-4 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm font-medium disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 h-11 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition text-sm font-medium text-gray-800 disabled:opacity-50 shadow-sm"
                 type="button"
+                aria-label={`${verb} with Google`}
             >
                 <GoogleLogo />
-                {loading === "google" ? "Redirecting…" : `Continue with Google`}
+                {loading === "google" ? "Redirecting…" : `${verb} with Google`}
             </button>
             <button
                 onClick={() => go("azure")}
                 disabled={!!loading}
-                className="w-full flex items-center justify-center gap-2 h-10 px-4 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm font-medium disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 h-11 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition text-sm font-medium text-gray-800 disabled:opacity-50 shadow-sm"
                 type="button"
+                aria-label={`${verb} with Microsoft`}
             >
                 <MicrosoftLogo />
-                {loading === "azure" ? "Redirecting…" : `Continue with Microsoft`}
+                {loading === "azure" ? "Redirecting…" : `${verb} with Microsoft`}
             </button>
             {error && (
-                <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-2">
+                <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg p-2.5">
                     {error}
                     <div className="mt-1 text-[10px] opacity-70">
-                        OAuth providers must be enabled in Supabase &rarr; Authentication &rarr; Providers.
+                        OAuth providers must be enabled in Supabase → Authentication → Providers.
                     </div>
                 </div>
             )}
