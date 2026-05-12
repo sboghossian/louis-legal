@@ -91,6 +91,9 @@ export function normalizeApiKeyProvider(value: string): ApiKeyProvider | null {
     return isProvider(value) ? value : null;
 }
 
+// User-supplied keys take precedence over env keys. Env keys are the fallback
+// for users who haven't configured their own — without this ordering, setting
+// ANTHROPIC_API_KEY on the server silently hides every BYO key the user stored.
 export async function getUserApiKeyStatus(
     userId: string,
     db: Db = createServerSupabase(),
@@ -106,13 +109,6 @@ export async function getUserApiKeyStatus(
         },
     };
 
-    for (const provider of PROVIDERS) {
-        if (hasEnvApiKey(provider)) {
-            status[provider] = true;
-            status.sources[provider] = "env";
-        }
-    }
-
     const { data, error } = await db
         .from("user_api_keys")
         .select("provider")
@@ -121,9 +117,17 @@ export async function getUserApiKeyStatus(
 
     for (const row of data ?? []) {
         const provider = normalizeApiKeyProvider(String(row.provider));
-        if (provider && !status[provider]) {
+        if (provider) {
             status[provider] = true;
             status.sources[provider] = "user";
+        }
+    }
+
+    for (const provider of PROVIDERS) {
+        if (status[provider]) continue;
+        if (hasEnvApiKey(provider)) {
+            status[provider] = true;
+            status.sources[provider] = "env";
         }
     }
 
@@ -135,9 +139,9 @@ export async function getUserApiKeys(
     db: Db = createServerSupabase(),
 ): Promise<UserApiKeys> {
     const apiKeys: UserApiKeys = {
-        claude: envApiKey("claude"),
-        gemini: envApiKey("gemini"),
-        openai: envApiKey("openai"),
+        claude: null,
+        gemini: null,
+        openai: null,
     };
 
     const { data, error } = await db
@@ -149,8 +153,14 @@ export async function getUserApiKeys(
     for (const row of (data ?? []) as EncryptedKeyRow[]) {
         const provider = normalizeApiKeyProvider(row.provider);
         if (!provider) continue;
+        const decrypted = decrypt(row);
+        if (decrypted?.trim()) apiKeys[provider] = decrypted;
+    }
+
+    // Env keys fill in only where the user hasn't supplied their own.
+    for (const provider of PROVIDERS) {
         if (apiKeys[provider]?.trim()) continue;
-        apiKeys[provider] = decrypt(row);
+        apiKeys[provider] = envApiKey(provider);
     }
 
     return apiKeys;

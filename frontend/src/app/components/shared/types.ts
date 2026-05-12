@@ -143,6 +143,10 @@ export type AssistantEvent =
   | { type: "content"; text: string; isStreaming?: boolean };
 
 export interface LouisMessage {
+  /** Server-side row id. Present once the message is persisted (load + after
+   *  streaming completes via the chat_id event refresh); undefined during
+   *  the initial optimistic insert. */
+  id?: string;
   role: "user" | "assistant";
   content: string;
   files?: { filename: string; document_id?: string }[];

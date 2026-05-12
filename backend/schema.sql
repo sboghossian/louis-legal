@@ -270,6 +270,22 @@ create table if not exists public.chat_messages (
 create index if not exists idx_chat_messages_chat
   on public.chat_messages(chat_id);
 
+-- Per-message thumbs up/down feedback. One row per (user, message); upserting
+-- with the same rating clears it (toggle). `note` is optional free text.
+create table if not exists public.chat_message_feedback (
+  id uuid primary key default gen_random_uuid(),
+  message_id uuid not null references public.chat_messages(id) on delete cascade,
+  user_id text not null,
+  rating text not null check (rating in ('up', 'down')),
+  note text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(message_id, user_id)
+);
+
+create index if not exists idx_chat_message_feedback_message
+  on public.chat_message_feedback(message_id);
+
 do $$
 begin
   if not exists (
@@ -490,6 +506,7 @@ alter table public.hidden_workflows enable row level security;
 alter table public.workflow_shares enable row level security;
 alter table public.chats enable row level security;
 alter table public.chat_messages enable row level security;
+alter table public.chat_message_feedback enable row level security;
 alter table public.tabular_reviews enable row level security;
 alter table public.tabular_cells enable row level security;
 alter table public.tabular_review_chats enable row level security;
@@ -876,6 +893,44 @@ create policy "Chat owners can delete messages"
     )
   );
 
+-- chat_message_feedback: a user can rate any message in a chat they can view,
+-- and can only see/modify their own rating row.
+drop policy if exists "Users can view their feedback" on public.chat_message_feedback;
+create policy "Users can view their feedback"
+  on public.chat_message_feedback for select
+  using (user_id = public.current_user_id_text());
+
+drop policy if exists "Users can insert their feedback" on public.chat_message_feedback;
+create policy "Users can insert their feedback"
+  on public.chat_message_feedback for insert
+  with check (
+    user_id = public.current_user_id_text()
+    and exists (
+      select 1
+      from public.chat_messages m
+      join public.chats c on c.id = m.chat_id
+      where m.id = message_id
+        and (
+          c.user_id = public.current_user_id_text()
+          or (
+            c.project_id is not null
+            and public.project_is_accessible(c.project_id)
+          )
+        )
+    )
+  );
+
+drop policy if exists "Users can update their feedback" on public.chat_message_feedback;
+create policy "Users can update their feedback"
+  on public.chat_message_feedback for update
+  using (user_id = public.current_user_id_text())
+  with check (user_id = public.current_user_id_text());
+
+drop policy if exists "Users can delete their feedback" on public.chat_message_feedback;
+create policy "Users can delete their feedback"
+  on public.chat_message_feedback for delete
+  using (user_id = public.current_user_id_text());
+
 drop policy if exists "Users can view accessible tabular reviews" on public.tabular_reviews;
 create policy "Users can view accessible tabular reviews"
   on public.tabular_reviews for select
@@ -1066,6 +1121,7 @@ revoke all on public.hidden_workflows from anon, authenticated;
 revoke all on public.workflow_shares from anon, authenticated;
 revoke all on public.chats from anon, authenticated;
 revoke all on public.chat_messages from anon, authenticated;
+revoke all on public.chat_message_feedback from anon, authenticated;
 revoke all on public.tabular_reviews from anon, authenticated;
 revoke all on public.tabular_cells from anon, authenticated;
 revoke all on public.tabular_review_chats from anon, authenticated;

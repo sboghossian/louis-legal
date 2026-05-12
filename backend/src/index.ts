@@ -30,6 +30,7 @@ import { teamRouter } from "./routes/team";
 import { skillsSyncRouter } from "./routes/skillsSync";
 import { mcpRouter } from "./routes/mcp";
 import { inboxRouter } from "./routes/inbox";
+import { feedbackRouter } from "./routes/feedback";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -156,6 +157,7 @@ app.use("/api/team", teamRouter);
 app.use("/api/skills-sync", skillsSyncRouter);
 app.use("/api/mcp", mcpRouter);
 app.use("/api/inbox", inboxRouter);
+app.use("/api/feedback", feedbackRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 

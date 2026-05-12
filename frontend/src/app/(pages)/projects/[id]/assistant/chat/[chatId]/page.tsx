@@ -33,6 +33,7 @@ import {
     moveSubfolderToFolder,
 } from "@/app/lib/louisApi";
 import { useAssistantChat } from "@/app/hooks/useAssistantChat";
+import { useMessageFeedback } from "@/app/hooks/useMessageFeedback";
 import { useChatHistoryContext } from "@/app/contexts/ChatHistoryContext";
 import { UserMessage } from "@/app/components/assistant/UserMessage";
 import { AssistantMessage } from "@/app/components/assistant/AssistantMessage";
@@ -256,6 +257,7 @@ export default function ProjectAssistantChatPage({ params }: Props) {
     const [initialMessages] = useState<LouisMessage[]>(newChatMessages ?? []);
     const { messages, isResponseLoading, handleChat, setMessages, cancel } =
         useAssistantChat({ initialMessages, chatId, projectId });
+    const { feedback: feedbackMap, onFeedback } = useMessageFeedback(chatId);
 
     const hasLoaded = useRef(false);
     const hasAutoSent = useRef(false);
@@ -1183,6 +1185,14 @@ export default function ProjectAssistantChatPage({ params }: Props) {
                                             key={i}
                                             content={msg.content ?? ""}
                                             events={msg.events}
+                                            messageId={msg.id}
+                                            feedback={
+                                                msg.id
+                                                    ? feedbackMap[msg.id]
+                                                          ?.rating ?? null
+                                                    : null
+                                            }
+                                            onFeedback={onFeedback}
                                             isStreaming={
                                                 i === messages.length - 1 &&
                                                 isResponseLoading

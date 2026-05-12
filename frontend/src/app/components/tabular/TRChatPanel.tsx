@@ -81,7 +81,7 @@ function ReasoningBlock({
     text: string;
     isStreaming: boolean;
 }) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     const [phraseIdx, setPhraseIdx] = useState(0);
 
     useEffect(() => {

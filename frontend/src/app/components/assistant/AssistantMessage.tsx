@@ -6,7 +6,15 @@ import remarkMath from "remark-math";
 import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import { Copy, Check, ChevronDown, Download, Loader2 } from "lucide-react";
+import {
+    Copy,
+    Check,
+    ChevronDown,
+    Download,
+    Loader2,
+    ThumbsUp,
+    ThumbsDown,
+} from "lucide-react";
 import { LouisIcon } from "@/components/chat/louis-icon";
 import { displayCitationQuote, formatCitationPage } from "../shared/types";
 import type {
@@ -374,7 +382,9 @@ function ReasoningBlock({
     isStreaming: boolean;
     showConnector?: boolean;
 }) {
-    const [isOpen, setIsOpen] = useState(false);
+    // Show the reasoning by default. The chevron lets users collapse it
+    // once they've seen enough.
+    const [isOpen, setIsOpen] = useState(true);
     const [thinkingIndex, setThinkingIndex] = useState(0);
 
     useEffect(() => {
@@ -1065,6 +1075,16 @@ interface Props {
      * edits flip their per-card UI without per-card clicks.
      */
     resolvedEditStatuses?: Record<string, "accepted" | "rejected">;
+    /** Persisted message id; required to render thumbs up/down. */
+    messageId?: string;
+    /** Current rating from the server, if any. */
+    feedback?: "up" | "down" | null;
+    /** Called when the user clicks a thumb. Returns the new state from the
+     *  server (null = cleared). The parent should update its feedback map. */
+    onFeedback?: (
+        messageId: string,
+        rating: "up" | "down",
+    ) => Promise<"up" | "down" | null> | "up" | "down" | null;
 }
 
 export function AssistantMessage({
@@ -1085,10 +1105,35 @@ export function AssistantMessage({
     isDocReloading,
     isEditReloading,
     resolvedEditStatuses,
+    messageId,
+    feedback,
+    onFeedback,
 }: Props) {
     const messageKey = useId();
     const contentDivRef = useRef<HTMLDivElement | null>(null);
     const [isCopied, setIsCopied] = useState(false);
+    const [localFeedback, setLocalFeedback] = useState<
+        "up" | "down" | null | undefined
+    >(feedback);
+    // Sync local state when the parent's feedback prop changes (e.g., when
+    // chat-load completes and feedback map arrives after the message rendered).
+    useEffect(() => {
+        setLocalFeedback(feedback);
+    }, [feedback]);
+    const currentFeedback = localFeedback ?? null;
+    const handleRate = async (rating: "up" | "down") => {
+        if (!messageId || !onFeedback) return;
+        // Optimistic toggle.
+        const next = currentFeedback === rating ? null : rating;
+        setLocalFeedback(next);
+        try {
+            const server = await onFeedback(messageId, rating);
+            setLocalFeedback(server ?? null);
+        } catch {
+            // Roll back on error.
+            setLocalFeedback(currentFeedback);
+        }
+    };
     // Per-document override of the download URL, set as Accept/Reject resolves
     // each tracked change and produces a new version.
     const [resolvedOverrides, setResolvedOverrides] = useState<
@@ -1613,11 +1658,12 @@ export function AssistantMessage({
                         </div>
                     )}
 
-                {/* Copy button */}
-                <div className="flex items-center gap-2 pt-2 pb-4 md:pb-8 font-sans justify-start">
+                {/* Message actions: copy + thumbs up/down */}
+                <div className="flex items-center gap-1 pt-2 pb-4 md:pb-8 font-sans justify-start">
                     {!isStreaming && (
                         <button
                             className="p-1.5 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                            title="Copy"
                             onClick={handleCopy}
                         >
                             {isCopied ? (
@@ -1626,6 +1672,32 @@ export function AssistantMessage({
                                 <Copy className="h-3.5 w-3.5" />
                             )}
                         </button>
+                    )}
+                    {!isStreaming && messageId && onFeedback && (
+                        <>
+                            <button
+                                className={`p-1.5 rounded hover:bg-gray-100 transition-colors ${
+                                    currentFeedback === "up"
+                                        ? "text-green-600"
+                                        : "text-gray-500 hover:text-gray-700"
+                                }`}
+                                title="Good response"
+                                onClick={() => handleRate("up")}
+                            >
+                                <ThumbsUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                                className={`p-1.5 rounded hover:bg-gray-100 transition-colors ${
+                                    currentFeedback === "down"
+                                        ? "text-red-600"
+                                        : "text-gray-500 hover:text-gray-700"
+                                }`}
+                                title="Bad response"
+                                onClick={() => handleRate("down")}
+                            >
+                                <ThumbsDown className="h-3.5 w-3.5" />
+                            </button>
+                        </>
                     )}
                 </div>
             </div>

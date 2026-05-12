@@ -17,12 +17,14 @@ import type {
 } from "../shared/types";
 import { useSidebar } from "@/app/contexts/SidebarContext";
 import { invalidateDocxBytes } from "@/app/hooks/useFetchDocxBytes";
+import { useMessageFeedback } from "@/app/hooks/useMessageFeedback";
 
 interface Props {
     messages: LouisMessage[];
     isResponseLoading: boolean;
     handleChat: (message: LouisMessage) => Promise<string | null>;
     cancel: () => void;
+    chatId?: string;
 }
 
 export function ChatView({
@@ -30,7 +32,9 @@ export function ChatView({
     isResponseLoading,
     handleChat,
     cancel,
+    chatId,
 }: Props) {
+    const { feedback: feedbackMap, onFeedback } = useMessageFeedback(chatId);
     const [tabs, setTabs] = useState<AssistantSidePanelTab[]>([]);
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
     const [panelMounted, setPanelMounted] = useState(false);
@@ -501,6 +505,14 @@ export function ChatView({
                                             <AssistantMessage
                                                 content={msg.content ?? ""}
                                                 events={msg.events}
+                                                messageId={msg.id}
+                                                feedback={
+                                                    msg.id
+                                                        ? feedbackMap[msg.id]
+                                                              ?.rating ?? null
+                                                        : null
+                                                }
+                                                onFeedback={onFeedback}
                                                 isStreaming={
                                                     i === messages.length - 1 &&
                                                     isResponseLoading

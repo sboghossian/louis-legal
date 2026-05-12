@@ -426,6 +426,7 @@ export async function getChat(chatId: string): Promise<LouisChatDetailOut> {
     const messages: LouisMessage[] = raw.messages.map((m) => {
         if (m.role === "user") {
             return {
+                id: m.id,
                 role: "user",
                 content: typeof m.content === "string" ? m.content : "",
                 files: m.files ?? undefined,
@@ -436,6 +437,7 @@ export async function getChat(chatId: string): Promise<LouisChatDetailOut> {
             ? (m.content as AssistantEvent[])
             : undefined;
         return {
+            id: m.id,
             role: "assistant",
             content:
                 events
@@ -861,5 +863,33 @@ export async function deleteWorkflowShare(
 ): Promise<void> {
     await apiRequest(`/workflows/${workflowId}/shares/${shareId}`, {
         method: "DELETE",
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Message feedback (thumbs up/down)
+// ---------------------------------------------------------------------------
+
+export type MessageRating = "up" | "down";
+export type MessageFeedbackMap = Record<
+    string,
+    { rating: MessageRating; note: string | null }
+>;
+
+export async function listChatFeedback(
+    chatId: string,
+): Promise<MessageFeedbackMap> {
+    return apiRequest<MessageFeedbackMap>(`/api/feedback/chat/${chatId}`);
+}
+
+export async function rateMessage(
+    messageId: string,
+    rating: MessageRating,
+    note?: string,
+): Promise<{ rating: MessageRating | null; note: string | null }> {
+    return apiRequest(`/api/feedback/${messageId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, note }),
     });
 }
