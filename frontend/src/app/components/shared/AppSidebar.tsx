@@ -399,6 +399,29 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 )}
                 {isOpen && (
                     <button
+                        type="button"
+                        onClick={() => {
+                            // Dispatch a synthetic Cmd/Ctrl+K so the global
+                            // listener inside CommandPalette opens the modal
+                            // regardless of which surface we're on.
+                            window.dispatchEvent(
+                                new KeyboardEvent("keydown", {
+                                    key: "k",
+                                    metaKey: true,
+                                    ctrlKey: true,
+                                    bubbles: true,
+                                }),
+                            );
+                        }}
+                        className="hidden md:flex h-9 w-9 p-2.5 items-center justify-center hover:bg-gray-100 rounded-md transition-colors text-gray-500"
+                        title="Search (⌘K)"
+                        aria-label="Open command palette"
+                    >
+                        <kbd className="text-[10px] font-mono leading-none">⌘K</kbd>
+                    </button>
+                )}
+                {isOpen && (
+                    <button
                         onClick={() => setNotifOpen(true)}
                         className="relative h-9 w-9 p-2.5 items-center flex hover:bg-gray-100 rounded-md transition-colors"
                         title="Notifications"

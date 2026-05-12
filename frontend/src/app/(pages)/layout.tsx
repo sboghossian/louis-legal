@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ChatHistoryProvider } from "@/app/contexts/ChatHistoryContext";
 import { SidebarContext } from "@/app/contexts/SidebarContext";
 import { AppSidebar } from "@/app/components/shared/AppSidebar";
+import { CommandPalette } from "@/app/components/shared/CommandPalette";
 import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
@@ -153,6 +154,9 @@ export default function LouisLayout({
                             <main className="flex-1 overflow-y-auto w-full h-full">
                                 {children}
                             </main>
+                            {/* Global Cmd/Ctrl+K palette — captures the
+                                shortcut from any focus inside (pages). */}
+                            <CommandPalette />
                         </div>
                     </div>
                 </div>
