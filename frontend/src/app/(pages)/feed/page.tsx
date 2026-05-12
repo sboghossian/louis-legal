@@ -33,6 +33,8 @@ import {
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useToast } from "@/contexts/ToastContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function timeAgo(unixSeconds: number): string {
     const diff = Math.max(0, Date.now() / 1000 - unixSeconds);
@@ -53,6 +55,7 @@ export default function FeedPage() {
     const { isAuthenticated } = useAuth();
     const { profile, reloadProfile } = useUserProfile();
     const { t } = useLocale();
+    const { toast } = useToast();
 
     const [topics, setTopics] = useState<FeedTopic[] | null>(null);
     const [items, setItems] = useState<FeedItem[]>([]);
@@ -120,8 +123,15 @@ export default function FeedPage() {
             setSavingTopics(true);
             await updateUserProfile({ feeds: next });
             await reloadProfile();
+            toast({ title: "Topics saved", variant: "success" });
         } catch (e) {
-            setError(e instanceof Error ? e.message : String(e));
+            const detail = e instanceof Error ? e.message : String(e);
+            setError(detail);
+            toast({
+                title: "Failed to save topics",
+                description: detail,
+                variant: "error",
+            });
         } finally {
             setSavingTopics(false);
         }
@@ -321,9 +331,18 @@ export default function FeedPage() {
 
             {/* Feed */}
             {loading ? (
-                <div className="text-sm text-gray-500 py-12 text-center">
-                    {t("feed.loading")}
-                </div>
+                <ul className="divide-y divide-gray-100 border border-gray-200 rounded-lg bg-white">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <li key={i} className="p-3 flex gap-3">
+                            <Skeleton className="w-16 h-16 rounded-md shrink-0" />
+                            <div className="flex-1 space-y-2">
+                                <Skeleton className="h-3 w-1/3" />
+                                <Skeleton className="h-4 w-5/6" />
+                                <Skeleton className="h-3 w-2/3" />
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             ) : filtered.length === 0 ? (
                 <div className="text-sm text-gray-500 py-12 text-center">
                     {t("feed.empty")}

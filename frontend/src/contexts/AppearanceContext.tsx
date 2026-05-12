@@ -34,6 +34,7 @@ import {
 } from "@/app/lib/louisApi";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 
 const STORAGE_KEY = "louis.appearance";
 
@@ -161,17 +162,25 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
         setAppearance((prev) => merge(prev, profile.appearance));
     }, [isAuthenticated, profile?.appearance]);
 
+    const { toast } = useToast();
     const persist = useCallback(
         async (next: AppearanceCore) => {
             if (!isAuthenticated) return;
             try {
                 await updateUserProfile({ appearance: next });
-            } catch {
+            } catch (e) {
                 // Don't unwind the optimistic UI on a sync failure; the
                 // localStorage value is still authoritative for this device.
+                toast({
+                    title: "Appearance saved locally",
+                    description:
+                        "Server sync failed — your changes will sync on next sign-in.",
+                    variant: "error",
+                });
+                console.error("[appearance] persist failed", e);
             }
         },
-        [isAuthenticated],
+        [isAuthenticated, toast],
     );
 
     const update = useCallback(

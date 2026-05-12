@@ -8,6 +8,7 @@ import { ChatHistoryProvider } from "@/app/contexts/ChatHistoryContext";
 import { SidebarContext } from "@/app/contexts/SidebarContext";
 import { AppSidebar } from "@/app/components/shared/AppSidebar";
 import { CommandPalette } from "@/app/components/shared/CommandPalette";
+import { MobileBottomNav } from "@/app/components/shared/MobileBottomNav";
 import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
@@ -151,12 +152,17 @@ export default function LouisLayout({
                             {/* Pages scroll by default. Full-bleed surfaces
                                 like the assistant chat manage their own
                                 overflow with an inner overflow-y-auto. */}
-                            <main className="flex-1 overflow-y-auto w-full h-full">
+                            {/* pb-16 on mobile clears the bottom tab nav so
+                                content isn't hidden under it. md+ has no
+                                bottom nav so no padding needed. */}
+                            <main className="flex-1 overflow-y-auto w-full h-full pb-16 md:pb-0">
                                 {children}
                             </main>
                             {/* Global Cmd/Ctrl+K palette — captures the
                                 shortcut from any focus inside (pages). */}
                             <CommandPalette />
+                            {/* Mobile-only bottom tab strip; hidden on md+. */}
+                            <MobileBottomNav />
                         </div>
                     </div>
                 </div>

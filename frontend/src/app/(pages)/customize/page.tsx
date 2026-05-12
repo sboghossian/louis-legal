@@ -35,6 +35,7 @@ import {
     type LucideIcon,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/contexts/ToastContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -314,6 +315,7 @@ const CATEGORIES_META: { id: CategoryId; label: string; icon: LucideIcon }[] = [
 // ---------------------------------------------------------------------------
 
 export default function CustomizePage() {
+    const { toast } = useToast();
     const [settings, setSettings] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(true);
     const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -412,7 +414,7 @@ export default function CustomizePage() {
             setSavingKey(key);
             try {
                 const headers = await authHeaders();
-                await fetch(
+                const r = await fetch(
                     `${API_BASE}/api/customize/${encodeURIComponent(key)}`,
                     {
                         method: "POST",
@@ -420,15 +422,21 @@ export default function CustomizePage() {
                         body: JSON.stringify({ enabled: next }),
                     },
                 );
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
             } catch (e) {
-                // Revert on failure.
+                // Revert on failure + tell the user.
                 setSettings((prev) => ({ ...prev, [key]: !next }));
                 console.error(e);
+                toast({
+                    title: "Couldn't save toggle",
+                    description: e instanceof Error ? e.message : String(e),
+                    variant: "error",
+                });
             } finally {
                 setSavingKey(null);
             }
         },
-        [settings],
+        [settings, toast],
     );
 
     const categories: Category[] = useMemo(

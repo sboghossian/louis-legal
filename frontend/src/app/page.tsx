@@ -1,19 +1,16 @@
-"use client";
-
 /**
  * Marketing landing page for legal.dashable.dev (the root URL).
  *
- * Signed-in visitors get bounced straight to /assistant — the workbench
- * is what they came back for. Anonymous visitors see this surface: hero
- * with a generated Louis illustration, feature grid, "why open source",
- * footer with GitHub + Academy + Privacy links.
+ * Server-rendered for SEO + faster FCP. The "if signed in, jump to
+ * /assistant" check runs in a small client island (LandingAuthRedirect)
+ * so the hero, headlines, and feature copy ship in the initial HTML
+ * even before JS hydrates.
  *
  * The hero illustration lives at /public/hero-louis.svg. To replace it
  * with an AI-generated image, drop a new file at the same path (jpg/png
  * fine — just keep the aspect ratio close to 16:10 so the layout holds).
  */
 
-import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -36,32 +33,21 @@ import {
     Briefcase,
 } from "lucide-react";
 import { LouisMark, LouisWordmark } from "@/components/brand/louis-mark";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { LandingAuthRedirect } from "./_LandingAuthRedirect";
 
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
 
+export const metadata = {
+    title: "Louis — open-source legal AI workbench",
+    description:
+        "MENA-first legal AI built for actual lawyering. 982 expert skills, BYO Claude / Gemini / OpenAI keys, MIT licensed. The open alternative to Harvey, Legora, and CoCounsel.",
+};
+
 export default function LandingPage() {
-    const { isAuthenticated, authLoading } = useAuth();
-    const router = useRouter();
-
-    // Signed-in users skip the marketing surface and go straight to the app.
-    useEffect(() => {
-        if (!authLoading && isAuthenticated) {
-            router.replace("/assistant");
-        }
-    }, [authLoading, isAuthenticated, router]);
-
-    if (authLoading) {
-        return (
-            <div className="min-h-dvh bg-[color:var(--louis-cream,#fbf8f2)] flex items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-700" />
-            </div>
-        );
-    }
-
     return (
         <main className="relative min-h-dvh bg-[#fbf8f2] text-[#1f2937]">
+            {/* Client-only redirect — server-rendered HTML still ships first. */}
+            <LandingAuthRedirect />
             <TopNav />
             <Hero />
             <Features />
