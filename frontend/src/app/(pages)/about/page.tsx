@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Github, ExternalLink, Heart, BookOpen, Sparkles, Scale, GraduationCap, ShieldCheck, Building2 } from "lucide-react";
+import { Info, Github, ExternalLink, Heart, BookOpen, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LouisMark } from "@/components/brand/louis-mark";
@@ -9,42 +9,6 @@ import Link from "next/link";
 const VERSION = "0.8.0-louis";
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
 const UPSTREAM_URL = "https://github.com/willchen96/mike";
-
-const HAQQ_PRODUCTS = [
-    {
-        name: "Louis",
-        tagline: "Legal AI infrastructure",
-        description: "What you're using now. Drafting, review, research, matter management, citations, risk, flows. MENA-first, jurisdiction-aware, 982-skill library.",
-        url: "https://louis.haqq.ai",
-        icon: Scale,
-        accent: "bg-blue-50 border-blue-200 text-blue-700",
-        active: true,
-    },
-    {
-        name: "Justinian",
-        tagline: "Legal education",
-        description: "Bar-exam prep, case briefs, course outlines, moot court, time-management coaching. For law students + bar candidates + junior lawyers.",
-        url: "https://justinian.haqq.ai",
-        icon: GraduationCap,
-        accent: "bg-purple-50 border-purple-200 text-purple-700",
-    },
-    {
-        name: "Justice",
-        tagline: "Access to law",
-        description: "Pro-bono routing, refugee/asylum support, tenant rights, pro-se defense scaffolding. Makes the law accessible to non-lawyers.",
-        url: "https://justice.haqq.ai",
-        icon: ShieldCheck,
-        accent: "bg-emerald-50 border-emerald-200 text-emerald-700",
-    },
-    {
-        name: "OpenClaw",
-        tagline: "Open-source case management",
-        description: "Free, self-hosted matter management. Plays alongside Louis (deep integration in Settings → Integrations).",
-        url: "https://openclaw.org",
-        icon: Building2,
-        accent: "bg-amber-50 border-amber-200 text-amber-800",
-    },
-];
 
 const STACK = [
     { layer: "Frontend", tech: "Next.js 15 · React 19 · Tailwind · Shadcn UI" },
@@ -148,35 +112,6 @@ export default function AboutPage() {
                     the most charming and not the flashiest, but the one
                     you&apos;d hand a contract to.
                 </p>
-            </Section>
-
-            {/* HAQQ products */}
-            <Section icon={Sparkles} title="HAQQ products">
-                <div className="grid grid-cols-2 gap-3">
-                    {HAQQ_PRODUCTS.map(p => {
-                        const Icon = p.icon;
-                        return (
-                            <a
-                                key={p.name}
-                                href={p.url}
-                                target={p.active ? "_self" : "_blank"}
-                                rel="noreferrer"
-                                className={`border rounded-lg p-4 hover:shadow-sm transition relative ${p.accent}`}
-                            >
-                                {p.active && <Badge variant="secondary" className="absolute top-3 right-3 bg-white text-[10px]">you are here</Badge>}
-                                <Icon className="w-6 h-6 mb-2" />
-                                <div className="font-semibold">{p.name}</div>
-                                <div className="text-xs opacity-70 mb-1">{p.tagline}</div>
-                                <div className="text-xs text-gray-700">{p.description}</div>
-                                {!p.active && (
-                                    <div className="text-xs mt-2 inline-flex items-center gap-1 opacity-70">
-                                        Visit <ExternalLink className="w-3 h-3" />
-                                    </div>
-                                )}
-                            </a>
-                        );
-                    })}
-                </div>
             </Section>
 
             {/* Open source */}

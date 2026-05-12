@@ -57,28 +57,63 @@ intermediary.
 - At least one model provider API key: Anthropic, Gemini, or OpenAI
 - LibreOffice (only if you need DOC/DOCX → PDF conversion)
 
-## Quick start (local)
+## Quick start (local) — 10 minutes from clone to running app
+
+Assumes you have Node 20+, npm, and Homebrew (or your platform's
+equivalent for installing LibreOffice / cloudflared). You'll need
+free-tier accounts for Supabase and Cloudflare R2 (or any S3-compatible
+bucket: MinIO, Wasabi, Backblaze B2, Supabase Storage…).
 
 ```bash
+# 1. Clone
 git clone https://github.com/sboghossian/louis-legal.git
 cd louis-legal
 
+# 2. Install deps for both apps
 npm install --prefix backend
 npm install --prefix frontend
 
-cp /dev/null backend/.env       # then fill in (see "Environment" below)
-cp /dev/null frontend/.env.local
+# 3. Create env files
+touch backend/.env frontend/.env.local
+#    Now open both and paste the templates from the "Environment"
+#    section below; fill in the Supabase / R2 values you just minted.
 
-# Apply the database schema to a fresh Supabase project
-# (open Supabase → SQL editor → paste backend/schema.sql → run)
+# 4. Apply the schema to a fresh Supabase database
+#    Open the Supabase SQL editor for your project and paste:
+#      backend/schema.sql
+#    Hit Run. The file is idempotent — safe to re-run.
 
-# In two terminals (or `npm run dev` from the repo root):
-npm run dev --prefix backend    # → :3001
-npm run dev --prefix frontend   # → :3000
+# 5. Start both servers (two terminals, or `npm run dev` from the root
+#    if you have `concurrently` installed)
+npm run dev --prefix backend    # → http://localhost:3001
+npm run dev --prefix frontend   # → http://localhost:3000
 ```
 
-Open `http://localhost:3000`, sign up, and if you didn't set any model
-keys in `backend/.env`, add one in **Account → Models & API Keys**.
+Open `http://localhost:3000`, sign up, complete onboarding (you'll see
+it exactly once per account), then add an API key for at least one
+model provider — either in `backend/.env` for the whole instance, or
+per-user in **Account → Models & API Keys**.
+
+### Hosted demo
+
+A live build sits at **https://legal.dashable.dev** (Cloudflare-tunneled
+from a workstation; uptime is best-effort). Use it for a tour, not for
+real data.
+
+### Common gotchas
+
+- **Supabase confirmation email never arrives.** Disable email
+  confirmation in Supabase → Authentication → Providers → Email for
+  local dev, or wire your own SMTP — the built-in mailer is heavily
+  rate-limited.
+- **Model picker shows "missing key".** Set `ANTHROPIC_API_KEY`,
+  `GEMINI_API_KEY`, or `OPENAI_API_KEY` in `backend/.env` and restart
+  the backend, or just paste a key in **Account → Models & API Keys**
+  (user-set keys take precedence over env keys).
+- **DOC / DOCX conversion fails.** `brew install libreoffice` and
+  restart the backend so `soffice` is on `PATH`.
+- **Multiple lockfiles warning.** Cosmetic; ignore. `frontend/` has its
+  own `package-lock.json`.
 
 ## Environment
 
