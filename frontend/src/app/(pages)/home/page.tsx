@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { listChats } from "@/app/lib/louisApi";
 import type { LouisChat } from "@/app/components/shared/types";
+import { useLocale } from "@/contexts/LocaleContext";
+import { useUserProfile } from "@/contexts/UserProfileContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -72,6 +74,9 @@ const QUICK_LINKS = [
 
 export default function HomePage() {
     const router = useRouter();
+    const { t } = useLocale();
+    const { profile } = useUserProfile();
+    const displayName = profile?.displayName || null;
     const [composer, setComposer] = useState("");
     const [category, setCategory] = useState("all");
     const [workspace, setWorkspace] = useState(WORKSPACES[1].id);
@@ -178,7 +183,9 @@ export default function HomePage() {
                 </div>
             </div>
             <p className="text-sm text-gray-600 mb-8">
-                Welcome back, Stephane. What are we working on today?
+                {displayName
+                    ? t("home.welcome.named", { name: displayName })
+                    : t("home.welcome.anon")}
             </p>
 
             {/* Composer */}
@@ -204,12 +211,12 @@ export default function HomePage() {
                             if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
                         }}
                         rows={3}
-                        placeholder="Draft a mutual NDA between [parties] for [purpose]… Type / for commands, or pick from the prompt library below.  (⌘↩ to send)"
+                        placeholder={t("home.composer.placeholder")}
                         className="w-full px-4 py-3 text-sm resize-none outline-none"
                     />
                     {slashCommandsOpen && (
                         <div className="absolute left-3 right-3 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-72 overflow-y-auto z-20">
-                            <div className="px-3 py-2 text-[10px] uppercase tracking-wide text-gray-500 border-b border-gray-100">Slash commands</div>
+                            <div className="px-3 py-2 text-[10px] uppercase tracking-wide text-gray-500 border-b border-gray-100">{t("home.slash_commands")}</div>
                             {SLASH_COMMANDS.filter(s => s.cmd.startsWith(composer)).map(s => (
                                 <button
                                     key={s.cmd}
@@ -231,7 +238,7 @@ export default function HomePage() {
                         <Button variant="ghost" size="sm" className="h-7 text-xs"><Paperclip className="w-3.5 h-3.5 mr-1" /> Attach</Button>
                         <Button variant="ghost" size="sm" className="h-7 text-xs"><Wrench className="w-3.5 h-3.5 mr-1" /> Tools</Button>
                         <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setPromptLibraryOpen(true)}>
-                            <Sparkles className="w-3.5 h-3.5 mr-1" /> Prompt library ({promptLibrary.length})
+                            <Sparkles className="w-3.5 h-3.5 mr-1" /> {t("home.prompt_library_header")} ({promptLibrary.length})
                         </Button>
                     </div>
                     <Button size="sm" onClick={submit} disabled={!composer.trim()} className="h-7 text-xs">
@@ -246,7 +253,7 @@ export default function HomePage() {
                     <div className="bg-white rounded-lg shadow-xl w-[640px] max-w-[90vw] max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
                         <div className="px-5 py-3 border-b border-gray-200 flex items-center gap-2">
                             <Sparkles className="w-4 h-4" />
-                            <h2 className="font-semibold text-sm">Prompt library</h2>
+                            <h2 className="font-semibold text-sm">{t("home.prompt_library_header")}</h2>
                             <Badge variant="secondary">{promptLibrary.length} expert prompts</Badge>
                             <button onClick={() => setPromptLibraryOpen(false)} className="ml-auto text-gray-500 hover:text-gray-900">
                                 <X className="w-4 h-4" />
@@ -276,7 +283,7 @@ export default function HomePage() {
                                 </button>
                             ))}
                             {!filteredPrompts.length && (
-                                <div className="px-5 py-12 text-center text-sm text-gray-500">No prompts match</div>
+                                <div className="px-5 py-12 text-center text-sm text-gray-500">{t("home.no_prompts")}</div>
                             )}
                         </div>
                     </div>
@@ -295,7 +302,7 @@ export default function HomePage() {
             </div>
 
             {/* Recent chats */}
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Recent {category !== "all" && `· ${CATEGORIES.find(c => c.id === category)?.label}`}</h2>
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t("home.recent")} {category !== "all" && `· ${CATEGORIES.find(c => c.id === category)?.label}`}</h2>
             <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
                 {visibleChats.map(chat => (
                     <button key={chat.id} onClick={() => router.push(`/assistant/chat/${chat.id}`)} className="w-full text-left px-4 py-3 hover:bg-gray-50">
@@ -306,7 +313,7 @@ export default function HomePage() {
                         <div className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-wide">{chat.category}</div>
                     </button>
                 ))}
-                {!visibleChats.length && <div className="px-4 py-8 text-sm text-gray-500 text-center">No {category} chats yet</div>}
+                {!visibleChats.length && <div className="px-4 py-8 text-sm text-gray-500 text-center">{t("home.no_chats", { category })}</div>}
             </div>
         </div>
     );

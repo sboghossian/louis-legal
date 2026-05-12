@@ -32,6 +32,7 @@ import {
 } from "@/app/lib/louisApi";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 function timeAgo(unixSeconds: number): string {
     const diff = Math.max(0, Date.now() / 1000 - unixSeconds);
@@ -51,6 +52,7 @@ function slugify(label: string): string {
 export default function FeedPage() {
     const { isAuthenticated } = useAuth();
     const { profile, reloadProfile } = useUserProfile();
+    const { t } = useLocale();
 
     const [topics, setTopics] = useState<FeedTopic[] | null>(null);
     const [items, setItems] = useState<FeedItem[]>([]);
@@ -137,7 +139,7 @@ export default function FeedPage() {
             .map((s) => s.trim())
             .filter(Boolean);
         if (subs.length === 0 && kws.length === 0) {
-            setError("Add at least one subreddit or keyword.");
+            setError(t("feed.error_min"));
             return;
         }
         const id = `${slugify(label) || "topic"}-${Date.now()
@@ -174,29 +176,26 @@ export default function FeedPage() {
             <div className="flex items-center gap-2 mb-1">
                 <Rss className="w-5 h-5 text-amber-700" />
                 <h1 className="text-xl font-serif font-semibold tracking-tight">
-                    Newsfeed
+                    {t("feed.title")}
                 </h1>
                 {savingTopics && (
-                    <span className="text-xs text-gray-500 ml-2">saving…</span>
+                    <span className="text-xs text-gray-500 ml-2">{t("feed.saving")}</span>
                 )}
                 <button
                     type="button"
                     onClick={() => topics && refresh(topics)}
                     disabled={refreshing || !topics}
-                    aria-label="Refresh"
+                    aria-label={t("action.refresh")}
                     className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
                 >
                     <RefreshCw
                         className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`}
                     />
-                    Refresh
+                    {t("action.refresh")}
                 </button>
             </div>
             <p className="text-sm text-gray-600 font-serif mb-5 max-w-2xl">
-                Live Reddit threads on the legal industry — drafting, big law
-                gossip, legal AI launches, regulator news. Pulled fresh every
-                5 minutes. Add your own topics and Louis aggregates them into
-                one stream.
+                {t("feed.intro")}
             </p>
 
             {/* Topic chips */}
@@ -209,7 +208,7 @@ export default function FeedPage() {
                             : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
                     }`}
                 >
-                    All
+                    {t("feed.all")}
                 </button>
                 {(topics ?? []).map((t) => (
                     <span key={t.id} className="inline-flex items-center">
@@ -242,14 +241,14 @@ export default function FeedPage() {
                     className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-full border border-dashed border-gray-400 text-gray-600 hover:bg-gray-50"
                 >
                     <Plus className="w-3 h-3" />
-                    Add topic
+                    {t("feed.add_topic")}
                 </button>
                 {topics && topics.length === 0 && (
                     <button
                         onClick={resetToDefaults}
                         className="text-xs text-blue-600 hover:underline ml-2"
                     >
-                        Restore defaults
+                        {t("feed.restore_defaults")}
                     </button>
                 )}
             </div>
@@ -259,7 +258,7 @@ export default function FeedPage() {
                 <div className="border border-gray-200 rounded-lg p-4 mb-5 bg-gray-50 space-y-3">
                     <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">
-                            Topic name
+                            {t("feed.topic_name")}
                         </label>
                         <input
                             type="text"
@@ -272,7 +271,7 @@ export default function FeedPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">
-                                Subreddits (comma or newline)
+                                {t("feed.subreddits")}
                             </label>
                             <textarea
                                 value={newSubs}
@@ -284,7 +283,7 @@ export default function FeedPage() {
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">
-                                Keywords (one per line or comma-separated)
+                                {t("feed.keywords")}
                             </label>
                             <textarea
                                 value={newKeywords}
@@ -300,7 +299,7 @@ export default function FeedPage() {
                             onClick={() => setShowAdd(false)}
                             className="px-3 py-1.5 text-xs rounded-md text-gray-600 hover:bg-gray-100"
                         >
-                            Cancel
+                            {t("action.cancel")}
                         </button>
                         <button
                             onClick={addTopic}
@@ -308,7 +307,7 @@ export default function FeedPage() {
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
                         >
                             <Save className="w-3 h-3" />
-                            Save topic
+                            {t("feed.save_topic")}
                         </button>
                     </div>
                 </div>
@@ -323,12 +322,11 @@ export default function FeedPage() {
             {/* Feed */}
             {loading ? (
                 <div className="text-sm text-gray-500 py-12 text-center">
-                    Loading the newsfeed…
+                    {t("feed.loading")}
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="text-sm text-gray-500 py-12 text-center">
-                    Nothing in this topic right now. Try Refresh or another
-                    topic.
+                    {t("feed.empty")}
                 </div>
             ) : (
                 <ul className="divide-y divide-gray-100 border border-gray-200 rounded-lg bg-white">
@@ -392,9 +390,8 @@ export default function FeedPage() {
             )}
 
             <div className="mt-6 text-[11px] text-gray-400 text-center">
-                Sources: Reddit public JSON. Posts are not endorsed by Louis.
-                {!isAuthenticated &&
-                    " · Sign in to save custom topics across devices."}
+                {t("feed.footer")}
+                {!isAuthenticated && ` · ${t("feed.footer.signin")}`}
             </div>
         </div>
     );
