@@ -268,6 +268,10 @@ function DraftingBoardInner() {
     const [statusFilter, setStatusFilter] = useState<"all" | NodeStatus>(
         "all",
     );
+    // Swimlane view groups nodes horizontally by actor (Human · Agent ·
+    // Gate). Toggling on snaps every node into its lane; toggling off
+    // returns to free positioning (the per-node x/y you've dragged stays).
+    const [layoutMode, setLayoutMode] = useState<"free" | "lanes">("free");
     const [selected, setSelected] = useState<string | null>(null);
     const [incomingSuggestions, setIncomingSuggestions] = useState<
         IncomingSuggestion[]
@@ -294,6 +298,74 @@ function DraftingBoardInner() {
                       }
                   ).__louisDrag ?? { x: 0, y: 0, ox: 0, oy: 0 })
             : { x: 0, y: 0, ox: 0, oy: 0 };
+
+    // ----- layout helpers ---------------------------------------------------
+    // Topological-ish levels: BFS from root nodes (no inbound link). x is
+    // computed from depth; y is determined by lane mode.
+    function computeAutoLayout(): BoardNode[] {
+        const inbound = new Map<string, number>();
+        for (const n of nodes) inbound.set(n.id, 0);
+        for (const [, to] of links) inbound.set(to, (inbound.get(to) ?? 0) + 1);
+
+        const level = new Map<string, number>();
+        const queue: string[] = [];
+        for (const n of nodes) {
+            if ((inbound.get(n.id) ?? 0) === 0) {
+                level.set(n.id, 0);
+                queue.push(n.id);
+            }
+        }
+        while (queue.length) {
+            const id = queue.shift()!;
+            const lvl = level.get(id) ?? 0;
+            for (const [from, to] of links) {
+                if (from !== id) continue;
+                const cur = level.get(to);
+                if (cur === undefined || cur < lvl + 1) {
+                    level.set(to, lvl + 1);
+                    queue.push(to);
+                }
+            }
+        }
+        // Fallback: nodes not reached get level = max + 1
+        const maxLvl = Math.max(0, ...Array.from(level.values()));
+        for (const n of nodes) if (!level.has(n.id)) level.set(n.id, maxLvl + 1);
+
+        // Lane y per actor.
+        const laneY: Record<ActorKind, number> = {
+            human: 80,
+            agent: 280,
+            gate: 480,
+        };
+
+        // Count siblings in each (level, actor) to stagger y a bit.
+        const seenInLane: Record<string, number> = {};
+        return nodes.map((n) => {
+            const lvl = level.get(n.id) ?? 0;
+            const key = `${lvl}-${n.actor}`;
+            const idx = seenInLane[key] ?? 0;
+            seenInLane[key] = idx + 1;
+            return {
+                ...n,
+                x: 80 + lvl * 280,
+                y: laneY[n.actor] + idx * 40,
+            };
+        });
+    }
+
+    function autoArrange() {
+        setNodes(computeAutoLayout());
+    }
+
+    function toggleLanes() {
+        if (layoutMode === "free") {
+            setLayoutMode("lanes");
+            // Snap into lanes (also auto-arranges so the lanes are clean).
+            setNodes(computeAutoLayout());
+        } else {
+            setLayoutMode("free");
+        }
+    }
 
     function loadTemplate(id: string) {
         const t = TEMPLATES.find((x) => x.id === id);
@@ -576,6 +648,46 @@ function DraftingBoardInner() {
                     </Badge>
                 )}
                 <div className="ml-auto flex items-center gap-2">
+                    {/* View mode toggle */}
+                    <div className="inline-flex items-center bg-gray-100 rounded-md p-0.5 text-xs">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (layoutMode !== "free") toggleLanes();
+                            }}
+                            className={`px-2.5 py-1 rounded ${
+                                layoutMode === "free"
+                                    ? "bg-white shadow-sm font-medium"
+                                    : "text-gray-600 hover:text-gray-900"
+                            }`}
+                            title="Free layout — drag nodes anywhere"
+                        >
+                            Free
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (layoutMode !== "lanes") toggleLanes();
+                            }}
+                            className={`px-2.5 py-1 rounded ${
+                                layoutMode === "lanes"
+                                    ? "bg-white shadow-sm font-medium"
+                                    : "text-gray-600 hover:text-gray-900"
+                            }`}
+                            title="Lanes — group by actor (Human · Agent · Gate)"
+                        >
+                            Lanes
+                        </button>
+                    </div>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={autoArrange}
+                        className="h-8 text-xs"
+                        title="Re-arrange nodes by following the link graph"
+                    >
+                        Auto-arrange
+                    </Button>
                     {pendingApprovals.length > 0 && (
                         <Badge
                             variant="secondary"
@@ -695,6 +807,35 @@ function DraftingBoardInner() {
                 <div className="flex-1 relative overflow-auto bg-gray-50">
                     <div className="absolute inset-0 [background-image:radial-gradient(#0001_1px,transparent_1px)] [background-size:24px_24px]" />
                     <div className="relative" style={{ width: 1200, height: 700 }}>
+                        {/* Lane backdrops (only in Lanes mode) */}
+                        {layoutMode === "lanes" && (
+                            <div className="absolute inset-0 pointer-events-none">
+                                {[
+                                    { y: 50,  h: 160, label: "Human",  color: "rgba(59,130,246,0.04)", border: "rgba(59,130,246,0.18)" },
+                                    { y: 250, h: 160, label: "Agent",  color: "rgba(139,92,246,0.04)", border: "rgba(139,92,246,0.18)" },
+                                    { y: 450, h: 160, label: "Gate",   color: "rgba(245,158,11,0.05)", border: "rgba(245,158,11,0.22)" },
+                                ].map((lane) => (
+                                    <div
+                                        key={lane.label}
+                                        className="absolute left-0 w-full"
+                                        style={{
+                                            top: lane.y,
+                                            height: lane.h,
+                                            background: lane.color,
+                                            borderTop: `1px dashed ${lane.border}`,
+                                            borderBottom: `1px dashed ${lane.border}`,
+                                        }}
+                                    >
+                                        <div
+                                            className="absolute left-3 top-2 text-[10px] uppercase tracking-[0.25em] font-medium"
+                                            style={{ color: lane.border.replace("0.18", "1").replace("0.22", "1") }}
+                                        >
+                                            {lane.label}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         {/* Links */}
                         <svg
                             className="absolute inset-0 pointer-events-none"
@@ -783,13 +924,35 @@ function DraftingBoardInner() {
                                     <div className="text-xs opacity-70 truncate mb-2">
                                         {n.subtitle}
                                     </div>
-                                    <div
-                                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${style.chip}`}
-                                    >
-                                        <StatusIcon
-                                            className={`w-3 h-3 ${n.status === "running" ? "animate-spin" : ""}`}
-                                        />
-                                        {style.label}
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                        <div
+                                            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${style.chip}`}
+                                        >
+                                            <StatusIcon
+                                                className={`w-3 h-3 ${n.status === "running" ? "animate-spin" : ""}`}
+                                            />
+                                            {style.label}
+                                        </div>
+                                        {n.docId && (
+                                            <a
+                                                href={`/doc-workspace?docId=${encodeURIComponent(n.docId)}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                                title="Open linked document"
+                                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+                                            >
+                                                <FileText className="w-3 h-3" />
+                                                doc
+                                            </a>
+                                        )}
+                                        {n.skillsUsed && n.skillsUsed.length > 0 && (
+                                            <span
+                                                title={n.skillsUsed.join(", ")}
+                                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-50 text-gray-700 border border-gray-200"
+                                            >
+                                                {n.skillsUsed.length} skill
+                                                {n.skillsUsed.length === 1 ? "" : "s"}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             );

@@ -16,7 +16,6 @@ import {
     Gift,
     SlidersHorizontal,
     FileText,
-    Home,
     MessageSquareDashed,
     Repeat,
     Briefcase,
@@ -71,8 +70,10 @@ interface NavGroup {
 }
 
 // Pinned items always show (never collapsed). Top-of-mind daily actions.
+// Home is intentionally NOT pinned anymore — /assistant is now the unified
+// entry surface (dashboard widgets + composer in one). /home stays as a
+// redirect so old links resolve.
 const PINNED: NavItem[] = [
-    { href: "/home",       label: "Home",      labelKey: "nav.home",      icon: Home },
     { href: "/assistant",  label: "Assistant", labelKey: "nav.assistant", icon: MessageSquare },
     { href: "/feed",       label: "Newsfeed",  labelKey: "nav.newsfeed",  icon: Rss },
     { href: "/inbox",      label: "Inbox",     labelKey: "nav.inbox",     icon: Inbox },

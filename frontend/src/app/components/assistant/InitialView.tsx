@@ -1,12 +1,40 @@
 "use client";
 
+/**
+ * InitialView — the assistant's empty-state surface that doubles as the
+ * Home dashboard.
+ *
+ * Layout:
+ *   1) Animated Louis mark + "Hi, {name}"
+ *   2) ChatInput composer (the entry point to the assistant)
+ *   3) Suggested prompts (six comfort-UI starters)
+ *   4) Dashboard widgets: Continue (recent chats) · Projects · Library
+ *
+ * The dashboard widgets are silent on failure — if the user is offline
+ * or the backend is asleep, the widget row just doesn't render. The
+ * composer is always interactive.
+ */
+
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+    FolderOpen,
+    MessageSquare,
+    BookMarked,
+    Rss,
+    ArrowRight,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { LouisIcon } from "@/components/chat/louis-icon";
 import { ChatInput } from "./ChatInput";
 import { SelectAssistantProjectModal } from "./SelectAssistantProjectModal";
 import type { LouisMessage } from "../shared/types";
+import { listChats, listProjects } from "@/app/lib/louisApi";
+import type {
+    LouisChat,
+    LouisProject,
+} from "@/app/components/shared/types";
 
 interface InitialViewProps {
     onSubmit: (message: LouisMessage) => void;
@@ -15,14 +43,29 @@ interface InitialViewProps {
 const ICON_SIZE = 35;
 const GAP = 16; // gap-4 = 1rem = 16px
 
+function relativeTime(iso?: string): string {
+    if (!iso) return "";
+    const d = new Date(iso).getTime();
+    if (!Number.isFinite(d)) return "";
+    const diff = Math.max(0, Date.now() - d) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.round(diff / 60)}m`;
+    if (diff < 86400) return `${Math.round(diff / 3600)}h`;
+    return `${Math.round(diff / 86400)}d`;
+}
+
 export function InitialView({ onSubmit }: InitialViewProps) {
     const { user } = useAuth();
     const { profile } = useUserProfile();
+    const router = useRouter();
     const [loaded, setLoaded] = useState(false);
     const [projectModalOpen, setProjectModalOpen] = useState(false);
     const [iconOffset, setIconOffset] = useState(0);
     const [textOffset, setTextOffset] = useState(0);
     const textRef = useRef<HTMLHeadingElement>(null);
+
+    const [recentChats, setRecentChats] = useState<LouisChat[]>([]);
+    const [projects, setProjects] = useState<LouisProject[]>([]);
 
     const username =
         profile?.displayName?.trim() || user?.email?.split("@")[0] || "there";
@@ -40,11 +83,34 @@ export function InitialView({ onSubmit }: InitialViewProps) {
         return () => clearTimeout(t);
     }, [iconOffset]);
 
+    // Dashboard widgets — silent on failure.
+    useEffect(() => {
+        if (!user) return;
+        let cancelled = false;
+        (async () => {
+            try {
+                const [chats, ps] = await Promise.all([
+                    listChats(),
+                    listProjects(),
+                ]);
+                if (cancelled) return;
+                setRecentChats((chats ?? []).slice(0, 4));
+                setProjects((ps ?? []).slice(0, 4));
+            } catch {
+                /* offline or unauth — leave widgets empty */
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [user]);
+
     return (
-        <div className="flex flex-col h-full w-full px-6">
-            <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex flex-col h-full w-full overflow-y-auto">
+            <div className="flex flex-col items-center w-full px-6 pt-16 pb-10">
                 <div className="flex-col items-center w-full max-w-4xl relative px-0 xl:px-8">
-                    <div className="mb-10 relative flex items-center justify-center">
+                    {/* Hi + Louis mark */}
+                    <div className="mb-10 relative flex items-center justify-center h-10">
                         <div
                             className="absolute h-[35px]"
                             style={{
@@ -75,6 +141,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                         </h1>
                     </div>
 
+                    {/* Composer */}
                     <ChatInput
                         onSubmit={onSubmit}
                         onCancel={() => {}}
@@ -82,9 +149,11 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                         onProjectsClick={() => setProjectModalOpen(true)}
                     />
 
-                    {/* Comfort-UI quick prompts (per HAQQ prototype) */}
+                    {/* Quick prompts */}
                     <div className="mt-6">
-                        <p className="text-[10px] uppercase tracking-wide text-gray-400 text-center mb-3">Try one of these</p>
+                        <p className="text-[10px] uppercase tracking-wide text-gray-400 text-center mb-3">
+                            Try one of these
+                        </p>
                         <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
                             {[
                                 "Draft a mutual NDA for UAE under DIFC law",
@@ -93,10 +162,12 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                                 "Calculate end-of-service for a 6-year UAE employee",
                                 "Draft a Saudi labor contract for a marketing manager",
                                 "Summarize this lease in 5 bullets",
-                            ].map(p => (
+                            ].map((p) => (
                                 <button
                                     key={p}
-                                    onClick={() => onSubmit({ role: "user", content: p })}
+                                    onClick={() =>
+                                        onSubmit({ role: "user", content: p })
+                                    }
                                     className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full border border-gray-200 transition-colors"
                                 >
                                     {p}
@@ -104,12 +175,94 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                             ))}
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div className="text-center">
-                        <p className="text-xs py-3 mt-6 mb-3 text-gray-500">
-                            Louis provides legal information, not legal advice. AI can make mistakes.
-                        </p>
-                    </div>
+            {/* Dashboard widget rows */}
+            <div className="w-full max-w-5xl mx-auto px-6 pb-8 space-y-6">
+                {/* Continue (recent chats) */}
+                {recentChats.length > 0 && (
+                    <WidgetRow
+                        title="Continue"
+                        actionLabel="All chats →"
+                        onAction={() => router.push("/all-chats")}
+                    >
+                        {recentChats.map((c) => (
+                            <button
+                                key={c.id}
+                                onClick={() =>
+                                    router.push(`/assistant/chat/${c.id}`)
+                                }
+                                className="flex-1 min-w-[220px] max-w-[280px] text-left border border-gray-200 rounded-xl bg-white p-3 hover:border-gray-400 hover:shadow-sm transition"
+                            >
+                                <MessageSquare className="w-4 h-4 text-gray-500 mb-2" />
+                                <div className="font-medium text-sm text-gray-900 line-clamp-2">
+                                    {c.title || "Untitled chat"}
+                                </div>
+                                <div className="text-[10px] text-gray-500 mt-1">
+                                    {relativeTime(c.created_at)}
+                                </div>
+                            </button>
+                        ))}
+                    </WidgetRow>
+                )}
+
+                {/* Projects */}
+                {projects.length > 0 && (
+                    <WidgetRow
+                        title="Projects"
+                        actionLabel="All projects →"
+                        onAction={() => router.push("/projects")}
+                    >
+                        {projects.map((p) => (
+                            <button
+                                key={p.id}
+                                onClick={() =>
+                                    router.push(`/projects/${p.id}/assistant`)
+                                }
+                                className="flex-1 min-w-[220px] max-w-[280px] text-left border border-gray-200 rounded-xl bg-white p-3 hover:border-gray-400 hover:shadow-sm transition"
+                            >
+                                <FolderOpen className="w-4 h-4 text-amber-700 mb-2" />
+                                <div className="font-medium text-sm text-gray-900 line-clamp-2">
+                                    {p.name}
+                                </div>
+                                {p.cm_number && (
+                                    <div className="text-[10px] text-gray-500 mt-1 font-mono">
+                                        {p.cm_number}
+                                    </div>
+                                )}
+                            </button>
+                        ))}
+                    </WidgetRow>
+                )}
+
+                {/* Library shortcuts */}
+                <WidgetRow title="Library">
+                    <ShortcutCard
+                        icon={BookMarked}
+                        title="Prompt Library"
+                        sub="152 expert prompts to pick from"
+                        href="/prompt-library"
+                    />
+                    <ShortcutCard
+                        icon={Rss}
+                        title="Newsfeed"
+                        sub="Reddit on legal industry"
+                        href="/feed"
+                    />
+                    <ShortcutCard
+                        icon={FolderOpen}
+                        title="Drafting Board"
+                        sub="Agentic legal workflows"
+                        href="/drafting-board"
+                    />
+                </WidgetRow>
+
+                <div className="text-center">
+                    <p className="text-xs text-gray-500 mt-4">
+                        Louis provides legal information, not legal advice. AI
+                        can make mistakes.
+                    </p>
                 </div>
             </div>
 
@@ -118,5 +271,66 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                 onClose={() => setProjectModalOpen(false)}
             />
         </div>
+    );
+}
+
+function WidgetRow({
+    title,
+    actionLabel,
+    onAction,
+    children,
+}: {
+    title: string;
+    actionLabel?: string;
+    onAction?: () => void;
+    children: React.ReactNode;
+}) {
+    return (
+        <section>
+            <div className="flex items-center justify-between mb-2">
+                <h2 className="text-[10px] uppercase tracking-wide text-gray-500 font-semibold">
+                    {title}
+                </h2>
+                {actionLabel && onAction && (
+                    <button
+                        type="button"
+                        onClick={onAction}
+                        className="text-xs text-gray-500 hover:text-gray-900"
+                    >
+                        {actionLabel}
+                    </button>
+                )}
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
+                {children}
+            </div>
+        </section>
+    );
+}
+
+function ShortcutCard({
+    icon: Icon,
+    title,
+    sub,
+    href,
+}: {
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    sub: string;
+    href: string;
+}) {
+    const router = useRouter();
+    return (
+        <button
+            onClick={() => router.push(href)}
+            className="flex-1 min-w-[220px] max-w-[280px] text-left border border-gray-200 rounded-xl bg-white p-3 hover:border-gray-400 hover:shadow-sm transition group"
+        >
+            <div className="flex items-center justify-between mb-2">
+                <Icon className="w-4 h-4 text-amber-700" />
+                <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-900 transition" />
+            </div>
+            <div className="font-medium text-sm text-gray-900">{title}</div>
+            <div className="text-[10px] text-gray-500 mt-0.5">{sub}</div>
+        </button>
     );
 }
