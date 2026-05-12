@@ -295,15 +295,76 @@ Earn $20-100 per conversion (Consumer AI) and free months (e-Firm). Configurable
         title: "Bring your own API keys",
         category: "settings",
         icon: Key,
-        summary: "Use your own Anthropic / OpenAI / Gemini / Voyage / etc keys. Set defaults per provider.",
+        summary: "Drop in your Anthropic / OpenAI / Gemini key and every turn runs through it. Your key always wins over the server's.",
         body: `
-Settings → API Keys. Add a key, label it, set as default for that provider. Louis uses your key for chat / drafting / research instead of (or in addition to) HAQQ's pooled key.
+Open **Settings → Models & API Keys** (or **/settings/api-keys**). Paste a key for any of: Anthropic, Google Gemini, OpenAI. Louis stores it AES-256-GCM encrypted with a server-side secret.
+
+**Precedence (important)**: your stored key always takes precedence over any key the server has in its env. The status panel labels each provider as either \`user\` (your key) or \`env\` (server fallback) so you can see exactly which key will run the next turn.
 
 **Cost transparency**: your tokens, your bill — you see exactly what each turn costs in your provider dashboard.
 
-Supported providers: Anthropic, OpenAI, Google, Voyage, Groq, DeepSeek, Mistral, OpenRouter, Cerebras, Perplexity, Tavily, Firecrawl, Hugging Face.
+**What's used where**:
+- Main chat at /assistant uses the per-message model picker (Claude Opus / Sonnet, Gemini Pro / Flash, GPT-5)
+- Title generation uses the low-tier model (Haiku / Flash-Lite)
+- Tabular review uses the mid-tier (Sonnet / Flash / GPT-5 Mini)
+- Skill router runs a small classifier — same key as main chat
+
+If a slot is marked read-only with "Configured by server admin", the operator set that provider in \`backend/.env\` and locked it. Ask them to unset \`ANTHROPIC_API_KEY\` etc. if you want to bring your own.
 `,
-        related: ["integrations", "skill-router"],
+        related: ["integrations", "skill-router", "appearance"],
+    },
+    {
+        slug: "prompt-library",
+        title: "Prompt Library",
+        category: "features",
+        icon: BookA,
+        summary: "152 expert-crafted legal prompts (drafting / review / research / strategy), filter by use case + practice area, one click to use.",
+        body: `
+Open **/prompt-library**. Cards are filterable by:
+- **Use case**: Draft / Generate · Review / Redline · Summarize / Extract · Research · Compliance · Strategy
+- **Practice area**: Corporate / Commercial · Privacy · Employment · Disputes · FinTech · M&A · Arbitration · Governance · Legal Ops · IP
+
+Click **Use in Louis** to send the template to the /assistant composer (placeholders included — fill them in conversation). Click the copy icon to grab the raw template.
+
+Every prompt is a real Louis skill under \`backend/src/skills/prompt-pack.*.md\` — they're not stored in a database, they're version-controlled markdown files you can fork.
+`,
+        related: ["skills-library", "assistant"],
+    },
+    {
+        slug: "appearance",
+        title: "Appearance — themes, fonts, density",
+        category: "settings",
+        icon: SettingsIcon,
+        summary: "Customize the look of the workbench: theme palette, serif/sans font, density, text scale.",
+        body: `
+**Settings → Appearance**.
+
+**Theme**: cream (default), paper, slate, clean light, dark. Each swaps the workbench palette (background, surface, borders, accents) — every component re-themes automatically.
+
+**Font**: EB Garamond serif (default), Inter sans, system serif, monospace, or system sans. Applies everywhere the UI reads from \`--font-sans\`.
+
+**Density**: comfortable / compact. Tightens vertical rhythm on flexible containers.
+
+**Text size**: scale from 85% to 125%.
+
+Settings sync to your user profile if you're signed in, and to localStorage as a per-device fallback. A boot script runs before React hydrates so the page paints with your settings instantly — no flash of the default theme.
+`,
+        related: ["api-keys"],
+    },
+    {
+        slug: "feedback",
+        title: "Message feedback (thumbs up / down)",
+        category: "features",
+        icon: BookA,
+        summary: "Rate every assistant message. Used to tune the skill router and surface bad answers to the team.",
+        body: `
+Every assistant message in /assistant has a thumbs-up and thumbs-down button next to Copy. Click one to record a rating; click the same one again to clear it (toggle).
+
+Ratings are per-user and per-message. They live in \`chat_message_feedback\` with full RLS — you can only see and modify your own. The team admin pages aggregate them anonymously to spot bad turns.
+
+In future sessions the skill router will use the corpus of thumbs-up turns as the implicit training signal for which skill combinations actually work for which message shapes.
+`,
+        related: ["assistant", "skill-router"],
     },
     {
         slug: "integrations",
