@@ -41,6 +41,7 @@ import {
     HelpCircle,
     Zap,
     Rss,
+    Star,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -80,11 +81,14 @@ const PINNED: NavItem[] = [
     { href: "/projects",   label: "Projects",  labelKey: "nav.projects",  icon: FolderOpen },
 ];
 
+// Workbench + Practice merged into a single Work group per the HAQQ
+// prototype direction. Customize collapses Skills/Workflows/Integrations
+// since they're all surfaced again from inside /customize.
 const NAV_GROUPS: NavGroup[] = [
     {
-        id: "workbench",
-        label: "Workbench",
-        labelKey: "nav.workbench",
+        id: "work",
+        label: "Work",
+        labelKey: "nav.work",
         items: [
             { href: "/doc-workspace",     label: "Doc Workspace",   labelKey: "nav.doc_workspace",   icon: FileText },
             { href: "/drafting-board",    label: "Drafting Board",  labelKey: "nav.drafting_board",  icon: Network },
@@ -96,16 +100,9 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/tabular-reviews",   label: "Tabular Review",  labelKey: "nav.tabular_review",  icon: Table2 },
             { href: "/prompt-library",    label: "Prompt Library",  labelKey: "nav.prompt_library",  icon: BookMarked },
             { href: "/vault",             label: "Vault",            labelKey: "nav.vault",           icon: Lock },
-        ],
-    },
-    {
-        id: "practice",
-        label: "Practice",
-        labelKey: "nav.practice",
-        items: [
-            { href: "/matters",   label: "Matters",   labelKey: "nav.matters",   icon: Briefcase },
-            { href: "/efirm",     label: "e-Firm",    labelKey: "nav.efirm",     icon: Building2 },
-            { href: "/routines",  label: "Routines",  labelKey: "nav.routines",  icon: Repeat },
+            { href: "/matters",           label: "Matters",          labelKey: "nav.matters",         icon: Briefcase },
+            { href: "/efirm",             label: "e-Firm",           labelKey: "nav.efirm",           icon: Building2 },
+            { href: "/routines",          label: "Routines",         labelKey: "nav.routines",        icon: Repeat },
         ],
     },
     {
@@ -114,23 +111,23 @@ const NAV_GROUPS: NavGroup[] = [
         labelKey: "nav.customize",
         defaultCollapsed: true,
         items: [
-            { href: "/customize",         label: "Preferences",   labelKey: "nav.preferences",   icon: SlidersHorizontal },
-            { href: "/skills",            label: "Skills",        labelKey: "nav.skills",        icon: Sparkles },
-            { href: "/workflows",         label: "Workflows",     labelKey: "nav.workflows",     icon: Library },
-            { href: "/integrations",      label: "Integrations",  labelKey: "nav.integrations",  icon: Plug },
-            { href: "/settings/api-keys", label: "API Keys",      labelKey: "nav.api_keys",      icon: Key },
+            { href: "/customize",         label: "Customize hub",  labelKey: "nav.customize",     icon: SlidersHorizontal },
+            { href: "/skills",            label: "Skills",         labelKey: "nav.skills",        icon: Sparkles },
+            { href: "/workflows",         label: "Workflows",      labelKey: "nav.workflows",     icon: Library },
+            { href: "/integrations",      label: "Integrations",   labelKey: "nav.integrations",  icon: Plug },
         ],
     },
     {
-        id: "admin",
-        label: "Admin",
-        labelKey: "nav.admin",
+        id: "account",
+        label: "Account",
+        labelKey: "nav.account",
         defaultCollapsed: true,
         items: [
-            { href: "/billing",    label: "Billing",   labelKey: "nav.billing",   icon: CreditCard },
-            { href: "/upgrade",    label: "Upgrade",   labelKey: "nav.upgrade",   icon: Zap },
-            { href: "/team",       label: "Team",      labelKey: "nav.team",      icon: Users },
-            { href: "/settings",   label: "Account",   labelKey: "nav.account",   icon: SettingsIcon },
+            { href: "/settings",          label: "Settings",       labelKey: "nav.settings",      icon: SettingsIcon },
+            { href: "/settings/api-keys", label: "API Keys",       labelKey: "nav.api_keys",      icon: Key },
+            { href: "/billing",           label: "Billing",        labelKey: "nav.billing",       icon: CreditCard },
+            { href: "/upgrade",           label: "Upgrade",        labelKey: "nav.upgrade",       icon: Zap },
+            { href: "/team",              label: "Team",           labelKey: "nav.team",          icon: Users },
         ],
     },
     {
@@ -139,13 +136,48 @@ const NAV_GROUPS: NavGroup[] = [
         labelKey: "nav.more",
         defaultCollapsed: true,
         items: [
-            { href: "/help",      label: "Help",      labelKey: "nav.help",      icon: HelpCircle },
-            { href: "/docs",      label: "Docs",      labelKey: "nav.docs",      icon: BookOpenCheck },
-            { href: "/referral",  label: "Referral",  labelKey: "nav.referral",  icon: Gift },
-            { href: "/about",     label: "About",     labelKey: "nav.about",     icon: Info },
+            { href: "/academy",  label: "Academy",   labelKey: "nav.academy",  icon: BookOpenCheck },
+            { href: "/referral", label: "Referral",  labelKey: "nav.referral", icon: Gift },
+            { href: "/about",    label: "About",     labelKey: "nav.about",    icon: Info },
         ],
     },
 ];
+
+// Favorites: lightweight per-user pin list stored in localStorage. Lets
+// users build their own preferred sidebar — independent of the
+// canonical groups above. Persistence is browser-local (not server)
+// because it's a UI-only preference that doesn't need cross-device sync.
+const FAVORITES_KEY = "louis.sidebar.favorites";
+
+function readFavorites(): string[] {
+    if (typeof window === "undefined") return [];
+    try {
+        const raw = window.localStorage.getItem(FAVORITES_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed)
+            ? parsed.filter((v) => typeof v === "string")
+            : [];
+    } catch {
+        return [];
+    }
+}
+
+function writeFavorites(value: string[]) {
+    if (typeof window === "undefined") return;
+    try {
+        window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(value));
+    } catch {
+        /* quota — ignore */
+    }
+}
+
+function allNavItems(): NavItem[] {
+    return [
+        ...PINNED,
+        ...NAV_GROUPS.flatMap((g) => g.items),
+    ];
+}
 
 interface AppSidebarProps {
     isOpen: boolean;
@@ -162,6 +194,21 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     const [shouldAnimate, setShouldAnimate] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [historyCollapsed, setHistoryCollapsed] = useState(false);
+    const [favorites, setFavorites] = useState<string[]>([]);
+
+    useEffect(() => {
+        setFavorites(readFavorites());
+    }, []);
+
+    function toggleFavorite(href: string) {
+        setFavorites((prev) => {
+            const next = prev.includes(href)
+                ? prev.filter((h) => h !== href)
+                : [...prev, href];
+            writeFavorites(next);
+            return next;
+        });
+    }
 
     // Per-group collapsed state, persisted to localStorage
     const [groupsCollapsed, setGroupsCollapsed] = useState<Record<string, boolean>>(() => {
@@ -368,27 +415,100 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 </button>
             </div>
 
-            {/* Nav: pinned items first */}
+            {/* Nav: favorites (per-user pin list) first, then pinned-by-default items */}
             <div className="overflow-y-auto flex-1 min-h-0 pb-2">
+                {favorites.length > 0 && (() => {
+                    const all = allNavItems();
+                    const favItems = favorites
+                        .map((href) => all.find((i) => i.href === href))
+                        .filter((i): i is NavItem => !!i);
+                    if (favItems.length === 0) return null;
+                    return (
+                        <div className="mb-1">
+                            {isOpen && (
+                                <div className="px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                    <span className="inline-flex items-center gap-1">
+                                        <Star className="w-3 h-3" />
+                                        Favorites
+                                    </span>
+                                </div>
+                            )}
+                            {favItems.map(({ href, label, labelKey, icon: Icon }) => {
+                                const text = t(labelKey) || label;
+                                const isActive = pathname === href || pathname.startsWith(href + "/");
+                                return (
+                                    <div key={`fav-${href}`} className="py-0.5 px-2.5 group/item">
+                                        <div
+                                            className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors text-left ${
+                                                isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
+                                            } ${!isOpen ? "hidden md:flex" : "flex"}`}
+                                        >
+                                            <button
+                                                onClick={() => router.push(href)}
+                                                className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                                                title={!isOpen ? text : ""}
+                                            >
+                                                <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
+                                                {isOpen && <span className="text-[13px] truncate">{text}</span>}
+                                            </button>
+                                            {isOpen && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleFavorite(href);
+                                                    }}
+                                                    className="opacity-100 text-amber-500 hover:text-amber-600"
+                                                    aria-label="Unpin from favorites"
+                                                    title="Unpin"
+                                                >
+                                                    <Star className="w-3.5 h-3.5 fill-current" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    );
+                })()}
+
                 {PINNED.map(({ href, label, labelKey, icon: Icon }) => {
                     const text = t(labelKey) || label;
                     const isActive = pathname === href || pathname.startsWith(href + "/");
+                    const isFav = favorites.includes(href);
                     return (
-                        <div key={href} className="py-0.5 px-2.5">
-                            <button
-                                onClick={() => router.push(href)}
-                                title={!isOpen ? text : ""}
+                        <div key={href} className="py-0.5 px-2.5 group/item">
+                            <div
                                 className={`w-full h-9 flex items-center gap-3 px-2.5 py-2 rounded-md transition-colors text-left ${
                                     isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
                                 } ${!isOpen ? "hidden md:flex" : "flex"}`}
                             >
-                                <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-gray-900" : "text-black"}`} />
+                                <button
+                                    onClick={() => router.push(href)}
+                                    className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                                    title={!isOpen ? text : ""}
+                                >
+                                    <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-gray-900" : "text-black"}`} />
+                                    {isOpen && (
+                                        <span className={`text-sm font-medium ${shouldAnimate ? "sidebar-fade-in-2" : ""}`}>
+                                            {text}
+                                        </span>
+                                    )}
+                                </button>
                                 {isOpen && (
-                                    <span className={`text-sm font-medium ${shouldAnimate ? "sidebar-fade-in-2" : ""}`}>
-                                        {text}
-                                    </span>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleFavorite(href);
+                                        }}
+                                        className={`${isFav ? "opacity-100 text-amber-500" : "opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-amber-500"} transition-opacity`}
+                                        aria-label={isFav ? "Unpin from favorites" : "Pin to favorites"}
+                                        title={isFav ? "Unpin from favorites" : "Pin to favorites"}
+                                    >
+                                        <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
+                                    </button>
                                 )}
-                            </button>
+                            </div>
                         </div>
                     );
                 })}
@@ -410,18 +530,36 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                             {(!collapsed || !isOpen) && group.items.map(({ href, label, labelKey, icon: Icon }) => {
                                 const text = t(labelKey) || label;
                                 const isActive = pathname === href || pathname.startsWith(href + "/");
+                                const isFav = favorites.includes(href);
                                 return (
-                                    <div key={href} className="py-0.5 px-2.5">
-                                        <button
-                                            onClick={() => router.push(href)}
-                                            title={!isOpen ? text : ""}
+                                    <div key={href} className="py-0.5 px-2.5 group/item">
+                                        <div
                                             className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors text-left ${
                                                 isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
                                             } ${!isOpen ? "hidden md:flex" : "flex"}`}
                                         >
-                                            <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
-                                            {isOpen && <span className="text-[13px]">{text}</span>}
-                                        </button>
+                                            <button
+                                                onClick={() => router.push(href)}
+                                                className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                                                title={!isOpen ? text : ""}
+                                            >
+                                                <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
+                                                {isOpen && <span className="text-[13px] truncate">{text}</span>}
+                                            </button>
+                                            {isOpen && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleFavorite(href);
+                                                    }}
+                                                    className={`${isFav ? "opacity-100 text-amber-500" : "opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-amber-500"} transition-opacity`}
+                                                    aria-label={isFav ? "Unpin from favorites" : "Pin to favorites"}
+                                                    title={isFav ? "Unpin from favorites" : "Pin to favorites"}
+                                                >
+                                                    <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 );
                             })}

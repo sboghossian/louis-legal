@@ -13,7 +13,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001"
 
 // Paths inside (pages)/ that don't gate on onboarding completion.
 // Note: /onboarding lives outside (pages)/ now, so this layout doesn't apply there.
-const ONBOARDING_EXEMPT = ["/about", "/docs"];
+const ONBOARDING_EXEMPT = ["/about", "/docs", "/academy", "/help"];
 
 export default function LouisLayout({
     children,

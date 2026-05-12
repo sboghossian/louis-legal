@@ -1,9 +1,8 @@
 "use client";
 
 /**
- * /help is the friendly entry point that routes to /docs. /docs has the
- * categorised, searchable knowledge base; /help is the URL someone types
- * when they're stuck.
+ * /help redirects to /academy — the merged docs + help surface.
+ * Kept as an alias so old URLs don't 404.
  */
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -11,11 +10,11 @@ import { useRouter } from "next/navigation";
 export default function HelpRedirect() {
     const router = useRouter();
     useEffect(() => {
-        router.replace("/docs");
+        router.replace("/academy");
     }, [router]);
     return (
         <div className="flex h-full items-center justify-center text-sm text-gray-500">
-            Opening Help…
+            Opening Academy…
         </div>
     );
 }

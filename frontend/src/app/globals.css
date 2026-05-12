@@ -262,6 +262,117 @@ html[data-font="system"] {
         ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/*
+ * Force the chosen font on every element. Without this, Tailwind utility
+ * classes like `font-sans` and `font-serif` baked their font choice at
+ * compile time, so swapping the CSS variable would have no visible effect.
+ */
+html[data-font] body,
+html[data-font] body * {
+    font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+ * Theme paint-through: most components in the app use the hardcoded
+ * Tailwind utility classes (bg-white, bg-gray-50, text-gray-900,
+ * border-gray-200) rather than the semantic tokens (bg-background, etc.).
+ * The proper fix is to migrate every component to tokens; in the
+ * meantime, these overrides repaint the most common utility classes per
+ * theme so changes in /settings/appearance are immediately visible.
+ *
+ * Cream is the "default" so we leave it un-hijacked.
+ * --------------------------------------------------------------------------- */
+
+html[data-theme="paper"] body {
+    background: var(--background);
+    color: var(--foreground);
+}
+html[data-theme="paper"] .bg-white {
+    background-color: var(--card) !important;
+}
+html[data-theme="paper"] .bg-gray-50,
+html[data-theme="paper"] .bg-gray-100,
+html[data-theme="paper"] .hover\:bg-gray-50:hover,
+html[data-theme="paper"] .hover\:bg-gray-100:hover {
+    background-color: var(--muted) !important;
+}
+html[data-theme="paper"] .border-gray-100,
+html[data-theme="paper"] .border-gray-200,
+html[data-theme="paper"] .border-gray-300 {
+    border-color: var(--border) !important;
+}
+html[data-theme="paper"] .divide-gray-100 > * + *,
+html[data-theme="paper"] .divide-gray-200 > * + * {
+    border-color: var(--border) !important;
+}
+
+html[data-theme="slate"] body {
+    background: var(--background);
+    color: var(--foreground);
+}
+html[data-theme="slate"] .bg-white {
+    background-color: var(--card) !important;
+}
+html[data-theme="slate"] .bg-gray-50,
+html[data-theme="slate"] .bg-gray-100,
+html[data-theme="slate"] .hover\:bg-gray-50:hover,
+html[data-theme="slate"] .hover\:bg-gray-100:hover {
+    background-color: var(--muted) !important;
+}
+html[data-theme="slate"] .border-gray-100,
+html[data-theme="slate"] .border-gray-200,
+html[data-theme="slate"] .border-gray-300 {
+    border-color: var(--border) !important;
+}
+html[data-theme="slate"] .divide-gray-100 > * + *,
+html[data-theme="slate"] .divide-gray-200 > * + * {
+    border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] body {
+    background: var(--background);
+    color: var(--foreground);
+}
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
+html[data-theme="dark"] .bg-white {
+    background-color: var(--card) !important;
+    color: var(--card-foreground) !important;
+}
+html[data-theme="dark"] .bg-gray-50,
+html[data-theme="dark"] .bg-gray-100,
+html[data-theme="dark"] .hover\:bg-gray-50:hover,
+html[data-theme="dark"] .hover\:bg-gray-100:hover {
+    background-color: var(--muted) !important;
+    color: var(--muted-foreground) !important;
+}
+html[data-theme="dark"] .border-gray-100,
+html[data-theme="dark"] .border-gray-200,
+html[data-theme="dark"] .border-gray-300 {
+    border-color: var(--border) !important;
+}
+html[data-theme="dark"] .divide-gray-100 > * + *,
+html[data-theme="dark"] .divide-gray-200 > * + * {
+    border-color: var(--border) !important;
+}
+html[data-theme="dark"] .text-gray-500,
+html[data-theme="dark"] .text-gray-600,
+html[data-theme="dark"] .text-gray-700,
+html[data-theme="dark"] .text-gray-800,
+html[data-theme="dark"] .text-gray-900 {
+    color: var(--foreground) !important;
+}
+html[data-theme="dark"] .text-gray-400,
+html[data-theme="dark"] .text-gray-500 {
+    color: var(--muted-foreground) !important;
+}
+
+html[data-theme="light"] body {
+    background: #ffffff;
+    color: #111827;
+}
+
 /* Density nudges the global vertical rhythm. Components that already pick
  * their own padding keep their look; flexible containers tighten up. */
 html[data-density="compact"] {
