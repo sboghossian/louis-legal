@@ -1,21 +1,58 @@
 ---
 id: workflow.investment-round-closing-pack
-name: 'investment round closing pack'
+name: Workflow — Investment Round Closing Pack
 category: workflow
-priority: P3
-status: stub
+intent: ['closing pack', 'investment round']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Documentation pack for closing an equity financing round.
 
-# workflow.investment-round-closing-pack — STUB
+# Standard closing documents
 
-This skill is named in the Louis skills inventory but not yet authored.
+1. **Term Sheet** (signed) — [[draft.term-sheet-VC]]
+2. **Stock Purchase Agreement (SPA)** — [[draft.share-purchase-agreement]] adapted for new issuance
+3. **Investors' Rights Agreement** — information rights, registration rights, pro-rata
+4. **Voting Agreement** — board composition, drag-along, exit triggers
+5. **Right of First Refusal & Co-Sale Agreement** — share transfer restrictions
+6. **Amended & Restated Articles of Association** — preferred share rights baked in
+7. **Amended & Restated Shareholders' Agreement** — [[draft.shareholders-agreement]] updated
+8. **Disclosure schedule** — company's reps & warranties carve-outs
+9. **Cap table** — pre-money + post-money + option pool
+10. **Board resolutions** — authorizing issuance, ratifying agreements
+11. **Stockholder consents** — required approvals
+12. **Investor questionnaire** — accredited investor / sophisticated investor confirmations
+13. **Subscription agreements** — per investor
+14. **Legal opinion** — closing opinion from company counsel
+15. **Side letters** — investor-specific provisions
+16. **Stock certificates / book entries**
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Workflow steps
+1. Term sheet signed → due diligence
+2. Definitive agreement drafting (4-6 weeks typical)
+3. Disclosure schedule preparation
+4. Last-minute issues + carve-outs
+5. Stockholder consents collected
+6. Board approvals
+7. Wire transfer
+8. Stock issuance + cap table update
+9. Post-closing filings (SEC, foreign equivalents, tax)
+10. Investor onboarding
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Closing checklist
+- [ ] All signature pages collected
+- [ ] Wire confirmations received
+- [ ] Stock certificates / book-entry recorded
+- [ ] Cap table updated + circulated
+- [ ] Director appointments effective
+- [ ] Post-closing actions calendar
+- [ ] Tax forms (W-9, BO declarations) collected
+
+# Critical
+- Securities filings — Form D (US), foreign equivalents
+- Anti-money laundering checks on investors
+- Director's fiduciary duties + conflict declarations
+- Insurance binding (D&O if not in place)
+
+See [[draft.term-sheet-VC]] and [[draft.shareholders-agreement]].

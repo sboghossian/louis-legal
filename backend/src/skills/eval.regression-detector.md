@@ -1,21 +1,33 @@
 ---
 id: eval.regression-detector
-name: 'regression detector'
+name: Regression Detector
 category: eval
-priority: P3
-status: stub
+intent: [__eval__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Detect regressions in AI quality across deployments.
 
-# eval.regression-detector — STUB
+# Rules
+- Any rubric score drops >5% vs previous deployment → alert
+- Hallucination rate increases >0.5% → alert
+- Latency p95 increases >20% → alert
+- Cost-per-message increases >15% → alert
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Outputs
+- Slack alert to #eng-quality with diff
+- Linear ticket auto-created with regression context
+- Block automatic deployment if blocking-rubric regresses
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Investigation flow
+1. Identify which prompts regressed
+2. Compare current vs previous responses side-by-side
+3. Inspect which skills routed differently
+4. Check for model API changes / config drift
+5. Rollback if severity warrants
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+Connect to PostHog + Langfuse for full observability surface.
+
+See [[eval.benchmark-runner]] and [[eval.LLM-as-judge-system-prompt]].

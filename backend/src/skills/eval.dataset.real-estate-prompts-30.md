@@ -1,21 +1,23 @@
 ---
 id: eval.dataset.real-estate-prompts-30
-name: 'dataset · real estate prompts 30'
+name: Eval Dataset — Real estate prompts (30)
 category: eval
-priority: P3
-status: stub
+intent: [__eval__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Benchmark dataset: 30 real-estate-law prompts across UAE / KSA / LB.
 
-# eval.dataset.real-estate-prompts-30 — STUB
+# Categories
+1. **Draft** — residential/commercial lease, sale agreement, sublease (10 prompts)
+2. **Review** — tenant side / landlord side; eviction notice validity (5 prompts)
+3. **Compliance** — RERA Ejari, Tawtheeq, Ejar; foreign ownership rules (5 prompts)
+4. **Disputes** — rent disputes, eviction, security deposit recovery (5 prompts)
+5. **Tax** — VAT on commercial rentals, RETT (KSA), capital gains structures (3 prompts)
+6. **Bilingual** — Arabic-English split-screen (2 prompts)
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Use
+Same pipeline as [[eval.dataset.NDA-prompts-30]].
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
-
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Storage: `eval/datasets/real-estate-prompts-30.jsonl`

@@ -1,21 +1,35 @@
 ---
 id: justice.intent.book-call
-name: 'intent · book call'
+name: Justice Intent — Book a Call
 category: justice
-priority: P3
-status: stub
+intent: [__justice__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Detect intent to book a call with sales / customer success.
 
-# justice.intent.book-call — STUB
+# Patterns
+- "talk to someone", "speak with sales", "book a call"
+- "schedule a demo", "set up a meeting"
+- "have a conversation about", "discuss for our firm"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Response action
+- Route to Calendly link (e.g., calendly.com/haqq-sales)
+- Or embed booking widget in chat
+- Suggest 3 time slots from current day
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Context capture
+Before handoff, capture from the conversation:
+- Use case
+- Firm size + role
+- Timeline / urgency
+- Specific questions
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Send context to sales rep as pre-meeting brief.
+
+# Skip booking if
+- Question can be answered immediately (route to FAQ instead)
+- User clearly wants self-service (route to signup)
+
+See [[justice.intent.sales]] and [[justice.human-handoff]].

@@ -1,21 +1,41 @@
 ---
 id: safety.violence-threats-handling
-name: 'violence threats handling'
+name: Violence + Threats Handling
 category: safety
-priority: P3
-status: stub
+intent: [__core__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+When the user describes violence, threats, or imminent harm.
 
-# safety.violence-threats-handling — STUB
+# Detection signals
+- "he hit me", "she threatened me"
+- "domestic violence", "harassment"
+- "I want to hurt", "I'm going to"
+- Explicit threats
 
-This skill is named in the Louis skills inventory but not yet authored.
+# When user is at risk
+1. **Safety first**: emergency hotline + local police + DV shelter
+2. **Order of protection** — legal mechanism to restrain abuser
+3. **Documenting incidents** — what + when + photos + witnesses
+4. **Legal options** — criminal complaint + civil order + family-court intervention
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# When user threatens others
+1. **Reframe** — focus on legal consequences of acting on threats
+2. **De-escalation** — encourage cooling off, professional support
+3. **Mental health resources** — local crisis lines
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Critical
+- **Do not lecture** the user
+- **Do not minimize** their fear
+- **Do not promise specific outcomes** but state legal options exist
+- **Surface emergency resources** every response in this thread
+
+# Jurisdictional resources
+- **LB**: KAFA hotline (DV), ISF (police)
+- **KSA**: Saudi DV reporting line, MHRSD social services
+- **UAE**: Dubai Foundation for Women + Children, UAE police 999
+- **Generic emergency**: 911 (US), 112 (EU), local equivalents
+
+See [[safety.criminal-defense-disclaimer]] and [[safety.minor-protection]].

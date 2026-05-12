@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
     Home, Send, Paperclip, Wrench, Sparkles,
     FileText, Network, MessageSquare, FolderOpen, Repeat, Gift,
-    ChevronDown,
+    ChevronDown, Search, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+interface PromptPackSkill {
+    id: string;
+    name: string;
+    category: string;
+    intent?: string[];
+}
 
 // SCAFFOLD: ported from haqq-prototype `renderHome`.
 // Landing surface with composer (free-text + filter chips + tools / files menus),
@@ -53,16 +62,65 @@ export default function HomePage() {
     const [category, setCategory] = useState("all");
     const [workspace, setWorkspace] = useState(WORKSPACES[1].id);
     const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
+    const [promptLibraryOpen, setPromptLibraryOpen] = useState(false);
+    const [promptLibrary, setPromptLibrary] = useState<PromptPackSkill[]>([]);
+    const [promptQuery, setPromptQuery] = useState("");
+    const [slashCommandsOpen, setSlashCommandsOpen] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Load prompt library once
+    useEffect(() => {
+        (async () => {
+            try {
+                const r = await fetch(`${API_BASE}/api/skills?category=prompt-pack`);
+                if (r.ok) {
+                    const json = await r.json();
+                    setPromptLibrary(json.entries ?? []);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+    }, []);
+
+    // Slash-command detector: when user types "/" at start, show menu
+    function onComposerChange(value: string) {
+        setComposer(value);
+        const showSlash = value.startsWith("/") && !value.includes(" ");
+        setSlashCommandsOpen(showSlash);
+    }
+
+    function insertPrompt(text: string) {
+        setComposer(text);
+        setPromptLibraryOpen(false);
+        setSlashCommandsOpen(false);
+        textareaRef.current?.focus();
+    }
 
     function submit() {
         if (!composer.trim()) return;
-        // Route to /assistant with the message as initial input via sessionStorage
         if (typeof window !== "undefined") {
             sessionStorage.setItem("louis.initialPrompt", composer);
             sessionStorage.setItem("louis.category", category);
         }
         router.push("/assistant");
     }
+
+    const SLASH_COMMANDS = [
+        { cmd: "/draft",     desc: "Draft a contract or clause",            example: "/draft NDA mutual UAE" },
+        { cmd: "/review",    desc: "Review a contract for issues",          example: "/review this MSA from the client side" },
+        { cmd: "/research",  desc: "Research statutes / case law",          example: "/research non-compete UAE recent rulings" },
+        { cmd: "/compare",   desc: "Compare across jurisdictions",          example: "/compare employment notice LB vs KSA" },
+        { cmd: "/translate", desc: "Translate text or clause",              example: "/translate to Arabic" },
+        { cmd: "/calc",      desc: "Calculate EOSG / interest / deadline",  example: "/calc EOSG for 6yr UAE employee" },
+        { cmd: "/summarize", desc: "Summarize a document or clause",        example: "/summarize this MSA in 5 bullets" },
+        { cmd: "/demo",      desc: "Open the Acme MSA demo workspace",      example: "/demo" },
+        { cmd: "/help",      desc: "List available commands + features",    example: "/help" },
+    ];
+
+    const filteredPrompts = promptLibrary
+        .filter(p => !promptQuery.trim() || (p.id + p.name).toLowerCase().includes(promptQuery.trim().toLowerCase()))
+        .slice(0, 30);
 
     const visibleChats = category === "all" ? RECENT_CHATS : RECENT_CHATS.filter(c => c.category === category);
     const currentWorkspace = WORKSPACES.find(w => w.id === workspace);
@@ -108,25 +166,94 @@ export default function HomePage() {
                         </button>
                     ))}
                 </div>
-                <textarea
-                    value={composer}
-                    onChange={e => setComposer(e.target.value)}
-                    onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit(); }}
-                    rows={3}
-                    placeholder="Draft a mutual NDA between [parties] for [purpose], governed by [law]…  (⌘↩ to send)"
-                    className="w-full px-4 py-3 text-sm resize-none outline-none"
-                />
+                <div className="relative">
+                    <textarea
+                        ref={textareaRef}
+                        value={composer}
+                        onChange={e => onComposerChange(e.target.value)}
+                        onKeyDown={e => {
+                            if (e.key === "Escape") { setSlashCommandsOpen(false); setPromptLibraryOpen(false); }
+                            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
+                        }}
+                        rows={3}
+                        placeholder="Draft a mutual NDA between [parties] for [purpose]… Type / for commands, or pick from the prompt library below.  (⌘↩ to send)"
+                        className="w-full px-4 py-3 text-sm resize-none outline-none"
+                    />
+                    {slashCommandsOpen && (
+                        <div className="absolute left-3 right-3 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-72 overflow-y-auto z-20">
+                            <div className="px-3 py-2 text-[10px] uppercase tracking-wide text-gray-500 border-b border-gray-100">Slash commands</div>
+                            {SLASH_COMMANDS.filter(s => s.cmd.startsWith(composer)).map(s => (
+                                <button
+                                    key={s.cmd}
+                                    onClick={() => insertPrompt(s.example)}
+                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 border-b border-gray-100"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-mono text-xs font-semibold">{s.cmd}</span>
+                                        <span className="text-xs text-gray-500">{s.desc}</span>
+                                    </div>
+                                    <div className="text-[10px] text-gray-400 mt-0.5 font-mono">{s.example}</div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 <div className="flex items-center justify-between px-3 py-2 border-t border-gray-100 bg-gray-50">
                     <div className="flex items-center gap-1">
                         <Button variant="ghost" size="sm" className="h-7 text-xs"><Paperclip className="w-3.5 h-3.5 mr-1" /> Attach</Button>
                         <Button variant="ghost" size="sm" className="h-7 text-xs"><Wrench className="w-3.5 h-3.5 mr-1" /> Tools</Button>
-                        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => router.push("/skills")}><Sparkles className="w-3.5 h-3.5 mr-1" /> Prompts</Button>
+                        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setPromptLibraryOpen(true)}>
+                            <Sparkles className="w-3.5 h-3.5 mr-1" /> Prompt library ({promptLibrary.length})
+                        </Button>
                     </div>
                     <Button size="sm" onClick={submit} disabled={!composer.trim()} className="h-7 text-xs">
                         <Send className="w-3.5 h-3.5 mr-1" /> Send
                     </Button>
                 </div>
             </div>
+
+            {/* Prompt library modal */}
+            {promptLibraryOpen && (
+                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50" onClick={() => setPromptLibraryOpen(false)}>
+                    <div className="bg-white rounded-lg shadow-xl w-[640px] max-w-[90vw] max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
+                        <div className="px-5 py-3 border-b border-gray-200 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4" />
+                            <h2 className="font-semibold text-sm">Prompt library</h2>
+                            <Badge variant="secondary">{promptLibrary.length} expert prompts</Badge>
+                            <button onClick={() => setPromptLibraryOpen(false)} className="ml-auto text-gray-500 hover:text-gray-900">
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                        <div className="px-5 py-3 border-b border-gray-100">
+                            <div className="relative">
+                                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    value={promptQuery}
+                                    onChange={e => setPromptQuery(e.target.value)}
+                                    placeholder="Search prompts… (e.g., NDA, employment, distribution)"
+                                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded outline-none focus:border-gray-500"
+                                    autoFocus
+                                />
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto">
+                            {filteredPrompts.map(p => (
+                                <button
+                                    key={p.id}
+                                    onClick={() => insertPrompt(p.name)}
+                                    className="w-full text-left px-5 py-3 border-b border-gray-100 hover:bg-gray-50"
+                                >
+                                    <div className="font-medium text-sm">{p.name}</div>
+                                    <div className="text-[10px] text-gray-500 font-mono">{p.id}</div>
+                                </button>
+                            ))}
+                            {!filteredPrompts.length && (
+                                <div className="px-5 py-12 text-center text-sm text-gray-500">No prompts match</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Quick links */}
             <div className="grid grid-cols-4 gap-3 mb-10">

@@ -202,8 +202,20 @@ function DocWorkspaceInner() {
     const [versions, setVersions] = useState<ServerVersion[]>([]);
     const [comments, setComments] = useState<ServerComment[]>([]);
     const [contentBlocks, setContentBlocks] = useState<ServerBlock[]>([]);
+    const [compareBlocks, setCompareBlocks] = useState<ServerBlock[]>([]);
+    const [compareVersionId, setCompareVersionId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
+
+    async function loadCompareVersion(versionId: string) {
+        const headers = await authHeaders();
+        const r = await fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/content?versionId=${encodeURIComponent(versionId)}`, { headers, cache: "no-store" });
+        if (r.ok) {
+            const json = await r.json();
+            setCompareBlocks(json.blocks ?? []);
+            setCompareVersionId(versionId);
+        }
+    }
 
     // Load all the things in parallel
     useEffect(() => {
@@ -283,9 +295,23 @@ function DocWorkspaceInner() {
     // Use real content if loaded; otherwise fall back to the fixture
     const blocksForRender = contentBlocks.length ? contentBlocks : DOC_BLOCKS;
     const visibleBlocks = useMemo(() => {
-        if (view === "compare") return blocksForRender.filter(b => b.changed);
+        if (view === "compare") {
+            // Only show blocks where current differs from compare baseline
+            if (compareBlocks.length) {
+                const baselineMap = new Map(compareBlocks.map(b => [b.heading ?? b.id, b]));
+                return blocksForRender.filter(b => {
+                    const baseline = baselineMap.get(b.heading ?? b.id);
+                    return !baseline || (baseline.text ?? "") !== (b.text ?? "");
+                });
+            }
+            return blocksForRender.filter(b => b.changed);
+        }
         return blocksForRender;
-    }, [view, blocksForRender]);
+    }, [view, blocksForRender, compareBlocks]);
+
+    const compareBaseline = useMemo(() => {
+        return new Map(compareBlocks.map(b => [b.heading ?? b.id, b]));
+    }, [compareBlocks]);
 
     const title = meta?.title || DOC_DEFAULT.title;
     const wordCount = meta?.wordCount ?? DOC_DEFAULT.wordCount;
@@ -399,7 +425,26 @@ function DocWorkspaceInner() {
                         {view === "compare" && (
                             <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-center gap-2">
                                 <GitCompare className="w-3.5 h-3.5" />
-                                <span>Showing only sections changed vs <strong>v2</strong>. Switch to <button className="underline" onClick={() => setView("edit")}>edit</button> to see the full document.</span>
+                                <span className="flex-1">
+                                    {compareBlocks.length ? (
+                                        <>Showing only sections changed vs <strong>{compareVersionId}</strong>.</>
+                                    ) : (
+                                        <>Pick a version to compare against:</>
+                                    )}
+                                </span>
+                                {versions.length > 1 && (
+                                    <select
+                                        value={compareVersionId ?? ""}
+                                        onChange={e => e.target.value && loadCompareVersion(e.target.value)}
+                                        className="text-xs border border-amber-300 rounded px-2 py-0.5 bg-white"
+                                    >
+                                        <option value="">— pick a version —</option>
+                                        {versions.slice(1).map(v => (
+                                            <option key={v.id} value={v.id}>{v.displayName}</option>
+                                        ))}
+                                    </select>
+                                )}
+                                <button className="underline" onClick={() => setView("edit")}>back to edit</button>
                             </div>
                         )}
                         <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-sm">

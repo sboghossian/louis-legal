@@ -1,21 +1,39 @@
 ---
 id: output.table-of-comparisons
-name: 'table of comparisons'
+name: Table of Comparisons
 category: output
-priority: P3
-status: stub
+intent: [__format__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Format output as a structured comparison table for multi-jurisdictional or multi-option questions.
 
-# output.table-of-comparisons — STUB
+# Pattern
+| Aspect | Option A | Option B | Option C |
+|--------|----------|----------|----------|
+| Statute | … | … | … |
+| Max duration | … | … | … |
+| Enforceability | … | … | … |
+| Cost | … | … | … |
+| Recommendation | … | … | … |
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Best practices
+- **Same row order** for each option (apples-to-apples)
+- **Same level of detail** per cell
+- **Citations per cell** where the source matters
+- **Summary row at bottom**: BLUF per option
+- **Decision recommendation** below table
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Example
+For "compare non-compete enforceability in LB / KSA / UAE":
+| Aspect | LB | KSA | UAE federal | DIFC |
+|--------|----|----|-------------|------|
+| Statute | Labor Code | Royal Decree | Decree-Law 33/2021 | DIFC Law 4/2021 |
+| Max duration | Case-by-case | 2 years | 2 years | Reasonable test |
+| Compensation required | Recommended | No | No | No |
+| Court approach | Narrow | Reasonable scope | Proportionate | Common-law reasonableness |
+| Enforceability | Mixed | Moderate | High if proportionate | High |
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Pair with
+[[research.jurisdiction-comparison]] · [[output.executive-summary-first]]

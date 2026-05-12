@@ -82,9 +82,32 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                         onProjectsClick={() => setProjectModalOpen(true)}
                     />
 
+                    {/* Comfort-UI quick prompts (per HAQQ prototype) */}
+                    <div className="mt-6">
+                        <p className="text-[10px] uppercase tracking-wide text-gray-400 text-center mb-3">Try one of these</p>
+                        <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+                            {[
+                                "Draft a mutual NDA for UAE under DIFC law",
+                                "Review this MSA from the client side",
+                                "Compare non-compete enforceability LB vs KSA vs UAE",
+                                "Calculate end-of-service for a 6-year UAE employee",
+                                "Draft a Saudi labor contract for a marketing manager",
+                                "Summarize this lease in 5 bullets",
+                            ].map(p => (
+                                <button
+                                    key={p}
+                                    onClick={() => onSubmit({ role: "user", content: p })}
+                                    className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full border border-gray-200 transition-colors"
+                                >
+                                    {p}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="text-center">
-                        <p className="text-xs py-3 mb-3 text-gray-500">
-                            AI can make mistakes. Answers are not legal advice.
+                        <p className="text-xs py-3 mt-6 mb-3 text-gray-500">
+                            Louis provides legal information, not legal advice. AI can make mistakes.
                         </p>
                     </div>
                 </div>

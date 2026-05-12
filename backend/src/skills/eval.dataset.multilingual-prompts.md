@@ -1,21 +1,29 @@
 ---
 id: eval.dataset.multilingual-prompts
-name: 'dataset · multilingual prompts'
+name: Eval Dataset — Multilingual prompts
 category: eval
-priority: P3
-status: stub
+intent: [__eval__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Multilingual benchmark dataset: prompts across English, Arabic, French (and mixed) to test language-detection + output-matching.
 
-# eval.dataset.multilingual-prompts — STUB
+# Categories (~10 prompts each)
+1. **Arabic-only** — MSA + Levantine + Gulf dialect variations
+2. **French-only** — LB-French + standard French
+3. **Mixed Arabic-English** — common in MENA legal practice
+4. **Bilingual document requests** — "draft side-by-side AR/EN"
+5. **Translation requests** — explicit "translate this clause to Arabic"
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Expected behaviors
+- Language detected correctly ([[router.language-detector]])
+- Output matches input language (or explicitly translates per request)
+- Arabic legal terminology used correctly
+- Bilingual formatting per [[output.bilingual-formatting]] + [[draft.bilingual-AR-EN-side-by-side]]
+- Controlling language statement included for bilingual drafts
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Key metric
+**Language-match rate** — output should match input ≥95% of the time
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+Storage: `eval/datasets/multilingual-prompts.jsonl`

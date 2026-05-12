@@ -201,12 +201,32 @@ docWorkspaceRouter.post("/:docId/suggestions/reset", requireAuth, (req, res) => 
  * GET /api/doc-workspace/:docId/content
  * Returns plain text content of the doc (extracted from DOCX/PDF) split into
  * paragraph blocks. For docId === "demo" returns the fixture clauses.
+ *
+ * Optional query: ?versionId=<uuid> — fetch a specific version (for compare mode).
  */
 docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
   const userId = res.locals.userId as string;
   const { docId } = req.params;
+  const versionId = typeof req.query.versionId === "string" ? req.query.versionId : null;
 
   if (docId === "demo") {
+    // Demo: return either current (v3) or a slightly different v2 for diff demo
+    if (versionId === "v2") {
+      res.json({
+        blocks: [
+          { id: "b1", heading: "1. Definitions", text: "In this Agreement, 'Affiliate' means any entity controlling, controlled by, or under common control with a Party; 'Business Day' means any day other than Friday or Saturday." },
+          { id: "b2", heading: "2. Services", text: "Provider shall perform the services described in each SOW signed under this MSA." },
+          { id: "b3", heading: "3. Fees and Payment", text: "Client shall pay Provider the fees set forth in each SOW. Invoices are due 45 days from receipt. Late payments accrue interest at the maximum rate permitted by law." },
+          { id: "b4", heading: "4. Intellectual Property", text: "Provider retains all rights to pre-existing IP. All IP developed under any SOW belongs to Provider." },
+          { id: "b5", heading: "5. Confidentiality", text: "Each Party shall hold the other's Confidential Information in strict confidence." },
+          { id: "b6", heading: "6. Limitation of Liability", text: "PROVIDER'S LIABILITY SHALL NOT EXCEED THE FEES PAID IN THE TWENTY-FOUR (24) MONTHS PRECEDING THE CLAIM." },
+          { id: "b7", heading: "7. Governing Law and Dispute Resolution", text: "This Agreement is governed by English law. Disputes shall be resolved in the courts of England and Wales." },
+        ],
+        source: "fixture",
+        versionId: "v2",
+      });
+      return;
+    }
     res.json({
       blocks: [
         { id: "b1", heading: "1. Definitions", text: "In this Agreement, the following terms shall have the meanings ascribed: 'Affiliate' means any entity controlling, controlled by, or under common control with a Party; 'Business Day' means any day other than Friday or Saturday on which banks in the United Arab Emirates are open." },
@@ -218,6 +238,7 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
         { id: "b7", heading: "7. Governing Law and Dispute Resolution", text: "This Agreement is governed by the laws of the Emirate of Dubai and applicable UAE federal laws. Disputes shall be resolved by binding arbitration under the DIAC Arbitration Rules, seat Dubai (DIFC), in English." },
       ],
       source: "fixture",
+      versionId: "v3",
     });
     return;
   }
@@ -234,7 +255,11 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
   }
 
   try {
-    const active = await loadActiveVersion(docId, db);
+    let active = await loadActiveVersion(docId, db, versionId);
+    if (!active) {
+      // Fallback to current
+      active = await loadActiveVersion(docId, db);
+    }
     if (!active) {
       res.json({ blocks: [], source: "live-empty" });
       return;

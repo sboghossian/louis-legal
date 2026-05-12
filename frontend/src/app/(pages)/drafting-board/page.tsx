@@ -106,7 +106,10 @@ function DraftingBoardInner() {
     const [selected, setSelected] = useState<string | null>(null);
     const [incomingSuggestions, setIncomingSuggestions] = useState<IncomingSuggestion[]>([]);
     const [nodes, setNodes] = useState<BoardNode[]>(INITIAL_NODES);
+    const [timeline, setTimeline] = useState(TIMELINE);
     const [dragId, setDragId] = useState<string | null>(null);
+    const [agentRunning, setAgentRunning] = useState(false);
+    const [agentProgress, setAgentProgress] = useState(0);
     const dragOriginRef = (typeof window !== "undefined" ? (window as unknown as { __louisDrag?: { x: number; y: number; ox: number; oy: number } }).__louisDrag = (window as unknown as { __louisDrag?: { x: number; y: number; ox: number; oy: number } }).__louisDrag ?? { x: 0, y: 0, ox: 0, oy: 0 } : { x: 0, y: 0, ox: 0, oy: 0 });
 
     function onNodeMouseDown(e: React.MouseEvent, id: string) {
@@ -155,8 +158,42 @@ function DraftingBoardInner() {
         })();
     }, [docId, sugIds]);
 
+    function runAgent() {
+        if (agentRunning) return;
+        setAgentRunning(true);
+        setAgentProgress(0);
+
+        const steps: { delayMs: number; event: { t: string; actor: ActorKind; text: string }; node?: BoardNode }[] = [
+            { delayMs: 800, event: { t: "now", actor: "agent", text: "Agent run started: analyzing matter context…" } },
+            { delayMs: 1500, event: { t: "now", actor: "agent", text: "Loaded firm KB precedents (4 matches)." } },
+            { delayMs: 1000, event: { t: "now", actor: "agent", text: "Drafting term sheet variant against firm playbook…" }, node: {
+                id: `n${Date.now()}-1`, kind: "termsheet", title: "Term sheet variant",
+                subtitle: "Agent · against firm playbook v2.1", x: 80, y: 460, actor: "agent",
+            } },
+            { delayMs: 1800, event: { t: "now", actor: "agent", text: "Computed risk score: 4 high-severity issues identified." } },
+            { delayMs: 1200, event: { t: "now", actor: "gate", text: "Gate: risk score exceeds threshold — partner approval required." }, node: {
+                id: `n${Date.now()}-2`, kind: "memo", title: "Approval required",
+                subtitle: "Gate · partner review", x: 380, y: 460, actor: "gate",
+            } },
+            { delayMs: 600, event: { t: "now", actor: "agent", text: "Agent run complete. 2 nodes added, 1 gate pending." } },
+        ];
+
+        let total = 0;
+        const totalSteps = steps.length;
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            total += step.delayMs;
+            setTimeout(() => {
+                setTimeline(prev => [{ ...step.event, t: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }, ...prev]);
+                if (step.node) setNodes(prev => [...prev, step.node!]);
+                setAgentProgress(Math.round(((i + 1) / totalSteps) * 100));
+                if (i === steps.length - 1) setAgentRunning(false);
+            }, total);
+        }
+    }
+
     const selectedNode = selected ? nodes.find(n => n.id === selected) : null;
-    const filteredTimeline = TIMELINE.filter(e => filter === "all" || e.actor === filter);
+    const filteredTimeline = timeline.filter(e => filter === "all" || e.actor === filter);
 
     return (
         <div className="flex h-full overflow-hidden">
@@ -224,6 +261,14 @@ function DraftingBoardInner() {
                         <Button size="sm" variant="outline" className="mb-3 h-7 text-xs" onClick={() => router.push(`/doc-workspace?docId=${encodeURIComponent(docId)}`)}>
                             <ExternalLink className="w-3 h-3 mr-1" /> Back to doc workspace
                         </Button>
+                    )}
+                    <Button size="sm" variant="default" onClick={runAgent} disabled={agentRunning} className="w-full mb-3 h-8 text-xs">
+                        {agentRunning ? `Agent running… ${agentProgress}%` : "▶ Run agent"}
+                    </Button>
+                    {agentRunning && (
+                        <div className="w-full bg-gray-200 rounded-full h-1 mb-3">
+                            <div className="bg-gray-900 h-1 rounded-full transition-all" style={{ width: `${agentProgress}%` }} />
+                        </div>
                     )}
                     <div className="flex gap-1.5">
                         {(["all", "agent", "human", "gate"] as const).map(f => (

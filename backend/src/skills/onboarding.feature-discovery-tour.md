@@ -1,21 +1,32 @@
 ---
 id: onboarding.feature-discovery-tour
-name: 'feature discovery tour'
+name: Onboarding — Feature Discovery Tour
 category: onboarding
-priority: P3
-status: stub
+intent: [__onboarding__]
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Guided tour of Louis features on first sign-in. Optional, skippable.
 
-# onboarding.feature-discovery-tour — STUB
+# Tour steps (modal sequence)
+1. **Welcome** — Louis introduces itself, sets expectations
+2. **Composer demo** — type a sample prompt; show categories
+3. **Doc workspace tease** — "Upload a contract and Louis can review it"
+4. **Skills library** — "Louis routes 973 specialized skills based on your request"
+5. **Customize** — "Tailor the assistant to your workflow"
+6. **Drafting board** — "For complex multi-step legal work"
+7. **Done** — start screen
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Triggers
+- First sign-in
+- After 7 days inactive (re-engagement)
+- New major feature launch
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Anti-pattern
+- Don't lock UI behind tour
+- Allow skip on every step
+- Don't repeat tour after dismissal
+- Don't show tour mid-task
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+See [[unlock.first-week-progressive-tour]] for the longer-arc onboarding.

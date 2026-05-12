@@ -1,21 +1,55 @@
 ---
 id: draft.security-agreement
-name: 'security agreement'
+name: Security Agreement
 category: draft
-priority: P3
-status: stub
+practice_area: banking
+intent: ['security agreement', 'secured loan']
+priority: P1
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Draft a security agreement — grants secured creditor rights over specific collateral.
 
-# draft.security-agreement — STUB
+# Required inputs
+- Debtor (collateral owner)
+- Secured Party (creditor)
+- Description of collateral (specific or general)
+- Underlying obligation secured
+- Default conditions
+- Remedies
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Collateral types
+- **Real property** — mortgage / charge / hypothec
+- **Receivables** — accounts receivable / book debts
+- **Inventory + goods** — floating charge / pledge
+- **IP** — security interest perfected with registrar
+- **Shares** — share pledge with corporate consent
+- **Bank accounts** — assignment / charge over deposits
+- **All assets** — floating charge / GSA / debenture
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Jurisdictional perfection mechanisms
+- **DIFC**: DIFC Security Law 2005 + DIFC Personal Property Security Regulations 2019; financing statement filing
+- **ADGM**: similar mechanism
+- **UAE onshore**: Federal Decree-Law 4/2020 (Movable Securities Law); central registry; pledges over specific assets
+- **KSA**: Pledges/Liens on Movable Properties Law; Unified Register of Real Rights
+- **LB**: Commercial Code provisions; gage commercial registration
+- **UK**: PSC register; Companies House filing for charges
+- **EU**: harmonization under Insolvency Regulation; member-state specifics
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Standard clauses
+1. Granting clause — Debtor grants security interest
+2. Collateral description (specific identification)
+3. Obligations secured (cross-default with related agreements)
+4. Reps & warranties — Debtor's title to collateral, no other liens
+5. Affirmative covenants — maintenance, insurance, no other liens
+6. Negative covenants — no transfer, no further encumbrance
+7. Events of default
+8. Remedies — sale, possession, set-off
+9. Receiver / administrator appointment (where available)
+10. Governing law + perfection
+
+# Critical
+- **Perfection** is jurisdiction-specific — wrong registration = unperfected = subordinate to other creditors in insolvency
+- **Cross-collateral arrangements** — collateral securing multiple loans; subordination agreements between creditors
+- **Insolvency carve-outs** — jurisdictions have specific rules on enforceability in insolvency proceedings
+- **Sharia structures** — KSA/MENA murabaha + ijara structures avoid direct interest concepts

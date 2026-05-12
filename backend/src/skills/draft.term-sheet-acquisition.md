@@ -1,21 +1,47 @@
 ---
 id: draft.term-sheet-acquisition
-name: 'term sheet acquisition'
+name: Acquisition Term Sheet
 category: draft
-priority: P3
-status: stub
+practice_area: corporate
+intent: ['acquisition term sheet']
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+Draft a non-binding term sheet for an acquisition (full or majority stake).
 
-# draft.term-sheet-acquisition — STUB
+# Required inputs
+- Buyer + Seller(s)
+- Target company
+- Type (share purchase vs asset purchase vs merger)
+- Consideration (cash / shares / mix / earn-out)
+- Closing conditions
+- No-shop period
+- Confidentiality
 
-This skill is named in the Louis skills inventory but not yet authored.
+# Standard sections
+1. Parties + purpose
+2. Transaction structure (share / asset / merger)
+3. Purchase price + payment mechanics (cash at close, escrow %, earn-out terms)
+4. Working capital adjustment mechanism
+5. Conditions precedent (regulatory, due diligence, employment retention, material consents)
+6. Representations & warranties scope (high-level)
+7. Indemnification framework (caps, baskets, time limits)
+8. Restrictive covenants on Seller (non-compete, non-solicit)
+9. Key employee retention (typically 12-24 months)
+10. Termination rights (MAC, breach, regulatory)
+11. Exclusivity / no-shop period (typically 30-60 days)
+12. Expenses and breakup fee
+13. Governing law + dispute resolution
+14. Binding vs non-binding sections (typically non-binding except exclusivity + confidentiality)
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+# Negotiation axes
+- **Purchase price structure**: cash-heavy vs earn-out-heavy
+- **Escrow %**: typically 10-15% for 12-24 months
+- **Earn-out**: trigger metrics + cap + dispute resolution
+- **R&W cap**: % of purchase price (typically 10-30%)
+- **Survival period**: 18-36 months general; longer for IP/tax/fundamentals
+- **Definition of MAC** — narrow (specific events) vs broad
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+# Document follow-up
+After signed term sheet → due diligence → definitive Share Purchase Agreement (see [[draft.share-purchase-agreement]]) → ancillary docs (escrow, employment, transition).

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-12T10:11:53.314Z",
-  "total": 973,
+  "generated_at": "2026-05-12T10:45:30.762Z",
+  "total": 975,
   "entries": [
     {
       "id": "academy.ai-feature-explainer",
@@ -857,10 +857,15 @@
     },
     {
       "id": "draft.AML-policy",
-      "name": "AML policy",
+      "name": "AML / KYC Policy",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "aml policy",
+        "anti money laundering"
+      ],
+      "practice_area": "regulatory",
       "filename": "draft.AML-policy.md"
     },
     {
@@ -886,10 +891,15 @@
     },
     {
       "id": "draft.asset-purchase-agreement",
-      "name": "asset purchase agreement",
+      "name": "Asset Purchase Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "asset purchase agreement",
+        "apa"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.asset-purchase-agreement.md"
     },
     {
@@ -907,10 +917,14 @@
     },
     {
       "id": "draft.board-resolution",
-      "name": "board resolution",
+      "name": "Board Resolution",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "board resolution"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.board-resolution.md"
     },
     {
@@ -1106,10 +1120,16 @@
     },
     {
       "id": "draft.divorce-petition",
-      "name": "divorce petition",
+      "name": "Divorce Petition",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "divorce petition",
+        "talaq",
+        "annulment"
+      ],
+      "practice_area": "estate-personal-status",
       "filename": "draft.divorce-petition.md"
     },
     {
@@ -1159,10 +1179,15 @@
     },
     {
       "id": "draft.employee-handbook",
-      "name": "employee handbook",
+      "name": "Employee Handbook",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "employee handbook",
+        "staff manual"
+      ],
+      "practice_area": "employment",
       "filename": "draft.employee-handbook.md"
     },
     {
@@ -1231,10 +1256,15 @@
     },
     {
       "id": "draft.equity-grant-letter",
-      "name": "equity grant letter",
+      "name": "Equity Grant Letter",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "equity grant",
+        "stock option letter"
+      ],
+      "practice_area": "employment",
       "filename": "draft.equity-grant-letter.md"
     },
     {
@@ -1260,10 +1290,15 @@
     },
     {
       "id": "draft.founders-agreement",
-      "name": "founders agreement",
+      "name": "Founders' Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "founders agreement",
+        "founder agreement"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.founders-agreement.md"
     },
     {
@@ -1566,10 +1601,15 @@
     },
     {
       "id": "draft.PIP-letter",
-      "name": "PIP letter",
+      "name": "Performance Improvement Plan (PIP)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "pip",
+        "performance improvement"
+      ],
+      "practice_area": "employment",
       "filename": "draft.PIP-letter.md"
     },
     {
@@ -1589,10 +1629,16 @@
     },
     {
       "id": "draft.prenup",
-      "name": "prenup",
+      "name": "Prenuptial Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "prenup",
+        "prenuptial",
+        "premarital agreement"
+      ],
+      "practice_area": "estate-personal-status",
       "filename": "draft.prenup.md"
     },
     {
@@ -1622,10 +1668,15 @@
     },
     {
       "id": "draft.property-sale-agreement",
-      "name": "property sale agreement",
+      "name": "Property Sale Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "property sale",
+        "real estate purchase"
+      ],
+      "practice_area": "real-estate",
       "filename": "draft.property-sale-agreement.md"
     },
     {
@@ -1692,10 +1743,15 @@
     },
     {
       "id": "draft.security-agreement",
-      "name": "security agreement",
+      "name": "Security Agreement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "security agreement",
+        "secured loan"
+      ],
+      "practice_area": "banking",
       "filename": "draft.security-agreement.md"
     },
     {
@@ -1826,10 +1882,14 @@
     },
     {
       "id": "draft.term-sheet-acquisition",
-      "name": "term sheet acquisition",
+      "name": "Acquisition Term Sheet",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "acquisition term sheet"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.term-sheet-acquisition.md"
     },
     {
@@ -1887,18 +1947,28 @@
     },
     {
       "id": "draft.vesting-schedule",
-      "name": "vesting schedule",
+      "name": "Vesting Schedule",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "vesting",
+        "vesting schedule"
+      ],
+      "practice_area": "corporate",
       "filename": "draft.vesting-schedule.md"
     },
     {
       "id": "draft.warning-letter",
-      "name": "warning letter",
+      "name": "Warning Letter (Employment Discipline)",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "warning letter",
+        "disciplinary warning"
+      ],
+      "practice_area": "employment",
       "filename": "draft.warning-letter.md"
     },
     {
@@ -1918,10 +1988,15 @@
     },
     {
       "id": "draft.witness-statement",
-      "name": "witness statement",
+      "name": "Witness Statement",
       "category": "draft",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "witness statement",
+        "deposition statement"
+      ],
+      "practice_area": "litigation",
       "filename": "draft.witness-statement.md"
     },
     {
@@ -2324,18 +2399,24 @@
     },
     {
       "id": "eval.benchmark-runner",
-      "name": "benchmark runner",
+      "name": "Benchmark Runner",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.benchmark-runner.md"
     },
     {
       "id": "eval.dataset.adversarial-prompts",
-      "name": "dataset · adversarial prompts",
+      "name": "Eval Dataset — Adversarial prompts",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.dataset.adversarial-prompts.md"
     },
     {
@@ -2359,10 +2440,13 @@
     },
     {
       "id": "eval.dataset.multilingual-prompts",
-      "name": "dataset · multilingual prompts",
+      "name": "Eval Dataset — Multilingual prompts",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.dataset.multilingual-prompts.md"
     },
     {
@@ -2378,18 +2462,24 @@
     },
     {
       "id": "eval.dataset.real-estate-prompts-30",
-      "name": "dataset · real estate prompts 30",
+      "name": "Eval Dataset — Real estate prompts (30)",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.dataset.real-estate-prompts-30.md"
     },
     {
       "id": "eval.dataset.research-prompts-30",
-      "name": "dataset · research prompts 30",
+      "name": "Eval Dataset — Research prompts (30)",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.dataset.research-prompts-30.md"
     },
     {
@@ -2413,10 +2503,13 @@
     },
     {
       "id": "eval.regression-detector",
-      "name": "regression detector",
+      "name": "Regression Detector",
       "category": "eval",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__eval__"
+      ],
       "filename": "eval.regression-detector.md"
     },
     {
@@ -2669,10 +2762,13 @@
     },
     {
       "id": "heuristic.notarization-apostille-requirements",
-      "name": "notarization apostille requirements",
+      "name": "Notarization + Apostille Requirements",
       "category": "heuristic",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "heuristic.notarization-apostille-requirements.md"
     },
     {
@@ -2721,10 +2817,13 @@
     },
     {
       "id": "heuristic.statute-of-limitations-flag",
-      "name": "statute of limitations flag",
+      "name": "Statute of Limitations Flag",
       "category": "heuristic",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "heuristic.statute-of-limitations-flag.md"
     },
     {
@@ -3225,10 +3324,13 @@
     },
     {
       "id": "justice.intent.book-call",
-      "name": "intent · book call",
+      "name": "Justice Intent — Book a Call",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.book-call.md"
     },
     {
@@ -3329,10 +3431,13 @@
     },
     {
       "id": "justice.intent.sales",
-      "name": "intent · sales",
+      "name": "Justice Intent — Sales",
       "category": "justice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__justice__"
+      ],
       "filename": "justice.intent.sales.md"
     },
     {
@@ -3977,26 +4082,46 @@
     },
     {
       "id": "kb.real-estate-UAE",
-      "name": "real estate UAE",
+      "name": "Knowledge Pack — UAE Real Estate",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.real-estate-UAE.md"
     },
     {
       "id": "kb.shariah-finance-AAOIFI",
-      "name": "shariah finance AAOIFI",
+      "name": "Knowledge Pack — Shariah Finance (AAOIFI)",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA",
+        "UAE",
+        "MENA"
+      ],
       "filename": "kb.shariah-finance-AAOIFI.md"
     },
     {
       "id": "kb.tax-KSA",
-      "name": "tax KSA",
+      "name": "Knowledge Pack — KSA Tax",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "KSA"
+      ],
       "filename": "kb.tax-KSA.md"
     },
     {
@@ -4009,10 +4134,16 @@
     },
     {
       "id": "kb.tax-UAE",
-      "name": "tax UAE",
+      "name": "Knowledge Pack — UAE Tax",
       "category": "kb",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__kb__"
+      ],
+      "jurisdictions": [
+        "UAE"
+      ],
       "filename": "kb.tax-UAE.md"
     },
     {
@@ -4184,6 +4315,29 @@
       "filename": "messaging.surface-rule.waitlist-email.md"
     },
     {
+      "id": "multimodal.scanned-PDF-handler",
+      "name": "Scanned PDF Handler",
+      "category": "voice",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "scanned pdf",
+        "ocr pdf"
+      ],
+      "filename": "multimodal.scanned-PDF-handler.md"
+    },
+    {
+      "id": "multimodal.signature-page-detector",
+      "name": "Signature Page Detector",
+      "category": "voice",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "signature detection"
+      ],
+      "filename": "multimodal.signature-page-detector.md"
+    },
+    {
       "id": "onboarding.B2C-vs-B2B-fork",
       "name": "B2C vs B2B fork",
       "category": "onboarding",
@@ -4193,34 +4347,46 @@
     },
     {
       "id": "onboarding.empty-state-prompts",
-      "name": "empty state prompts",
+      "name": "Onboarding — Empty-State Prompts",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
       "filename": "onboarding.empty-state-prompts.md"
     },
     {
       "id": "onboarding.feature-discovery-tour",
-      "name": "feature discovery tour",
+      "name": "Onboarding — Feature Discovery Tour",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
       "filename": "onboarding.feature-discovery-tour.md"
     },
     {
       "id": "onboarding.first-prompt-suggestion-by-persona",
-      "name": "first prompt suggestion by persona",
+      "name": "Onboarding — First Prompt Suggestions",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
       "filename": "onboarding.first-prompt-suggestion-by-persona.md"
     },
     {
       "id": "onboarding.persona-detection-questions",
-      "name": "persona detection questions",
+      "name": "Onboarding — Persona Detection",
       "category": "onboarding",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__onboarding__"
+      ],
       "filename": "onboarding.persona-detection-questions.md"
     },
     {
@@ -4450,10 +4616,13 @@
     },
     {
       "id": "output.client-letter-style",
-      "name": "client letter style",
+      "name": "Client Letter Style",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.client-letter-style.md"
     },
     {
@@ -4532,10 +4701,13 @@
     },
     {
       "id": "output.partner-memo-style",
-      "name": "partner memo style",
+      "name": "Partner Memo Style",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.partner-memo-style.md"
     },
     {
@@ -4556,18 +4728,24 @@
     },
     {
       "id": "output.table-of-comparisons",
-      "name": "table of comparisons",
+      "name": "Table of Comparisons",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.table-of-comparisons.md"
     },
     {
       "id": "output.timeline-builder",
-      "name": "timeline builder",
+      "name": "Timeline Builder",
       "category": "output",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "output.timeline-builder.md"
     },
     {
@@ -7877,10 +8055,13 @@
     },
     {
       "id": "safety.criminal-defense-disclaimer",
-      "name": "criminal defense disclaimer",
+      "name": "Criminal Defense Disclaimer",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "safety.criminal-defense-disclaimer.md"
     },
     {
@@ -7912,10 +8093,13 @@
     },
     {
       "id": "safety.minor-protection",
-      "name": "minor protection",
+      "name": "Minor Protection",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "safety.minor-protection.md"
     },
     {
@@ -7961,10 +8145,13 @@
     },
     {
       "id": "safety.violence-threats-handling",
-      "name": "violence threats handling",
+      "name": "Violence + Threats Handling",
       "category": "safety",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__core__"
+      ],
       "filename": "safety.violence-threats-handling.md"
     },
     {
@@ -8679,10 +8866,13 @@
     },
     {
       "id": "voice.dictation-cleanup",
-      "name": "dictation cleanup",
+      "name": "Voice — Dictation Cleanup",
       "category": "voice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "dictation cleanup"
+      ],
       "filename": "voice.dictation-cleanup.md"
     },
     {
@@ -8703,10 +8893,13 @@
     },
     {
       "id": "voice.short-spoken-output",
-      "name": "short spoken output",
+      "name": "Voice — Short Spoken Output",
       "category": "voice",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "__format__"
+      ],
       "filename": "voice.short-spoken-output.md"
     },
     {
@@ -9099,10 +9292,14 @@
     },
     {
       "id": "workflow.dispute-pre-litigation-pack",
-      "name": "dispute pre litigation pack",
+      "name": "Workflow — Dispute Pre-Litigation Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P1",
+      "status": "drafted",
+      "intent": [
+        "pre litigation",
+        "dispute pack"
+      ],
       "filename": "workflow.dispute-pre-litigation-pack.md"
     },
     {
@@ -9150,10 +9347,14 @@
     },
     {
       "id": "workflow.investment-round-closing-pack",
-      "name": "investment round closing pack",
+      "name": "Workflow — Investment Round Closing Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "closing pack",
+        "investment round"
+      ],
       "filename": "workflow.investment-round-closing-pack.md"
     },
     {
@@ -9178,10 +9379,14 @@
     },
     {
       "id": "workflow.startup-incorporation-pack",
-      "name": "startup incorporation pack",
+      "name": "Workflow — Startup Incorporation Pack",
       "category": "workflow",
-      "priority": "P3",
-      "status": "stub",
+      "priority": "P0",
+      "status": "drafted",
+      "intent": [
+        "incorporate startup",
+        "incorporation pack"
+      ],
       "filename": "workflow.startup-incorporation-pack.md"
     }
   ]

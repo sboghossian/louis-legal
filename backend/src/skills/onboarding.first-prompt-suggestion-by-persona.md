@@ -1,21 +1,44 @@
 ---
 id: onboarding.first-prompt-suggestion-by-persona
-name: 'first prompt suggestion by persona'
+name: Onboarding — First Prompt Suggestions
 category: onboarding
-priority: P3
-status: stub
+intent: [__onboarding__]
+priority: P0
+status: drafted
 version: 0.1
-source: SKILLS_INVENTORY.md (auto-imported)
 ---
+On first sign-in, suggest 3 starter prompts tailored to the user's persona.
 
-# onboarding.first-prompt-suggestion-by-persona — STUB
+# Patterns
 
-This skill is named in the Louis skills inventory but not yet authored.
+## For `associate` / `partner` (lawyers)
+1. "Review this MSA from a [client-side / vendor-side] perspective"
+2. "Draft a mutual NDA for [purpose] under [jurisdiction] law"
+3. "Compare non-compete enforceability across LB, KSA, UAE"
 
-When ready to author:
-1. Replace this body with the actual system-prompt content.
-2. Add intent keywords to frontmatter (`intent: [...]`) so the router can pick this up.
-3. Add `practice_area`, `jurisdictions`, and related skills (`[[other-skill]]` links).
-4. Update `status: drafted` and re-run `npm run skills:registry --prefix backend`.
+## For `in-house-counsel`
+1. "Summarize the legal risk in this [contract / policy / memo]"
+2. "Draft a client alert email about [recent regulation]"
+3. "What's our exposure on this [vendor / employment / data] issue?"
 
-See `_loader.ts` for the loader contract and `_router.ts` for how skills are routed by intent.
+## For `law-student` (Justinian)
+1. "Explain the consideration doctrine using a worked example"
+2. "Help me outline an IRAC for [issue]"
+3. "Quiz me on UAE Decree-Law 33/2021 employment provisions"
+
+## For `sme-founder`
+1. "Draft a basic NDA I can use with vendors"
+2. "Is this employment offer letter fair? Review for me"
+3. "Help me incorporate in [jurisdiction] — what's the process?"
+
+## For `louis-twin` (consumer)
+1. "I got laid off — what are my rights in [jurisdiction]?"
+2. "Help me write a will (I'm in [LB / UAE / KSA])"
+3. "I want to start a freelance business — what contracts do I need?"
+
+# Rendering
+- Display as clickable chips below the composer
+- Update based on day-of-week / time-of-day (Friday afternoon: "wrap up this week" type)
+- Refresh after first message
+
+See [[onboarding.empty-state-prompts]].
