@@ -113,6 +113,30 @@ export interface AppearanceSettings {
     fontScale?: number;
 }
 
+export interface FeedTopic {
+    id: string;
+    label: string;
+    subreddits?: string[];
+    keywords?: string[];
+}
+
+export interface FeedItem {
+    id: string;
+    topicId: string;
+    topicLabel: string;
+    title: string;
+    author: string;
+    subreddit: string;
+    url: string;
+    externalUrl: string | null;
+    createdUtc: number;
+    score: number;
+    numComments: number;
+    thumbnail: string | null;
+    excerpt: string | null;
+    over18: boolean;
+}
+
 export interface UserProfile {
     displayName: string | null;
     organisation: string | null;
@@ -122,6 +146,7 @@ export interface UserProfile {
     tier: string;
     tabularModel: string;
     appearance: AppearanceSettings;
+    feeds: FeedTopic[];
     apiKeyStatus: ApiKeyStatus;
 }
 
@@ -134,12 +159,40 @@ export async function updateUserProfile(payload: {
     organisation?: string | null;
     tabularModel?: string;
     appearance?: AppearanceSettings;
+    feeds?: FeedTopic[];
 }): Promise<UserProfile> {
     return apiRequest<UserProfile>("/user/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
     });
+}
+
+// ---------------------------------------------------------------------------
+// Reddit-backed newsfeed
+// ---------------------------------------------------------------------------
+
+export async function getFeedDefaults(): Promise<{ topics: FeedTopic[] }> {
+    const r = await fetch(`${API_BASE}/api/feed/defaults`, {
+        cache: "no-store",
+    });
+    if (!r.ok) throw new Error(`Feed defaults failed: ${r.status}`);
+    return r.json();
+}
+
+export async function fetchFeed(topics: FeedTopic[]): Promise<{
+    topics: FeedTopic[];
+    items: FeedItem[];
+    fetchedAt: number;
+}> {
+    const r = await fetch(`${API_BASE}/api/feed`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topics }),
+        cache: "no-store",
+    });
+    if (!r.ok) throw new Error(`Feed fetch failed: ${r.status}`);
+    return r.json();
 }
 
 export type ApiKeyProvider = "claude" | "gemini" | "openai";

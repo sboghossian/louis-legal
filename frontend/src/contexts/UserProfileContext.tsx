@@ -13,6 +13,7 @@ import {
     type ApiKeyState,
     type ApiKeyProvider,
     type AppearanceSettings,
+    type FeedTopic,
     type UserProfile as ApiUserProfile,
     getUserProfile,
     saveApiKey,
@@ -28,6 +29,7 @@ interface UserProfile {
     tier: string;
     tabularModel: string;
     appearance: AppearanceSettings;
+    feeds: FeedTopic[];
     apiKeys: ApiKeyState;
 }
 
@@ -77,6 +79,7 @@ function toProfile(data: ApiUserProfile): UserProfile {
     return {
         ...profile,
         appearance: (profile.appearance ?? {}) as AppearanceSettings,
+        feeds: (profile.feeds ?? []) as FeedTopic[],
         apiKeys,
     };
 }
@@ -105,6 +108,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
                 tier: "Free",
                 tabularModel: "gemini-3-flash-preview",
                 appearance: {},
+                feeds: [],
                 apiKeys: emptyApiKeys(),
             });
         } finally {

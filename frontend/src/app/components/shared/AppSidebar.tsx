@@ -39,6 +39,7 @@ import {
     Users,
     HelpCircle,
     Zap,
+    Rss,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -69,6 +70,7 @@ interface NavGroup {
 const PINNED: NavItem[] = [
     { href: "/home",       label: "Home",        icon: Home },
     { href: "/assistant",  label: "Assistant",   icon: MessageSquare },
+    { href: "/feed",       label: "Newsfeed",    icon: Rss },
     { href: "/inbox",      label: "Inbox",       icon: Inbox },
     { href: "/all-chats",  label: "All Chats",   icon: MessageSquareDashed },
     { href: "/projects",   label: "Projects",    icon: FolderOpen },

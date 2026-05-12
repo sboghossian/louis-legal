@@ -20,6 +20,8 @@ create table if not exists public.user_profiles (
   tabular_model text not null default 'gemini-3-flash-preview',
   -- { theme, font, density } — see frontend/contexts/AppearanceContext.tsx
   appearance jsonb not null default '{}'::jsonb,
+  -- [{ id, label, subreddits[], keywords[] }] — saved topics for the newsfeed
+  feeds jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -33,6 +35,14 @@ begin
   ) then
     alter table public.user_profiles
       add column appearance jsonb not null default '{}'::jsonb;
+  end if;
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='user_profiles' and column_name='feeds'
+  ) then
+    -- [{ id, label, subreddits[], keywords[] }] — see frontend Feeds tab
+    alter table public.user_profiles
+      add column feeds jsonb not null default '[]'::jsonb;
   end if;
 end;
 $$;

@@ -26,6 +26,13 @@ export type AppearanceSettings = {
   fontScale?: number; // 0.85 – 1.25
 };
 
+export type FeedTopic = {
+  id: string;
+  label: string;
+  subreddits?: string[];
+  keywords?: string[];
+};
+
 type UserProfileRow = {
   display_name: string | null;
   organisation: string | null;
@@ -34,10 +41,11 @@ type UserProfileRow = {
   tier: string;
   tabular_model: string;
   appearance: AppearanceSettings | null;
+  feeds: FeedTopic[] | null;
 };
 
 const PROFILE_COLUMNS =
-  "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model, appearance";
+  "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model, appearance, feeds";
 
 const VALID_THEMES = new Set([
   "cream",
@@ -109,8 +117,61 @@ function serializeProfile(
     tier: row.tier || "Free",
     tabularModel: resolveModel(row.tabular_model, DEFAULT_TABULAR_MODEL),
     appearance: (row.appearance ?? {}) as AppearanceSettings,
+    feeds: (row.feeds ?? []) as FeedTopic[],
     ...(apiKeyStatus ? { apiKeyStatus } : {}),
   };
+}
+
+function sanitizeFeeds(value: unknown):
+  | { ok: true; feeds: FeedTopic[] }
+  | { ok: false; detail: string } {
+  if (value === null) return { ok: true, feeds: [] };
+  if (!Array.isArray(value)) {
+    return { ok: false, detail: "feeds must be an array" };
+  }
+  const out: FeedTopic[] = [];
+  for (const entry of value) {
+    if (!entry || typeof entry !== "object") {
+      return { ok: false, detail: "feeds entries must be objects" };
+    }
+    const raw = entry as Record<string, unknown>;
+    if (typeof raw.id !== "string" || typeof raw.label !== "string") {
+      return { ok: false, detail: "feed entry needs id + label" };
+    }
+    const subreddits =
+      raw.subreddits === undefined
+        ? []
+        : Array.isArray(raw.subreddits) &&
+            raw.subreddits.every(
+              (s) => typeof s === "string" && s.trim().length > 0,
+            )
+          ? (raw.subreddits as string[]).map((s) =>
+              s.trim().replace(/^r\//i, ""),
+            )
+          : null;
+    const keywords =
+      raw.keywords === undefined
+        ? []
+        : Array.isArray(raw.keywords) &&
+            raw.keywords.every(
+              (s) => typeof s === "string" && s.trim().length > 0,
+            )
+          ? (raw.keywords as string[]).map((s) => s.trim())
+          : null;
+    if (subreddits === null) {
+      return { ok: false, detail: "feed.subreddits must be a string array" };
+    }
+    if (keywords === null) {
+      return { ok: false, detail: "feed.keywords must be a string array" };
+    }
+    out.push({
+      id: raw.id.trim(),
+      label: raw.label.trim(),
+      subreddits,
+      keywords,
+    });
+  }
+  return { ok: true, feeds: out.slice(0, 50) };
 }
 
 function validateProfilePayload(body: unknown):
@@ -135,6 +196,7 @@ function validateProfilePayload(body: unknown):
     "organisation",
     "tabularModel",
     "appearance",
+    "feeds",
   ]);
   const invalidField = Object.keys(raw).find((key) => !allowedFields.has(key));
   if (invalidField) {
@@ -146,6 +208,7 @@ function validateProfilePayload(body: unknown):
     organisation?: string | null;
     tabular_model?: string;
     appearance?: AppearanceSettings;
+    feeds?: FeedTopic[];
     updated_at: string;
   } = { updated_at: new Date().toISOString() };
 
@@ -178,6 +241,12 @@ function validateProfilePayload(body: unknown):
     const sanitized = sanitizeAppearance(raw.appearance);
     if (!sanitized.ok) return { ok: false, detail: sanitized.detail };
     update.appearance = sanitized.appearance;
+  }
+
+  if ("feeds" in raw) {
+    const sanitized = sanitizeFeeds(raw.feeds);
+    if (!sanitized.ok) return { ok: false, detail: sanitized.detail };
+    update.feeds = sanitized.feeds;
   }
 
   return { ok: true, update };

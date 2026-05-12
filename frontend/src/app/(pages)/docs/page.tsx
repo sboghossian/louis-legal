@@ -314,6 +314,26 @@ If a slot is marked read-only with "Configured by server admin", the operator se
         related: ["integrations", "skill-router", "appearance"],
     },
     {
+        slug: "feed",
+        title: "Newsfeed — Reddit on legal industry",
+        category: "features",
+        icon: BookA,
+        summary: "Live Reddit stream filtered to legal/big-law/legal-tech/AI-in-law. Add your own topics (subreddits + keywords) and Louis aggregates them.",
+        body: `
+Open **/feed** (also in the sidebar). The page ships with default topics:
+- Legal · Big Law · Legal Advice (subreddits)
+- Legal AI · Anthropic Claude × Legal · Microsoft × Legal · Open source legal (keyword search)
+- Legal products (Harvey AI, Clio, Spellbook, CoCounsel, Legora, etc.)
+
+**Custom topics**: click "Add topic", pick a label, list subreddits (one per line or comma-separated, with or without \`r/\`), and / or keywords. Each topic fans out to Reddit's public JSON; results are merged newest-first and cached for 5 minutes server-side.
+
+**Limits**: 4 subreddits + 4 keywords per topic, 20 topics per user, 200 posts per fetch. Reddit rate-limits aggressively — that's why the cache exists.
+
+**Storage**: signed-in users' topics persist in \`user_profiles.feeds\`. Signed-out users see the defaults and any topics they add are session-local.
+`,
+        related: ["assistant"],
+    },
+    {
         slug: "prompt-library",
         title: "Prompt Library",
         category: "features",
