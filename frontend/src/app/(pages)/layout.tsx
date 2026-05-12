@@ -10,8 +10,9 @@ import { AppSidebar } from "@/app/components/shared/AppSidebar";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
-// Paths that don't require completed onboarding
-const ONBOARDING_EXEMPT = ["/onboarding", "/about", "/docs", "/login", "/signup"];
+// Paths inside (pages)/ that don't gate on onboarding completion.
+// Note: /onboarding lives outside (pages)/ now, so this layout doesn't apply there.
+const ONBOARDING_EXEMPT = ["/about", "/docs"];
 
 export default function LouisLayout({
     children,

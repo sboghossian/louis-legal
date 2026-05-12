@@ -33,6 +33,9 @@ import {
     Grid3x3,
     Building2,
     ChevronRight,
+    Inbox,
+    CreditCard,
+    Users,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -59,10 +62,11 @@ interface NavGroup {
     defaultCollapsed?: boolean;
 }
 
-// Pinned items always show (never collapsed). The first 4 daily actions.
+// Pinned items always show (never collapsed). Top-of-mind daily actions.
 const PINNED: NavItem[] = [
     { href: "/home",       label: "Home",        icon: Home },
     { href: "/assistant",  label: "Assistant",   icon: MessageSquare },
+    { href: "/inbox",      label: "Inbox",       icon: Inbox },
     { href: "/all-chats",  label: "All Chats",   icon: MessageSquareDashed },
     { href: "/projects",   label: "Projects",    icon: FolderOpen },
 ];
@@ -101,7 +105,16 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/workflows",         label: "Workflows",     icon: Library },
             { href: "/integrations",      label: "Integrations",  icon: Plug },
             { href: "/settings/api-keys", label: "API Keys",      icon: Key },
-            { href: "/settings",          label: "Account",       icon: SettingsIcon },
+        ],
+    },
+    {
+        id: "admin",
+        label: "Admin",
+        defaultCollapsed: true,
+        items: [
+            { href: "/billing",    label: "Billing",   icon: CreditCard },
+            { href: "/team",       label: "Team",      icon: Users },
+            { href: "/settings",   label: "Account",   icon: SettingsIcon },
         ],
     },
     {

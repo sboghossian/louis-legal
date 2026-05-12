@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Search, Activity, RefreshCw, Plus, Pencil, Trash2 } from "lucide-react";
+import { Sparkles, Search, Activity, RefreshCw, Plus, Pencil, Trash2, Github, Upload, Download, X } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -61,9 +62,63 @@ interface RouteStats {
     bySource: Record<string, number>;
 }
 
+interface SyncConfig {
+    repo: string;
+    branch: string;
+    path: string;
+    hasToken: boolean;
+    lastPullAt?: string;
+    lastPullCount?: number;
+    status: string;
+}
+
 export default function SkillsPage() {
     const router = useRouter();
     const [view, setView] = useState<"library" | "observability">("library");
+    const [syncConfig, setSyncConfig] = useState<SyncConfig | null>(null);
+    const [showSyncSetup, setShowSyncSetup] = useState(false);
+    const [syncWorking, setSyncWorking] = useState<string | null>(null);
+
+    async function refreshSync() {
+        try {
+            const r = await fetch(`${API_BASE}/api/skills-sync/config`, { headers: { "x-user-id": "demo" } });
+            if (r.ok) {
+                const j = await r.json();
+                setSyncConfig(j.config);
+            }
+        } catch (e) { console.error(e); }
+    }
+    useEffect(() => { refreshSync(); }, []);
+
+    async function pullFromGithub() {
+        if (!syncConfig) return;
+        setSyncWorking("pull");
+        try {
+            await fetch(`${API_BASE}/api/skills-sync/pull`, { method: "POST", headers: { "x-user-id": "demo" } });
+            // Backend simulates ~1.5s; poll once
+            await new Promise(r => setTimeout(r, 2000));
+            await refreshSync();
+            window.location.reload();
+        } finally {
+            setSyncWorking(null);
+        }
+    }
+
+    async function pushToGithub() {
+        if (!syncConfig) return;
+        setSyncWorking("push");
+        try {
+            const r = await fetch(`${API_BASE}/api/skills-sync/push`, { method: "POST", headers: { "x-user-id": "demo" } });
+            const j = await r.json();
+            if (j.prUrl) {
+                if (confirm(`PR opened: ${j.prUrl}\n\nOpen in browser?`)) {
+                    window.open(j.prUrl, "_blank");
+                }
+            }
+        } finally {
+            setSyncWorking(null);
+        }
+    }
     const [entries, setEntries] = useState<RegistryEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -201,11 +256,32 @@ export default function SkillsPage() {
                             <Activity className="w-3.5 h-3.5 mr-1" />
                             Router
                         </Button>
+                        <Button
+                            size="sm"
+                            variant={syncConfig ? "outline" : "ghost"}
+                            className="h-7 text-xs"
+                            onClick={() => setShowSyncSetup(true)}
+                            title={syncConfig ? `Synced from ${syncConfig.repo}` : "Connect a GitHub repo"}
+                        >
+                            <Github className="w-3.5 h-3.5" />
+                        </Button>
                         <Button size="sm" className="h-7 text-xs" onClick={() => router.push("/skills/new")}>
                             <Plus className="w-3.5 h-3.5 mr-1" />
                             New
                         </Button>
                     </div>
+                    {syncConfig && (
+                        <div className="flex items-center gap-2 px-1 mb-2 text-[10px] text-gray-500">
+                            <Github className="w-3 h-3" />
+                            <span className="font-mono truncate flex-1">{syncConfig.repo}@{syncConfig.branch}</span>
+                            <button onClick={pullFromGithub} disabled={!!syncWorking} className="inline-flex items-center gap-0.5 text-blue-600 hover:underline">
+                                <Download className="w-2.5 h-2.5" /> {syncWorking === "pull" ? "pulling…" : "pull"}
+                            </button>
+                            <button onClick={pushToGithub} disabled={!!syncWorking} className="inline-flex items-center gap-0.5 text-blue-600 hover:underline">
+                                <Upload className="w-2.5 h-2.5" /> {syncWorking === "push" ? "pushing…" : "push"}
+                            </button>
+                        </div>
+                    )}
                     <div className="relative">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <Input
@@ -311,6 +387,108 @@ export default function SkillsPage() {
                         </div>
                     </div>
                 )}
+            </div>
+
+            {showSyncSetup && (
+                <SyncSetupModal
+                    initial={syncConfig}
+                    onClose={() => setShowSyncSetup(false)}
+                    onSaved={() => { setShowSyncSetup(false); refreshSync(); }}
+                    onDisconnect={async () => {
+                        await fetch(`${API_BASE}/api/skills-sync/config`, { method: "DELETE", headers: { "x-user-id": "demo" } });
+                        setShowSyncSetup(false);
+                        refreshSync();
+                    }}
+                />
+            )}
+        </div>
+    );
+}
+
+function SyncSetupModal({ initial, onClose, onSaved, onDisconnect }: {
+    initial: SyncConfig | null;
+    onClose: () => void;
+    onSaved: () => void;
+    onDisconnect: () => void;
+}) {
+    const [repo, setRepo] = useState(initial?.repo || "");
+    const [branch, setBranch] = useState(initial?.branch || "main");
+    const [path, setPath] = useState(initial?.path || "skills");
+    const [token, setToken] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    async function save() {
+        if (!repo.trim()) return;
+        setSubmitting(true);
+        setError(null);
+        try {
+            const r = await fetch(`${API_BASE}/api/skills-sync/config`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                body: JSON.stringify({ repo, branch, path, token: token || undefined }),
+            });
+            if (!r.ok) {
+                const j = await r.json();
+                throw new Error(j.error || `HTTP ${r.status}`);
+            }
+            onSaved();
+        } catch (e) {
+            setError((e as Error).message);
+        } finally {
+            setSubmitting(false);
+        }
+    }
+
+    return (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg w-full max-w-md">
+                <div className="px-6 py-4 border-b flex items-center justify-between">
+                    <h2 className="font-semibold flex items-center gap-2">
+                        <Github className="w-5 h-5" /> GitHub skills sync
+                    </h2>
+                    <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
+                </div>
+                <div className="px-6 py-4 space-y-3">
+                    <p className="text-xs text-gray-600">
+                        Point Louis at a GitHub repo of .md skill files. <strong>Pull</strong> syncs them into Louis;
+                        <strong> push</strong> opens a PR with your local custom skills.
+                    </p>
+                    <div>
+                        <Label className="text-xs">Repo (owner/name)</Label>
+                        <Input value={repo} onChange={e => setRepo(e.target.value)} placeholder="haqq-inc/louis-skills" className="mt-1 font-mono" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <Label className="text-xs">Branch</Label>
+                            <Input value={branch} onChange={e => setBranch(e.target.value)} className="mt-1 font-mono" />
+                        </div>
+                        <div>
+                            <Label className="text-xs">Path</Label>
+                            <Input value={path} onChange={e => setPath(e.target.value)} className="mt-1 font-mono" />
+                        </div>
+                    </div>
+                    <div>
+                        <Label className="text-xs">GitHub token (optional, for private repos / push)</Label>
+                        <Input type="password" value={token} onChange={e => setToken(e.target.value)} placeholder="ghp_…" className="mt-1 font-mono" />
+                        <p className="text-[10px] text-gray-500 mt-1">
+                            Scopes needed: <code>repo</code> (for private) or <code>public_repo</code> (for public).
+                            {initial?.hasToken && " A token is already stored."}
+                        </p>
+                    </div>
+                    {error && <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded p-2">{error}</div>}
+                </div>
+                <div className="px-6 py-4 border-t flex items-center justify-between gap-2">
+                    {initial ? (
+                        <Button variant="ghost" className="text-red-600" onClick={onDisconnect}>Disconnect</Button>
+                    ) : <span />}
+                    <div className="flex gap-2">
+                        <Button variant="outline" onClick={onClose}>Cancel</Button>
+                        <Button onClick={save} disabled={submitting || !repo.trim()}>
+                            {submitting ? "Saving…" : initial ? "Update" : "Connect"}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );
