@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
     type ApiKeyState,
     type ApiKeyProvider,
+    type AppearanceSettings,
     type UserProfile as ApiUserProfile,
     getUserProfile,
     saveApiKey,
@@ -26,6 +27,7 @@ interface UserProfile {
     creditsRemaining: number;
     tier: string;
     tabularModel: string;
+    appearance: AppearanceSettings;
     apiKeys: ApiKeyState;
 }
 
@@ -74,6 +76,7 @@ function toProfile(data: ApiUserProfile): UserProfile {
 
     return {
         ...profile,
+        appearance: (profile.appearance ?? {}) as AppearanceSettings,
         apiKeys,
     };
 }
@@ -101,6 +104,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
                 creditsRemaining: 999999, // temporarily unlimited
                 tier: "Free",
                 tabularModel: "gemini-3-flash-preview",
+                appearance: {},
                 apiKeys: emptyApiKeys(),
             });
         } finally {

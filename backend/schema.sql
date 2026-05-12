@@ -18,9 +18,24 @@ create table if not exists public.user_profiles (
   message_credits_used integer not null default 0,
   credits_reset_date timestamptz not null default (now() + interval '30 days'),
   tabular_model text not null default 'gemini-3-flash-preview',
+  -- { theme, font, density } — see frontend/contexts/AppearanceContext.tsx
+  appearance jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Idempotent column add for existing databases.
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='user_profiles' and column_name='appearance'
+  ) then
+    alter table public.user_profiles
+      add column appearance jsonb not null default '{}'::jsonb;
+  end if;
+end;
+$$;
 
 create index if not exists idx_user_profiles_user
   on public.user_profiles(user_id);

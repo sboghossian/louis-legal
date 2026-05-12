@@ -3,19 +3,21 @@
 import { useEffect, useState } from "react";
 import {
     Settings as SettingsIcon, User, CreditCard, Users as TeamIcon,
-    Database, Plug, Bell, Shield, ChevronRight,
+    Database, Plug, Bell, Shield, ChevronRight, Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AppearanceTab } from "./AppearanceTab";
 
 // Settings hub. Tabs: Profile · Models & API Keys · Billing · Team · Data ·
 // Integrations · Notifications · Security. Cross-links to dedicated pages
 // (/account, /customize, /skills) where deeper config lives.
 
-type Tab = "profile" | "models" | "billing" | "team" | "data" | "integrations" | "notifications" | "security";
+type Tab = "profile" | "appearance" | "models" | "billing" | "team" | "data" | "integrations" | "notifications" | "security";
 
 const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: "profile",       label: "Profile",         icon: User },
+    { id: "profile",       label: "Profile",          icon: User },
+    { id: "appearance",    label: "Appearance",       icon: Palette },
     { id: "models",        label: "Models & API Keys", icon: Plug },
     { id: "billing",       label: "Billing & Plan",   icon: CreditCard },
     { id: "team",          label: "Team",             icon: TeamIcon },
@@ -56,6 +58,7 @@ export default function SettingsPage() {
                 <p className="text-xs text-gray-500 mb-6">Configure {tab}.</p>
 
                 {tab === "profile" && <ProfileTab />}
+                {tab === "appearance" && <AppearanceTab />}
                 {tab === "models" && <ModelsTab />}
                 {tab === "billing" && <BillingTab />}
                 {tab === "team" && <TeamTab />}

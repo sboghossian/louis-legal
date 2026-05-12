@@ -97,6 +97,22 @@ export async function deleteAccount(): Promise<void> {
     return apiRequest<void>("/user/account", { method: "DELETE" });
 }
 
+export type AppearanceTheme = "cream" | "light" | "dark" | "paper" | "slate";
+export type AppearanceFont =
+    | "serif-garamond"
+    | "sans-inter"
+    | "serif-merriweather"
+    | "mono-jetbrains"
+    | "system";
+export type AppearanceDensity = "comfortable" | "compact";
+
+export interface AppearanceSettings {
+    theme?: AppearanceTheme;
+    font?: AppearanceFont;
+    density?: AppearanceDensity;
+    fontScale?: number;
+}
+
 export interface UserProfile {
     displayName: string | null;
     organisation: string | null;
@@ -105,6 +121,7 @@ export interface UserProfile {
     creditsRemaining: number;
     tier: string;
     tabularModel: string;
+    appearance: AppearanceSettings;
     apiKeyStatus: ApiKeyStatus;
 }
 
@@ -116,6 +133,7 @@ export async function updateUserProfile(payload: {
     displayName?: string | null;
     organisation?: string | null;
     tabularModel?: string;
+    appearance?: AppearanceSettings;
 }): Promise<UserProfile> {
     return apiRequest<UserProfile>("/user/profile", {
         method: "PATCH",

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { APPEARANCE_BOOT_SCRIPT } from "@/contexts/AppearanceContext";
 
 const inter = Inter({
     variable: "--font-inter",
@@ -57,7 +58,16 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" data-theme="cream" data-font="serif-garamond">
+            <head>
+                {/* Avoid a flash of the default theme: apply user's stored
+                    appearance synchronously before React hydrates. */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: APPEARANCE_BOOT_SCRIPT,
+                    }}
+                />
+            </head>
             <body
                 className={`${inter.variable} ${ebGaramond.variable} font-sans antialiased`}
             >

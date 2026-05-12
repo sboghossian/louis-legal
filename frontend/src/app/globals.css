@@ -141,6 +141,139 @@
     }
 }
 
+/*
+ * ---------------------------------------------------------------------------
+ * Appearance customization
+ *
+ * The frontend AppearanceContext writes two attributes on <html>:
+ *   data-theme = cream | light | dark | paper | slate
+ *   data-font  = serif-garamond | sans-inter | serif-merriweather |
+ *                mono-jetbrains | system
+ *   data-density = comfortable | compact
+ *   style="--font-scale: 1.0"
+ *
+ * Each combination only overrides tokens that are already used by the rest of
+ * the app. Nothing here adds new classes — components keep using
+ * bg-background, text-foreground, font-sans/serif, etc.
+ * ---------------------------------------------------------------------------
+ */
+
+:root {
+    --font-scale: 1;
+}
+
+html {
+    font-size: calc(16px * var(--font-scale, 1));
+}
+
+html[data-theme="cream"] {
+    --background: #fbf8f2;
+    --foreground: #1f2937;
+    --card: #ffffff;
+    --card-foreground: #1f2937;
+    --popover: #ffffff;
+    --popover-foreground: #1f2937;
+    --muted: #f5f0e5;
+    --muted-foreground: #4b5563;
+    --accent: #f5f0e5;
+    --accent-foreground: #1f2937;
+    --border: #e7e2d6;
+    --input: #e7e2d6;
+    --ring: #c9a961;
+    --sidebar: #f7f3ea;
+    --sidebar-foreground: #1f2937;
+    --sidebar-border: #e7e2d6;
+}
+
+html[data-theme="paper"] {
+    --background: #faf7f0;
+    --foreground: #2b2118;
+    --card: #fffdf6;
+    --card-foreground: #2b2118;
+    --popover: #fffdf6;
+    --popover-foreground: #2b2118;
+    --muted: #f1ead8;
+    --muted-foreground: #56493b;
+    --accent: #f1ead8;
+    --accent-foreground: #2b2118;
+    --border: #e2d8c0;
+    --input: #e2d8c0;
+    --ring: #a07b3a;
+    --sidebar: #f5efdc;
+    --sidebar-foreground: #2b2118;
+    --sidebar-border: #e2d8c0;
+}
+
+html[data-theme="slate"] {
+    --background: #f5f7fb;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+    --muted: #e8edf5;
+    --muted-foreground: #475569;
+    --accent: #e2e8f0;
+    --accent-foreground: #0f172a;
+    --border: #d8dee9;
+    --input: #d8dee9;
+    --ring: #475569;
+    --sidebar: #eef2f8;
+    --sidebar-foreground: #0f172a;
+    --sidebar-border: #d8dee9;
+}
+
+html[data-theme="dark"] {
+    --background: oklch(0.16 0 0);
+    --foreground: oklch(0.96 0 0);
+    --card: oklch(0.22 0 0);
+    --card-foreground: oklch(0.96 0 0);
+    --popover: oklch(0.22 0 0);
+    --popover-foreground: oklch(0.96 0 0);
+    --muted: oklch(0.27 0 0);
+    --muted-foreground: oklch(0.7 0 0);
+    --accent: oklch(0.27 0 0);
+    --accent-foreground: oklch(0.96 0 0);
+    --border: oklch(1 0 0 / 12%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.6 0 0);
+    --sidebar: oklch(0.2 0 0);
+    --sidebar-foreground: oklch(0.96 0 0);
+    --sidebar-border: oklch(1 0 0 / 12%);
+}
+
+/* Font choices — override --font-sans (which everything reads via Tailwind). */
+html[data-font="serif-garamond"] {
+    --font-sans: var(--font-eb-garamond);
+}
+html[data-font="sans-inter"] {
+    --font-sans: var(--font-inter);
+}
+html[data-font="serif-merriweather"] {
+    --font-sans: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+html[data-font="mono-jetbrains"] {
+    --font-sans:
+        ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas,
+        "Courier New", monospace;
+}
+html[data-font="system"] {
+    --font-sans:
+        ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Density nudges the global vertical rhythm. Components that already pick
+ * their own padding keep their look; flexible containers tighten up. */
+html[data-density="compact"] {
+    --density-gap: 0.625rem;
+    --density-pad: 0.75rem;
+}
+html[data-density="comfortable"],
+html:not([data-density]) {
+    --density-gap: 1rem;
+    --density-pad: 1.25rem;
+}
+
 .usc-section {
     font-family: var(--font-serif);
     line-height: 1.6;

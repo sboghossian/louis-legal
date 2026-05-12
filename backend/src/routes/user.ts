@@ -14,6 +14,18 @@ export const userRouter = Router();
 
 const MONTHLY_CREDIT_LIMIT = 999999;
 
+export type AppearanceSettings = {
+  theme?: "cream" | "light" | "dark" | "paper" | "slate";
+  font?:
+    | "serif-garamond"
+    | "sans-inter"
+    | "serif-merriweather"
+    | "mono-jetbrains"
+    | "system";
+  density?: "comfortable" | "compact";
+  fontScale?: number; // 0.85 – 1.25
+};
+
 type UserProfileRow = {
   display_name: string | null;
   organisation: string | null;
@@ -21,7 +33,67 @@ type UserProfileRow = {
   credits_reset_date: string;
   tier: string;
   tabular_model: string;
+  appearance: AppearanceSettings | null;
 };
+
+const PROFILE_COLUMNS =
+  "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model, appearance";
+
+const VALID_THEMES = new Set([
+  "cream",
+  "light",
+  "dark",
+  "paper",
+  "slate",
+]);
+const VALID_FONTS = new Set([
+  "serif-garamond",
+  "sans-inter",
+  "serif-merriweather",
+  "mono-jetbrains",
+  "system",
+]);
+const VALID_DENSITIES = new Set(["comfortable", "compact"]);
+
+function sanitizeAppearance(
+  value: unknown,
+): { ok: true; appearance: AppearanceSettings } | { ok: false; detail: string } {
+  if (value === null) return { ok: true, appearance: {} };
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { ok: false, detail: "appearance must be an object" };
+  }
+  const raw = value as Record<string, unknown>;
+  const out: AppearanceSettings = {};
+  if ("theme" in raw && raw.theme !== undefined) {
+    if (typeof raw.theme !== "string" || !VALID_THEMES.has(raw.theme)) {
+      return { ok: false, detail: "Unsupported appearance.theme" };
+    }
+    out.theme = raw.theme as AppearanceSettings["theme"];
+  }
+  if ("font" in raw && raw.font !== undefined) {
+    if (typeof raw.font !== "string" || !VALID_FONTS.has(raw.font)) {
+      return { ok: false, detail: "Unsupported appearance.font" };
+    }
+    out.font = raw.font as AppearanceSettings["font"];
+  }
+  if ("density" in raw && raw.density !== undefined) {
+    if (
+      typeof raw.density !== "string" ||
+      !VALID_DENSITIES.has(raw.density)
+    ) {
+      return { ok: false, detail: "Unsupported appearance.density" };
+    }
+    out.density = raw.density as AppearanceSettings["density"];
+  }
+  if ("fontScale" in raw && raw.fontScale !== undefined) {
+    if (typeof raw.fontScale !== "number" || !Number.isFinite(raw.fontScale)) {
+      return { ok: false, detail: "appearance.fontScale must be a number" };
+    }
+    const clamped = Math.min(1.25, Math.max(0.85, raw.fontScale));
+    out.fontScale = Math.round(clamped * 100) / 100;
+  }
+  return { ok: true, appearance: out };
+}
 
 function serializeProfile(
   row: UserProfileRow,
@@ -36,6 +108,7 @@ function serializeProfile(
     creditsRemaining: Math.max(MONTHLY_CREDIT_LIMIT - creditsUsed, 0),
     tier: row.tier || "Free",
     tabularModel: resolveModel(row.tabular_model, DEFAULT_TABULAR_MODEL),
+    appearance: (row.appearance ?? {}) as AppearanceSettings,
     ...(apiKeyStatus ? { apiKeyStatus } : {}),
   };
 }
@@ -47,6 +120,7 @@ function validateProfilePayload(body: unknown):
         display_name?: string | null;
         organisation?: string | null;
         tabular_model?: string;
+        appearance?: AppearanceSettings;
         updated_at: string;
       };
     }
@@ -60,6 +134,7 @@ function validateProfilePayload(body: unknown):
     "displayName",
     "organisation",
     "tabularModel",
+    "appearance",
   ]);
   const invalidField = Object.keys(raw).find((key) => !allowedFields.has(key));
   if (invalidField) {
@@ -70,6 +145,7 @@ function validateProfilePayload(body: unknown):
     display_name?: string | null;
     organisation?: string | null;
     tabular_model?: string;
+    appearance?: AppearanceSettings;
     updated_at: string;
   } = { updated_at: new Date().toISOString() };
 
@@ -98,6 +174,12 @@ function validateProfilePayload(body: unknown):
     update.tabular_model = resolved;
   }
 
+  if ("appearance" in raw) {
+    const sanitized = sanitizeAppearance(raw.appearance);
+    if (!sanitized.ok) return { ok: false, detail: sanitized.detail };
+    update.appearance = sanitized.appearance;
+  }
+
   return { ok: true, update };
 }
 
@@ -122,7 +204,7 @@ async function loadProfile(
   let { data, error } = await db
     .from("user_profiles")
     .select(
-      "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model",
+      PROFILE_COLUMNS,
     )
     .eq("user_id", userId)
     .maybeSingle();
@@ -139,7 +221,7 @@ async function loadProfile(
     const created = await db
       .from("user_profiles")
       .select(
-        "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model",
+        PROFILE_COLUMNS,
       )
       .eq("user_id", userId)
       .single();
@@ -160,7 +242,7 @@ async function loadProfile(
       })
       .eq("user_id", userId)
       .select(
-        "display_name, organisation, message_credits_used, credits_reset_date, tier, tabular_model",
+        PROFILE_COLUMNS,
       )
       .single();
 
