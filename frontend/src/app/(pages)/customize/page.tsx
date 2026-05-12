@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { SlidersHorizontal, Search, Check, Sparkles, Library, Repeat, Plug, Key, Settings as SettingsIcon, ChevronRight } from "lucide-react";
+import { SlidersHorizontal, Search, Check, Sparkles, Library, Repeat, Plug, Key, Settings as SettingsIcon, ChevronRight, Database, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
@@ -56,6 +56,33 @@ const CATEGORIES: CustomizeCategory[] = [
             { key: "tool.calc-interest",             label: "Statutory interest calc",   description: "Compute civil/commercial interest." },
             { key: "tool.ocr-arabic",                label: "OCR (Arabic)",              description: "Extract text from scanned Arabic PDFs." },
             { key: "tool.tawqi3i",                   label: "Tawqi3i e-signature",      description: "Lebanese cross-border e-signature bridge." },
+        ],
+    },
+    {
+        title: "Sources",
+        items: [
+            { key: "source.user-uploads",   label: "Your uploaded documents",  description: "Files you've added to matters/projects (default on)." },
+            { key: "source.chat-history",   label: "Your past chats",          description: "Let Louis recall what you discussed in prior sessions." },
+            { key: "source.westlaw",        label: "Westlaw",                  description: "If you have a subscription configured in Integrations." },
+            { key: "source.lexisnexis",     label: "LexisNexis",               description: "Same — requires your subscription." },
+            { key: "source.courtlistener",  label: "CourtListener",            description: "Free US federal case law." },
+            { key: "source.eurlex",         label: "EUR-Lex",                  description: "EU law + Court of Justice judgments." },
+            { key: "source.legifrance",     label: "Légifrance",               description: "Codes français + jurisprudence." },
+            { key: "source.wipo",           label: "WIPO trademark / patent",  description: "Global IP search." },
+            { key: "source.companies-house", label: "Companies House (UK)",    description: "UK corporate registry." },
+            { key: "source.sec-edgar",       label: "SEC EDGAR",               description: "US public-company filings." },
+            { key: "source.ofac",            label: "OFAC sanctions",          description: "Sanctions list screening." },
+            { key: "source.vault",           label: "Your secure Vault",       description: "Encrypted firm-only document store (see Vault below)." },
+        ],
+    },
+    {
+        title: "Vault",
+        items: [
+            { key: "vault.encrypted-store",    label: "Enable encrypted vault",        description: "Documents marked as Vault are encrypted at rest with your AES key." },
+            { key: "vault.privileged-folder",  label: "Privileged-only folder",         description: "Hidden from skill router by default; needs explicit opt-in per chat." },
+            { key: "vault.client-isolation",   label: "Per-client isolation",           description: "Cross-client matter access requires an explicit override." },
+            { key: "vault.expiring-shares",    label: "Expiring shares",                description: "Vault documents shared externally auto-expire after 7 days." },
+            { key: "vault.audit-log",          label: "Audit log every access",         description: "Every Vault read is logged; downloadable per matter." },
         ],
     },
     {
@@ -160,6 +187,8 @@ export default function CustomizePage() {
                 <HubCard href="/workflows" icon={Library} title="Workflows" desc="Reusable multi-turn flows" />
                 <HubCard href="/routines" icon={Repeat} title="Routines" desc="Scheduled AI tasks · digests · alerts" />
                 <HubCard href="/integrations" icon={Plug} title="Integrations" desc="OpenClaw · MCP servers · 32 connectors" />
+                <HubCard href="/vault" icon={Lock} title="Vault" desc="Encrypted matter storage · privilege-aware" />
+                <HubCard href="/projects" icon={Database} title="Sources" desc="Document libraries Louis pulls from" />
                 <HubCard href="/settings/api-keys" icon={Key} title="API Keys" desc="Bring your own Claude · GPT · Gemini · …" />
                 <HubCard href="/settings" icon={SettingsIcon} title="Account" desc="Profile · billing · team · data · security" />
             </div>

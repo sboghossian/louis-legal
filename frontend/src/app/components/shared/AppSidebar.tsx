@@ -6,6 +6,7 @@ import {
     MessageSquare,
     FolderOpen,
     Table2,
+    Lock,
     Library,
     User,
     ChevronsUpDown,
@@ -94,6 +95,7 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/legal-flows",       label: "Legal Flows",     labelKey: "nav.legal_flows",     icon: Workflow },
             { href: "/tabular-reviews",   label: "Tabular Review",  labelKey: "nav.tabular_review",  icon: Table2 },
             { href: "/prompt-library",    label: "Prompt Library",  labelKey: "nav.prompt_library",  icon: BookMarked },
+            { href: "/vault",             label: "Vault",            labelKey: "nav.vault",           icon: Lock },
         ],
     },
     {
