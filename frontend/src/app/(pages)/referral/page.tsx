@@ -1,173 +1,289 @@
 "use client";
 
-import { useState } from "react";
-import { Gift, Copy, Check, Mail, Linkedin } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Gift, Copy, Check, Mail, Linkedin, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
-// SCAFFOLD: ported from haqq-prototype REFERRAL_AI + REFERRAL_EFIRM.
-// Renders the consumer-AI and e-firm referral tabs with mock data. Backend is stubbed.
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
-const REFERRAL_AI = {
-    code: "stephane-h7q",
-    link: "louis.legal/r/stephane-h7q",
-    creditsBalance: 60,
-    pendingPayout: 20,
-    totalEarned: 140,
-    shareCopy: "I've been using Louis for legal drafting and it's the first tool that actually feels built for lawyers. Use my link and you'll get +50% credits on your first paid month: louis.legal/r/stephane-h7q",
-    invites: [
-        { name: "Layla K.", email: "layla@…", stage: "converted", reward: 20, when: "2 days ago" },
-        { name: "Omar D.",  email: "omar@…",  stage: "signed up", reward: null, when: "5 days ago" },
-        { name: "Ravi P.",  email: "ravi@…",  stage: "clicked",   reward: null, when: "1 week ago" },
-        { name: "Sara M.",  email: "sara@…",  stage: "converted", reward: 20, when: "2 weeks ago" },
-    ],
-};
+type Product = "ai" | "efirm";
 
-const REFERRAL_EFIRM = {
-    link: "louis.legal/r/cabinet-stephane",
-    slotsUsed: 2,
-    slotsTotal: 6,
-    freeMonthsEarned: 2,
-    invites: [
-        { firm: "Cabinet Saliba", contact: "Marie Saliba",  stage: "trial",   when: "3 days ago" },
-        { firm: "Haddad & Co.",   contact: "Tarek Haddad",  stage: "signed",  when: "3 weeks ago" },
-        { firm: "Beirut Legal",   contact: "Rania Khoury",  stage: "signed",  when: "6 weeks ago" },
-        { firm: "Nassif Avocats", contact: "Pierre Nassif", stage: "invited", when: "yesterday" },
-    ],
-};
+interface ReferralCode {
+    id: string;
+    userId: string;
+    code: string;
+    product: Product;
+    creditsBalance: number;
+    pendingPayout: number;
+    totalEarned: number;
+    createdAt: string;
+}
 
-const STAGE_COLOR: Record<string, string> = {
+interface Invite {
+    id: string;
+    referralCodeId: string;
+    inviteeEmail: string;
+    inviteeName?: string;
+    stage: "clicked" | "signed-up" | "converted" | "churned";
+    reward?: number;
+    stageAt: string;
+}
+
+const STAGE_COLOR: Record<Invite["stage"], string> = {
     converted: "bg-green-100 text-green-700",
-    "signed up": "bg-blue-100 text-blue-700",
-    signed: "bg-blue-100 text-blue-700",
+    "signed-up": "bg-blue-100 text-blue-700",
     clicked: "bg-yellow-100 text-yellow-800",
-    trial: "bg-purple-100 text-purple-700",
-    invited: "bg-gray-100 text-gray-600",
+    churned: "bg-gray-100 text-gray-600",
 };
+
+const SHARE_COPY: Record<Product, (link: string) => string> = {
+    ai: (link) => `I've been using Louis for legal drafting and it's the first tool that actually feels built for lawyers. Use my link and you'll get +50% credits on your first paid month: ${link}`,
+    efirm: (link) => `My firm uses Louis e-Firm. Highly recommend it for matter management, billing, and AI workflows. Use my link for 2 free months: ${link}`,
+};
+
+function buildLink(code: ReferralCode): string {
+    const path = code.product === "ai" ? "r" : "r/firm";
+    return `louis.legal/${path}/${code.code}`;
+}
+
+function formatTime(iso: string): string {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+}
 
 export default function ReferralPage() {
-    const [tab, setTab] = useState<"ai" | "efirm">("ai");
+    const [tab, setTab] = useState<Product>("ai");
+    const [aiCode, setAiCode] = useState<ReferralCode | null>(null);
+    const [efirmCode, setEfirmCode] = useState<ReferralCode | null>(null);
+    const [invites, setInvites] = useState<Invite[]>([]);
     const [copied, setCopied] = useState(false);
+    const [showInvite, setShowInvite] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const link = tab === "ai" ? REFERRAL_AI.link : REFERRAL_EFIRM.link;
+    const code = tab === "ai" ? aiCode : efirmCode;
+    const link = code ? buildLink(code) : "";
+
+    async function refresh() {
+        setLoading(true);
+        try {
+            const r = await fetch(`${API_BASE}/api/referral/codes`, { headers: { "x-user-id": "demo" } });
+            const j = await r.json();
+            let codes: ReferralCode[] = j.codes ?? [];
+
+            // Auto-create codes if missing
+            const ensureCode = async (product: Product) => {
+                let c = codes.find(cc => cc.product === product);
+                if (!c) {
+                    const cr = await fetch(`${API_BASE}/api/referral/codes`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                        body: JSON.stringify({ product, displayName: "stephane" }),
+                    });
+                    c = await cr.json();
+                }
+                return c!;
+            };
+            const ai = await ensureCode("ai");
+            const efirm = await ensureCode("efirm");
+            setAiCode(ai);
+            setEfirmCode(efirm);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => { refresh(); }, []);
+
+    useEffect(() => {
+        if (!code) return;
+        (async () => {
+            const r = await fetch(`${API_BASE}/api/referral/codes/${code.id}/invites`);
+            const j = await r.json();
+            setInvites(j.invites ?? []);
+        })();
+    }, [code?.id]);
+
     function copyLink() {
         navigator.clipboard.writeText(link);
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
     }
 
+    async function refreshInvites() {
+        if (!code) return;
+        const r = await fetch(`${API_BASE}/api/referral/codes/${code.id}/invites`);
+        const j = await r.json();
+        setInvites(j.invites ?? []);
+    }
+
     return (
         <div className="max-w-4xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Gift className="w-6 h-6" />
-                <h1 className="text-2xl font-semibold">Referral</h1>
+                <Gift className="w-5 h-5 text-gray-700" />
+                <h1 className="text-lg font-semibold">Referrals</h1>
+                <Badge variant="secondary">{invites.length} invites</Badge>
             </div>
             <p className="text-sm text-gray-600 mb-6">
-                Earn credits (AI side) or free months (e-firm side) by referring lawyers and clients to Louis.
+                Refer Louis to peers and earn credits + cash payouts. Two programs: consumer AI (per-signup credits) and e-Firm (free months for the firm).
             </p>
 
-            <div className="flex gap-1 mb-6 border-b border-gray-200">
-                <TabBtn active={tab === "ai"} onClick={() => setTab("ai")}>Louis AI</TabBtn>
-                <TabBtn active={tab === "efirm"} onClick={() => setTab("efirm")}>e-Firm</TabBtn>
+            <div className="flex gap-1.5 mb-6">
+                <button
+                    onClick={() => setTab("ai")}
+                    className={`px-3 py-1.5 text-sm rounded ${tab === "ai" ? "bg-gray-900 text-white" : "bg-white border border-gray-200 text-gray-700"}`}
+                >
+                    Consumer AI
+                </button>
+                <button
+                    onClick={() => setTab("efirm")}
+                    className={`px-3 py-1.5 text-sm rounded ${tab === "efirm" ? "bg-gray-900 text-white" : "bg-white border border-gray-200 text-gray-700"}`}
+                >
+                    e-Firm
+                </button>
             </div>
 
-            {tab === "ai" ? (
-                <>
-                    <div className="grid grid-cols-3 gap-4 mb-8">
-                        <StatCard label="Credits balance" value={`€${REFERRAL_AI.creditsBalance}`} />
-                        <StatCard label="Pending payout" value={`€${REFERRAL_AI.pendingPayout}`} />
-                        <StatCard label="Total earned" value={`€${REFERRAL_AI.totalEarned}`} />
-                    </div>
+            {loading && <div className="text-sm text-gray-500">Loading…</div>}
 
-                    <div className="border border-gray-200 rounded-lg p-4 mb-8">
-                        <div className="text-xs text-gray-500 mb-2">Your link</div>
-                        <div className="flex gap-2">
-                            <code className="flex-1 px-3 py-2 bg-gray-50 rounded font-mono text-sm">{REFERRAL_AI.link}</code>
-                            <Button variant="outline" onClick={copyLink}>
-                                {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
-                                {copied ? "Copied" : "Copy"}
-                            </Button>
-                            <Button variant="outline"><Mail className="w-4 h-4 mr-1" />Email</Button>
-                            <Button variant="outline"><Linkedin className="w-4 h-4 mr-1" />Share</Button>
+            {code && (
+                <>
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Credits balance</div>
+                            <div className="text-2xl font-semibold text-gray-900 mt-1">{code.creditsBalance}</div>
                         </div>
-                        <div className="mt-3 text-xs text-gray-500">Suggested share copy:</div>
-                        <div className="mt-1 px-3 py-2 bg-gray-50 rounded text-sm text-gray-700 italic">{REFERRAL_AI.shareCopy}</div>
-                    </div>
-
-                    <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Your invites</h2>
-                    <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
-                        {REFERRAL_AI.invites.map((inv, i) => (
-                            <div key={i} className="flex items-center justify-between px-4 py-3">
-                                <div>
-                                    <div className="font-medium text-sm">{inv.name}</div>
-                                    <div className="text-xs text-gray-500">{inv.email}</div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <Badge variant="secondary" className={STAGE_COLOR[inv.stage]}>{inv.stage}</Badge>
-                                    {inv.reward != null && <span className="text-sm font-medium">€{inv.reward}</span>}
-                                    <span className="text-xs text-gray-500 w-20 text-right">{inv.when}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </>
-            ) : (
-                <>
-                    <div className="grid grid-cols-3 gap-4 mb-8">
-                        <StatCard label="Slots used" value={`${REFERRAL_EFIRM.slotsUsed}/${REFERRAL_EFIRM.slotsTotal}`} />
-                        <StatCard label="Free months earned" value={`${REFERRAL_EFIRM.freeMonthsEarned}`} />
-                        <StatCard label="Tier" value="Cabinet" />
-                    </div>
-
-                    <div className="border border-gray-200 rounded-lg p-4 mb-8">
-                        <div className="text-xs text-gray-500 mb-2">Your e-firm link</div>
-                        <div className="flex gap-2">
-                            <code className="flex-1 px-3 py-2 bg-gray-50 rounded font-mono text-sm">{REFERRAL_EFIRM.link}</code>
-                            <Button variant="outline" onClick={copyLink}>
-                                {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
-                                {copied ? "Copied" : "Copy"}
-                            </Button>
+                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Pending payout</div>
+                            <div className="text-2xl font-semibold text-gray-900 mt-1">${code.pendingPayout}</div>
+                        </div>
+                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Total earned</div>
+                            <div className="text-2xl font-semibold text-gray-900 mt-1">${code.totalEarned}</div>
                         </div>
                     </div>
 
-                    <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Firm invites</h2>
-                    <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
-                        {REFERRAL_EFIRM.invites.map((inv, i) => (
-                            <div key={i} className="flex items-center justify-between px-4 py-3">
-                                <div>
-                                    <div className="font-medium text-sm">{inv.firm}</div>
-                                    <div className="text-xs text-gray-500">{inv.contact}</div>
+                    {/* Link + share */}
+                    <div className="bg-gradient-to-br from-blue-50 to-emerald-50 border border-emerald-200 rounded-lg p-5 mb-6">
+                        <div className="text-xs uppercase tracking-wide text-gray-600 mb-1">Your referral link</div>
+                        <div className="flex items-center gap-2 mb-3">
+                            <code className="flex-1 bg-white border border-gray-200 rounded px-3 py-2 text-sm font-mono truncate">{link}</code>
+                            <Button size="sm" variant="outline" onClick={copyLink}>
+                                {copied ? <Check className="w-3.5 h-3.5 mr-1" /> : <Copy className="w-3.5 h-3.5 mr-1" />}
+                                {copied ? "Copied" : "Copy"}
+                            </Button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            <Button size="sm" variant="outline" onClick={() => setShowInvite(true)}>
+                                <Send className="w-3.5 h-3.5 mr-1" /> Send invite
+                            </Button>
+                            <a
+                                href={`mailto:?subject=${encodeURIComponent("Try Louis legal AI")}&body=${encodeURIComponent(SHARE_COPY[tab](link))}`}
+                                className="inline-flex items-center px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-white"
+                            >
+                                <Mail className="w-3.5 h-3.5 mr-1" /> Email
+                            </a>
+                            <a
+                                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://" + link)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-white"
+                            >
+                                <Linkedin className="w-3.5 h-3.5 mr-1" /> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Invites table */}
+                    <div>
+                        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-2">Invites ({invites.length})</h2>
+                        <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                            {invites.length === 0 && (
+                                <div className="px-4 py-8 text-center text-sm text-gray-500">
+                                    No invites yet. Click "Send invite" to add one.
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <Badge variant="secondary" className={STAGE_COLOR[inv.stage]}>{inv.stage}</Badge>
-                                    <span className="text-xs text-gray-500 w-20 text-right">{inv.when}</span>
+                            )}
+                            {invites.map(inv => (
+                                <div key={inv.id} className="px-4 py-3 flex items-center gap-3">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-sm font-medium">{inv.inviteeName || inv.inviteeEmail}</div>
+                                        {inv.inviteeName && <div className="text-xs text-gray-500">{inv.inviteeEmail}</div>}
+                                    </div>
+                                    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STAGE_COLOR[inv.stage]}`}>
+                                        {inv.stage}
+                                    </span>
+                                    {inv.reward != null && inv.reward > 0 && (
+                                        <span className="text-xs text-green-700">+{inv.reward}</span>
+                                    )}
+                                    <span className="text-[10px] text-gray-400 w-20 text-right">{formatTime(inv.stageAt)}</span>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </>
             )}
 
-            <div className="mt-12 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-900">
-                <strong>Scaffold:</strong> mock data above. Backend ({"`/api/referrals`"}, Stripe payout flow) is next-session work.
-            </div>
+            {showInvite && code && (
+                <InviteModal
+                    codeId={code.id}
+                    onClose={() => setShowInvite(false)}
+                    onSent={() => { setShowInvite(false); refreshInvites(); }}
+                />
+            )}
         </div>
     );
 }
 
-function TabBtn({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
-    return (
-        <button onClick={onClick} className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${active ? "border-gray-900 text-gray-900" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
-            {children}
-        </button>
-    );
-}
+function InviteModal({ codeId, onClose, onSent }: { codeId: string; onClose: () => void; onSent: () => void }) {
+    const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
-function StatCard({ label, value }: { label: string; value: string }) {
+    async function submit() {
+        if (!email.trim()) return;
+        setSubmitting(true);
+        try {
+            const r = await fetch(`${API_BASE}/api/referral/codes/${codeId}/invites`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                body: JSON.stringify({ email, name }),
+            });
+            if (r.ok) onSent();
+        } finally {
+            setSubmitting(false);
+        }
+    }
+
     return (
-        <div className="border border-gray-200 rounded-lg p-4">
-            <div className="text-xs text-gray-500 uppercase tracking-wide">{label}</div>
-            <div className="text-2xl font-semibold mt-1">{value}</div>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg w-full max-w-md">
+                <div className="px-6 py-4 border-b flex items-center justify-between">
+                    <h2 className="font-semibold">Send invite</h2>
+                    <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
+                </div>
+                <div className="px-6 py-4 space-y-3">
+                    <div>
+                        <Label className="text-xs">Email</Label>
+                        <Input type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1" placeholder="friend@example.com" />
+                    </div>
+                    <div>
+                        <Label className="text-xs">Name (optional)</Label>
+                        <Input value={name} onChange={e => setName(e.target.value)} className="mt-1" />
+                    </div>
+                </div>
+                <div className="px-6 py-4 border-t flex justify-end gap-2">
+                    <Button variant="outline" onClick={onClose}>Cancel</Button>
+                    <Button onClick={submit} disabled={submitting || !email.trim()}>
+                        {submitting ? "Sending…" : "Send invite"}
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 }

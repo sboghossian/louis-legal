@@ -1,33 +1,21 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquare, Search, LayoutGrid, List, Filter } from "lucide-react";
+import { MessageSquare, Search, LayoutGrid, List, Filter, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { listChats, deleteChat } from "@/app/lib/louisApi";
+import type { LouisChat } from "@/app/components/shared/types";
 
-// SCAFFOLD: ported from haqq-prototype `renderAllChats`. Cards vs list view with category filter.
-
-interface Chat {
+interface ChatRow {
     id: string;
     title: string;
     when: string;
-    category: "draft" | "review" | "research" | "translate" | "calculate" | "advice";
-    preview: string;
-    msgCount: number;
+    category: string;
+    createdAt: string;
 }
-
-const CHATS: Chat[] = [
-    { id: "c1", title: "Acme x Globex MSA — redline",            when: "2h ago",    category: "review",   msgCount: 14, preview: "Liability cap at 12 months is favourable; recommend 24 months as fallback…" },
-    { id: "c2", title: "Saudi labor contract for marketing",      when: "yesterday", category: "draft",    msgCount: 22, preview: "I've drafted a definite-term contract with 90-day probation, 21-day annual leave…" },
-    { id: "c3", title: "Non-compete enforceability MENA",         when: "2d ago",    category: "research", msgCount: 8,  preview: "KSA Labor Law Art 83 allows up to 2 years; UAE Decree-Law 33/2021 narrowed scope…" },
-    { id: "c4", title: "End-of-service for 6yr UAE employee",     when: "3d ago",    category: "calculate", msgCount: 5, preview: "Total: 21 × 5 + 30 × 1 = 135 days basic salary; capped at 2 years total." },
-    { id: "c5", title: "Translate MSA — English to Arabic",       when: "4d ago",    category: "translate", msgCount: 3, preview: "Side-by-side bilingual draft with controlling-Arabic statement." },
-    { id: "c6", title: "Should I sign this NDA?",                 when: "5d ago",    category: "advice",   msgCount: 11, preview: "Term of 10 years is unusually long; carve-outs missing for already-public info…" },
-    { id: "c7", title: "DIFC vs ADGM for our SPV",                when: "1w ago",    category: "research", msgCount: 17, preview: "Both are common-law overlays; DIFC has older case law, ADGM has clearer crypto regime…" },
-    { id: "c8", title: "Founders agreement for 3-way split",      when: "1w ago",    category: "draft",    msgCount: 9,  preview: "Vesting 4-year + 1-year cliff; reverse vesting on founder departure; ROFR…" },
-];
 
 const CATEGORIES = ["all", "draft", "review", "research", "translate", "calculate", "advice"] as const;
 
@@ -38,22 +26,80 @@ const CAT_COLOR: Record<string, string> = {
     translate: "bg-yellow-100 text-yellow-800",
     calculate: "bg-orange-100 text-orange-700",
     advice: "bg-rose-100 text-rose-700",
+    other: "bg-gray-100 text-gray-700",
 };
+
+function inferCategory(title: string): string {
+    const t = (title || "").toLowerCase();
+    if (/draft|nda|contract|agreement|letter/.test(t)) return "draft";
+    if (/review|redline|compare|risk|sanity/.test(t)) return "review";
+    if (/research|precedent|enforceability|jurisdiction|case law/.test(t)) return "research";
+    if (/translate|arabic|french|spanish/.test(t)) return "translate";
+    if (/calc|eos|deadline|stamp duty|tax/.test(t)) return "calculate";
+    if (/advice|opinion|should i|recommend/.test(t)) return "advice";
+    return "other";
+}
+
+function relativeTime(iso: string): string {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+    return d.toLocaleDateString();
+}
 
 export default function AllChatsPage() {
     const router = useRouter();
+    const [chats, setChats] = useState<LouisChat[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [view, setView] = useState<"cards" | "list">("cards");
     const [q, setQ] = useState("");
-    const [category, setCategory] = useState<typeof CATEGORIES[number]>("all");
+    const [category, setCategory] = useState<string>("all");
+
+    async function refresh() {
+        setLoading(true);
+        setError(null);
+        try {
+            const list = await listChats();
+            setChats(list ?? []);
+        } catch (e) {
+            setError((e as Error).message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => { refresh(); }, []);
+
+    const rows: ChatRow[] = useMemo(() => chats.map(c => ({
+        id: c.id,
+        title: c.title || "Untitled chat",
+        when: relativeTime(c.created_at),
+        category: inferCategory(c.title || ""),
+        createdAt: c.created_at,
+    })), [chats]);
 
     const filtered = useMemo(() => {
         const needle = q.trim().toLowerCase();
-        return CHATS.filter(c => {
+        return rows.filter(c => {
             if (category !== "all" && c.category !== category) return false;
-            if (needle && !(c.title + " " + c.preview).toLowerCase().includes(needle)) return false;
+            if (needle && !c.title.toLowerCase().includes(needle)) return false;
             return true;
         });
-    }, [q, category]);
+    }, [rows, q, category]);
+
+    async function remove(id: string, title: string) {
+        if (!confirm(`Delete chat "${title}"?`)) return;
+        try {
+            await deleteChat(id);
+            refresh();
+        } catch (e) {
+            alert(`Delete failed: ${(e as Error).message}`);
+        }
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-8 py-8">
@@ -74,8 +120,8 @@ export default function AllChatsPage() {
                     <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search chats…" className="pl-9" />
                 </div>
-                <Button variant="outline" size="sm" className="h-9">
-                    <Filter className="w-3.5 h-3.5 mr-1" /> Advanced
+                <Button variant="outline" size="sm" className="h-9" onClick={refresh}>
+                    <Filter className="w-3.5 h-3.5 mr-1" /> Refresh
                 </Button>
             </div>
 
@@ -91,38 +137,59 @@ export default function AllChatsPage() {
                 ))}
             </div>
 
-            {view === "cards" ? (
+            {loading && <div className="text-sm text-gray-500 py-6 text-center">loading…</div>}
+            {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 text-sm">{error}</div>}
+
+            {!loading && view === "cards" && (
                 <div className="grid grid-cols-2 gap-4">
                     {filtered.map(c => (
-                        <button key={c.id} onClick={() => router.push(`/assistant/chat/${c.id}`)} className="border border-gray-200 rounded-lg p-4 text-left hover:border-gray-300 hover:shadow-sm transition-all">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category]}`}>{c.category}</span>
-                                <span className="text-[10px] text-gray-500">{c.when}</span>
-                            </div>
-                            <div className="font-medium text-sm mb-1.5 line-clamp-2">{c.title}</div>
-                            <div className="text-xs text-gray-500 line-clamp-2">{c.preview}</div>
-                            <div className="text-[10px] text-gray-400 mt-2">{c.msgCount} messages</div>
-                        </button>
-                    ))}
-                </div>
-            ) : (
-                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
-                    {filtered.map(c => (
-                        <button key={c.id} onClick={() => router.push(`/assistant/chat/${c.id}`)} className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
-                            <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category]} w-20 text-center flex-shrink-0`}>{c.category}</span>
-                            <div className="flex-1 min-w-0">
-                                <div className="font-medium text-sm truncate">{c.title}</div>
-                                <div className="text-xs text-gray-500 truncate">{c.preview}</div>
-                            </div>
-                            <span className="text-[10px] text-gray-500 w-16 text-right flex-shrink-0">{c.when}</span>
-                            <span className="text-[10px] text-gray-400 w-12 text-right flex-shrink-0">{c.msgCount} msg</span>
-                        </button>
+                        <div key={c.id} className="group relative border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition-all">
+                            <button onClick={() => router.push(`/assistant/chat/${c.id}`)} className="block w-full text-left">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other}`}>{c.category}</span>
+                                    <span className="text-[10px] text-gray-500">{c.when}</span>
+                                </div>
+                                <div className="font-medium text-sm mb-1.5 line-clamp-2">{c.title}</div>
+                            </button>
+                            <button
+                                onClick={() => remove(c.id, c.title)}
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity"
+                                title="Delete chat"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
                     ))}
                 </div>
             )}
 
-            {!filtered.length && (
-                <div className="text-center py-12 text-sm text-gray-500">No chats match the filters.</div>
+            {!loading && view === "list" && (
+                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                    {filtered.map(c => (
+                        <div key={c.id} className="group w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50">
+                            <button onClick={() => router.push(`/assistant/chat/${c.id}`)} className="flex-1 flex items-center gap-3 text-left">
+                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other} w-20 text-center flex-shrink-0`}>{c.category}</span>
+                                <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-sm truncate">{c.title}</div>
+                                </div>
+                                <span className="text-[10px] text-gray-500 w-20 text-right flex-shrink-0">{c.when}</span>
+                            </button>
+                            <button
+                                onClick={() => remove(c.id, c.title)}
+                                className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity"
+                                title="Delete chat"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {!loading && !filtered.length && (
+                <div className="text-center py-12 text-sm text-gray-500">
+                    {chats.length === 0 ? "No chats yet — start one from /assistant." : "No chats match the filters."}
+                </div>
             )}
         </div>
     );

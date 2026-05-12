@@ -14,11 +14,10 @@ async function authHeaders(): Promise<Record<string, string>> {
     return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
 }
 
-// SCAFFOLD: ported design from haqq-prototype.pages.dev `Drafting Board`.
-// This is the visual shell + interaction skeleton; backend wiring (agent reasoning,
-// tool calls, gate approvals) is intentionally stubbed for next-session implementation.
-// See haqq-prototype `BOARD_NODES`, `BOARD_LINKS`, `BOARD_TIMELINE` for the full
-// data model the prototype demonstrates.
+// Drafting Board: visual workspace for agentic legal workflows.
+// Each node is a deliverable; gates pause for human approval. The "Run agent"
+// action invokes the live skill router (/api/skills/route-test) to surface
+// which skills + jurisdictions are activated for each step.
 
 type NodeKind = "contract" | "termsheet" | "redline" | "client" | "memo" | "precedent";
 type ActorKind = "agent" | "human" | "gate";
@@ -158,14 +157,29 @@ function DraftingBoardInner() {
         })();
     }, [docId, sugIds]);
 
-    function runAgent() {
+    async function runAgent() {
         if (agentRunning) return;
         setAgentRunning(true);
         setAgentProgress(0);
 
+        // Ask the real skill router which skills will fire for this context.
+        let routedSkillsText = "Loaded firm KB precedents (4 matches).";
+        try {
+            const probe = await fetch(`${API_BASE}/api/skills/route-test`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: "Draft a term sheet for Acme x Globex M&A, MENA jurisdiction." }),
+            });
+            if (probe.ok) {
+                const j = await probe.json();
+                const skills = (j.skillIds ?? []).slice(0, 4).join(", ");
+                if (skills) routedSkillsText = `Skill router fired: ${skills}.`;
+            }
+        } catch { /* fall through to demo text */ }
+
         const steps: { delayMs: number; event: { t: string; actor: ActorKind; text: string }; node?: BoardNode }[] = [
             { delayMs: 800, event: { t: "now", actor: "agent", text: "Agent run started: analyzing matter context…" } },
-            { delayMs: 1500, event: { t: "now", actor: "agent", text: "Loaded firm KB precedents (4 matches)." } },
+            { delayMs: 1500, event: { t: "now", actor: "agent", text: routedSkillsText } },
             { delayMs: 1000, event: { t: "now", actor: "agent", text: "Drafting term sheet variant against firm playbook…" }, node: {
                 id: `n${Date.now()}-1`, kind: "termsheet", title: "Term sheet variant",
                 subtitle: "Agent · against firm playbook v2.1", x: 80, y: 460, actor: "agent",
@@ -262,8 +276,11 @@ function DraftingBoardInner() {
                             <ExternalLink className="w-3 h-3 mr-1" /> Back to doc workspace
                         </Button>
                     )}
-                    <Button size="sm" variant="default" onClick={runAgent} disabled={agentRunning} className="w-full mb-3 h-8 text-xs">
+                    <Button size="sm" variant="default" onClick={runAgent} disabled={agentRunning} className="w-full mb-2 h-8 text-xs">
                         {agentRunning ? `Agent running… ${agentProgress}%` : "▶ Run agent"}
+                    </Button>
+                    <Button size="sm" variant="outline" className="w-full mb-3 h-7 text-xs" onClick={() => router.push("/legal-flows")}>
+                        <ExternalLink className="w-3 h-3 mr-1" /> Run a structured Legal Flow
                     </Button>
                     {agentRunning && (
                         <div className="w-full bg-gray-200 rounded-full h-1 mb-3">

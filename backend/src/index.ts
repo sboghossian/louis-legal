@@ -20,6 +20,8 @@ import { mattersRouter } from "./routes/matters";
 import { citationsRouter } from "./routes/citations";
 import { riskRouter } from "./routes/risk";
 import { legalFlowsRouter } from "./routes/legalFlows";
+import { routinesRouter } from "./routes/routines";
+import { referralRouter } from "./routes/referral";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -136,6 +138,8 @@ app.use("/api/matters", mattersRouter);
 app.use("/api/citations", citationsRouter);
 app.use("/api/risk", riskRouter);
 app.use("/api/legal-flows", legalFlowsRouter);
+app.use("/api/routines", routinesRouter);
+app.use("/api/referral", referralRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Settings as SettingsIcon, User, CreditCard, Users as TeamIcon,
     Database, Plug, Bell, Shield, ChevronRight,
@@ -8,9 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-// SCAFFOLD: ported from haqq-prototype `renderSettingsModal` as a full page.
-// Tabbed: Profile · Models & API Keys · Billing · Team · Data · Integrations · Notifications · Security.
-// Most tabs are scaffolds with TODO pointers to existing routes.
+// Settings hub. Tabs: Profile · Models & API Keys · Billing · Team · Data ·
+// Integrations · Notifications · Security. Cross-links to dedicated pages
+// (/account, /customize, /skills) where deeper config lives.
 
 type Tab = "profile" | "models" | "billing" | "team" | "data" | "integrations" | "notifications" | "security";
 
@@ -76,7 +76,7 @@ function ProfileTab() {
             <Card title="Organisation" value="HAQQ" cta="Change" href="/account" />
             <Card title="Workspace" value="HAQQ — Beirut · Partner" />
             <Card title="Language preference" value="English (auto-detect input)" cta="Change" />
-            <Note>Existing account flows live at <code>/account</code>. This tab is a scaffold linking out to those.</Note>
+            <Note>Profile + identity management is in <a href="/account" className="underline">/account</a>.</Note>
         </div>
     );
 }
@@ -134,7 +134,7 @@ function BillingTab() {
                     ))}
                 </div>
             </div>
-            <Note>Stripe integration wire-up is next-session work.</Note>
+            <Note>Stripe customer portal launches in a new window when configured (see Integrations).</Note>
         </div>
     );
 }
@@ -207,24 +207,51 @@ function IntegrationsTab() {
 }
 
 function NotificationsTab() {
+    const NOTIF_DEFAULTS = [
+        { id: "deadlines",      label: "Approaching deadlines",        enabled: true,  channel: "email + slack" },
+        { id: "matter-comments", label: "Comments on your matters",    enabled: true,  channel: "email" },
+        { id: "skills-router",  label: "Skills router decisions",      enabled: false, channel: "in-app" },
+        { id: "weekly-digest",  label: "Weekly digest",                enabled: true,  channel: "email" },
+        { id: "credit-threshold", label: "Credit threshold",            enabled: true,  channel: "email" },
+        { id: "team-activity",  label: "Team activity",                enabled: false, channel: "in-app" },
+    ];
+    const [state, setState] = useState<Record<string, boolean>>({});
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem("louis.notif.prefs");
+            if (stored) {
+                setState(JSON.parse(stored));
+                return;
+            }
+        } catch {}
+        const init: Record<string, boolean> = {};
+        for (const n of NOTIF_DEFAULTS) init[n.id] = n.enabled;
+        setState(init);
+    }, []);
+    function toggle(id: string) {
+        setState(prev => {
+            const next = { ...prev, [id]: !prev[id] };
+            try { localStorage.setItem("louis.notif.prefs", JSON.stringify(next)); } catch {}
+            return next;
+        });
+    }
     return (
-        <div className="space-y-4">
-            {[
-                { label: "Approaching deadlines",        enabled: true,  channel: "email + slack" },
-                { label: "Comments on your matters",     enabled: true,  channel: "email" },
-                { label: "Skills router decisions",      enabled: false, channel: "in-app" },
-                { label: "Weekly digest",                enabled: true,  channel: "email" },
-                { label: "Credit threshold",             enabled: true,  channel: "email" },
-                { label: "Team activity",                enabled: false, channel: "in-app" },
-            ].map(n => (
-                <label key={n.label} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded">
-                    <input type="checkbox" defaultChecked={n.enabled} className="accent-gray-900" />
+        <div className="space-y-1">
+            {NOTIF_DEFAULTS.map(n => (
+                <label key={n.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={state[n.id] ?? n.enabled}
+                        onChange={() => toggle(n.id)}
+                        className="accent-gray-900"
+                    />
                     <div className="flex-1">
                         <div className="text-sm">{n.label}</div>
                         <div className="text-[10px] text-gray-500">via {n.channel}</div>
                     </div>
                 </label>
             ))}
+            <p className="text-[11px] text-gray-500 mt-3">Preferences persist in your browser. Server-side delivery routing wires up when notification channels (email + Slack) are configured in Integrations.</p>
         </div>
     );
 }

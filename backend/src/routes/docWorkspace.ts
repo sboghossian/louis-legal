@@ -2,7 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/auth";
 import { createServerSupabase } from "../lib/supabase";
 import { downloadFile } from "../lib/storage";
-import { extractPdfText, loadActiveVersion } from "../lib/chatTools";
+import { extractPdfText } from "../lib/chatTools";
+import { loadActiveVersion } from "../lib/documentVersions";
 
 export const docWorkspaceRouter = Router();
 
@@ -289,7 +290,7 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
     for (const p of paragraphs) {
       const headingMatch = p.match(/^(\d+(?:\.\d+)*\.?\s+[^\n]{1,80}|Article\s+\d+[^\n]{0,80}|[A-Z][A-Z\s]{4,40})$/);
       if (headingMatch && p.length < 120) {
-        blocks.push({ id: `b${i++}`, heading: p });
+        blocks.push({ id: `b${i++}`, heading: p, text: "" });
       } else {
         // If previous block has a heading but no text yet, attach
         if (blocks.length && !("text" in blocks[blocks.length - 1])) {

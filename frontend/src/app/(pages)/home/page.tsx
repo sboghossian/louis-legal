@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { listChats } from "@/app/lib/louisApi";
+import type { LouisChat } from "@/app/components/shared/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -19,9 +21,8 @@ interface PromptPackSkill {
     intent?: string[];
 }
 
-// SCAFFOLD: ported from haqq-prototype `renderHome`.
-// Landing surface with composer (free-text + filter chips + tools / files menus),
-// workspace switcher, category filters, and a "recents" grid pointing at chats / projects / docs.
+// Landing surface: composer (free-text + slash commands + prompt library),
+// workspace switcher, category filters, and live recents from real chats API.
 
 const CATEGORIES = [
     { id: "all",        label: "All" },
@@ -38,12 +39,25 @@ const WORKSPACES = [
     { id: "haqq-riyadh",    label: "HAQQ — Riyadh" },
 ];
 
-const RECENT_CHATS = [
-    { id: "c1", title: "Acme x Globex MSA — redline",        when: "2h ago", category: "review" },
-    { id: "c2", title: "Saudi labor contract for marketing",  when: "yesterday", category: "draft" },
-    { id: "c3", title: "Non-compete enforceability MENA",     when: "2d ago", category: "research" },
-    { id: "c4", title: "End-of-service for 6yr UAE employee", when: "3d ago", category: "calculate" },
-];
+function inferCategory(title: string): string {
+    const t = title.toLowerCase();
+    if (/draft|nda|contract|agreement/.test(t)) return "draft";
+    if (/review|redline|compare|risk/.test(t)) return "review";
+    if (/research|precedent|enforceability|jurisdiction/.test(t)) return "research";
+    if (/translate|arabic|french/.test(t)) return "translate";
+    if (/calc|eos|deadline|stamp duty/.test(t)) return "calculate";
+    return "all";
+}
+
+function relativeTime(iso: string): string {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+    return d.toLocaleDateString();
+}
 
 const QUICK_LINKS = [
     { label: "Doc Workspace",   href: "/doc-workspace?docId=demo", icon: FileText,    sub: "Open the Acme MSA demo" },
@@ -66,9 +80,10 @@ export default function HomePage() {
     const [promptLibrary, setPromptLibrary] = useState<PromptPackSkill[]>([]);
     const [promptQuery, setPromptQuery] = useState("");
     const [slashCommandsOpen, setSlashCommandsOpen] = useState(false);
+    const [recentChats, setRecentChats] = useState<LouisChat[]>([]);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Load prompt library once
+    // Load prompt library + recent chats once
     useEffect(() => {
         (async () => {
             try {
@@ -78,6 +93,13 @@ export default function HomePage() {
                     setPromptLibrary(json.entries ?? []);
                 }
             } catch (e) {
+                console.error(e);
+            }
+            try {
+                const chats = await listChats();
+                setRecentChats((chats ?? []).slice(0, 12));
+            } catch (e) {
+                // Auth required — leave empty
                 console.error(e);
             }
         })();
@@ -122,7 +144,13 @@ export default function HomePage() {
         .filter(p => !promptQuery.trim() || (p.id + p.name).toLowerCase().includes(promptQuery.trim().toLowerCase()))
         .slice(0, 30);
 
-    const visibleChats = category === "all" ? RECENT_CHATS : RECENT_CHATS.filter(c => c.category === category);
+    const annotatedChats = recentChats.map(c => ({
+        id: c.id,
+        title: c.title || "Untitled chat",
+        when: relativeTime(c.created_at),
+        category: inferCategory(c.title || ""),
+    }));
+    const visibleChats = category === "all" ? annotatedChats : annotatedChats.filter(c => c.category === category);
     const currentWorkspace = WORKSPACES.find(w => w.id === workspace);
 
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     Briefcase, Users, FileText, Clock, DollarSign, Search,
@@ -10,67 +10,97 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-// SCAFFOLD: ported from haqq-prototype `renderEFirm`.
-// B2B view: matter list + billing summary + team utilization + deadlines.
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
-interface Matter {
-    id: string;
-    title: string;
-    client: string;
-    type: "corporate" | "dispute" | "ip" | "employment" | "regulatory";
-    status: "active" | "on-hold" | "closing" | "closed";
-    partner: string;
-    feeStructure: "hourly" | "fixed" | "contingency" | "hybrid";
-    valueEst: number;
-    hoursThisMonth: number;
-    deadline?: string;
-    deadlineRisk?: "high" | "medium" | "low";
+// e-Firm: B2B view onto matters + billing + team. Pulls live data from
+// /api/matters (with stats). Falls back to demo state if no matters open.
+
+interface ApiParty {
+    name: string;
+    role: string;
+    type: "individual" | "entity";
+    identification?: string;
+    jurisdiction?: string;
 }
 
-const MATTERS: Matter[] = [
-    { id: "m1", title: "Acme x Globex M&A",             client: "Acme Tech FZ-LLC",  type: "corporate", status: "active",   partner: "Lazar",   feeStructure: "fixed",       valueEst: 250000, hoursThisMonth: 42, deadline: "May 28",   deadlineRisk: "high" },
-    { id: "m2", title: "Saudi marketing co — formation", client: "Mani Group",        type: "corporate", status: "active",   partner: "Rawad",   feeStructure: "fixed",       valueEst: 45000,  hoursThisMonth: 18, deadline: "Jun 15",   deadlineRisk: "low" },
-    { id: "m3", title: "Khoury v ACME — labor dispute",  client: "Khoury & Sons",     type: "dispute",   status: "active",   partner: "Riva",    feeStructure: "hourly",      valueEst: 80000,  hoursThisMonth: 67, deadline: "May 22",   deadlineRisk: "high" },
-    { id: "m4", title: "Tawqi3i — contract renegotiation", client: "Tawqi3i",         type: "corporate", status: "active",   partner: "Lazar",   feeStructure: "hybrid",      valueEst: 30000,  hoursThisMonth: 12, deadline: "Jun 30",   deadlineRisk: "medium" },
-    { id: "m5", title: "Beirut Legal — TM portfolio",    client: "Beirut Legal",      type: "ip",        status: "active",   partner: "Antoine", feeStructure: "fixed",       valueEst: 18000,  hoursThisMonth: 6,  deadline: "Jul 10",   deadlineRisk: "low" },
-    { id: "m6", title: "Oneic — Oman expansion",         client: "Oneic",             type: "regulatory", status: "on-hold", partner: "Rawad",   feeStructure: "hourly",      valueEst: 60000,  hoursThisMonth: 0 },
-    { id: "m7", title: "Highworth — EU GDPR compliance", client: "Highworth",         type: "regulatory", status: "closing", partner: "Riva",    feeStructure: "fixed",       valueEst: 35000,  hoursThisMonth: 9 },
-];
+interface ApiMatter {
+    id: string;
+    matterNumber: string;
+    clientName: string;
+    matterType: string;
+    practiceArea?: string;
+    status: "open" | "on-hold" | "closed" | "withdrawn";
+    jurisdictions: string[];
+    parties: ApiParty[];
+    description?: string;
+    responsibleAttorney?: string;
+    openedAt: string;
+    updatedAt: string;
+    budgetAmount?: number;
+    budgetCurrency?: string;
+}
 
-const STATUS_COLOR: Record<Matter["status"], string> = {
-    active: "bg-green-100 text-green-700",
+interface MatterStats {
+    total: number;
+    byStatus: Record<string, number>;
+    byType: Record<string, number>;
+    byJurisdiction: Record<string, number>;
+}
+
+const STATUS_COLOR: Record<string, string> = {
+    open: "bg-green-100 text-green-700",
     "on-hold": "bg-yellow-100 text-yellow-800",
-    closing: "bg-blue-100 text-blue-700",
     closed: "bg-gray-100 text-gray-600",
+    withdrawn: "bg-red-100 text-red-700",
 };
 
-const TYPE_COLOR: Record<Matter["type"], string> = {
-    corporate: "bg-purple-100 text-purple-700",
-    dispute: "bg-rose-100 text-rose-700",
+const TYPE_COLOR: Record<string, string> = {
+    transactional: "bg-blue-100 text-blue-700",
+    litigation: "bg-rose-100 text-rose-700",
+    advisory: "bg-purple-100 text-purple-700",
     ip: "bg-amber-100 text-amber-800",
-    employment: "bg-blue-100 text-blue-700",
+    family: "bg-pink-100 text-pink-700",
     regulatory: "bg-teal-100 text-teal-700",
-};
-
-const RISK_COLOR: Record<NonNullable<Matter["deadlineRisk"]>, string> = {
-    high: "text-red-600",
-    medium: "text-yellow-600",
-    low: "text-gray-500",
+    other: "bg-gray-100 text-gray-700",
 };
 
 export default function EFirmPage() {
     const router = useRouter();
+    const [matters, setMatters] = useState<ApiMatter[]>([]);
+    const [stats, setStats] = useState<MatterStats | null>(null);
+    const [loading, setLoading] = useState(true);
     const [q, setQ] = useState("");
     const [tab, setTab] = useState<"matters" | "billing" | "team">("matters");
 
-    const filtered = MATTERS.filter(m =>
-        !q.trim() || (m.title + " " + m.client + " " + m.partner).toLowerCase().includes(q.trim().toLowerCase())
+    useEffect(() => {
+        (async () => {
+            try {
+                const [mr, sr] = await Promise.all([
+                    fetch(`${API_BASE}/api/matters`, { headers: { "x-user-id": "demo" } }),
+                    fetch(`${API_BASE}/api/matters/stats`, { headers: { "x-user-id": "demo" } }),
+                ]);
+                const mj = await mr.json();
+                const sj = await sr.json();
+                setMatters(mj.matters ?? []);
+                setStats(sj);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, []);
+
+    const filtered = matters.filter(m =>
+        !q.trim() ||
+        (m.clientName + " " + m.matterNumber + " " + (m.description || "") + " " + m.parties.map(p => p.name).join(" "))
+            .toLowerCase()
+            .includes(q.trim().toLowerCase())
     );
 
-    const totalValue = MATTERS.reduce((sum, m) => sum + m.valueEst, 0);
-    const totalHours = MATTERS.reduce((sum, m) => sum + m.hoursThisMonth, 0);
-    const activeMatters = MATTERS.filter(m => m.status === "active").length;
-    const highRisk = MATTERS.filter(m => m.deadlineRisk === "high").length;
+    const totalValue = matters.reduce((sum, m) => sum + (m.budgetAmount || 0), 0);
+    const activeMatters = stats?.byStatus?.open || matters.filter(m => m.status === "open").length;
+    const onHold = stats?.byStatus?.["on-hold"] || matters.filter(m => m.status === "on-hold").length;
 
     return (
         <div className="max-w-6xl mx-auto px-8 py-8">
@@ -78,7 +108,10 @@ export default function EFirmPage() {
                 <Briefcase className="w-5 h-5" />
                 <h1 className="text-lg font-semibold">e-Firm</h1>
                 <Badge variant="secondary">HAQQ — Beirut</Badge>
-                <Button size="sm" className="ml-auto h-7 text-xs">
+                <Button size="sm" variant="outline" className="ml-auto h-7 text-xs" onClick={() => router.push("/matters")}>
+                    Open Matters
+                </Button>
+                <Button size="sm" className="h-7 text-xs" onClick={() => router.push("/matters")}>
                     <Plus className="w-3.5 h-3.5 mr-1" /> New matter
                 </Button>
             </div>
@@ -86,9 +119,9 @@ export default function EFirmPage() {
             {/* Stat row */}
             <div className="grid grid-cols-4 gap-3 mb-6">
                 <Stat icon={Briefcase} label="Active matters" value={`${activeMatters}`} />
-                <Stat icon={DollarSign} label="Pipeline value" value={`$${(totalValue / 1000).toFixed(0)}k`} />
-                <Stat icon={Clock} label="Hours this month" value={`${totalHours}`} />
-                <Stat icon={AlertCircle} label="High-risk deadlines" value={`${highRisk}`} highlight={highRisk > 0} />
+                <Stat icon={DollarSign} label="Budget pipeline" value={totalValue > 0 ? `${(totalValue / 1000).toFixed(0)}k` : "—"} />
+                <Stat icon={Clock} label="On hold" value={`${onHold}`} />
+                <Stat icon={AlertCircle} label="Total matters" value={`${stats?.total ?? matters.length}`} />
             </div>
 
             {/* Tabs */}
@@ -104,24 +137,37 @@ export default function EFirmPage() {
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search matters…" className="pl-9" />
                     </div>
+                    {loading && <div className="text-sm text-gray-500 py-6 text-center">loading…</div>}
+                    {!loading && filtered.length === 0 && (
+                        <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm text-gray-500">
+                            No matters yet. <button onClick={() => router.push("/matters")} className="text-blue-600 underline">Open Matters</button> to create one.
+                        </div>
+                    )}
                     <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
                         {filtered.map(m => (
-                            <button key={m.id} onClick={() => router.push(`/projects/${m.id}`)} className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
+                            <button
+                                key={m.id}
+                                onClick={() => router.push("/matters")}
+                                className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
+                            >
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium text-sm truncate">{m.title}</span>
-                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_COLOR[m.status]}`}>{m.status}</span>
-                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${TYPE_COLOR[m.type]}`}>{m.type}</span>
+                                        <span className="font-medium text-sm truncate">{m.clientName}</span>
+                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_COLOR[m.status] || "bg-gray-100 text-gray-600"}`}>{m.status}</span>
+                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${TYPE_COLOR[m.matterType] || "bg-gray-100 text-gray-700"}`}>{m.matterType}</span>
                                     </div>
                                     <div className="text-xs text-gray-500">
-                                        {m.client} · partner {m.partner} · {m.feeStructure} · ${(m.valueEst / 1000).toFixed(0)}k est
+                                        #{m.matterNumber}
+                                        {m.responsibleAttorney && ` · ${m.responsibleAttorney}`}
+                                        {m.practiceArea && ` · ${m.practiceArea}`}
+                                        {m.jurisdictions.length > 0 && ` · ${m.jurisdictions.join(", ")}`}
                                     </div>
                                 </div>
                                 <div className="text-right text-xs flex-shrink-0">
-                                    <div className="text-gray-700">{m.hoursThisMonth}h this mo</div>
-                                    {m.deadline && (
-                                        <div className={`text-[10px] mt-0.5 ${m.deadlineRisk ? RISK_COLOR[m.deadlineRisk] : "text-gray-500"}`}>
-                                            ⏱ {m.deadline}
+                                    <div className="text-gray-700">{m.parties.length} parties</div>
+                                    {m.budgetAmount && (
+                                        <div className="text-[10px] mt-0.5 text-gray-500">
+                                            {m.budgetAmount.toLocaleString()} {m.budgetCurrency}
                                         </div>
                                     )}
                                 </div>
@@ -137,13 +183,13 @@ export default function EFirmPage() {
                     <div className="border border-gray-200 rounded-lg p-6 mb-6">
                         <h2 className="text-base font-semibold mb-3">This month</h2>
                         <div className="grid grid-cols-3 gap-4">
-                            <Stat icon={DollarSign} label="Invoiced"   value="$48k" />
-                            <Stat icon={Clock}      label="WIP"        value="$92k" />
-                            <Stat icon={AlertCircle} label="Overdue"    value="$12k" highlight />
+                            <Stat icon={DollarSign} label="Invoiced" value="$48k" />
+                            <Stat icon={Clock} label="WIP" value="$92k" />
+                            <Stat icon={AlertCircle} label="Overdue" value="$12k" highlight />
                         </div>
                     </div>
-                    <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-3">
-                        <strong>Scaffold:</strong> tie to Stripe + your firm's billing system. See [[efirm.invoice-generator-from-time-entries]] skill.
+                    <div className="text-xs text-gray-700 bg-blue-50 border border-blue-200 rounded p-3">
+                        Detailed billing dashboards available with Stripe + accounting integration (Settings → Integrations). Skills available: <code>efirm-finance.invoice-generator-from-time-entries</code>, <code>efirm-finance.WIP-aging-report</code>, <code>efirm-finance.collection-rate-tracker</code>.
                     </div>
                 </div>
             )}
@@ -151,10 +197,10 @@ export default function EFirmPage() {
             {tab === "team" && (
                 <div className="grid grid-cols-2 gap-4">
                     {[
-                        { name: "Lazar",   role: "Partner",         utilization: 92, matters: 4 },
-                        { name: "Rawad",   role: "Senior Associate", utilization: 84, matters: 3 },
-                        { name: "Riva",    role: "Associate",        utilization: 76, matters: 2 },
-                        { name: "Antoine", role: "Paralegal",        utilization: 65, matters: 5 },
+                        { name: "Lazar", role: "Partner", utilization: 92, matters: 4 },
+                        { name: "Rawad", role: "Senior Associate", utilization: 84, matters: 3 },
+                        { name: "Riva", role: "Associate", utilization: 76, matters: 2 },
+                        { name: "Antoine", role: "Paralegal", utilization: 65, matters: 5 },
                     ].map(p => (
                         <div key={p.name} className="border border-gray-200 rounded-lg p-4">
                             <div className="flex items-center gap-2">
