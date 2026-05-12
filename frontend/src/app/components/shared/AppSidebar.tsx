@@ -38,7 +38,6 @@ import {
     Inbox,
     CreditCard,
     Users,
-    HelpCircle,
     Zap,
     Rss,
     Star,
