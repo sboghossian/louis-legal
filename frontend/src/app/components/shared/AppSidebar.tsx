@@ -37,6 +37,8 @@ import {
     Inbox,
     CreditCard,
     Users,
+    HelpCircle,
+    Zap,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -115,6 +117,7 @@ const NAV_GROUPS: NavGroup[] = [
         defaultCollapsed: true,
         items: [
             { href: "/billing",    label: "Billing",   icon: CreditCard },
+            { href: "/upgrade",    label: "Upgrade",   icon: Zap },
             { href: "/team",       label: "Team",      icon: Users },
             { href: "/settings",   label: "Account",   icon: SettingsIcon },
         ],
@@ -124,6 +127,7 @@ const NAV_GROUPS: NavGroup[] = [
         label: "More",
         defaultCollapsed: true,
         items: [
+            { href: "/help",      label: "Help",      icon: HelpCircle },
             { href: "/docs",      label: "Docs",      icon: BookOpenCheck },
             { href: "/referral",  label: "Referral",  icon: Gift },
             { href: "/about",     label: "About",     icon: Info },

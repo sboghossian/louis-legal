@@ -14,6 +14,8 @@ import {
     FileText,
     FolderOpen,
     Library,
+    Mic,
+    MicOff,
     Square,
     X,
 } from "lucide-react";
@@ -73,6 +75,106 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     const [workflowModalOpen, setWorkflowModalOpen] = useState(false);
     const [apiKeyModalProvider, setApiKeyModalProvider] =
         useState<ModelProvider | null>(null);
+
+    // Voice dictation via Web Speech API. Captures interim + final results
+    // and appends them to the composer. Falls back gracefully when the
+    // browser doesn't support it (no button is rendered).
+    const recognitionRef = useRef<unknown>(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [voiceSupported, setVoiceSupported] = useState(false);
+    const [voiceError, setVoiceError] = useState<string | null>(null);
+
+    // Probe browser support after mount so SSR matches.
+    if (typeof window !== "undefined" && !voiceSupported) {
+        const w = window as unknown as {
+            SpeechRecognition?: new () => unknown;
+            webkitSpeechRecognition?: new () => unknown;
+        };
+        if (w.SpeechRecognition || w.webkitSpeechRecognition) {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            setVoiceSupported(true);
+        }
+    }
+
+    function ensureRecognizer(): unknown {
+        if (recognitionRef.current) return recognitionRef.current;
+        if (typeof window === "undefined") return null;
+        const w = window as unknown as {
+            SpeechRecognition?: new () => unknown;
+            webkitSpeechRecognition?: new () => unknown;
+        };
+        const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+        if (!Ctor) return null;
+        const rec = new Ctor() as {
+            lang: string;
+            interimResults: boolean;
+            continuous: boolean;
+            onresult: (e: unknown) => void;
+            onerror: (e: unknown) => void;
+            onend: () => void;
+        };
+        rec.lang =
+            (typeof navigator !== "undefined" && navigator.language) || "en-US";
+        rec.interimResults = true;
+        rec.continuous = true;
+        rec.onresult = (event: unknown) => {
+            const e = event as {
+                resultIndex: number;
+                results: ArrayLike<{
+                    isFinal: boolean;
+                    0: { transcript: string };
+                }>;
+            };
+            let finalText = "";
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                const r = e.results[i];
+                if (r.isFinal) finalText += r[0].transcript;
+            }
+            if (finalText) {
+                setValue((prev) =>
+                    prev ? `${prev} ${finalText.trim()}` : finalText.trim(),
+                );
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = "auto";
+                    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+                }
+            }
+        };
+        rec.onerror = (event: unknown) => {
+            const e = event as { error?: string };
+            setVoiceError(e?.error ?? "voice-input-error");
+            setIsRecording(false);
+        };
+        rec.onend = () => {
+            setIsRecording(false);
+        };
+        recognitionRef.current = rec;
+        return rec;
+    }
+
+    function toggleVoice() {
+        const rec = ensureRecognizer() as {
+            start: () => void;
+            stop: () => void;
+        } | null;
+        if (!rec) {
+            setVoiceError("Voice input is not supported in this browser");
+            return;
+        }
+        if (isRecording) {
+            rec.stop();
+            setIsRecording(false);
+        } else {
+            setVoiceError(null);
+            try {
+                rec.start();
+                setIsRecording(true);
+            } catch {
+                // start() throws if a previous session is still finishing —
+                // ignore and let onend() reset state.
+            }
+        }
+    }
 
     useImperativeHandle(ref, () => ({
         addDoc: (doc: LouisDocument) => {
@@ -265,6 +367,38 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                     )}
                                     <span className="hidden sm:inline">
                                         Workflows
+                                    </span>
+                                </button>
+                            )}
+                            {voiceSupported && (
+                                <button
+                                    type="button"
+                                    onClick={toggleVoice}
+                                    aria-label={
+                                        isRecording
+                                            ? "Stop voice input"
+                                            : "Start voice input"
+                                    }
+                                    title={
+                                        voiceError
+                                            ? `Voice: ${voiceError}`
+                                            : isRecording
+                                              ? "Listening — click to stop"
+                                              : "Dictate (Web Speech API)"
+                                    }
+                                    className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors ${
+                                        isRecording
+                                            ? "text-red-600 bg-red-50 hover:bg-red-100"
+                                            : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                                    }`}
+                                >
+                                    {isRecording ? (
+                                        <MicOff className="h-3.5 w-3.5" />
+                                    ) : (
+                                        <Mic className="h-3.5 w-3.5" />
+                                    )}
+                                    <span className="hidden sm:inline">
+                                        {isRecording ? "Listening…" : "Voice"}
                                     </span>
                                 </button>
                             )}
