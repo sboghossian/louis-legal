@@ -1,0 +1,382 @@
+/* ----------------------------------------------------------------
+   Louis rich-text editor — paper-style canvas
+   ---------------------------------------------------------------- */
+
+.paper {
+    background: #fbf8f2;
+    color: #1f1d18;
+    min-height: 100%;
+    padding: 3rem 0;
+}
+
+.sheet {
+    background: #fbf8f2;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+/* Thin gold rule above each heading after the first one */
+.sheet :global(.ProseMirror) > h1 + *,
+.sheet :global(.ProseMirror) > h2:not(:first-child),
+.sheet :global(.ProseMirror) > h3:not(:first-child) {
+    /* no-op — rule applied via ::before below */
+}
+
+.sheet :global(.ProseMirror) {
+    outline: none;
+    min-height: 60vh;
+}
+
+.sheet :global(.ProseMirror) h1 {
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 2rem 0 1rem;
+}
+
+.sheet :global(.ProseMirror) h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 1.8rem 0 0.75rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid #c8a64a40;
+}
+
+.sheet :global(.ProseMirror) h2:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.sheet :global(.ProseMirror) h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 1.4rem 0 0.5rem;
+}
+
+.sheet :global(.ProseMirror) h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.2rem 0 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.sheet :global(.ProseMirror) p {
+    margin: 0 0 0.9rem;
+}
+
+.sheet :global(.ProseMirror) ul,
+.sheet :global(.ProseMirror) ol {
+    margin: 0 0 1rem 1.5rem;
+    padding-left: 0.5rem;
+}
+
+.sheet :global(.ProseMirror) li {
+    margin: 0.3rem 0;
+}
+
+.sheet :global(.ProseMirror) blockquote {
+    border-left: 3px solid #c8a64a;
+    margin: 1rem 0;
+    padding: 0.4rem 1rem;
+    background: #f6efde;
+    font-style: italic;
+}
+
+.sheet :global(.ProseMirror) pre {
+    background: #2b2820;
+    color: #f6efde;
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.92rem;
+    overflow-x: auto;
+}
+
+.sheet :global(.ProseMirror) code {
+    background: #efe9d6;
+    border-radius: 3px;
+    padding: 0 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.93em;
+}
+
+.sheet :global(.louis-link) {
+    color: #1d4ed8;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.sheet :global(.louis-track-insertion) {
+    color: #166534;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    background: #dcfce780;
+}
+
+.sheet :global(.louis-track-deletion) {
+    color: #b91c1c;
+    text-decoration: line-through;
+    background: #fee2e280;
+}
+
+.sheet :global(.louis-comment) {
+    background: #fef3c7;
+    border-bottom: 1px dotted #b45309;
+    cursor: pointer;
+}
+
+.sheet :global(.louis-comment--resolved) {
+    background: #f3f4f6;
+    border-bottom: 1px dotted #9ca3af;
+    opacity: 0.7;
+}
+
+.sheet :global(.ProseMirror) :global(p.is-editor-empty:first-child)::before {
+    color: #a8a29e;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+/* ----------------------------------------------------------------
+   Toolbar
+   ---------------------------------------------------------------- */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    padding: 0.4rem 0.75rem;
+    font-family:
+        ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        sans-serif;
+    font-size: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.toolbar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    height: 28px;
+    min-width: 28px;
+    padding: 0 0.45rem;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 4px;
+    color: #374151;
+    cursor: pointer;
+    transition: background 0.1s ease, border-color 0.1s ease;
+}
+
+.toolbar button:hover {
+    background: #f3f4f6;
+}
+
+.toolbar button:focus-visible {
+    outline: 2px solid #c8a64a;
+    outline-offset: 1px;
+}
+
+.toolbar button[aria-pressed="true"],
+.toolbar .active {
+    background: #1f2937;
+    color: #fbf8f2;
+}
+
+.toolbar select {
+    height: 28px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 0 0.5rem;
+    background: #fff;
+    color: #374151;
+    font-size: 12px;
+}
+
+.toolbar .sep {
+    width: 1px;
+    height: 18px;
+    background: #e5e7eb;
+    margin: 0 0.25rem;
+}
+
+.toolbar .spacer {
+    flex: 1;
+}
+
+.suggestToggle {
+    border: 1px solid #d1d5db !important;
+}
+
+.suggestToggle[aria-pressed="true"] {
+    background: #b91c1c !important;
+    color: #ffffff !important;
+    border-color: #991b1b !important;
+}
+
+.toneSlider {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #6b7280;
+}
+
+.toneSlider input {
+    accent-color: #1f2937;
+}
+
+/* ----------------------------------------------------------------
+   Right rail
+   ---------------------------------------------------------------- */
+.rail {
+    width: 320px;
+    border-left: 1px solid #e5e7eb;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.railTabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    font-family:
+        ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        sans-serif;
+    font-size: 12px;
+}
+
+.railTab {
+    flex: 1;
+    padding: 0.6rem 0.5rem;
+    border: 0;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.railTab.active {
+    color: #111827;
+    border-bottom: 2px solid #c8a64a;
+    font-weight: 600;
+}
+
+.railBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem;
+}
+
+.railItem {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #fefefe;
+}
+
+.railItem .meta {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.railItem .quote {
+    font-size: 12px;
+    color: #374151;
+    font-style: italic;
+    margin-bottom: 0.4rem;
+}
+
+.railActions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+}
+
+.railBtn {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.railBtn.primary {
+    background: #166534;
+    color: #fff;
+    border-color: #166534;
+}
+
+.railBtn.danger {
+    background: #b91c1c;
+    color: #fff;
+    border-color: #b91c1c;
+}
+
+/* ----------------------------------------------------------------
+   Bottom bar
+   ---------------------------------------------------------------- */
+.bottomBar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+    padding: 0.4rem 1rem;
+    font-family:
+        ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        sans-serif;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.bottomBar .spacer {
+    flex: 1;
+}
+
+.exportMenu {
+    position: relative;
+}
+
+.exportPanel {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    right: 0;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    min-width: 140px;
+    z-index: 10;
+}
+
+.exportPanel button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-size: 12px;
+    color: #374151;
+}
+
+.exportPanel button:hover {
+    background: #f3f4f6;
+}

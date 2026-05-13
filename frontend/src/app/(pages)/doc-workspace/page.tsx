@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect, Suspense, lazy } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
     FileText, MessageSquare, ListChecks, History, ListOrdered, MessageCircle,
@@ -12,6 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
+
+// Lazy-load the rich-text editor so the doc-workspace shell stays light. The
+// editor pulls in TipTap + ProseMirror, which we only need on the edit view.
+const RichTextEditor = lazy(() =>
+    import("@/app/components/editor").then((m) => ({ default: m.RichTextEditor })),
+);
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -419,40 +425,61 @@ function DocWorkspaceInner() {
                     )}
                 </div>
 
-                {/* Center: document */}
-                <div className="flex-1 overflow-y-auto bg-gray-50">
-                    <div className="max-w-3xl mx-auto px-8 py-10">
-                        {view === "compare" && (
-                            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-center gap-2">
-                                <GitCompare className="w-3.5 h-3.5" />
-                                <span className="flex-1">
-                                    {compareBlocks.length ? (
-                                        <>Showing only sections changed vs <strong>{compareVersionId}</strong>.</>
-                                    ) : (
-                                        <>Pick a version to compare against:</>
-                                    )}
-                                </span>
-                                {versions.length > 1 && (
-                                    <select
-                                        value={compareVersionId ?? ""}
-                                        onChange={e => e.target.value && loadCompareVersion(e.target.value)}
-                                        className="text-xs border border-amber-300 rounded px-2 py-0.5 bg-white"
-                                    >
-                                        <option value="">— pick a version —</option>
-                                        {versions.slice(1).map(v => (
-                                            <option key={v.id} value={v.id}>{v.displayName}</option>
-                                        ))}
-                                    </select>
+                {/* Center: document — rich-text editor (edit) or block view (review/read/compare). */}
+                <div className="flex-1 overflow-hidden bg-gray-50 relative">
+                    {view === "edit" ? (
+                        <Suspense fallback={<div className="p-12 text-sm text-gray-500">loading editor…</div>}>
+                            <RichTextEditor
+                                docId={docId}
+                                title={title}
+                                authorName="You"
+                                initialBlocks={blocksForRender as ServerBlock[]}
+                                railOpen={true}
+                                onPersist={(blocks, html) => {
+                                    // Hold the editor's authoritative blocks in component state so
+                                    // switching to review/read/compare uses fresh content. (No backend
+                                    // PUT endpoint exists yet — see docs/EDITOR.md TODO.)
+                                    setContentBlocks(blocks);
+                                    void html;
+                                }}
+                            />
+                        </Suspense>
+                    ) : (
+                        <div className="h-full overflow-y-auto">
+                            <div className="max-w-3xl mx-auto px-8 py-10">
+                                {view === "compare" && (
+                                    <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-center gap-2">
+                                        <GitCompare className="w-3.5 h-3.5" />
+                                        <span className="flex-1">
+                                            {compareBlocks.length ? (
+                                                <>Showing only sections changed vs <strong>{compareVersionId}</strong>.</>
+                                            ) : (
+                                                <>Pick a version to compare against:</>
+                                            )}
+                                        </span>
+                                        {versions.length > 1 && (
+                                            <select
+                                                value={compareVersionId ?? ""}
+                                                onChange={e => e.target.value && loadCompareVersion(e.target.value)}
+                                                className="text-xs border border-amber-300 rounded px-2 py-0.5 bg-white"
+                                            >
+                                                <option value="">— pick a version —</option>
+                                                {versions.slice(1).map(v => (
+                                                    <option key={v.id} value={v.id}>{v.displayName}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                        <button className="underline" onClick={() => setView("edit")}>back to edit</button>
+                                    </div>
                                 )}
-                                <button className="underline" onClick={() => setView("edit")}>back to edit</button>
+                                <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-sm">
+                                    {visibleBlocks.map(b => (
+                                        <DocBlockView key={b.id} block={b} view={view} />
+                                    ))}
+                                </div>
                             </div>
-                        )}
-                        <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-sm">
-                            {visibleBlocks.map(b => (
-                                <DocBlockView key={b.id} block={b} view={view} />
-                            ))}
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Right rail */}
