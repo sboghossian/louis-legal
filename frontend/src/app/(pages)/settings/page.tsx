@@ -352,30 +352,33 @@ function VoiceSection() {
 }
 
 function BillingTab() {
-    const PLANS = [
-        { name: "Free",     price: "$0",      desc: "BYO API keys · all features" },
-        { name: "Starter",  price: "$19/mo",  desc: "Hosted models · 25k credits" },
-        { name: "Pro",      price: "$49/mo",  desc: "Hosted models · 100k credits · matter mgmt" },
-        { name: "Business", price: "$199/mo", desc: "Team seats · e-Firm · SSO" },
-    ];
+    // Louis is 100% free. The "Billing" tab survives only as a destination
+    // for users following a deep link or stored search result — the actual
+    // page lives at /billing (also redirect-display). Keep both copies in
+    // sync if either changes.
     return (
         <div className="space-y-4">
-            <Card title="Current plan" value="Free (BYO keys)" sub="Connect a Stripe integration in /integrations to enable hosted plans" />
-            <div className="border border-border rounded-lg p-4">
-                <h3 className="font-semibold text-sm mb-2">Plans</h3>
-                <div className="grid grid-cols-4 gap-3">
-                    {PLANS.map(p => (
-                        <div key={p.name} className="border border-border rounded p-3">
-                            <div className="font-medium text-sm">{p.name}</div>
-                            <div className="text-lg font-semibold mt-1">{p.price}</div>
-                            <div className="text-[10px] text-muted-foreground mt-1">{p.desc}</div>
-                        </div>
-                    ))}
+            <Card title="Current plan" value="Free forever" sub="BYO API key — Louis never bills you. You pay your AI provider directly for the tokens you spend." />
+            <div className="rounded-lg border border-border bg-muted/30 p-5">
+                <div className="font-serif text-base text-foreground mb-1">No plan. No seat fee. No credits.</div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    There is nothing to upgrade to. Bring your own Anthropic / Gemini / OpenAI key in <a href="/settings/api-keys" className="text-amber-800 underline hover:text-amber-900">API Keys</a> and use the full workbench. Your tokens go directly to your provider; we don&apos;t take a margin.
+                </p>
+                <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
+                    <div className="rounded border border-border bg-card p-3">
+                        <div className="text-foreground font-medium mb-0.5">Free</div>
+                        <div className="text-muted-foreground">Every surface, every skill, unlimited turns. Forever.</div>
+                    </div>
+                    <div className="rounded border border-border bg-card p-3">
+                        <div className="text-foreground font-medium mb-0.5">Your bill</div>
+                        <div className="text-muted-foreground">The cost shown in your AI provider dashboard. Nothing more.</div>
+                    </div>
+                    <div className="rounded border border-border bg-card p-3">
+                        <div className="text-foreground font-medium mb-0.5">Open source</div>
+                        <div className="text-muted-foreground">MIT licensed. Self-host if you want the data to stay home.</div>
+                    </div>
                 </div>
             </div>
-            <Note>
-                When Stripe is connected, this tab shows live plan, credit balance, next billing, and an &ldquo;Open Stripe portal&rdquo; button. See <a href="/integrations" className="underline">/integrations</a>.
-            </Note>
         </div>
     );
 }
