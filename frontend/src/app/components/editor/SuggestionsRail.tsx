@@ -262,6 +262,7 @@ function VersionsPanel({
     }
 
     function restore(v: VersionSnapshot) {
+        if (!editor) return;
         if (!confirm(`Restore version from ${new Date(v.createdAt).toLocaleString()}? Your current draft will be replaced (a fresh snapshot is taken first).`)) return;
         saveNow();
         editor.commands.setContent(v.html, { emitUpdate: true });

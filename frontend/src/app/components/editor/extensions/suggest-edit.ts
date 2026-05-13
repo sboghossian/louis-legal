@@ -68,8 +68,7 @@ export const SuggestEdit = Extension.create<SuggestEditOptions>({
                             if (!(step instanceof ReplaceStep)) continue;
                             const inserted = step.slice.size;
                             if (inserted <= 0) continue;
-                            // @ts-expect-error - from is a public ReplaceStep prop at runtime
-                            const startInThisStep = step.from as number;
+                            const startInThisStep = (step as ReplaceStep & { from: number }).from;
                             const endInThisStep   = startInThisStep + inserted;
                             // Map through later steps to land in the final doc.
                             let from = startInThisStep;

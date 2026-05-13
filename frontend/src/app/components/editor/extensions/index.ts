@@ -44,5 +44,5 @@ export function buildExtensions(args: BuildExtensionsArgs) {
 export { CommentMark } from "./comment-mark";
 export type { CommentAttrs, CommentInDoc } from "./comment-mark";
 export { InsertionMark, DeletionMark } from "./track-change-marks";
-export type { TrackChangeAttrs, TrackChangeInDoc };
+export type { TrackChangeAttrs, TrackChangeInDoc } from "./track-change-marks";
 export { SuggestEdit, SuggestEditKey } from "./suggest-edit";
