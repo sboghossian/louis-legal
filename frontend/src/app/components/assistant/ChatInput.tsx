@@ -188,17 +188,21 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         };
     }, [voiceModeOpen]);
 
-    // Probe browser support after mount so SSR matches.
-    if (typeof window !== "undefined" && !voiceSupported) {
+    // Probe browser support after mount so SSR matches. Previously this
+    // called setVoiceSupported during render — illegal under React 19's
+    // strict mode and tripping the react-hooks/refs-during-render lint
+    // (with the disable above). Moving the probe into an effect runs it
+    // once on mount and keeps render pure.
+    useEffect(() => {
+        if (typeof window === "undefined") return;
         const w = window as unknown as {
             SpeechRecognition?: new () => unknown;
             webkitSpeechRecognition?: new () => unknown;
         };
         if (w.SpeechRecognition || w.webkitSpeechRecognition) {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             setVoiceSupported(true);
         }
-    }
+    }, []);
 
     function ensureRecognizer(): unknown {
         if (recognitionRef.current) return recognitionRef.current;
