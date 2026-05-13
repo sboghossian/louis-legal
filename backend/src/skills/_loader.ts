@@ -59,6 +59,9 @@ export function loadAllSkills(force = false): Map<string, Skill> {
     if (!p.endsWith(".md")) return;
     if (basename(p).startsWith("_")) return; // skip helpers like _INDEX.md
     const raw = readFileSync(p, "utf-8");
+    // Bare docs (READMEs, plans) sit alongside skill files but don't have
+    // YAML frontmatter — skip them silently so the boot log stays clean.
+    if (!raw.startsWith("---")) return;
     try {
       const { fm, body } = parseFrontmatter(raw);
       const id = fm.id || basename(p, ".md");
