@@ -3,13 +3,17 @@
 /**
  * Vault — landing page for the encrypted-storage feature.
  *
- * The Vault toggle set lives in /customize → "Vault". The actual document
- * surface is /projects (projects act as vault containers; toggling
- * `vault.encrypted-store` enables per-document AES at rest). This page is
- * the explainer + entry point so the URL "/vault" resolves to something
- * meaningful instead of 404.
+ * As of the E2EE upgrade, this page also owns the *gate* into the vault:
+ *   - first-time users see <PassphraseSetupModal>
+ *   - returning users with a missing in-memory KEK see <PassphraseUnlockModal>
+ *   - unlocked users see the explainer + entry points + settings panel
+ *
+ * The actual document surface still lives under /projects; this page is
+ * the front door. Document upload/read happens in the projects flow,
+ * which can now import from `@/app/components/vault` for the E2EE helpers.
  */
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     Lock,
@@ -18,39 +22,88 @@ import {
     KeyRound,
     ArrowRight,
     FolderOpen,
+    Settings as SettingsIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import {
+    VaultKeyProvider,
+    useVaultKey,
+} from "@/contexts/VaultKeyContext";
+import { PassphraseSetupModal } from "@/app/components/vault/PassphraseSetupModal";
+import { PassphraseUnlockModal } from "@/app/components/vault/PassphraseUnlockModal";
+import { VaultSettingsPanel } from "@/app/components/vault/VaultSettingsPanel";
+import { EncryptionStatusBar } from "@/app/components/vault/EncryptionStatusBar";
+
 export default function VaultPage() {
+    return (
+        <VaultKeyProvider>
+            <VaultPageInner />
+        </VaultKeyProvider>
+    );
+}
+
+function VaultPageInner() {
     const router = useRouter();
+    const { isSetup, isUnlocked, saltB64, completeSetup, unlock } =
+        useVaultKey();
+
+    const [showSettings, setShowSettings] = useState(false);
+    // Allow the user to dismiss either modal explicitly (X / Cancel) without
+    // immediately popping it again on the next render. We track that the
+    // user has dismissed; the gate is otherwise derived directly from the
+    // context state (no setState-in-effect mirroring).
+    const [setupDismissed, setSetupDismissed] = useState(false);
+    const [unlockDismissed, setUnlockDismissed] = useState(false);
+
+    const setupOpen = !isSetup && !setupDismissed;
+    const unlockOpen = isSetup && !isUnlocked && !unlockDismissed;
 
     return (
         <div className="max-w-3xl mx-auto px-8 py-10">
-            <div className="flex items-center gap-2 mb-2">
-                <Lock className="w-5 h-5 text-amber-700" />
-                <h1 className="text-2xl font-serif font-semibold tracking-tight">
-                    Vault
-                </h1>
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                    <Lock className="w-5 h-5 text-amber-700" />
+                    <h1 className="text-2xl font-serif font-semibold tracking-tight">
+                        Vault
+                    </h1>
+                </div>
+                {isUnlocked && (
+                    <button
+                        type="button"
+                        onClick={() => setShowSettings((v) => !v)}
+                        className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-stone-900"
+                    >
+                        <SettingsIcon className="w-3.5 h-3.5" />
+                        {showSettings ? "Hide settings" : "Vault settings"}
+                    </button>
+                )}
             </div>
-            <p className="text-sm text-gray-600 font-serif max-w-2xl mb-8">
+
+            <p className="text-sm text-gray-600 font-serif max-w-2xl mb-6">
                 The Vault is where privileged documents live. Each Vault
-                document is encrypted at rest with an AES key derived from
-                your account secret, hidden from the skill router by default,
-                and access-logged. Projects can be marked "Vault projects" so
-                everything inside inherits the protections.
+                document is end-to-end encrypted with a key only you hold —
+                the cloud stores ciphertext and an additional server-side
+                AES layer, but cannot read the plaintext.
             </p>
+
+            {isUnlocked && (
+                <div className="mb-6">
+                    <EncryptionStatusBar />
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
                 <Feature
                     icon={KeyRound}
-                    title="AES-256 at rest"
-                    desc="Vault documents are encrypted before storage. Even a stolen R2 backup yields ciphertext."
+                    title="AES-256 end-to-end"
+                    desc="Documents are AES-256-GCM encrypted in your browser before upload. Even Louis's servers see only ciphertext."
                 />
                 <Feature
                     icon={ShieldCheck}
                     title="Privilege-aware routing"
-                    desc="The skill router won't include Vault documents in any chat unless you explicitly opt in for that matter."
+                    desc="The skill router won't include Vault documents in any chat unless you explicitly opt in per document."
                 />
                 <Feature
                     icon={History}
@@ -59,10 +112,16 @@ export default function VaultPage() {
                 />
                 <Feature
                     icon={Lock}
-                    title="Per-client isolation"
-                    desc="Conflict-of-interest checks block cross-client matter access without an explicit override."
+                    title="You hold the key"
+                    desc="Your passphrase derives a key that never leaves your browser. Lose it and the data is gone — by design."
                 />
             </div>
+
+            {showSettings && isUnlocked && (
+                <div className="mb-8">
+                    <VaultSettingsPanel />
+                </div>
+            )}
 
             <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
                 <h2 className="font-medium text-sm mb-2">Where to go next</h2>
@@ -110,6 +169,26 @@ export default function VaultPage() {
                     Configure Vault
                 </Button>
             </div>
+
+            <PassphraseSetupModal
+                open={setupOpen}
+                onCancel={() => setSetupDismissed(true)}
+                onComplete={async ({ salt, kek }) => {
+                    // TODO(server): POST the salt + recoverySalt + a wrapped-
+                    // KEK envelope so the user can recover from another
+                    // device. See docs/VAULT_ENCRYPTION.md.
+                    completeSetup(salt, kek);
+                }}
+            />
+
+            <PassphraseUnlockModal
+                open={unlockOpen}
+                saltB64={saltB64 ?? ""}
+                onCancel={() => setUnlockDismissed(true)}
+                onUnlocked={async ({ kek }) => {
+                    unlock(kek);
+                }}
+            />
         </div>
     );
 }
