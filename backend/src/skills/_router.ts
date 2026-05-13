@@ -422,9 +422,10 @@ function routeFromIntent(
     skillIds.push("output.executive-summary-first");
   }
 
-  if (intent === "drafting") {
-    skillIds.push("output.markdown-legal-doc");
-  }
+  // Decision #29: always plain prose in chat replies — no auto-markdown
+  // for drafting turns. The user can still ask for a markdown export
+  // explicitly, in which case the export pipeline pulls in
+  // output.markdown-legal-doc through its own selector.
 
   // Bilingual: if user wrote in Arabic, add bilingual skills
   const lang = detectLanguage(message);
