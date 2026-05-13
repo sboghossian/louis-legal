@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Key, ExternalLink, X, Eye, Check, Trash2, Star } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Key, ExternalLink, X, Eye, Check, Trash2, Star, Coins, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -79,6 +79,8 @@ export default function ApiKeysPage() {
             <p className="text-sm text-gray-600 mb-6">
                 Bring your own API keys for chat, drafting, research. Louis uses your default key per provider. Your tokens, your provider bill.
             </p>
+
+            <TokenSpendWidget />
 
             {loading && <div className="text-sm text-gray-500">Loading…</div>}
 
@@ -234,6 +236,147 @@ function AddKeyModal({ provider, onClose, onAdded }: { provider: Provider; onClo
                         {submitting ? "Adding…" : <><Check className="w-3.5 h-3.5 mr-1" /> Save key</>}
                     </Button>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// TokenSpendWidget
+// ---------------------------------------------------------------------------
+
+/**
+ * Local-only spend tracker. The streaming chat layer pushes
+ * `{turnAt, model, inputTokens, outputTokens, costUsd}` rows into
+ * localStorage under `louis.tokenUsage` (capped at 500 entries). This
+ * widget reads + aggregates that array — last 24h, 7d, 30d — and
+ * shows estimated cost based on each provider's published per-million
+ * token prices.
+ *
+ * Why local-only: the user pays their provider directly, so we have
+ * no authoritative cost number on our side. Tracking client-side is
+ * good-enough transparency and never leaves the browser.
+ */
+interface TokenRow {
+    turnAt: number;
+    model: string;
+    inputTokens?: number;
+    outputTokens?: number;
+    costUsd?: number;
+}
+
+function readUsage(): TokenRow[] {
+    if (typeof window === "undefined") return [];
+    try {
+        const raw = window.localStorage.getItem("louis.tokenUsage");
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+function TokenSpendWidget() {
+    const [rows, setRows] = useState<TokenRow[]>(() => readUsage());
+    const [alertThreshold, setAlertThreshold] = useState<number>(() => {
+        if (typeof window === "undefined") return 0;
+        const raw = window.localStorage.getItem("louis.spendAlertUsd");
+        return raw ? Number(raw) || 0 : 0;
+    });
+
+    useEffect(() => {
+        // Re-read on focus so a chat in another tab updates the panel.
+        const onFocus = () => setRows(readUsage());
+        window.addEventListener("focus", onFocus);
+        return () => window.removeEventListener("focus", onFocus);
+    }, []);
+
+    const buckets = useMemo(() => {
+        const now = Date.now();
+        const d = (h: number) => h * 60 * 60 * 1000;
+        const sums = { day: 0, week: 0, month: 0, turns: 0 };
+        for (const r of rows) {
+            const cost = Number(r.costUsd) || 0;
+            const age = now - r.turnAt;
+            if (age <= d(24)) sums.day += cost;
+            if (age <= d(24 * 7)) sums.week += cost;
+            if (age <= d(24 * 30)) {
+                sums.month += cost;
+                sums.turns += 1;
+            }
+        }
+        return sums;
+    }, [rows]);
+
+    function saveThreshold(v: number) {
+        setAlertThreshold(v);
+        if (typeof window !== "undefined") {
+            window.localStorage.setItem("louis.spendAlertUsd", String(v || 0));
+        }
+    }
+
+    const overTurn = useMemo(() => {
+        if (!alertThreshold) return null;
+        return rows.find(
+            (r) => (r.costUsd ?? 0) > alertThreshold && Date.now() - r.turnAt < 24 * 3600 * 1000,
+        );
+    }, [rows, alertThreshold]);
+
+    return (
+        <div className="mb-8 rounded-xl border border-[#e7e2d6] bg-[#fbf8f2] p-5">
+            <div className="flex items-center gap-2 mb-1">
+                <Coins className="w-4 h-4 text-amber-700" />
+                <h2 className="text-sm font-semibold text-gray-900">Your token spend (local)</h2>
+            </div>
+            <p className="text-xs text-gray-600 mb-4">
+                Tracked from your browser only. The authoritative bill is what
+                your AI provider invoices you — open your provider dashboard
+                for the source of truth.
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+                <SpendCell label="Last 24h" usd={buckets.day} />
+                <SpendCell label="Last 7d" usd={buckets.week} />
+                <SpendCell label="Last 30d" usd={buckets.month} />
+            </div>
+            <div className="mt-4 flex items-center justify-between gap-3 text-xs text-gray-600">
+                <span>
+                    {buckets.turns} turn{buckets.turns === 1 ? "" : "s"} in the last 30 days
+                </span>
+                <label className="inline-flex items-center gap-2">
+                    Alert above
+                    <input
+                        type="number"
+                        min={0}
+                        step={0.05}
+                        value={alertThreshold || ""}
+                        onChange={(e) => saveThreshold(Number(e.target.value))}
+                        placeholder="0.25"
+                        className="w-20 px-2 py-1 border border-gray-300 rounded text-xs"
+                    />
+                    <span>USD / turn</span>
+                </label>
+            </div>
+            {overTurn && (
+                <div className="mt-3 flex items-start gap-2 text-xs bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-amber-900">
+                    <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                    <span>
+                        A turn on <strong>{overTurn.model}</strong> cost ${(overTurn.costUsd ?? 0).toFixed(3)} in the last 24h — above your threshold of ${alertThreshold.toFixed(2)}.
+                    </span>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function SpendCell({ label, usd }: { label: string; usd: number }) {
+    return (
+        <div className="rounded-lg border border-[#e7e2d6] bg-white p-3">
+            <div className="text-[10px] uppercase tracking-wider text-gray-500 mb-0.5">
+                {label}
+            </div>
+            <div className="font-serif text-xl text-gray-900">
+                {usd === 0 ? "$0.00" : `$${usd.toFixed(2)}`}
             </div>
         </div>
     );

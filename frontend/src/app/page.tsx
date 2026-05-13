@@ -51,9 +51,9 @@ import {
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
 
 export const metadata = {
-    title: "Louis — open-source legal AI workbench",
+    title: "Louis — the developer platform for legal infrastructure",
     description:
-        "MENA-first legal AI built for actual lawyering. 982 expert skills, BYO Claude / Gemini / OpenAI keys, MIT licensed. The open alternative to Harvey, Legora, and CoCounsel.",
+        "Open-source, sovereign, free. Build legal AI inside your own perimeter — your API key, your data, your stack. 982 skills, 30+ jurisdictions, MIT licensed. The substrate behind your firm's next ten years of legal software.",
 };
 
 export default function LandingPage() {
@@ -93,20 +93,20 @@ function Hero() {
                 <div className="md:col-span-6">
                     <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-5">
                         <span className="h-px w-6 bg-amber-700" />
-                        Open source · MIT licensed
+                        Sovereign · open source · free forever
                     </span>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-light leading-[1.05] tracking-tight">
-                        The legal AI workbench, in a codebase your firm owns.
+                        The developer platform for legal infrastructure.
                     </h1>
                     <p className="mt-6 text-base md:text-lg text-gray-600 leading-relaxed max-w-xl font-serif">
-                        Draft contracts, redline against playbooks, review hundreds of documents at once, run agentic legal workflows. 982 expert skills, MENA-first jurisdictions. Bring your own Claude · Gemini · OpenAI keys. Self-host inside your perimeter.
+                        Louis is the open substrate firms and in-house teams build legal AI on top of. Your API key. Your data. Your stack. 982 skills, 30+ jurisdictions, MIT licensed — and the only cost is the tokens you spend with your model provider.
                     </p>
                     <div className="mt-8 flex flex-wrap items-center gap-3">
                         <Link
                             href="/signup"
                             className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors shadow-sm"
                         >
-                            Sign up free
+                            Start free
                             <ArrowRight className="h-4 w-4" />
                         </Link>
                         <a
@@ -116,26 +116,26 @@ function Hero() {
                             className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-gray-900 border border-gray-300 hover:bg-white transition-colors"
                         >
                             <Github className="h-4 w-4" />
-                            GitHub
+                            Clone the repo
                         </a>
                         <Link
                             href="/academy"
                             className="px-3 py-3 text-sm text-gray-600 hover:text-gray-900"
                         >
-                            Read the docs →
+                            Read the cookbook →
                         </Link>
                     </div>
                     <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
                         <span className="inline-flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                            MIT licensed
+                            Free forever
                         </span>
                         <span className="text-gray-300">·</span>
                         <span>BYO API keys</span>
                         <span className="text-gray-300">·</span>
-                        <span>982 authored skills</span>
+                        <span>MIT licensed</span>
                         <span className="text-gray-300">·</span>
-                        <span>30+ jurisdictions</span>
+                        <span>Self-hostable</span>
                     </div>
                 </div>
 
@@ -264,10 +264,10 @@ function Features() {
                 <div className="max-w-2xl mb-12 md:mb-16">
                     <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
                         <span className="h-px w-6 bg-amber-700" />
-                        Features
+                        The platform
                     </span>
                     <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight leading-tight">
-                        Everything the incumbents ship — visible, hackable, in a codebase you can read line by line.
+                        Every legal-AI primitive your firm needs — visible, hackable, and yours.
                     </h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">

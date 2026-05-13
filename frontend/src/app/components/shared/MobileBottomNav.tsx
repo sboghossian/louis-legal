@@ -7,7 +7,7 @@
  * actions so users don't need to open the side menu for routine
  * navigation.
  *
- * Routes pinned: Assistant · Newsfeed · Projects · Inbox · Menu
+ * Routes pinned: Assistant · Chats · Projects · Inbox · Menu
  * (Menu opens the full sidebar; controlled by the parent layout via
  * the SidebarContext setSidebarOpen.)
  */
@@ -15,7 +15,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import {
     MessageSquare,
-    Rss,
+    MessageSquareDashed,
     FolderOpen,
     Inbox,
     Menu as MenuIcon,
@@ -44,10 +44,10 @@ export function MobileBottomNav() {
             matchPrefix: "/assistant",
         },
         {
-            href: "/feed",
-            label: "News",
-            icon: Rss,
-            matchPrefix: "/feed",
+            href: "/all-chats",
+            label: "Chats",
+            icon: MessageSquareDashed,
+            matchPrefix: "/all-chats",
         },
         {
             href: "/projects",

@@ -51,14 +51,12 @@ import {
     Library,
     Plug,
     Key,
-    CreditCard,
-    Zap,
     Users,
     Settings as SettingsIcon,
     BookOpenCheck,
-    Gift,
     Info,
     LogOut,
+    Share2,
     Sun,
     LucideIcon,
 } from "lucide-react";
@@ -111,11 +109,9 @@ const STATIC_NAV: { href: string; label: string; icon: LucideIcon }[] = [
     { href: "/integrations",    label: "Integrations",    icon: Plug },
     { href: "/settings/api-keys", label: "API Keys",      icon: Key },
     { href: "/settings",        label: "Settings",        icon: SettingsIcon },
-    { href: "/billing",         label: "Billing",         icon: CreditCard },
-    { href: "/upgrade",         label: "Upgrade",         icon: Zap },
     { href: "/team",            label: "Team",            icon: Users },
     { href: "/academy",         label: "Academy",         icon: BookOpenCheck },
-    { href: "/referral",        label: "Referral",        icon: Gift },
+    { href: "/referral",        label: "Share Louis",     icon: Share2 },
     { href: "/about",           label: "About",           icon: Info },
 ];
 

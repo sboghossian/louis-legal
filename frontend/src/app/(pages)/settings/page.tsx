@@ -155,8 +155,92 @@ function DataTab() {
             <Card title="Document storage" value="Cloudflare R2 — bucket: louis" sub="See docs/STORAGE_SETUP.md" />
             <Card title="Database region" value="Supabase · eu-west-1" />
             <Card title="Data retention" value="Indefinite (per matter)" cta="Configure" />
+            <LegalDataHunterCard />
             <Card title="Export my data" value="Download a JSON archive of your chats, projects, settings" cta="Export" />
             <Card title="Delete account" value="Permanently delete account + all data" cta="Delete" href="/account" />
+        </div>
+    );
+}
+
+/**
+ * Legal-data-hunter — user-supplied API keys for legal-data sources
+ * (Westlaw, Lexis, EUR-Lex, CourtListener, CASEMine, Legifrance, etc).
+ * Stored client-side under `louis.legalDataKeys` so each user wires
+ * their own subscription; the backend looks up the key when a skill
+ * needs to fetch from that source. We never ship a default for
+ * commercial sources; users provide what they license.
+ */
+function LegalDataHunterCard() {
+    const SOURCES: { id: string; label: string; jurisdiction: string }[] = [
+        { id: "westlaw", label: "Westlaw", jurisdiction: "US · UK · Global" },
+        { id: "lexis", label: "LexisNexis", jurisdiction: "Global" },
+        { id: "courtlistener", label: "CourtListener", jurisdiction: "US (free)" },
+        { id: "eurlex", label: "EUR-Lex", jurisdiction: "EU (free)" },
+        { id: "casemine", label: "CASEMine", jurisdiction: "India · MENA" },
+        { id: "legifrance", label: "Légifrance", jurisdiction: "France (free)" },
+        { id: "wipo", label: "WIPO Lex", jurisdiction: "Global IP (free)" },
+        { id: "secedgar", label: "SEC EDGAR", jurisdiction: "US filings (free)" },
+    ];
+    const [keys, setKeys] = useState<Record<string, string>>(() => {
+        if (typeof window === "undefined") return {};
+        try {
+            return JSON.parse(window.localStorage.getItem("louis.legalDataKeys") ?? "{}");
+        } catch {
+            return {};
+        }
+    });
+    const [reveal, setReveal] = useState<Record<string, boolean>>({});
+
+    function save(id: string, value: string) {
+        const next = { ...keys, [id]: value };
+        if (!value) delete next[id];
+        setKeys(next);
+        if (typeof window !== "undefined") {
+            window.localStorage.setItem("louis.legalDataKeys", JSON.stringify(next));
+        }
+    }
+
+    return (
+        <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+                <div>
+                    <div className="font-medium text-sm text-gray-900">Legal-data-hunter API keys</div>
+                    <div className="text-xs text-gray-500">
+                        Wire your own subscription to each research source. Keys stay in your browser; the backend forwards them only when a skill needs to fetch.
+                    </div>
+                </div>
+            </div>
+            <div className="mt-4 space-y-2">
+                {SOURCES.map((s) => (
+                    <div
+                        key={s.id}
+                        className="grid grid-cols-[1fr_auto] gap-3 items-center"
+                    >
+                        <div className="text-sm">
+                            <div className="font-medium text-gray-800">{s.label}</div>
+                            <div className="text-[11px] text-gray-500">{s.jurisdiction}</div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <input
+                                type={reveal[s.id] ? "text" : "password"}
+                                value={keys[s.id] ?? ""}
+                                onChange={(e) => save(s.id, e.target.value)}
+                                placeholder={keys[s.id] ? "" : "API key"}
+                                className="text-xs border border-gray-300 rounded px-2 py-1 w-44 focus:outline-none focus:ring-1 focus:ring-amber-300"
+                            />
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setReveal((r) => ({ ...r, [s.id]: !r[s.id] }))
+                                }
+                                className="text-[10px] text-gray-500 hover:text-gray-800 px-1.5"
+                            >
+                                {reveal[s.id] ? "Hide" : "Show"}
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

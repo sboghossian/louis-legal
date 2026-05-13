@@ -112,6 +112,9 @@ export function MarketingFooter() {
                         <Link href="/about" className="hover:text-gray-900">
                             About
                         </Link>
+                        <Link href="/transparency" className="hover:text-gray-900">
+                            Transparency
+                        </Link>
                         <a
                             href={REPO_URL}
                             target="_blank"

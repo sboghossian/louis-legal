@@ -22,7 +22,7 @@ const ONBOARDING_EXEMPT = ["/about", "/docs", "/academy", "/help"];
 // Used by anyone browsing the marketing/learning surfaces. Signed-in users
 // still see them inside the normal app chrome; signed-out users see them
 // wrapped in the marketing shell (top nav + footer).
-const PUBLIC_PATHS = ["/academy", "/about"];
+const PUBLIC_PATHS = ["/academy", "/about", "/transparency"];
 
 export default function LouisLayout({
     children,

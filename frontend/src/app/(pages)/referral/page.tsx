@@ -1,289 +1,154 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Gift, Copy, Check, Mail, Linkedin, Send, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+/**
+ * Referral was a paid-conversion incentive — irrelevant for a free
+ * product. We replace the surface with a "Share Louis" page: copy the
+ * repo URL, open a pre-filled tweet/LinkedIn post, send a colleague an
+ * email. No tracking, no rewards, just spread the word.
+ */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+import { useState } from "react";
+import {
+    Share2,
+    Github,
+    Twitter,
+    Linkedin,
+    Mail,
+    MessageSquare,
+    Copy,
+    Check,
+} from "lucide-react";
 
-type Product = "ai" | "efirm";
+const REPO_URL = "https://github.com/sboghossian/louis-legal";
+const SITE_URL = "https://legal.dashable.dev";
+const PITCH =
+    "Louis — the open-source legal AI workbench. MIT licensed, bring your own API key, self-hostable. The free alternative to Harvey / Legora / CoCounsel.";
 
-interface ReferralCode {
-    id: string;
-    userId: string;
-    code: string;
-    product: Product;
-    creditsBalance: number;
-    pendingPayout: number;
-    totalEarned: number;
-    createdAt: string;
-}
+export default function ShareLouisPage() {
+    const [copied, setCopied] = useState<string | null>(null);
 
-interface Invite {
-    id: string;
-    referralCodeId: string;
-    inviteeEmail: string;
-    inviteeName?: string;
-    stage: "clicked" | "signed-up" | "converted" | "churned";
-    reward?: number;
-    stageAt: string;
-}
-
-const STAGE_COLOR: Record<Invite["stage"], string> = {
-    converted: "bg-green-100 text-green-700",
-    "signed-up": "bg-blue-100 text-blue-700",
-    clicked: "bg-yellow-100 text-yellow-800",
-    churned: "bg-gray-100 text-gray-600",
-};
-
-const SHARE_COPY: Record<Product, (link: string) => string> = {
-    ai: (link) => `I've been using Louis for legal drafting and it's the first tool that actually feels built for lawyers. Use my link and you'll get +50% credits on your first paid month: ${link}`,
-    efirm: (link) => `My firm uses Louis e-Firm. Highly recommend it for matter management, billing, and AI workflows. Use my link for 2 free months: ${link}`,
-};
-
-function buildLink(code: ReferralCode): string {
-    const path = code.product === "ai" ? "r" : "r/firm";
-    return `louis.legal/${path}/${code.code}`;
-}
-
-function formatTime(iso: string): string {
-    const d = new Date(iso);
-    const diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return "just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return `${Math.floor(diff / 86400)}d ago`;
-}
-
-export default function ReferralPage() {
-    const [tab, setTab] = useState<Product>("ai");
-    const [aiCode, setAiCode] = useState<ReferralCode | null>(null);
-    const [efirmCode, setEfirmCode] = useState<ReferralCode | null>(null);
-    const [invites, setInvites] = useState<Invite[]>([]);
-    const [copied, setCopied] = useState(false);
-    const [showInvite, setShowInvite] = useState(false);
-    const [loading, setLoading] = useState(true);
-
-    const code = tab === "ai" ? aiCode : efirmCode;
-    const link = code ? buildLink(code) : "";
-
-    async function refresh() {
-        setLoading(true);
-        try {
-            const r = await fetch(`${API_BASE}/api/referral/codes`, { headers: { "x-user-id": "demo" } });
-            const j = await r.json();
-            let codes: ReferralCode[] = j.codes ?? [];
-
-            // Auto-create codes if missing
-            const ensureCode = async (product: Product) => {
-                let c = codes.find(cc => cc.product === product);
-                if (!c) {
-                    const cr = await fetch(`${API_BASE}/api/referral/codes`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "x-user-id": "demo" },
-                        body: JSON.stringify({ product, displayName: "stephane" }),
-                    });
-                    c = await cr.json();
-                }
-                return c!;
-            };
-            const ai = await ensureCode("ai");
-            const efirm = await ensureCode("efirm");
-            setAiCode(ai);
-            setEfirmCode(efirm);
-        } finally {
-            setLoading(false);
-        }
+    function copy(text: string, key: string) {
+        navigator.clipboard.writeText(text).then(() => {
+            setCopied(key);
+            setTimeout(() => setCopied(null), 1500);
+        });
     }
 
-    useEffect(() => { refresh(); }, []);
-
-    useEffect(() => {
-        if (!code) return;
-        (async () => {
-            const r = await fetch(`${API_BASE}/api/referral/codes/${code.id}/invites`);
-            const j = await r.json();
-            setInvites(j.invites ?? []);
-        })();
-    }, [code?.id]);
-
-    function copyLink() {
-        navigator.clipboard.writeText(link);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-    }
-
-    async function refreshInvites() {
-        if (!code) return;
-        const r = await fetch(`${API_BASE}/api/referral/codes/${code.id}/invites`);
-        const j = await r.json();
-        setInvites(j.invites ?? []);
-    }
+    const tweet = encodeURIComponent(`${PITCH} ${SITE_URL}`);
+    const linkedinShare = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(SITE_URL)}`;
+    const mailBody = encodeURIComponent(
+        `I've been using Louis — an open-source legal AI workbench that runs on your own API key.\n\nIt's MIT licensed, self-hostable, and free forever:\n\n${SITE_URL}\n${REPO_URL}\n\nWorth a look.`,
+    );
 
     return (
-        <div className="max-w-4xl mx-auto px-8 py-8">
+        <div className="max-w-3xl mx-auto px-6 md:px-10 py-10">
             <div className="flex items-center gap-2 mb-2">
-                <Gift className="w-5 h-5 text-gray-700" />
-                <h1 className="text-lg font-semibold">Referrals</h1>
-                <Badge variant="secondary">{invites.length} invites</Badge>
+                <Share2 className="w-5 h-5 text-amber-700" />
+                <h1 className="text-2xl font-serif font-semibold">Share Louis</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-6">
-                Refer Louis to peers and earn credits + cash payouts. Two programs: consumer AI (per-signup credits) and e-Firm (free months for the firm).
+            <p className="text-sm text-gray-600 mb-8 max-w-xl">
+                Louis is free and open source. The most useful thing you can do
+                is tell another lawyer or legal-tech engineer about it.
             </p>
 
-            <div className="flex gap-1.5 mb-6">
-                <button
-                    onClick={() => setTab("ai")}
-                    className={`px-3 py-1.5 text-sm rounded ${tab === "ai" ? "bg-gray-900 text-white" : "bg-white border border-gray-200 text-gray-700"}`}
-                >
-                    Consumer AI
-                </button>
-                <button
-                    onClick={() => setTab("efirm")}
-                    className={`px-3 py-1.5 text-sm rounded ${tab === "efirm" ? "bg-gray-900 text-white" : "bg-white border border-gray-200 text-gray-700"}`}
-                >
-                    e-Firm
-                </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <ShareCard
+                    icon={Twitter}
+                    title="Post on X / Twitter"
+                    href={`https://twitter.com/intent/tweet?text=${tweet}`}
+                />
+                <ShareCard
+                    icon={Linkedin}
+                    title="Share on LinkedIn"
+                    href={linkedinShare}
+                />
+                <ShareCard
+                    icon={Mail}
+                    title="Email a colleague"
+                    href={`mailto:?subject=${encodeURIComponent("Have you tried Louis?")}&body=${mailBody}`}
+                />
+                <ShareCard
+                    icon={MessageSquare}
+                    title="Tell your group chat"
+                    onClick={() => copy(`${PITCH} ${SITE_URL}`, "pitch")}
+                    badge={copied === "pitch" ? "Copied!" : "Copy pitch"}
+                />
+                <ShareCard
+                    icon={Github}
+                    title="Star on GitHub"
+                    href={REPO_URL}
+                />
+                <ShareCard
+                    icon={Copy}
+                    title="Copy the link"
+                    onClick={() => copy(SITE_URL, "url")}
+                    badge={copied === "url" ? "Copied!" : SITE_URL}
+                />
             </div>
 
-            {loading && <div className="text-sm text-gray-500">Loading…</div>}
-
-            {code && (
-                <>
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                        <div className="bg-white border border-gray-200 rounded-lg p-4">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Credits balance</div>
-                            <div className="text-2xl font-semibold text-gray-900 mt-1">{code.creditsBalance}</div>
-                        </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Pending payout</div>
-                            <div className="text-2xl font-semibold text-gray-900 mt-1">${code.pendingPayout}</div>
-                        </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Total earned</div>
-                            <div className="text-2xl font-semibold text-gray-900 mt-1">${code.totalEarned}</div>
-                        </div>
-                    </div>
-
-                    {/* Link + share */}
-                    <div className="bg-gradient-to-br from-blue-50 to-emerald-50 border border-emerald-200 rounded-lg p-5 mb-6">
-                        <div className="text-xs uppercase tracking-wide text-gray-600 mb-1">Your referral link</div>
-                        <div className="flex items-center gap-2 mb-3">
-                            <code className="flex-1 bg-white border border-gray-200 rounded px-3 py-2 text-sm font-mono truncate">{link}</code>
-                            <Button size="sm" variant="outline" onClick={copyLink}>
-                                {copied ? <Check className="w-3.5 h-3.5 mr-1" /> : <Copy className="w-3.5 h-3.5 mr-1" />}
-                                {copied ? "Copied" : "Copy"}
-                            </Button>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            <Button size="sm" variant="outline" onClick={() => setShowInvite(true)}>
-                                <Send className="w-3.5 h-3.5 mr-1" /> Send invite
-                            </Button>
-                            <a
-                                href={`mailto:?subject=${encodeURIComponent("Try Louis legal AI")}&body=${encodeURIComponent(SHARE_COPY[tab](link))}`}
-                                className="inline-flex items-center px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-white"
-                            >
-                                <Mail className="w-3.5 h-3.5 mr-1" /> Email
-                            </a>
-                            <a
-                                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://" + link)}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-white"
-                            >
-                                <Linkedin className="w-3.5 h-3.5 mr-1" /> LinkedIn
-                            </a>
-                        </div>
-                    </div>
-
-                    {/* Invites table */}
-                    <div>
-                        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-2">Invites ({invites.length})</h2>
-                        <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
-                            {invites.length === 0 && (
-                                <div className="px-4 py-8 text-center text-sm text-gray-500">
-                                    No invites yet. Click "Send invite" to add one.
-                                </div>
-                            )}
-                            {invites.map(inv => (
-                                <div key={inv.id} className="px-4 py-3 flex items-center gap-3">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium">{inv.inviteeName || inv.inviteeEmail}</div>
-                                        {inv.inviteeName && <div className="text-xs text-gray-500">{inv.inviteeEmail}</div>}
-                                    </div>
-                                    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STAGE_COLOR[inv.stage]}`}>
-                                        {inv.stage}
-                                    </span>
-                                    {inv.reward != null && inv.reward > 0 && (
-                                        <span className="text-xs text-green-700">+{inv.reward}</span>
-                                    )}
-                                    <span className="text-[10px] text-gray-400 w-20 text-right">{formatTime(inv.stageAt)}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {showInvite && code && (
-                <InviteModal
-                    codeId={code.id}
-                    onClose={() => setShowInvite(false)}
-                    onSent={() => { setShowInvite(false); refreshInvites(); }}
-                />
-            )}
+            <div className="mt-10 rounded-xl border border-[#e7e2d6] bg-[#fbf8f2] p-5">
+                <div className="text-xs uppercase tracking-wider text-amber-700 mb-2">
+                    Suggested copy
+                </div>
+                <p className="text-sm text-gray-700 font-serif leading-relaxed mb-3">
+                    {PITCH}
+                </p>
+                <button
+                    onClick={() => copy(PITCH, "blurb")}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 hover:text-gray-900"
+                >
+                    {copied === "blurb" ? (
+                        <>
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            Copied
+                        </>
+                    ) : (
+                        <>
+                            <Copy className="w-3 h-3" />
+                            Copy this paragraph
+                        </>
+                    )}
+                </button>
+            </div>
         </div>
     );
 }
 
-function InviteModal({ codeId, onClose, onSent }: { codeId: string; onClose: () => void; onSent: () => void }) {
-    const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
-    const [submitting, setSubmitting] = useState(false);
-
-    async function submit() {
-        if (!email.trim()) return;
-        setSubmitting(true);
-        try {
-            const r = await fetch(`${API_BASE}/api/referral/codes/${codeId}/invites`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
-                body: JSON.stringify({ email, name }),
-            });
-            if (r.ok) onSent();
-        } finally {
-            setSubmitting(false);
-        }
-    }
-
-    return (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-md">
-                <div className="px-6 py-4 border-b flex items-center justify-between">
-                    <h2 className="font-semibold">Send invite</h2>
-                    <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
-                </div>
-                <div className="px-6 py-4 space-y-3">
-                    <div>
-                        <Label className="text-xs">Email</Label>
-                        <Input type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1" placeholder="friend@example.com" />
+function ShareCard({
+    icon: Icon,
+    title,
+    href,
+    onClick,
+    badge,
+}: {
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    href?: string;
+    onClick?: () => void;
+    badge?: string;
+}) {
+    const body = (
+        <div className="rounded-xl border border-gray-200 bg-white p-4 flex items-center gap-3 hover:border-amber-300 hover:shadow-sm transition-all cursor-pointer">
+            <div className="w-9 h-9 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-amber-700" />
+            </div>
+            <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-gray-900">{title}</div>
+                {badge && (
+                    <div className="text-[11px] text-gray-500 truncate mt-0.5">
+                        {badge}
                     </div>
-                    <div>
-                        <Label className="text-xs">Name (optional)</Label>
-                        <Input value={name} onChange={e => setName(e.target.value)} className="mt-1" />
-                    </div>
-                </div>
-                <div className="px-6 py-4 border-t flex justify-end gap-2">
-                    <Button variant="outline" onClick={onClose}>Cancel</Button>
-                    <Button onClick={submit} disabled={submitting || !email.trim()}>
-                        {submitting ? "Sending…" : "Send invite"}
-                    </Button>
-                </div>
+                )}
             </div>
         </div>
+    );
+    return href ? (
+        <a href={href} target="_blank" rel="noreferrer">
+            {body}
+        </a>
+    ) : (
+        <button type="button" onClick={onClick} className="text-left">
+            {body}
+        </button>
     );
 }

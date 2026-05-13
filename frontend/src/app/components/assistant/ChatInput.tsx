@@ -25,6 +25,7 @@ import { AssistantWorkflowModal } from "./AssistantWorkflowModal";
 import { ApiKeyMissingModal } from "../shared/ApiKeyMissingModal";
 import { ModelToggle } from "./ModelToggle";
 import { useSelectedModel } from "@/app/hooks/useSelectedModel";
+import { useRotatingPrompt } from "@/app/hooks/useRotatingPrompt";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import {
     getModelProvider,
@@ -62,6 +63,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     ref,
 ) {
     const [value, setValue] = useState("");
+    const rotatingPlaceholder = useRotatingPrompt({ enabled: value.length === 0 });
     const [attachedDocs, setAttachedDocs] = useState<LouisDocument[]>([]);
     const [selectedWorkflow, setSelectedWorkflow] = useState<{
         id: string;
@@ -320,7 +322,14 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                         <textarea
                             ref={textareaRef}
                             rows={1}
-                            placeholder="Ask a question about your documents..."
+                            // Rotate jurisdiction-aware sample prompts while the
+                            // input is empty so first-time users see a viable
+                            // starting question instead of generic placeholder.
+                            placeholder={
+                                value.length === 0
+                                    ? rotatingPlaceholder
+                                    : "Ask a question about your documents..."
+                            }
                             value={value}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}

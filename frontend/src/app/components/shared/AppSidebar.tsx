@@ -13,7 +13,6 @@ import {
     ChevronDown,
     Sparkles,
     Network,
-    Gift,
     SlidersHorizontal,
     FileText,
     MessageSquareDashed,
@@ -35,11 +34,10 @@ import {
     Building2,
     ChevronRight,
     Inbox,
-    CreditCard,
     Users,
-    Zap,
     LogOut,
     Rss,
+    Share2,
     Star,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
@@ -76,7 +74,6 @@ interface NavGroup {
 // redirect so old links resolve.
 const PINNED: NavItem[] = [
     { href: "/assistant",  label: "Assistant", labelKey: "nav.assistant", icon: MessageSquare },
-    { href: "/feed",       label: "Newsfeed",  labelKey: "nav.newsfeed",  icon: Rss },
     { href: "/inbox",      label: "Inbox",     labelKey: "nav.inbox",     icon: Inbox },
     { href: "/all-chats",  label: "All Chats", labelKey: "nav.all_chats", icon: MessageSquareDashed },
     { href: "/projects",   label: "Projects",  labelKey: "nav.projects",  icon: FolderOpen },
@@ -116,6 +113,7 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/skills",            label: "Skills",         labelKey: "nav.skills",        icon: Sparkles },
             { href: "/workflows",         label: "Workflows",      labelKey: "nav.workflows",     icon: Library },
             { href: "/integrations",      label: "Integrations",   labelKey: "nav.integrations",  icon: Plug },
+            { href: "/feed",              label: "Newsfeed",       labelKey: "nav.newsfeed",      icon: Rss },
         ],
     },
     {
@@ -126,8 +124,6 @@ const NAV_GROUPS: NavGroup[] = [
         items: [
             { href: "/settings",          label: "Settings",       labelKey: "nav.settings",      icon: SettingsIcon },
             { href: "/settings/api-keys", label: "API Keys",       labelKey: "nav.api_keys",      icon: Key },
-            { href: "/billing",           label: "Billing",        labelKey: "nav.billing",       icon: CreditCard },
-            { href: "/upgrade",           label: "Upgrade",        labelKey: "nav.upgrade",       icon: Zap },
             { href: "/team",              label: "Team",           labelKey: "nav.team",          icon: Users },
         ],
     },
@@ -138,7 +134,7 @@ const NAV_GROUPS: NavGroup[] = [
         defaultCollapsed: true,
         items: [
             { href: "/academy",  label: "Academy",   labelKey: "nav.academy",  icon: BookOpenCheck },
-            { href: "/referral", label: "Referral",  labelKey: "nav.referral", icon: Gift },
+            { href: "/referral", label: "Share Louis", labelKey: "nav.share", icon: Share2 },
             { href: "/about",    label: "About",     labelKey: "nav.about",    icon: Info },
         ],
     },

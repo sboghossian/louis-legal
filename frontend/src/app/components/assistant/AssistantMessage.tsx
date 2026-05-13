@@ -1006,6 +1006,45 @@ function MarkdownContent({
             >
                 {text}
             </ReactMarkdown>
+            {/* Inline footnotes — one row per cited source, numbered to match
+                the [N] chips in the body. Clicking still opens the right
+                panel for the full quote + doc preview. */}
+            {citationsList.length > 0 && (
+                <ol className="mt-4 pt-3 border-t border-gray-200 space-y-1.5 list-none pl-0 text-[12.5px] text-gray-600 font-sans not-prose">
+                    {citationsList.map((c, idx) => {
+                        const page = formatCitationPage(c);
+                        const quote = displayCitationQuote(c);
+                        return (
+                            <li
+                                key={idx}
+                                className="flex items-start gap-2 leading-snug"
+                            >
+                                <button
+                                    onClick={() => onCitationClick?.(c)}
+                                    className="shrink-0 inline-flex items-center justify-center rounded-full w-4 h-4 text-[10px] font-medium bg-gray-100 text-gray-900 hover:bg-gray-200 mt-0.5"
+                                    aria-label={`Open citation ${idx + 1}`}
+                                >
+                                    {idx + 1}
+                                </button>
+                                <button
+                                    onClick={() => onCitationClick?.(c)}
+                                    className="text-left flex-1 min-w-0 hover:text-gray-900"
+                                >
+                                    <span className="text-gray-900 font-medium">
+                                        {page}
+                                    </span>
+                                    {quote && (
+                                        <span className="text-gray-500 italic">
+                                            {" "}
+                                            — &ldquo;{quote.length > 180 ? quote.slice(0, 180).trim() + "…" : quote}&rdquo;
+                                        </span>
+                                    )}
+                                </button>
+                            </li>
+                        );
+                    })}
+                </ol>
+            )}
         </div>
     );
 }
