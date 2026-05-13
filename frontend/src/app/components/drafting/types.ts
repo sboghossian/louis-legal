@@ -70,11 +70,36 @@ export interface BoardEdge {
     to: string;
 }
 
+/**
+ * One turn in the board's threaded conversation. We snapshot the messages
+ * locally so node N+1 can see node N's output as a prior assistant turn —
+ * the model treats the whole run as a single conversation.
+ */
+export interface BoardChatMessage {
+    role: "user" | "assistant";
+    content: string;
+    /** Which node produced this message — surfaced in the inspector. */
+    nodeId?: string;
+}
+
 export interface Board {
     templateKey: string;
     name: string;
     nodes: BoardNode[];
     edges: BoardEdge[];
+    /**
+     * Chat-thread id the board's nodes share. First node-run creates a fresh
+     * chat (chatId stays `undefined`); the SSE response returns `chat_id`,
+     * which we save here so subsequent nodes continue the same conversation.
+     * The thread shows up in /all-chats as a single run-history entry.
+     */
+    chatId?: string;
+    /**
+     * Accumulated user/assistant messages across the run. Each completed node
+     * appends its user prompt + the model's reply so the next node sees full
+     * context. Reset when the board is re-seeded.
+     */
+    runMessages?: BoardChatMessage[];
 }
 
 /** Computed position from auto-layout — kept separate from node data. */

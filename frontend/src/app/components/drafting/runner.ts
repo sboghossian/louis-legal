@@ -23,7 +23,13 @@
  */
 
 import { streamChat } from "@/app/lib/louisApi";
-import type { Board, BoardNode, NodeStatus, StatusTransition } from "./types";
+import type {
+    Board,
+    BoardChatMessage,
+    BoardNode,
+    NodeStatus,
+    StatusTransition,
+} from "./types";
 
 export interface AdvanceResult {
     nextBoard: Board;
@@ -177,6 +183,49 @@ export interface RunNodeOutcome {
 }
 
 /**
+ * Build the messages array the model sees for this node:
+ *   [
+ *     {user: "Step 1 prompt"},  {assistant: "Step 1 output"},
+ *     {user: "Step 2 prompt"},  {assistant: "Step 2 output"},
+ *     ...
+ *     {user: "current step prompt"}
+ *   ]
+ *
+ * `priorMessages` is what we've accumulated across the board run so far.
+ * The current node's prompt becomes the new user turn at the end.
+ *
+ * If `priorMessages` is empty (first node of the run), the first item gets
+ * a short system-style preamble naming the workflow so the assistant
+ * understands the whole arc up front.
+ */
+function buildThreadedMessages(
+    node: BoardNode,
+    board: Board,
+    priorMessages: BoardChatMessage[],
+): { role: "user" | "assistant"; content: string }[] {
+    const promptForCurrent = promptForNode(node, board);
+    if (priorMessages.length === 0) {
+        return [
+            {
+                role: "user",
+                content:
+                    `You are running the "${board.name}" agentic workflow as a single ` +
+                    `conversation. Each user turn names one step of the workflow; you ` +
+                    `produce the deliverable for that step in plain prose, max 200 ` +
+                    `words, no markdown headers. Later steps will reference earlier ` +
+                    `outputs — keep them concrete + reusable.\n\n` +
+                    `Step 1 — ${promptForCurrent}`,
+            },
+        ];
+    }
+    // Subsequent steps: keep the role/content pairs verbatim, append the new step.
+    return [
+        ...priorMessages.map((m) => ({ role: m.role, content: m.content })),
+        { role: "user", content: promptForCurrent },
+    ];
+}
+
+/**
  * Run a single node end-to-end: open the SSE stream, accumulate the
  * assistant's content, write `lastOutput` + routing metadata, return the
  * updated board.
@@ -210,18 +259,25 @@ export async function runNode(
         };
     }
 
-    const prompt = promptForNode(node, board);
+    // v2: thread the board's running conversation. Node N+1 sees node N's
+    // output as a prior assistant turn — the model treats the whole board
+    // run as a single chat. chatId is captured from the SSE on first run
+    // and reused for every subsequent node so the run shows up in
+    // /all-chats as one persisted thread.
+    const priorMessages = board.runMessages ?? [];
+    const messages = buildThreadedMessages(node, board, priorMessages);
 
     let collected = "";
     let model: string | undefined;
     let playbookSlug: string | undefined;
     let httpStatus: number | undefined;
+    let capturedChatId: string | undefined = board.chatId;
 
     try {
         const response = await streamChat({
-            messages: [{ role: "user", content: prompt }],
-            // One-shot — no persisted chat thread per node.
-            chat_id: undefined,
+            messages,
+            // Reuse the board's chat thread on every node after the first.
+            chat_id: board.chatId,
             autoRouteModel: true,
             signal: options.signal,
         });
@@ -286,10 +342,19 @@ export async function runNode(
                     text?: string;
                     model?: string;
                     playbookSlug?: string;
+                    chatId?: string;
                 };
                 try {
                     data = JSON.parse(dataStr);
                 } catch {
+                    continue;
+                }
+
+                // Backend assigns + emits the chat id on first turn of a new
+                // thread (when client passes chat_id: undefined). Capture so
+                // subsequent nodes thread into the same conversation.
+                if (data.type === "chat_id" && typeof data.chatId === "string") {
+                    capturedChatId = data.chatId;
                     continue;
                 }
 
@@ -356,8 +421,30 @@ export async function runNode(
     }
 
     const finalText = collected.trim();
+
+    // Thread accumulator: append both the user turn we sent AND the
+    // assistant turn we got, tagged with the node id, so the inspector can
+    // surface the conversation per-node and the next node's prompt
+    // automatically inherits this context.
+    const lastUserTurn = messages[messages.length - 1];
+    const updatedRunMessages: BoardChatMessage[] = [
+        ...priorMessages,
+        {
+            role: "user",
+            content: lastUserTurn?.content ?? promptForNode(node, board),
+            nodeId,
+        },
+        {
+            role: "assistant",
+            content: finalText,
+            nodeId,
+        },
+    ];
+
     const completed: Board = {
         ...board,
+        chatId: capturedChatId ?? board.chatId,
+        runMessages: updatedRunMessages,
         nodes: board.nodes.map((n) =>
             n.id === nodeId
                 ? {
@@ -440,6 +527,19 @@ export function rejectGate(
             blocked.size === 1 ? "" : "s"
         } blocked.`,
         done: false,
+    };
+}
+
+/**
+ * Drop the threaded conversation state. Call when the user resets the
+ * board, re-seeds from a template, or wants a fresh run untainted by
+ * prior outputs. Keeps the node graph; clears the chat thread + messages.
+ */
+export function resetRunThread(board: Board): Board {
+    return {
+        ...board,
+        chatId: undefined,
+        runMessages: undefined,
     };
 }
 

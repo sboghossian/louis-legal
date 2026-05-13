@@ -433,6 +433,15 @@ function TopBar({
                 <span className="text-[11px] text-muted-foreground">
                     {t("drafting.steps", { count: board.nodes.length })}
                 </span>
+                {board.chatId && (
+                    <span
+                        className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-800"
+                        title="Every step in this run shares one chat thread. Later steps see prior outputs as conversation history."
+                    >
+                        <span className="louis-pulse h-1 w-1 rounded-full bg-[#C9A961]" />
+                        Threaded run
+                    </span>
+                )}
             </div>
             <div className="flex items-center gap-2">
                 <TemplateSwitcher current={board.templateKey} onPick={onPick} />
