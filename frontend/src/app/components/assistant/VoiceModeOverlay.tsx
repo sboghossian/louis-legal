@@ -332,14 +332,12 @@ export function VoiceModeOverlay({
         >
             {/* Top bar */}
             <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-5 font-sans text-xs text-muted-foreground">
-                <a
-                    href="#"
-                    onClick={(e) => e.preventDefault()}
-                    className="hover:text-foreground transition-colors"
+                <span
+                    className="cursor-help"
                     title={t("voice.how.tooltip")}
                 >
                     {t("voice.how")}
-                </a>
+                </span>
                 <button
                     type="button"
                     aria-label={t("voice.aria.close")}
