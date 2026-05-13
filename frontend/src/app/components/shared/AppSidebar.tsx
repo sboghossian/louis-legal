@@ -475,11 +475,6 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
         return profile.displayName || user?.email?.split("@")[0] || "";
     };
 
-    const getUserTier = () => {
-        if (!profile) return "";
-        return profile.tier || "Free";
-    };
-
     // Matter sub-links (rendered inside the expanded panel matter section).
     const matterSubLinks: NavItem[] = useMemo(() => {
         if (!activeMatter) return [];
@@ -668,7 +663,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                             >
                                 <div className="px-3 py-2 border-b border-border mb-1">
                                     <div className="text-sm font-medium text-foreground truncate">{getDisplayName()}</div>
-                                    <div className="text-[11px] text-muted-foreground">{getUserTier()}</div>
+                                    <div className="text-[11px] text-muted-foreground truncate">{user.email}</div>
                                 </div>
                                 <button
                                     onClick={() => { router.push("/account"); setIsDropdownOpen(false); }}
@@ -991,7 +986,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     </div>
                                     <div className="text-left flex-1 min-w-0">
                                         <div className="text-sm font-medium text-foreground truncate leading-tight">{getDisplayName()}</div>
-                                        <div className="text-[11px] text-muted-foreground leading-tight">{getUserTier()}</div>
+                                        <div className="text-[11px] text-muted-foreground truncate leading-tight">{user.email}</div>
                                     </div>
                                     <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                                 </button>

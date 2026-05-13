@@ -11,7 +11,7 @@ export const inboxRouter = Router();
 
 inboxRouter.use(requireAuth);
 
-export type InboxEntryKind = "matter-event" | "routine-output" | "deadline" | "system" | "team-invite" | "billing";
+export type InboxEntryKind = "matter-event" | "routine-output" | "deadline" | "system" | "team-invite";
 
 export interface InboxEntry {
   id: string;

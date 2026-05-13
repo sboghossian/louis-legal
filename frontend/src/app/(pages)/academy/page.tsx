@@ -41,7 +41,6 @@ import {
     Key,
     Rss,
     Settings as SettingsIcon,
-    CreditCard,
     Users,
     Gift,
     Info,
@@ -443,15 +442,6 @@ Search across all tabs at the top. Toggle on/off with the switch on each card.
 Slots labeled "Configured by server admin" are read-only — the operator set that provider in \`backend/.env\` and locked it.
 `,
         open: "/settings/api-keys",
-    },
-    {
-        slug: "billing",
-        title: "Billing",
-        category: "account",
-        icon: CreditCard,
-        summary: "Plan, invoices, payment method. Stripe-backed.",
-        body: `[/billing](/billing). Plan tier (Free / Pro / Firm), monthly invoices, credit pack purchases. Connect Stripe in [/integrations](/integrations) if not configured server-side.`,
-        open: "/billing",
     },
     {
         slug: "team",
