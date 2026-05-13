@@ -69,5 +69,5 @@
         "typescript": "^5",
         "wrangler": "^4.90.0"
     },
-    "license": "AGPL-3.0-only"
+    "license": "MIT"
 }
