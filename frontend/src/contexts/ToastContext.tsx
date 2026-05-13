@@ -97,7 +97,7 @@ const VARIANT_STYLES: Record<
     ToastVariant,
     { ring: string; icon: React.ComponentType<{ className?: string }>; iconClass: string }
 > = {
-    info:    { ring: "ring-gray-200",       icon: Info,         iconClass: "text-muted-foreground" },
+    info:    { ring: "ring-border",          icon: Info,         iconClass: "text-muted-foreground" },
     success: { ring: "ring-emerald-200",    icon: CheckCircle2, iconClass: "text-emerald-600" },
     error:   { ring: "ring-red-200",        icon: AlertTriangle, iconClass: "text-red-600" },
 };

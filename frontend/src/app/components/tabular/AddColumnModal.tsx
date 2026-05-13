@@ -449,7 +449,7 @@ export function AddColumnModal({ open, existingCount, onClose, onAdd, editingCol
                                         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:text-muted-foreground"
                                     >
                                         {generatingIndices.includes(index) ? (
-                                            <span className="h-4 w-4 rounded-full border-2 border-border border-t-gray-600 animate-spin block" />
+                                            <span className="h-4 w-4 rounded-full border-2 border-border border-t-foreground animate-spin block" />
                                         ) : (
                                             <Plus className="h-4 w-4" />
                                         )}

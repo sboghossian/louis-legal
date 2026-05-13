@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useUserProfile } from "@/contexts/UserProfileContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -66,6 +67,7 @@ const TYPE_COLOR: Record<string, string> = {
 
 export default function EFirmPage() {
     const router = useRouter();
+    const { profile } = useUserProfile();
     const [matters, setMatters] = useState<ApiMatter[]>([]);
     const [stats, setStats] = useState<MatterStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -107,7 +109,9 @@ export default function EFirmPage() {
             <div className="flex items-center gap-2 mb-6">
                 <Briefcase className="w-5 h-5" />
                 <h1 className="text-lg font-semibold">e-Firm</h1>
-                <Badge variant="secondary">HAQQ — Beirut</Badge>
+                {profile?.organisation && (
+                    <Badge variant="secondary">{profile.organisation}</Badge>
+                )}
                 <Button size="sm" variant="outline" className="ml-auto h-7 text-xs" onClick={() => router.push("/matters")}>
                     Open Matters
                 </Button>

@@ -60,7 +60,7 @@ export function AppearanceTab() {
                             aria-pressed={appearance.theme === t.id}
                             className={`flex flex-col items-start gap-2 p-2 rounded-lg border text-left transition-colors ${
                                 appearance.theme === t.id
-                                    ? "border-foreground ring-1 ring-gray-900"
+                                    ? "border-foreground ring-1 ring-foreground"
                                     : "border-border hover:border-border"
                             }`}
                         >
@@ -96,7 +96,7 @@ export function AppearanceTab() {
                             aria-pressed={appearance.font === f.id}
                             className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg border text-left transition-colors ${
                                 appearance.font === f.id
-                                    ? "border-foreground ring-1 ring-gray-900"
+                                    ? "border-foreground ring-1 ring-foreground"
                                     : "border-border hover:border-border"
                             }`}
                         >
