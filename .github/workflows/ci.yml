@@ -1,0 +1,100 @@
+name: CI
+
+# Catch regressions on every push + PR. The matrix runs frontend and
+# backend in parallel so failures land in ~3 min total. Both apps share
+# the same Node 22 runtime — the Dockerfiles do too, so this is the
+# truth source for the toolchain version.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────
+  # Frontend
+  # ─────────────────────────────────────────────────────────────────
+  frontend:
+    name: frontend (typecheck + lint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: TypeScript
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Lint
+        run: npx eslint . --max-warnings 0
+        continue-on-error: true # tighten once the baseline is clean
+
+  # ─────────────────────────────────────────────────────────────────
+  # Backend
+  # ─────────────────────────────────────────────────────────────────
+  backend:
+    name: backend (typecheck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: TypeScript
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Skill registry rebuild (sanity check)
+        run: |
+          if [ -f src/skills/_build-registry.ts ]; then
+            npx tsx src/skills/_build-registry.ts || echo "registry build failed (non-blocking)"
+          fi
+
+  # ─────────────────────────────────────────────────────────────────
+  # Migrations — confirm SQL syntax parses (no DB connection needed)
+  # ─────────────────────────────────────────────────────────────────
+  migrations:
+    name: migrations (syntax)
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pgsanity
+        run: pip install --quiet pgsanity
+
+      - name: Check every .sql file under backend/migrations/
+        run: |
+          fail=0
+          for f in backend/migrations/*.sql; do
+            if ! pgsanity "$f"; then
+              echo "::error file=$f::SQL syntax invalid"
+              fail=1
+            fi
+          done
+          exit $fail

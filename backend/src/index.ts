@@ -191,7 +191,90 @@ app.use("/api/v1", publicApiRouter);
 app.use("/api/v1/events", eventsRouter);
 app.use("/api/v1/plugins", pluginsRouter);
 
-app.get("/health", (_req, res) => res.json({ ok: true }));
+/**
+ * Liveness probe — answer fast, never block on external services.
+ * Used by Docker HEALTHCHECK + Kubernetes liveness probes.
+ */
+app.get("/health", (_req, res) => res.json({ ok: true, uptime: process.uptime() }));
+
+/**
+ * Readiness probe — checks every subsystem and reports per-component.
+ * Used by deployment systems that want to gate traffic until the
+ * backend can actually answer requests. Returns 200 if everything is
+ * green, 503 if any required subsystem fails. Optional subsystems
+ * (e.g. Cohere, Redis) report `degraded` without flipping the 503.
+ */
+app.get("/health/ready", async (_req, res) => {
+  const checks: Record<string, { status: "ok" | "degraded" | "down"; ms?: number; detail?: string }> = {};
+
+  // Supabase (required)
+  const t0 = Date.now();
+  try {
+    const { createServerSupabase } = await import("./lib/supabase");
+    const db = createServerSupabase();
+    const { error } = await db.from("_migrations").select("name").limit(1);
+    checks.supabase = error
+      ? { status: "down", ms: Date.now() - t0, detail: error.message }
+      : { status: "ok", ms: Date.now() - t0 };
+  } catch (e) {
+    checks.supabase = { status: "down", ms: Date.now() - t0, detail: (e as Error).message };
+  }
+
+  // BullMQ / Redis (optional — degraded if absent or unreachable)
+  const t1 = Date.now();
+  try {
+    const { getRedisUrl } = await import("./queue/index");
+    const url = getRedisUrl();
+    if (!process.env.REDIS_URL) {
+      checks.queue = { status: "degraded", detail: "REDIS_URL not set (queues are no-op)" };
+    } else {
+      // Probe with a tiny TCP connect attempt via ioredis. Lazy-import so
+      // boot doesn't pull ioredis when Redis isn't configured.
+      const ioredis = (await import("ioredis")).default;
+      const probe = new ioredis(url, {
+        lazyConnect: true,
+        maxRetriesPerRequest: 1,
+        connectTimeout: 1500,
+        enableOfflineQueue: false,
+      });
+      try {
+        await probe.connect();
+        await probe.ping();
+        checks.queue = { status: "ok", ms: Date.now() - t1 };
+      } finally {
+        probe.disconnect();
+      }
+    }
+  } catch (e) {
+    checks.queue = { status: "degraded", ms: Date.now() - t1, detail: (e as Error).message };
+  }
+
+  // Cohere (optional)
+  checks.cohere = process.env.COHERE_API_KEY
+    ? { status: "ok", detail: "key present (not pinged)" }
+    : { status: "degraded", detail: "no COHERE_API_KEY — retrieval falls back" };
+
+  // Storage (R2 / S3 — optional in dev)
+  try {
+    const { storageEnabled } = await import("./lib/storage");
+    checks.storage = storageEnabled
+      ? { status: "ok", detail: "configured" }
+      : { status: "degraded", detail: "storage not configured (uploads will fail)" };
+  } catch (e) {
+    checks.storage = { status: "degraded", detail: (e as Error).message };
+  }
+
+  const required = ["supabase"];
+  const failed = required.filter((k) => checks[k]?.status === "down");
+  const ready = failed.length === 0;
+
+  res.status(ready ? 200 : 503).json({
+    ready,
+    failed,
+    checks,
+    uptime: process.uptime(),
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Louis backend running on port ${PORT}`);
