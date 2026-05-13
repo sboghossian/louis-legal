@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
     ArrowRight,
+    AudioLines,
     Check,
     File,
     FileText,
@@ -26,6 +27,7 @@ import { AddDocumentsModal } from "../shared/AddDocumentsModal";
 import { AssistantWorkflowModal } from "./AssistantWorkflowModal";
 import { ApiKeyMissingModal } from "../shared/ApiKeyMissingModal";
 import { ModelToggle } from "./ModelToggle";
+import { VoiceModeOverlay } from "./VoiceModeOverlay";
 import { useSelectedModel } from "@/app/hooks/useSelectedModel";
 import { useRotatingPrompt } from "@/app/hooks/useRotatingPrompt";
 import { useUserProfile } from "@/contexts/UserProfileContext";
@@ -116,6 +118,37 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     const [isRecording, setIsRecording] = useState(false);
     const [voiceSupported, setVoiceSupported] = useState(false);
     const [voiceError, setVoiceError] = useState<string | null>(null);
+    // Full-screen voice-mode overlay (ChatGPT-style continuous dictation).
+    // Distinct from the single-shot Mic above: the overlay feeds final
+    // transcripts straight into onSubmit (same path as Enter-to-send) and
+    // lifts to the global "speaking" status while TTS reads the reply.
+    const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+    // Track loading transitions so we can flip the overlay's status from
+    // "thinking" → "listening" once the assistant reply lands. The actual
+    // TTS auto-play is driven by SpeakMessage reading `voiceModeOpen` via
+    // a window event — see notifyVoiceModeReply below.
+    const wasLoadingRef = useRef(false);
+    const [overlayStatus, setOverlayStatus] = useState<
+        "listening" | "thinking" | "speaking" | "paused"
+    >("listening");
+    useEffect(() => {
+        if (!voiceModeOpen) return;
+        if (isLoading && !wasLoadingRef.current) {
+            setOverlayStatus("thinking");
+        } else if (!isLoading && wasLoadingRef.current) {
+            // Reply just finished streaming. If TTS is supported the
+            // SpeakMessage auto-play will kick in; nudge our status to
+            // "speaking" briefly so the orb stops listening. The actual
+            // "back to listening" transition fires when TTS ends — we
+            // approximate it with a short delay since we don't get a
+            // direct callback from SpeakMessage. Users can also just talk
+            // — the recogniser restarts on its own.
+            setOverlayStatus("speaking");
+            const t = setTimeout(() => setOverlayStatus("listening"), 800);
+            return () => clearTimeout(t);
+        }
+        wasLoadingRef.current = isLoading;
+    }, [isLoading, voiceModeOpen]);
 
     // Probe browser support after mount so SSR matches.
     if (typeof window !== "undefined" && !voiceSupported) {
@@ -432,6 +465,20 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                             {voiceSupported && (
                                 <button
                                     type="button"
+                                    onClick={() => setVoiceModeOpen(true)}
+                                    aria-label="Open voice mode"
+                                    title="Voice mode — continuous dictation with spoken replies"
+                                    className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                                >
+                                    <AudioLines className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">
+                                        Voice mode
+                                    </span>
+                                </button>
+                            )}
+                            {voiceSupported && (
+                                <button
+                                    type="button"
                                     onClick={toggleVoice}
                                     aria-label={
                                         isRecording
@@ -539,6 +586,42 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                 open={apiKeyModalProvider !== null}
                 provider={apiKeyModalProvider}
                 onClose={() => setApiKeyModalProvider(null)}
+            />
+            <VoiceModeOverlay
+                open={voiceModeOpen}
+                onClose={() => setVoiceModeOpen(false)}
+                externalStatus={overlayStatus}
+                onSubmitTranscript={(transcript) => {
+                    // Reuse the same submit pipeline as the textarea — we
+                    // bypass `value` state because the overlay holds its
+                    // own transcript and we don't want a flash in the
+                    // composer behind the cream backdrop.
+                    if (isLoading) return;
+                    const query = transcript.trim();
+                    if (!query) return;
+                    if (
+                        !autoRoute &&
+                        apiKeys &&
+                        !isModelAvailable(model, apiKeys)
+                    ) {
+                        setApiKeyModalProvider(getModelProvider(model));
+                        return;
+                    }
+                    const files = attachedDocs.map((d) => ({
+                        filename: d.filename,
+                        document_id: d.id,
+                    }));
+                    setAttachedDocs([]);
+                    const wf = selectedWorkflow;
+                    setSelectedWorkflow(null);
+                    onSubmit?.({
+                        role: "user",
+                        content: query,
+                        files: files.length > 0 ? files : undefined,
+                        workflow: wf ?? undefined,
+                        model: autoRoute ? undefined : model,
+                    });
+                }}
             />
         </>
     );

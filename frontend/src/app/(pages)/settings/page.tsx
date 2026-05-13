@@ -4,10 +4,20 @@ import { useEffect, useState } from "react";
 import {
     Settings as SettingsIcon, User, CreditCard, Users as TeamIcon,
     Database, Plug, Bell, Shield, ChevronRight, Palette,
+    AudioLines, Play,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppearanceTab } from "./AppearanceTab";
+import {
+    DEFAULT_VOICE_PREFS,
+    isSpeechRecognitionSupported,
+    isSpeechSynthesisSupported,
+    readVoicePrefs,
+    writeVoicePrefs,
+    type VoicePrefs,
+} from "@/app/lib/voice/types";
+import { loadVoices, pickDefaultVoice, speak } from "@/app/lib/voice/tts";
 
 // Settings hub. Tabs: Profile · Models & API Keys · Billing · Team · Data ·
 // Integrations · Notifications · Security. Cross-links to dedicated pages
@@ -131,6 +141,205 @@ function ModelsTab() {
                 The skill router defaults to Gemini Flash for intent classification (cheap + fast).
                 Override via env <code>SKILLS_CLASSIFIER_MODEL</code>.
             </Note>
+            <VoiceSection />
+        </div>
+    );
+}
+
+/**
+ * Voice mode preferences — fold-out card on the Models tab. Stores
+ * everything under `louis.voicePrefs` so the composer (single-shot Mic
+ * + overlay), the SpeakMessage TTS button, and this panel all see the
+ * same defaults. Hidden when neither STT nor TTS is supported.
+ */
+function VoiceSection() {
+    const [open, setOpen] = useState(false);
+    const [prefs, setPrefs] = useState<VoicePrefs>(DEFAULT_VOICE_PREFS);
+    const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+    const [sttOk, setSttOk] = useState(false);
+    const [ttsOk, setTtsOk] = useState(false);
+
+    useEffect(() => {
+        setPrefs(readVoicePrefs());
+        setSttOk(isSpeechRecognitionSupported());
+        setTtsOk(isSpeechSynthesisSupported());
+        if (isSpeechSynthesisSupported()) {
+            loadVoices().then((vs) => {
+                setVoices(vs);
+                // Seed default voice URI if user has none picked yet.
+                setPrefs((cur) => {
+                    if (cur.voiceURI) return cur;
+                    const pick = pickDefaultVoice(vs);
+                    if (!pick) return cur;
+                    const next = { ...cur, voiceURI: pick.voiceURI };
+                    writeVoicePrefs(next);
+                    return next;
+                });
+            });
+        }
+    }, []);
+
+    function update<K extends keyof VoicePrefs>(key: K, value: VoicePrefs[K]) {
+        setPrefs((cur) => {
+            const next = { ...cur, [key]: value };
+            writeVoicePrefs(next);
+            return next;
+        });
+    }
+
+    function testVoice() {
+        speak(
+            "This is Louis. Voice mode is ready. Speak naturally and I will reply aloud.",
+            { rateOverride: prefs.rate, pitchOverride: prefs.pitch },
+        );
+    }
+
+    if (!sttOk && !ttsOk) return null;
+
+    const locale =
+        typeof navigator !== "undefined" ? navigator.language : "en-US";
+    const localeFamily = locale.split("-")[0];
+    const visibleVoices = voices.filter(
+        (v) => v.lang.startsWith(localeFamily) || v.lang === locale,
+    );
+
+    return (
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50 transition"
+            >
+                <div className="flex items-center gap-3">
+                    <AudioLines className="w-4 h-4 text-amber-700" />
+                    <div>
+                        <div className="font-medium text-sm">Voice</div>
+                        <div className="text-xs text-gray-500">
+                            Continuous dictation, spoken replies, speak-to-cite
+                            commands
+                        </div>
+                    </div>
+                </div>
+                <ChevronRight
+                    className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-90" : ""}`}
+                />
+            </button>
+            {open && (
+                <div className="border-t border-gray-200 p-4 space-y-4 bg-gray-50/50">
+                    <label className="flex items-center gap-3">
+                        <input
+                            type="checkbox"
+                            checked={prefs.enabled}
+                            onChange={(e) => update("enabled", e.target.checked)}
+                            className="accent-gray-900"
+                        />
+                        <div className="flex-1">
+                            <div className="text-sm font-medium">
+                                Enable voice features
+                            </div>
+                            <div className="text-[11px] text-gray-500">
+                                Master switch. Hides the voice-mode button and
+                                speaker icons when off.
+                            </div>
+                        </div>
+                    </label>
+
+                    {ttsOk && (
+                        <div className="space-y-1.5">
+                            <div className="text-xs font-medium text-gray-700">
+                                Preferred voice
+                            </div>
+                            <select
+                                value={prefs.voiceURI ?? ""}
+                                onChange={(e) =>
+                                    update("voiceURI", e.target.value || null)
+                                }
+                                className="w-full text-sm border border-gray-300 rounded px-2 py-1.5 bg-white"
+                            >
+                                {visibleVoices.length === 0 && (
+                                    <option value="">System default</option>
+                                )}
+                                {visibleVoices.map((v) => (
+                                    <option key={v.voiceURI} value={v.voiceURI}>
+                                        {v.name} ({v.lang})
+                                        {v.default ? " · default" : ""}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="text-[10px] text-gray-500">
+                                Showing voices for {localeFamily}. System voices
+                                vary by OS + browser.
+                            </div>
+                        </div>
+                    )}
+
+                    {ttsOk && (
+                        <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs font-medium text-gray-700">
+                                <span>Speech rate</span>
+                                <span className="text-gray-500 font-normal tabular-nums">
+                                    {prefs.rate.toFixed(2)}×
+                                </span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0.5}
+                                max={2.0}
+                                step={0.05}
+                                value={prefs.rate}
+                                onChange={(e) =>
+                                    update("rate", parseFloat(e.target.value))
+                                }
+                                className="w-full accent-amber-700"
+                            />
+                        </div>
+                    )}
+
+                    {sttOk && (
+                        <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs font-medium text-gray-700">
+                                <span>Auto-submit silence threshold</span>
+                                <span className="text-gray-500 font-normal tabular-nums">
+                                    {(prefs.silenceMs / 1000).toFixed(1)}s
+                                </span>
+                            </div>
+                            <input
+                                type="range"
+                                min={1000}
+                                max={3000}
+                                step={100}
+                                value={prefs.silenceMs}
+                                onChange={(e) =>
+                                    update("silenceMs", parseInt(e.target.value, 10))
+                                }
+                                className="w-full accent-amber-700"
+                            />
+                            <div className="text-[10px] text-gray-500">
+                                How long Louis waits after you stop speaking
+                                before sending the transcript.
+                            </div>
+                        </div>
+                    )}
+
+                    {ttsOk && (
+                        <button
+                            type="button"
+                            onClick={testVoice}
+                            className="flex items-center gap-2 h-8 px-3 rounded-md bg-white border border-gray-300 hover:border-amber-400 hover:bg-amber-50 text-sm transition-colors"
+                        >
+                            <Play className="h-3 w-3" /> Test voice
+                        </button>
+                    )}
+
+                    {!sttOk && (
+                        <Note>
+                            Speech recognition isn&apos;t supported in this
+                            browser. Use Chrome, Edge, or Arc for voice-mode
+                            dictation. Text-to-speech still works.
+                        </Note>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

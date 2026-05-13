@@ -24,6 +24,7 @@ import type {
 } from "../shared/types";
 import { EditCard, applyOptimisticResolution } from "./EditCard";
 import { PreResponseWrapper } from "../shared/PreResponseWrapper";
+import { SpeakMessage } from "./SpeakMessage";
 import { supabase } from "@/lib/supabase";
 
 function toolCallLabel(name: string): string {
@@ -1737,6 +1738,17 @@ export function AssistantMessage({
                                 <ThumbsDown className="h-3.5 w-3.5" />
                             </button>
                         </>
+                    )}
+                    {!isStreaming && messageId && (
+                        <SpeakMessage
+                            messageId={messageId}
+                            text={(events ?? [])
+                                .filter((e) => e.type === "content")
+                                .map((e) =>
+                                    e.type === "content" ? e.text : "",
+                                )
+                                .join("\n\n") || _content}
+                        />
                     )}
                 </div>
             </div>
