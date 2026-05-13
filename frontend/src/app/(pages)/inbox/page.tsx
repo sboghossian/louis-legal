@@ -5,16 +5,9 @@ import { useRouter } from "next/navigation";
 import { Inbox, FileText, Repeat, Calendar, Sparkles, UserPlus, CreditCard, CheckCheck, AlertCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
+import { getAuthHeader as authHeaders } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-
-async function authHeaders(): Promise<Record<string, string>> {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token
-        ? { Authorization: `Bearer ${session.access_token}` }
-        : {};
-}
 
 type EntryKind = "matter-event" | "routine-output" | "deadline" | "system" | "team-invite" | "billing";
 

@@ -37,7 +37,11 @@ interface ServerChatDetailOut {
 const API_BASE =
     process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 
-async function getAuthHeader(): Promise<Record<string, string>> {
+/**
+ * Shared Supabase JWT header helper. Exported so page-level fetch
+ * call sites don't duplicate the same 5 lines.
+ */
+export async function getAuthHeader(): Promise<Record<string, string>> {
     const {
         data: { session },
     } = await supabase.auth.getSession();

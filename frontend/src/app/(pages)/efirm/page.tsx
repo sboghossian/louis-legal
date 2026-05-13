@@ -10,16 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useUserProfile } from "@/contexts/UserProfileContext";
-import { supabase } from "@/lib/supabase";
+import { getAuthHeader as authHeaders } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-
-async function authHeaders(): Promise<Record<string, string>> {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token
-        ? { Authorization: `Bearer ${session.access_token}` }
-        : {};
-}
 
 // e-Firm: B2B view onto matters + billing + team. Pulls live data from
 // /api/matters (with stats). Falls back to demo state if no matters open.
