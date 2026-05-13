@@ -325,6 +325,24 @@ const en: Dict = {
     "dialog.confirm.continue": "Continue",
     "dialog.destructive.continue": "Yes, delete",
     "dialog.toast.error.title": "Something went wrong",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Trouble signing in?",
+    "auth.forgot.title": "Reset your password",
+    "auth.forgot.subtitle":
+        "Enter your email and we'll send you a reset link.",
+    "auth.forgot.submit": "Send reset link",
+    "auth.forgot.sent":
+        "If an account exists for this email, a reset link is on its way. Check your inbox + spam folder.",
+    "auth.forgot.back_to_login": "Back to sign in",
+    "auth.reset.title": "Set a new password",
+    "auth.reset.subtitle": "Pick a strong new password. Min. 6 characters.",
+    "auth.reset.password_label": "New password",
+    "auth.reset.confirm_label": "Confirm password",
+    "auth.reset.submit": "Update password",
+    "auth.reset.success": "Password updated. Redirecting…",
+    "auth.reset.expired":
+        "This reset link has expired or is invalid. Request a new one.",
 };
 
 const fr: Dict = {
@@ -584,6 +602,25 @@ const fr: Dict = {
     "dialog.confirm.continue": "Continuer",
     "dialog.destructive.continue": "Oui, supprimer",
     "dialog.toast.error.title": "Une erreur est survenue",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Mot de passe oublié ?",
+    "auth.forgot.title": "Réinitialiser votre mot de passe",
+    "auth.forgot.subtitle":
+        "Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.",
+    "auth.forgot.submit": "Envoyer le lien",
+    "auth.forgot.sent":
+        "Si un compte existe pour cet e-mail, un lien de réinitialisation est en route. Vérifiez votre boîte de réception et les spams.",
+    "auth.forgot.back_to_login": "Retour à la connexion",
+    "auth.reset.title": "Définir un nouveau mot de passe",
+    "auth.reset.subtitle":
+        "Choisissez un mot de passe robuste. Minimum 6 caractères.",
+    "auth.reset.password_label": "Nouveau mot de passe",
+    "auth.reset.confirm_label": "Confirmer le mot de passe",
+    "auth.reset.submit": "Mettre à jour",
+    "auth.reset.success": "Mot de passe mis à jour. Redirection…",
+    "auth.reset.expired":
+        "Ce lien de réinitialisation a expiré ou n'est pas valide. Demandez-en un nouveau.",
 };
 
 const ar: Dict = {
@@ -843,6 +880,24 @@ const ar: Dict = {
     "dialog.confirm.continue": "متابعة",
     "dialog.destructive.continue": "نعم، احذف",
     "dialog.toast.error.title": "حدث خطأ ما",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "هل تواجه مشكلة في تسجيل الدخول؟",
+    "auth.forgot.title": "إعادة تعيين كلمة المرور",
+    "auth.forgot.subtitle":
+        "أدخل بريدك الإلكتروني وسنرسل إليك رابط إعادة التعيين.",
+    "auth.forgot.submit": "إرسال رابط إعادة التعيين",
+    "auth.forgot.sent":
+        "إذا كان هناك حساب مرتبط بهذا البريد، فإن رابط إعادة التعيين في الطريق. تحقّق من البريد الوارد ومجلّد الرسائل غير المرغوب فيها.",
+    "auth.forgot.back_to_login": "العودة إلى تسجيل الدخول",
+    "auth.reset.title": "تعيين كلمة مرور جديدة",
+    "auth.reset.subtitle": "اختر كلمة مرور قوية. 6 أحرف على الأقل.",
+    "auth.reset.password_label": "كلمة المرور الجديدة",
+    "auth.reset.confirm_label": "تأكيد كلمة المرور",
+    "auth.reset.submit": "تحديث كلمة المرور",
+    "auth.reset.success": "تم تحديث كلمة المرور. جارٍ إعادة التوجيه…",
+    "auth.reset.expired":
+        "انتهت صلاحية رابط إعادة التعيين أو أنه غير صالح. اطلب رابطًا جديدًا.",
 };
 
 const es: Dict = {
@@ -1101,6 +1156,25 @@ const es: Dict = {
     "dialog.confirm.continue": "Continuar",
     "dialog.destructive.continue": "Sí, eliminar",
     "dialog.toast.error.title": "Algo salió mal",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "¿Problemas para iniciar sesión?",
+    "auth.forgot.title": "Restablece tu contraseña",
+    "auth.forgot.subtitle":
+        "Introduce tu correo y te enviaremos un enlace para restablecerla.",
+    "auth.forgot.submit": "Enviar enlace",
+    "auth.forgot.sent":
+        "Si existe una cuenta con este correo, el enlace está en camino. Revisa tu bandeja de entrada y la carpeta de spam.",
+    "auth.forgot.back_to_login": "Volver al inicio de sesión",
+    "auth.reset.title": "Establece una nueva contraseña",
+    "auth.reset.subtitle":
+        "Elige una contraseña segura. Mínimo 6 caracteres.",
+    "auth.reset.password_label": "Nueva contraseña",
+    "auth.reset.confirm_label": "Confirmar contraseña",
+    "auth.reset.submit": "Actualizar contraseña",
+    "auth.reset.success": "Contraseña actualizada. Redirigiendo…",
+    "auth.reset.expired":
+        "Este enlace ha caducado o no es válido. Solicita uno nuevo.",
 };
 
 const de: Dict = {
@@ -1359,6 +1433,25 @@ const de: Dict = {
     "dialog.confirm.continue": "Fortfahren",
     "dialog.destructive.continue": "Ja, löschen",
     "dialog.toast.error.title": "Etwas ist schiefgelaufen",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Probleme beim Anmelden?",
+    "auth.forgot.title": "Passwort zurücksetzen",
+    "auth.forgot.subtitle":
+        "Gib deine E-Mail-Adresse ein und wir senden dir einen Reset-Link.",
+    "auth.forgot.submit": "Reset-Link senden",
+    "auth.forgot.sent":
+        "Falls ein Konto mit dieser E-Mail existiert, ist der Reset-Link unterwegs. Prüfe Posteingang und Spam-Ordner.",
+    "auth.forgot.back_to_login": "Zurück zur Anmeldung",
+    "auth.reset.title": "Neues Passwort festlegen",
+    "auth.reset.subtitle":
+        "Wähle ein starkes Passwort. Mindestens 6 Zeichen.",
+    "auth.reset.password_label": "Neues Passwort",
+    "auth.reset.confirm_label": "Passwort bestätigen",
+    "auth.reset.submit": "Passwort aktualisieren",
+    "auth.reset.success": "Passwort aktualisiert. Weiterleitung…",
+    "auth.reset.expired":
+        "Dieser Reset-Link ist abgelaufen oder ungültig. Fordere einen neuen an.",
 };
 
 const it: Dict = {
@@ -1617,6 +1710,25 @@ const it: Dict = {
     "dialog.confirm.continue": "Continua",
     "dialog.destructive.continue": "Sì, elimina",
     "dialog.toast.error.title": "Qualcosa è andato storto",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Problemi ad accedere?",
+    "auth.forgot.title": "Reimposta la password",
+    "auth.forgot.subtitle":
+        "Inserisci la tua e-mail e ti invieremo un link per reimpostarla.",
+    "auth.forgot.submit": "Invia link di reset",
+    "auth.forgot.sent":
+        "Se esiste un account per questa e-mail, il link di reset è in arrivo. Controlla la posta in arrivo e lo spam.",
+    "auth.forgot.back_to_login": "Torna all'accesso",
+    "auth.reset.title": "Imposta una nuova password",
+    "auth.reset.subtitle":
+        "Scegli una password forte. Minimo 6 caratteri.",
+    "auth.reset.password_label": "Nuova password",
+    "auth.reset.confirm_label": "Conferma password",
+    "auth.reset.submit": "Aggiorna password",
+    "auth.reset.success": "Password aggiornata. Reindirizzamento…",
+    "auth.reset.expired":
+        "Questo link di reset è scaduto o non è valido. Richiedine uno nuovo.",
 };
 
 const pt: Dict = {
@@ -1874,6 +1986,25 @@ const pt: Dict = {
     "dialog.confirm.continue": "Continuar",
     "dialog.destructive.continue": "Sim, excluir",
     "dialog.toast.error.title": "Algo deu errado",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Problemas para entrar?",
+    "auth.forgot.title": "Redefinir sua senha",
+    "auth.forgot.subtitle":
+        "Informe seu e-mail e enviaremos um link para redefinir a senha.",
+    "auth.forgot.submit": "Enviar link",
+    "auth.forgot.sent":
+        "Se houver uma conta para este e-mail, o link de redefinição está a caminho. Confira a caixa de entrada e o spam.",
+    "auth.forgot.back_to_login": "Voltar ao login",
+    "auth.reset.title": "Definir uma nova senha",
+    "auth.reset.subtitle":
+        "Escolha uma senha forte. Mínimo de 6 caracteres.",
+    "auth.reset.password_label": "Nova senha",
+    "auth.reset.confirm_label": "Confirmar senha",
+    "auth.reset.submit": "Atualizar senha",
+    "auth.reset.success": "Senha atualizada. Redirecionando…",
+    "auth.reset.expired":
+        "Este link de redefinição expirou ou é inválido. Solicite um novo.",
 };
 
 const zh: Dict = {
@@ -2127,6 +2258,22 @@ const zh: Dict = {
     "dialog.confirm.continue": "继续",
     "dialog.destructive.continue": "是的，删除",
     "dialog.toast.error.title": "出现问题",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "登录有问题？",
+    "auth.forgot.title": "重置密码",
+    "auth.forgot.subtitle": "输入你的邮箱，我们将发送一封重置链接邮件。",
+    "auth.forgot.submit": "发送重置链接",
+    "auth.forgot.sent":
+        "如果该邮箱有对应账户，重置链接已发出。请查收收件箱与垃圾邮件夹。",
+    "auth.forgot.back_to_login": "返回登录",
+    "auth.reset.title": "设置新密码",
+    "auth.reset.subtitle": "请选择高强度密码，最少 6 个字符。",
+    "auth.reset.password_label": "新密码",
+    "auth.reset.confirm_label": "确认密码",
+    "auth.reset.submit": "更新密码",
+    "auth.reset.success": "密码已更新，正在跳转…",
+    "auth.reset.expired": "此重置链接已过期或无效，请重新申请。",
 };
 
 const ja: Dict = {
@@ -2384,6 +2531,25 @@ const ja: Dict = {
     "dialog.confirm.continue": "続行",
     "dialog.destructive.continue": "はい、削除します",
     "dialog.toast.error.title": "問題が発生しました",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "サインインでお困りですか？",
+    "auth.forgot.title": "パスワードをリセット",
+    "auth.forgot.subtitle":
+        "メールアドレスを入力してください。リセット用リンクをお送りします。",
+    "auth.forgot.submit": "リセットリンクを送信",
+    "auth.forgot.sent":
+        "このメールに対応するアカウントが存在する場合、リセットリンクをお送りしました。受信トレイと迷惑メールをご確認ください。",
+    "auth.forgot.back_to_login": "サインインに戻る",
+    "auth.reset.title": "新しいパスワードを設定",
+    "auth.reset.subtitle":
+        "強力なパスワードを設定してください。6 文字以上。",
+    "auth.reset.password_label": "新しいパスワード",
+    "auth.reset.confirm_label": "パスワードを確認",
+    "auth.reset.submit": "パスワードを更新",
+    "auth.reset.success": "パスワードを更新しました。リダイレクト中…",
+    "auth.reset.expired":
+        "このリセットリンクは期限切れか無効です。新しいリンクをリクエストしてください。",
 };
 
 const ru: Dict = {
@@ -2642,6 +2808,25 @@ const ru: Dict = {
     "dialog.confirm.continue": "Продолжить",
     "dialog.destructive.continue": "Да, удалить",
     "dialog.toast.error.title": "Что-то пошло не так",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Проблемы со входом?",
+    "auth.forgot.title": "Сбросить пароль",
+    "auth.forgot.subtitle":
+        "Введите ваш email — пришлём ссылку для сброса пароля.",
+    "auth.forgot.submit": "Отправить ссылку",
+    "auth.forgot.sent":
+        "Если для этого адреса есть аккаунт, ссылка для сброса уже в пути. Проверьте входящие и папку «Спам».",
+    "auth.forgot.back_to_login": "Назад ко входу",
+    "auth.reset.title": "Задайте новый пароль",
+    "auth.reset.subtitle":
+        "Выберите надёжный пароль. Минимум 6 символов.",
+    "auth.reset.password_label": "Новый пароль",
+    "auth.reset.confirm_label": "Подтвердите пароль",
+    "auth.reset.submit": "Обновить пароль",
+    "auth.reset.success": "Пароль обновлён. Перенаправление…",
+    "auth.reset.expired":
+        "Ссылка для сброса истекла или недействительна. Запросите новую.",
 };
 
 const tr: Dict = {
@@ -2900,6 +3085,25 @@ const tr: Dict = {
     "dialog.confirm.continue": "Devam et",
     "dialog.destructive.continue": "Evet, sil",
     "dialog.toast.error.title": "Bir şeyler ters gitti",
+
+    // Password reset flow (/forgot-password + /reset-password)
+    "auth.login.forgot": "Giriş yapmakta sorun mu var?",
+    "auth.forgot.title": "Parolanızı sıfırlayın",
+    "auth.forgot.subtitle":
+        "E-postanızı girin, size bir sıfırlama bağlantısı gönderelim.",
+    "auth.forgot.submit": "Sıfırlama bağlantısı gönder",
+    "auth.forgot.sent":
+        "Bu e-postaya ait bir hesap varsa sıfırlama bağlantısı yola çıktı. Gelen kutunuzu ve spam klasörünü kontrol edin.",
+    "auth.forgot.back_to_login": "Giriş ekranına dön",
+    "auth.reset.title": "Yeni parola belirleyin",
+    "auth.reset.subtitle":
+        "Güçlü bir parola seçin. En az 6 karakter.",
+    "auth.reset.password_label": "Yeni parola",
+    "auth.reset.confirm_label": "Parolayı onayla",
+    "auth.reset.submit": "Parolayı güncelle",
+    "auth.reset.success": "Parola güncellendi. Yönlendiriliyor…",
+    "auth.reset.expired":
+        "Bu sıfırlama bağlantısının süresi dolmuş ya da geçersiz. Yenisini isteyin.",
 };
 
 export const DICTIONARIES: Record<Locale, Dict> = {
