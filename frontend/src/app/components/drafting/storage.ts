@@ -1,15 +1,24 @@
 /**
- * Drafting Board persistence — localStorage only for now.
+ * Drafting Board persistence.
+ *
+ * Boards live in two places now:
+ *  - localStorage (synchronous, survives offline / lets us hydrate the
+ *    canvas before the network round-trip lands)
+ *  - Supabase via /api/drafting-boards (canonical — roams across
+ *    devices, survives a cache clear)
+ *
+ * Reads prefer the local cache; saves write through to both. The server
+ * call is fire-and-forget — failing offline doesn't lose the user's
+ * work, the next online save replays the latest payload.
  *
  * Key: `louis.drafting-board.<templateKey>`
- *
- * TODO (server-side): POST /api/drafting-boards on every dirty save. The
- * stub is captured in docs/DRAFTING_BOARD.md so the backend team can wire
- * the same JSON payload up against the project_meta or matters table.
  */
 
 import type { Board } from "./types";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
+const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 const KEY_PREFIX = "louis.drafting-board.";
 const TIMESTAMP_KEY = "louis.drafting-board.__lastSavedAt__";
 
@@ -28,6 +37,41 @@ export function loadBoard(templateKey: string): Board | null {
     }
 }
 
+// Pull the latest payload from the server when one exists and merge it
+// into localStorage. Called by the page on mount so cross-device users
+// see their boards even on a fresh browser. Returns the freshest board
+// it could resolve (server > local > null).
+export async function hydrateBoardFromServer(
+    templateKey: string,
+): Promise<Board | null> {
+    if (typeof window === "undefined") return null;
+    try {
+        const auth = await getAuthHeader();
+        if (!auth.Authorization) return loadBoard(templateKey);
+        const r = await fetch(
+            `${API_BASE}/api/drafting-boards/${encodeURIComponent(templateKey)}`,
+            { headers: auth, cache: "no-store" },
+        );
+        if (r.status === 404) return loadBoard(templateKey);
+        if (!r.ok) return loadBoard(templateKey);
+        const json = (await r.json()) as { payload?: Board };
+        if (!json.payload) return loadBoard(templateKey);
+        // Mirror to localStorage so subsequent reads are synchronous and
+        // we keep working offline.
+        try {
+            window.localStorage.setItem(
+                storageKey(templateKey),
+                JSON.stringify(json.payload),
+            );
+        } catch {
+            /* ignore */
+        }
+        return json.payload;
+    } catch {
+        return loadBoard(templateKey);
+    }
+}
+
 export function saveBoard(board: Board): void {
     if (typeof window === "undefined") return;
     try {
@@ -35,14 +79,52 @@ export function saveBoard(board: Board): void {
             storageKey(board.templateKey),
             JSON.stringify(board),
         );
-        // Track per-template last-saved timestamps so we can pick the
-        // most-recently-touched board on a return visit.
         const stamps = readTimestamps();
         stamps[board.templateKey] = Date.now();
         window.localStorage.setItem(TIMESTAMP_KEY, JSON.stringify(stamps));
     } catch {
         // localStorage may be disabled (private mode, quota) — fail silently.
     }
+    // Fire-and-forget server save. Debounced one layer up by the page
+    // (BoardPersistence saves on `dirty` transitions, not keystroke).
+    void persistToServer(board);
+}
+
+let inflight: Promise<void> | null = null;
+let pending: Board | null = null;
+
+async function persistToServer(board: Board): Promise<void> {
+    pending = board;
+    if (inflight) return;
+    inflight = (async () => {
+        // Drain the pending queue so back-to-back saves coalesce into
+        // one network call.
+        while (pending) {
+            const snapshot = pending;
+            pending = null;
+            try {
+                const auth = await getAuthHeader();
+                if (!auth.Authorization) break;
+                await fetch(`${API_BASE}/api/drafting-boards`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", ...auth },
+                    body: JSON.stringify({
+                        templateKey: snapshot.templateKey,
+                        name: snapshot.name,
+                        payload: snapshot,
+                    }),
+                });
+            } catch {
+                // Offline / 500 — leave the localStorage copy in place and
+                // try again on the next save. We could implement explicit
+                // retry-on-online but in practice the user saves often
+                // enough that the next dirty save catches up.
+                break;
+            }
+        }
+    })().finally(() => {
+        inflight = null;
+    });
 }
 
 export function clearBoard(templateKey: string): void {
@@ -54,6 +136,20 @@ export function clearBoard(templateKey: string): void {
         window.localStorage.setItem(TIMESTAMP_KEY, JSON.stringify(stamps));
     } catch {
         // ignore
+    }
+    void deleteFromServer(templateKey);
+}
+
+async function deleteFromServer(templateKey: string): Promise<void> {
+    try {
+        const auth = await getAuthHeader();
+        if (!auth.Authorization) return;
+        await fetch(
+            `${API_BASE}/api/drafting-boards/${encodeURIComponent(templateKey)}`,
+            { method: "DELETE", headers: auth },
+        );
+    } catch {
+        /* offline — server will keep the row, user can purge later */
     }
 }
 
