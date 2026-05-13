@@ -30,7 +30,7 @@ import { LouisIcon } from "@/components/chat/louis-icon";
 import { ChatInput } from "./ChatInput";
 import { SelectAssistantProjectModal } from "./SelectAssistantProjectModal";
 import type { LouisMessage } from "../shared/types";
-import { listChats, listProjects } from "@/app/lib/louisApi";
+import { listChats, listProjectsCached } from "@/app/lib/louisApi";
 import type {
     LouisChat,
     LouisProject,
@@ -84,15 +84,17 @@ export function InitialView({ onSubmit }: InitialViewProps) {
         return () => clearTimeout(t);
     }, [iconOffset]);
 
-    // Dashboard widgets — silent on failure.
+    // Dashboard widgets — silent on failure. Keyed on user.id so an
+    // identity-only re-render of the user object doesn't refire both
+    // requests; listProjectsCached() also de-duplicates across mounts.
     useEffect(() => {
-        if (!user) return;
+        if (!user?.id) return;
         let cancelled = false;
         (async () => {
             try {
                 const [chats, ps] = await Promise.all([
                     listChats(),
-                    listProjects(),
+                    listProjectsCached(),
                 ]);
                 if (cancelled) return;
                 setRecentChats((chats ?? []).slice(0, 4));
@@ -104,7 +106,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
         return () => {
             cancelled = true;
         };
-    }, [user]);
+    }, [user?.id]);
 
     return (
         <div className="flex flex-col h-full w-full overflow-y-auto">

@@ -85,16 +85,40 @@ export async function listProjects(): Promise<LouisProject[]> {
     return apiRequest<LouisProject[]>("/projects");
 }
 
+// Tiny TTL cache for the projects fetch. The sidebar + InitialView both
+// call listProjects() on every `user` change, even when user.id is
+// identical — re-rendering the user object would trigger a re-fetch.
+// 60s is short enough that newly-created projects still show up promptly
+// when the user navigates between surfaces, and long enough to absorb
+// the chatty mounts.
+let cachedProjects: { value: LouisProject[]; at: number } | null = null;
+const PROJECTS_CACHE_MS = 60_000;
+
+export async function listProjectsCached(): Promise<LouisProject[]> {
+    if (cachedProjects && Date.now() - cachedProjects.at < PROJECTS_CACHE_MS) {
+        return cachedProjects.value;
+    }
+    const value = await listProjects();
+    cachedProjects = { value, at: Date.now() };
+    return value;
+}
+
+export function invalidateProjectsCache(): void {
+    cachedProjects = null;
+}
+
 export async function createProject(
     name: string,
     cm_number?: string,
     shared_with?: string[],
 ): Promise<LouisProject> {
-    return apiRequest<LouisProject>("/projects", {
+    const created = await apiRequest<LouisProject>("/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, cm_number, shared_with }),
     });
+    invalidateProjectsCache();
+    return created;
 }
 
 export async function deleteAccount(): Promise<void> {
