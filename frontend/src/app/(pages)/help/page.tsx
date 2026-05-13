@@ -13,7 +13,7 @@ export default function HelpRedirect() {
         router.replace("/academy");
     }, [router]);
     return (
-        <div className="flex h-full items-center justify-center text-sm text-gray-500">
+        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             Opening Academy…
         </div>
     );

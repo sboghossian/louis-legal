@@ -57,7 +57,7 @@ interface ConflictHit {
 const STATUS_STYLE: Record<MatterStatus, string> = {
     open: "bg-green-100 text-green-700",
     "on-hold": "bg-amber-100 text-amber-700",
-    closed: "bg-gray-100 text-gray-600",
+    closed: "bg-muted text-muted-foreground",
     withdrawn: "bg-red-100 text-red-700",
 };
 
@@ -68,7 +68,7 @@ const TYPE_STYLE: Record<MatterType, string> = {
     regulatory: "bg-amber-50 text-amber-700",
     ip: "bg-pink-50 text-pink-700",
     family: "bg-rose-50 text-rose-700",
-    other: "bg-gray-50 text-gray-700",
+    other: "bg-muted text-foreground/80",
 };
 
 const ROLES = ["client", "counterparty", "co-defendant", "co-plaintiff", "third-party", "witness", "expert", "regulator"] as const;
@@ -135,10 +135,10 @@ export default function MattersPage() {
     return (
         <div className="flex h-full overflow-hidden">
             {/* Left list */}
-            <div className="w-[420px] flex-shrink-0 border-r border-gray-200 flex flex-col">
-                <div className="px-5 py-4 border-b border-gray-200">
+            <div className="w-[420px] flex-shrink-0 border-r border-border flex flex-col">
+                <div className="px-5 py-4 border-b border-border">
                     <div className="flex items-center gap-2 mb-3">
-                        <Briefcase className="w-5 h-5 text-gray-700" />
+                        <Briefcase className="w-5 h-5 text-foreground/80" />
                         <h1 className="text-lg font-semibold">Matters</h1>
                         {stats && <Badge variant="secondary">{stats.total}</Badge>}
                         <Button
@@ -156,7 +156,7 @@ export default function MattersPage() {
                         </Button>
                     </div>
                     <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                         <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search matters…" className="pl-9" />
                     </div>
                     <div className="flex flex-wrap gap-1.5 mt-3">
@@ -176,12 +176,12 @@ export default function MattersPage() {
                     </div>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                    {loading && <div className="p-6 text-sm text-gray-500">loading…</div>}
+                    {loading && <div className="p-6 text-sm text-muted-foreground">loading…</div>}
                     {filtered.map(m => (
                         <button
                             key={m.id}
                             onClick={() => openMatter(m)}
-                            className={`w-full text-left px-5 py-3 border-b border-gray-100 hover:bg-gray-50 ${selected?.id === m.id ? "bg-blue-50" : ""}`}
+                            className={`w-full text-left px-5 py-3 border-b border-border hover:bg-muted ${selected?.id === m.id ? "bg-blue-50" : ""}`}
                         >
                             <div className="flex items-center gap-1.5 mb-1">
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLE[m.status]}`}>
@@ -190,17 +190,17 @@ export default function MattersPage() {
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${TYPE_STYLE[m.matterType]}`}>
                                     {m.matterType}
                                 </span>
-                                <span className="text-[10px] text-gray-500 ml-auto">#{m.matterNumber}</span>
+                                <span className="text-[10px] text-muted-foreground ml-auto">#{m.matterNumber}</span>
                             </div>
-                            <div className="text-sm font-medium text-gray-900 truncate">{m.clientName}</div>
-                            {m.description && <div className="text-xs text-gray-500 line-clamp-2">{m.description}</div>}
-                            <div className="text-[10px] text-gray-400 mt-1">
+                            <div className="text-sm font-medium text-foreground truncate">{m.clientName}</div>
+                            {m.description && <div className="text-xs text-muted-foreground line-clamp-2">{m.description}</div>}
+                            <div className="text-[10px] text-muted-foreground mt-1">
                                 {m.parties.length} parties · {m.jurisdictions.join(", ") || "—"}
                             </div>
                         </button>
                     ))}
                     {!loading && filtered.length === 0 && (
-                        <div className="p-6 text-sm text-gray-500">no matters match</div>
+                        <div className="p-6 text-sm text-muted-foreground">no matters match</div>
                     )}
                 </div>
             </div>
@@ -208,7 +208,7 @@ export default function MattersPage() {
             {/* Detail */}
             <div className="flex-1 overflow-y-auto">
                 {!selected ? (
-                    <div className="p-12 text-sm text-gray-500">
+                    <div className="p-12 text-sm text-muted-foreground">
                         Select a matter to view details, parties, events, and conflict history.
                     </div>
                 ) : (
@@ -237,11 +237,11 @@ function MatterDetail({ matter, events, onAfterChange }: { matter: Matter; event
     return (
         <div className="p-8 max-w-3xl">
             <div className="flex items-baseline gap-2 mb-1">
-                <div className="text-xs text-gray-500 font-mono">#{matter.matterNumber}</div>
+                <div className="text-xs text-muted-foreground font-mono">#{matter.matterNumber}</div>
                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLE[matter.status]}`}>{matter.status}</span>
             </div>
             <h1 className="text-2xl font-semibold mb-2">{matter.clientName}</h1>
-            {matter.description && <p className="text-sm text-gray-700 mb-4">{matter.description}</p>}
+            {matter.description && <p className="text-sm text-foreground/80 mb-4">{matter.description}</p>}
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-6 text-xs">
                 <Field label="Matter type">{matter.matterType}</Field>
@@ -257,11 +257,11 @@ function MatterDetail({ matter, events, onAfterChange }: { matter: Matter; event
             <Section icon={<Users className="w-4 h-4" />} title="Parties">
                 <div className="space-y-1.5">
                     {matter.parties.map((p, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-2 rounded border border-gray-200">
-                            <span className="text-xs text-gray-500 w-24 truncate uppercase tracking-wide">{p.role}</span>
+                        <div key={i} className="flex items-center gap-2 text-sm bg-muted px-3 py-2 rounded border border-border">
+                            <span className="text-xs text-muted-foreground w-24 truncate uppercase tracking-wide">{p.role}</span>
                             <span className="font-medium">{p.name}</span>
-                            {p.jurisdiction && <span className="text-xs text-gray-400">· {p.jurisdiction}</span>}
-                            {p.identification && <span className="text-xs text-gray-400 font-mono">· {p.identification}</span>}
+                            {p.jurisdiction && <span className="text-xs text-muted-foreground">· {p.jurisdiction}</span>}
+                            {p.identification && <span className="text-xs text-muted-foreground font-mono">· {p.identification}</span>}
                         </div>
                     ))}
                 </div>
@@ -270,15 +270,15 @@ function MatterDetail({ matter, events, onAfterChange }: { matter: Matter; event
             <Section icon={<Calendar className="w-4 h-4" />} title={`Activity (${events.length})`}>
                 <div className="space-y-1.5">
                     {events.map(e => (
-                        <div key={e.id} className="text-sm bg-gray-50 px-3 py-2 rounded border border-gray-200">
+                        <div key={e.id} className="text-sm bg-muted px-3 py-2 rounded border border-border">
                             <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-700 uppercase tracking-wide">{e.eventType}</span>
-                                <span className="text-xs text-gray-500">{new Date(e.createdAt).toLocaleString()}</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground/80 uppercase tracking-wide">{e.eventType}</span>
+                                <span className="text-xs text-muted-foreground">{new Date(e.createdAt).toLocaleString()}</span>
                             </div>
                             <div>{e.description}</div>
                         </div>
                     ))}
-                    {events.length === 0 && <div className="text-xs text-gray-500">no events yet</div>}
+                    {events.length === 0 && <div className="text-xs text-muted-foreground">no events yet</div>}
                 </div>
             </Section>
         </div>
@@ -332,7 +332,7 @@ function NewMatterModal({ onClose, onCreated }: { onClose: () => void; onCreated
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div className="bg-card rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
                     <h2 className="font-semibold">New matter</h2>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
@@ -345,7 +345,7 @@ function NewMatterModal({ onClose, onCreated }: { onClose: () => void; onCreated
                         </div>
                         <div>
                             <Label className="text-xs">Type</Label>
-                            <select value={matterType} onChange={e => setMatterType(e.target.value as MatterType)} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                            <select value={matterType} onChange={e => setMatterType(e.target.value as MatterType)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
                                 {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
                         </div>
@@ -366,7 +366,7 @@ function NewMatterModal({ onClose, onCreated }: { onClose: () => void; onCreated
                     </div>
                     <div>
                         <Label className="text-xs">Description</Label>
-                        <textarea value={description} onChange={e => setDescription(e.target.value)} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm" rows={3} />
+                        <textarea value={description} onChange={e => setDescription(e.target.value)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm" rows={3} />
                     </div>
 
                     <div>
@@ -391,7 +391,7 @@ function NewMatterModal({ onClose, onCreated }: { onClose: () => void; onCreated
                                             updated[i] = { ...updated[i], role: e.target.value };
                                             setParties(updated);
                                         }}
-                                        className="border border-gray-300 rounded px-2 text-sm"
+                                        className="border border-border rounded px-2 text-sm"
                                     >
                                         {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                                     </select>
@@ -459,13 +459,13 @@ function ConflictCheckModal({ onClose }: { onClose: () => void }) {
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-xl max-h-[90vh] flex flex-col">
+            <div className="bg-card rounded-lg w-full max-w-xl max-h-[90vh] flex flex-col">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
                     <h2 className="font-semibold flex items-center gap-2"><ShieldAlert className="w-5 h-5" /> Conflict check</h2>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
                 </div>
                 <div className="overflow-y-auto px-6 py-4 space-y-3">
-                    <p className="text-xs text-gray-600">Check prospective party names against existing matters. Names match fuzzy across token overlap and substring.</p>
+                    <p className="text-xs text-muted-foreground">Check prospective party names against existing matters. Names match fuzzy across token overlap and substring.</p>
                     {parties.map((p, i) => (
                         <div key={i} className="flex gap-2">
                             <Input
@@ -485,7 +485,7 @@ function ConflictCheckModal({ onClose }: { onClose: () => void }) {
                                     u[i] = { ...u[i], role: e.target.value };
                                     setParties(u);
                                 }}
-                                className="border border-gray-300 rounded px-2 text-sm"
+                                className="border border-border rounded px-2 text-sm"
                             >
                                 {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                             </select>
@@ -529,7 +529,7 @@ function ConflictCheckModal({ onClose }: { onClose: () => void }) {
 function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
     return (
         <section className="mb-6">
-            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-600 mb-2">
+            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                 {icon} {title}
             </div>
             {children}
@@ -540,8 +540,8 @@ function Section({ icon, title, children }: { icon: React.ReactNode; title: stri
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <div>
-            <div className="text-[10px] text-gray-500 uppercase tracking-wide">{label}</div>
-            <div className="text-gray-900">{children}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</div>
+            <div className="text-foreground">{children}</div>
         </div>
     );
 }
@@ -550,7 +550,7 @@ function FilterChip({ children, active, onClick }: { children: React.ReactNode; 
     return (
         <button
             onClick={onClick}
-            className={`px-2 py-0.5 rounded-full text-xs border ${active ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+            className={`px-2 py-0.5 rounded-full text-xs border ${active ? "bg-foreground text-white border-foreground" : "bg-card text-foreground/80 border-border hover:bg-muted"}`}
         >
             {children}
         </button>

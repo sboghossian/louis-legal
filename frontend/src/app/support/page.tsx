@@ -85,16 +85,16 @@ export default function SupportPage() {
     if (isSubmitted) {
         return (
             <div className="h-full flex items-center justify-center p-4">
-                <div className="max-w-md w-full bg-white rounded-xl text-center">
+                <div className="max-w-md w-full bg-card rounded-xl text-center">
                     <div className="flex justify-center mb-4">
                         <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
                             <CheckCircle className="h-8 w-8 text-green-600" />
                         </div>
                     </div>
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                    <h2 className="text-2xl font-semibold text-foreground mb-2">
                         Thank you for helping us improve.
                     </h2>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-muted-foreground mb-6">
                         We will get in touch with you soon via email.
                     </p>
                     <button
@@ -114,7 +114,7 @@ export default function SupportPage() {
                 {/* Fixed Header Section */}
                 <div className="flex-shrink-0 pt-6 md:pt-10 pb-0">
                     <div className="mb-5">
-                        <h1 className="text-4xl font-medium font-eb-garamond text-gray-900 mb-3">
+                        <h1 className="text-4xl font-medium font-eb-garamond text-foreground mb-3">
                             Support
                         </h1>
                     </div>
@@ -122,11 +122,11 @@ export default function SupportPage() {
 
                 {/* Form Container */}
                 <div className="flex-1 overflow-y-auto pb-6">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Feedback Type Selection */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                <label className="block text-sm font-medium text-foreground/80 mb-3">
                                     What can we help you with?
                                 </label>
                                 <div className="grid grid-cols-2 gap-3">
@@ -140,19 +140,19 @@ export default function SupportPage() {
                                             className={`p-4 rounded-lg border-2 text-left transition-all ${
                                                 feedbackType === type.value
                                                     ? "border-blue-600 bg-blue-50"
-                                                    : "border-gray-200 hover:border-gray-300"
+                                                    : "border-border hover:border-border"
                                             }`}
                                         >
                                             <div
                                                 className={`font-medium ${
                                                     feedbackType === type.value
                                                         ? "text-blue-700"
-                                                        : "text-gray-900"
+                                                        : "text-foreground"
                                                 }`}
                                             >
                                                 {type.label}
                                             </div>
-                                            <div className="text-xs text-gray-500 mt-1">
+                                            <div className="text-xs text-muted-foreground mt-1">
                                                 {type.description}
                                             </div>
                                         </button>
@@ -165,7 +165,7 @@ export default function SupportPage() {
                                 <div>
                                     <label
                                         htmlFor="link"
-                                        className="block text-sm font-medium text-gray-700 mb-2"
+                                        className="block text-sm font-medium text-foreground/80 mb-2"
                                     >
                                         Link to issue (optional)
                                     </label>
@@ -177,9 +177,9 @@ export default function SupportPage() {
                                             setLink(e.target.value)
                                         }
                                         placeholder="http://localhost:3000/..."
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1">
                                         If the bug is in a chat, mouseover the
                                         chat in the sidebar, click the dots,
                                         then click share and paste the link
@@ -192,7 +192,7 @@ export default function SupportPage() {
                             <div>
                                 <label
                                     htmlFor="subject"
-                                    className="block text-sm font-medium text-gray-700 mb-2"
+                                    className="block text-sm font-medium text-foreground/80 mb-2"
                                 >
                                     Subject
                                 </label>
@@ -201,7 +201,7 @@ export default function SupportPage() {
                                     id="subject"
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -210,7 +210,7 @@ export default function SupportPage() {
                             <div>
                                 <label
                                     htmlFor="message"
-                                    className="block text-sm font-medium text-gray-700 mb-2"
+                                    className="block text-sm font-medium text-foreground/80 mb-2"
                                 >
                                     Message
                                 </label>
@@ -220,14 +220,14 @@ export default function SupportPage() {
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Please describe your question, issue, or suggestion in detail..."
                                     rows={5}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                                     required
                                 />
                             </div>
 
                             {/* Email Display (if logged in) */}
                             {user?.email && (
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-muted-foreground">
                                     We'll respond to:{" "}
                                     <span className="font-medium">
                                         {user.email}

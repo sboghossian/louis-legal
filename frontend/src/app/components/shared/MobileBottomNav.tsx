@@ -70,7 +70,7 @@ export function MobileBottomNav() {
 
     return (
         <nav
-            className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-gray-200 flex items-stretch"
+            className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur border-t border-border flex items-stretch"
             // Respect iOS safe area so the strip clears the home indicator.
             style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
             aria-label="Primary navigation"
@@ -92,8 +92,8 @@ export function MobileBottomNav() {
                         }}
                         className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] transition-colors ${
                             isActive
-                                ? "text-gray-900"
-                                : "text-gray-500 hover:text-gray-700"
+                                ? "text-foreground"
+                                : "text-muted-foreground hover:text-foreground/80"
                         }`}
                         aria-label={t.label}
                         aria-current={isActive ? "page" : undefined}

@@ -50,7 +50,7 @@ interface MatterStats {
 const STATUS_COLOR: Record<string, string> = {
     open: "bg-green-100 text-green-700",
     "on-hold": "bg-yellow-100 text-yellow-800",
-    closed: "bg-gray-100 text-gray-600",
+    closed: "bg-muted text-muted-foreground",
     withdrawn: "bg-red-100 text-red-700",
 };
 
@@ -61,7 +61,7 @@ const TYPE_COLOR: Record<string, string> = {
     ip: "bg-amber-100 text-amber-800",
     family: "bg-pink-100 text-pink-700",
     regulatory: "bg-teal-100 text-teal-700",
-    other: "bg-gray-100 text-gray-700",
+    other: "bg-muted text-foreground/80",
 };
 
 export default function EFirmPage() {
@@ -125,7 +125,7 @@ export default function EFirmPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 mb-6 border-b border-gray-200">
+            <div className="flex gap-1 mb-6 border-b border-border">
                 <TabBtn active={tab === "matters"} onClick={() => setTab("matters")}>Matters</TabBtn>
                 <TabBtn active={tab === "billing"} onClick={() => setTab("billing")}>Billing</TabBtn>
                 <TabBtn active={tab === "team"} onClick={() => setTab("team")}>Team</TabBtn>
@@ -134,29 +134,29 @@ export default function EFirmPage() {
             {tab === "matters" && (
                 <>
                     <div className="relative mb-4">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                         <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search matters…" className="pl-9" />
                     </div>
-                    {loading && <div className="text-sm text-gray-500 py-6 text-center">loading…</div>}
+                    {loading && <div className="text-sm text-muted-foreground py-6 text-center">loading…</div>}
                     {!loading && filtered.length === 0 && (
-                        <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm text-gray-500">
+                        <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
                             No matters yet. <button onClick={() => router.push("/matters")} className="text-blue-600 underline">Open Matters</button> to create one.
                         </div>
                     )}
-                    <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                    <div className="border border-border rounded-lg divide-y divide-border">
                         {filtered.map(m => (
                             <button
                                 key={m.id}
                                 onClick={() => router.push("/matters")}
-                                className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
+                                className="w-full text-left px-4 py-3 hover:bg-muted flex items-center gap-3"
                             >
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="font-medium text-sm truncate">{m.clientName}</span>
-                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_COLOR[m.status] || "bg-gray-100 text-gray-600"}`}>{m.status}</span>
-                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${TYPE_COLOR[m.matterType] || "bg-gray-100 text-gray-700"}`}>{m.matterType}</span>
+                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_COLOR[m.status] || "bg-muted text-muted-foreground"}`}>{m.status}</span>
+                                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${TYPE_COLOR[m.matterType] || "bg-muted text-foreground/80"}`}>{m.matterType}</span>
                                     </div>
-                                    <div className="text-xs text-gray-500">
+                                    <div className="text-xs text-muted-foreground">
                                         #{m.matterNumber}
                                         {m.responsibleAttorney && ` · ${m.responsibleAttorney}`}
                                         {m.practiceArea && ` · ${m.practiceArea}`}
@@ -164,14 +164,14 @@ export default function EFirmPage() {
                                     </div>
                                 </div>
                                 <div className="text-right text-xs flex-shrink-0">
-                                    <div className="text-gray-700">{m.parties.length} parties</div>
+                                    <div className="text-foreground/80">{m.parties.length} parties</div>
                                     {m.budgetAmount && (
-                                        <div className="text-[10px] mt-0.5 text-gray-500">
+                                        <div className="text-[10px] mt-0.5 text-muted-foreground">
                                             {m.budgetAmount.toLocaleString()} {m.budgetCurrency}
                                         </div>
                                     )}
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                             </button>
                         ))}
                     </div>
@@ -179,11 +179,11 @@ export default function EFirmPage() {
             )}
 
             {tab === "billing" && (
-                <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm">
-                    <div className="text-gray-700 font-medium mb-1">Billing dashboard requires Stripe + accounting integration.</div>
-                    <div className="text-gray-500 mb-4">Once connected, this view shows invoiced / WIP / overdue with drill-down by matter, partner, and client.</div>
+                <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm">
+                    <div className="text-foreground/80 font-medium mb-1">Billing dashboard requires Stripe + accounting integration.</div>
+                    <div className="text-muted-foreground mb-4">Once connected, this view shows invoiced / WIP / overdue with drill-down by matter, partner, and client.</div>
                     <a href="/integrations" className="text-blue-700 underline text-sm">Connect a billing integration</a>
-                    <div className="text-[10px] text-gray-500 mt-4">
+                    <div className="text-[10px] text-muted-foreground mt-4">
                         Related skills:
                         <code className="ml-1">efirm-finance.invoice-generator-from-time-entries</code>,
                         <code className="ml-1">efirm-finance.WIP-aging-report</code>,
@@ -193,9 +193,9 @@ export default function EFirmPage() {
             )}
 
             {tab === "team" && (
-                <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm">
-                    <div className="text-gray-700 font-medium mb-1">Team & utilization tracking requires team setup.</div>
-                    <div className="text-gray-500 mb-4">Invite teammates to share matters and surface live utilization rates (hours / target × role).</div>
+                <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm">
+                    <div className="text-foreground/80 font-medium mb-1">Team & utilization tracking requires team setup.</div>
+                    <div className="text-muted-foreground mb-4">Invite teammates to share matters and surface live utilization rates (hours / target × role).</div>
                     <a href="/settings" className="text-blue-700 underline text-sm">Set up team in Settings → Team</a>
                 </div>
             )}
@@ -205,10 +205,10 @@ export default function EFirmPage() {
 
 function Stat({ icon: Icon, label, value, highlight }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string; highlight?: boolean }) {
     return (
-        <div className={`border rounded-lg p-3 ${highlight ? "border-amber-300 bg-amber-50" : "border-gray-200"}`}>
+        <div className={`border rounded-lg p-3 ${highlight ? "border-amber-300 bg-amber-50" : "border-border"}`}>
             <div className="flex items-center gap-1.5 mb-1">
-                <Icon className={`w-3.5 h-3.5 ${highlight ? "text-amber-700" : "text-gray-500"}`} />
-                <span className={`text-[10px] uppercase tracking-wide ${highlight ? "text-amber-700" : "text-gray-500"}`}>{label}</span>
+                <Icon className={`w-3.5 h-3.5 ${highlight ? "text-amber-700" : "text-muted-foreground"}`} />
+                <span className={`text-[10px] uppercase tracking-wide ${highlight ? "text-amber-700" : "text-muted-foreground"}`}>{label}</span>
             </div>
             <div className={`text-xl font-semibold ${highlight ? "text-amber-900" : ""}`}>{value}</div>
         </div>
@@ -217,7 +217,7 @@ function Stat({ icon: Icon, label, value, highlight }: { icon: React.ComponentTy
 
 function TabBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
     return (
-        <button onClick={onClick} className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${active ? "border-gray-900 text-gray-900" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
+        <button onClick={onClick} className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground/80"}`}>
             {children}
         </button>
     );

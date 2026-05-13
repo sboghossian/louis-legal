@@ -43,7 +43,7 @@ export default function SettingsPage() {
     return (
         <div className="flex h-full overflow-hidden">
             {/* Left nav */}
-            <div className="w-[240px] flex-shrink-0 border-r border-gray-200 p-4">
+            <div className="w-[240px] flex-shrink-0 border-r border-border p-4">
                 <div className="flex items-center gap-2 mb-4">
                     <SettingsIcon className="w-4 h-4" />
                     <h1 className="font-semibold text-sm">Settings</h1>
@@ -53,7 +53,7 @@ export default function SettingsPage() {
                         <button
                             key={t.id}
                             onClick={() => setTab(t.id)}
-                            className={`w-full text-left px-3 py-1.5 rounded text-sm flex items-center gap-2 ${tab === t.id ? "bg-gray-100 font-medium" : "text-gray-700 hover:bg-gray-50"}`}
+                            className={`w-full text-left px-3 py-1.5 rounded text-sm flex items-center gap-2 ${tab === t.id ? "bg-muted font-medium" : "text-foreground/80 hover:bg-muted"}`}
                         >
                             <t.icon className="w-3.5 h-3.5" />
                             {t.label}
@@ -65,7 +65,7 @@ export default function SettingsPage() {
             {/* Right pane */}
             <div className="flex-1 overflow-y-auto px-8 py-6">
                 <h2 className="text-lg font-semibold mb-1">{TABS.find(t => t.id === tab)?.label}</h2>
-                <p className="text-xs text-gray-500 mb-6">Configure {tab}.</p>
+                <p className="text-xs text-muted-foreground mb-6">Configure {tab}.</p>
 
                 {tab === "profile" && <ProfileTab />}
                 {tab === "appearance" && <AppearanceTab />}
@@ -111,19 +111,19 @@ function ModelsTab() {
     }
     return (
         <div className="space-y-4">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-foreground/80">
                 API keys + provider management has its own dedicated page with live state, masked keys, and per-provider defaults.
             </p>
-            <a href="/settings/api-keys" className="block border border-gray-200 rounded-lg p-4 hover:border-gray-900 transition">
+            <a href="/settings/api-keys" className="block border border-border rounded-lg p-4 hover:border-foreground transition">
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="font-medium text-sm">Open API Keys</div>
-                        <div className="text-xs text-gray-500">Add Claude · OpenAI · Gemini · Voyage · 9 more providers</div>
+                        <div className="text-xs text-muted-foreground">Add Claude · OpenAI · Gemini · Voyage · 9 more providers</div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </div>
             </a>
-            <label className="flex items-start gap-3 border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-900 transition">
+            <label className="flex items-start gap-3 border border-border rounded-lg p-4 cursor-pointer hover:border-foreground transition">
                 <input
                     type="checkbox"
                     checked={autoRouteModel}
@@ -132,7 +132,7 @@ function ModelsTab() {
                 />
                 <div className="flex-1">
                     <div className="font-medium text-sm">Auto-route model & playbook</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                         Let Louis pick the cheapest capable model and the matching practice-area playbook for each message. Your composer pick always wins when set.
                     </div>
                 </div>
@@ -204,28 +204,28 @@ function VoiceSection() {
     );
 
     return (
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="border border-border rounded-lg overflow-hidden">
             <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50 transition"
+                className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted transition"
             >
                 <div className="flex items-center gap-3">
                     <AudioLines className="w-4 h-4 text-amber-700" />
                     <div>
                         <div className="font-medium text-sm">Voice</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                             Continuous dictation, spoken replies, speak-to-cite
                             commands
                         </div>
                     </div>
                 </div>
                 <ChevronRight
-                    className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-90" : ""}`}
+                    className={`w-4 h-4 text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}
                 />
             </button>
             {open && (
-                <div className="border-t border-gray-200 p-4 space-y-4 bg-gray-50/50">
+                <div className="border-t border-border p-4 space-y-4 bg-muted/50">
                     <label className="flex items-center gap-3">
                         <input
                             type="checkbox"
@@ -237,7 +237,7 @@ function VoiceSection() {
                             <div className="text-sm font-medium">
                                 Enable voice features
                             </div>
-                            <div className="text-[11px] text-gray-500">
+                            <div className="text-[11px] text-muted-foreground">
                                 Master switch. Hides the voice-mode button and
                                 speaker icons when off.
                             </div>
@@ -246,7 +246,7 @@ function VoiceSection() {
 
                     {ttsOk && (
                         <div className="space-y-1.5">
-                            <div className="text-xs font-medium text-gray-700">
+                            <div className="text-xs font-medium text-foreground/80">
                                 Preferred voice
                             </div>
                             <select
@@ -254,7 +254,7 @@ function VoiceSection() {
                                 onChange={(e) =>
                                     update("voiceURI", e.target.value || null)
                                 }
-                                className="w-full text-sm border border-gray-300 rounded px-2 py-1.5 bg-white"
+                                className="w-full text-sm border border-border rounded px-2 py-1.5 bg-card"
                             >
                                 {visibleVoices.length === 0 && (
                                     <option value="">System default</option>
@@ -266,7 +266,7 @@ function VoiceSection() {
                                     </option>
                                 ))}
                             </select>
-                            <div className="text-[10px] text-gray-500">
+                            <div className="text-[10px] text-muted-foreground">
                                 Showing voices for {localeFamily}. System voices
                                 vary by OS + browser.
                             </div>
@@ -275,9 +275,9 @@ function VoiceSection() {
 
                     {ttsOk && (
                         <div className="space-y-1.5">
-                            <div className="flex items-center justify-between text-xs font-medium text-gray-700">
+                            <div className="flex items-center justify-between text-xs font-medium text-foreground/80">
                                 <span>Speech rate</span>
-                                <span className="text-gray-500 font-normal tabular-nums">
+                                <span className="text-muted-foreground font-normal tabular-nums">
                                     {prefs.rate.toFixed(2)}×
                                 </span>
                             </div>
@@ -297,9 +297,9 @@ function VoiceSection() {
 
                     {sttOk && (
                         <div className="space-y-1.5">
-                            <div className="flex items-center justify-between text-xs font-medium text-gray-700">
+                            <div className="flex items-center justify-between text-xs font-medium text-foreground/80">
                                 <span>Auto-submit silence threshold</span>
-                                <span className="text-gray-500 font-normal tabular-nums">
+                                <span className="text-muted-foreground font-normal tabular-nums">
                                     {(prefs.silenceMs / 1000).toFixed(1)}s
                                 </span>
                             </div>
@@ -314,7 +314,7 @@ function VoiceSection() {
                                 }
                                 className="w-full accent-amber-700"
                             />
-                            <div className="text-[10px] text-gray-500">
+                            <div className="text-[10px] text-muted-foreground">
                                 How long Louis waits after you stop speaking
                                 before sending the transcript.
                             </div>
@@ -325,7 +325,7 @@ function VoiceSection() {
                         <button
                             type="button"
                             onClick={testVoice}
-                            className="flex items-center gap-2 h-8 px-3 rounded-md bg-white border border-gray-300 hover:border-amber-400 hover:bg-amber-50 text-sm transition-colors"
+                            className="flex items-center gap-2 h-8 px-3 rounded-md bg-card border border-border hover:border-amber-400 hover:bg-amber-50 text-sm transition-colors"
                         >
                             <Play className="h-3 w-3" /> Test voice
                         </button>
@@ -354,14 +354,14 @@ function BillingTab() {
     return (
         <div className="space-y-4">
             <Card title="Current plan" value="Free (BYO keys)" sub="Connect a Stripe integration in /integrations to enable hosted plans" />
-            <div className="border border-gray-200 rounded-lg p-4">
+            <div className="border border-border rounded-lg p-4">
                 <h3 className="font-semibold text-sm mb-2">Plans</h3>
                 <div className="grid grid-cols-4 gap-3">
                     {PLANS.map(p => (
-                        <div key={p.name} className="border border-gray-200 rounded p-3">
+                        <div key={p.name} className="border border-border rounded p-3">
                             <div className="font-medium text-sm">{p.name}</div>
                             <div className="text-lg font-semibold mt-1">{p.price}</div>
-                            <div className="text-[10px] text-gray-500 mt-1">{p.desc}</div>
+                            <div className="text-[10px] text-muted-foreground mt-1">{p.desc}</div>
                         </div>
                     ))}
                 </div>
@@ -376,8 +376,8 @@ function BillingTab() {
 function TeamTab() {
     return (
         <div className="space-y-4">
-            <div className="border border-dashed border-gray-300 rounded-lg p-8 text-center text-sm text-gray-500">
-                <div className="font-medium text-gray-700 mb-1">No team yet</div>
+            <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
+                <div className="font-medium text-foreground/80 mb-1">No team yet</div>
                 <div className="mb-4">Invite collaborators to share matters, skills, and routines.</div>
                 <Button size="sm" variant="outline">Invite team member</Button>
             </div>
@@ -438,11 +438,11 @@ function LegalDataHunterCard() {
     }
 
     return (
-        <div className="border border-gray-200 rounded-lg p-4">
+        <div className="border border-border rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <div className="font-medium text-sm text-gray-900">Legal-data-hunter API keys</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="font-medium text-sm text-foreground">Legal-data-hunter API keys</div>
+                    <div className="text-xs text-muted-foreground">
                         Wire your own subscription to each research source. Keys stay in your browser; the backend forwards them only when a skill needs to fetch.
                     </div>
                 </div>
@@ -454,8 +454,8 @@ function LegalDataHunterCard() {
                         className="grid grid-cols-[1fr_auto] gap-3 items-center"
                     >
                         <div className="text-sm">
-                            <div className="font-medium text-gray-800">{s.label}</div>
-                            <div className="text-[11px] text-gray-500">{s.jurisdiction}</div>
+                            <div className="font-medium text-foreground">{s.label}</div>
+                            <div className="text-[11px] text-muted-foreground">{s.jurisdiction}</div>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <input
@@ -463,14 +463,14 @@ function LegalDataHunterCard() {
                                 value={keys[s.id] ?? ""}
                                 onChange={(e) => save(s.id, e.target.value)}
                                 placeholder={keys[s.id] ? "" : "API key"}
-                                className="text-xs border border-gray-300 rounded px-2 py-1 w-44 focus:outline-none focus:ring-1 focus:ring-amber-300"
+                                className="text-xs border border-border rounded px-2 py-1 w-44 focus:outline-none focus:ring-1 focus:ring-amber-300"
                             />
                             <button
                                 type="button"
                                 onClick={() =>
                                     setReveal((r) => ({ ...r, [s.id]: !r[s.id] }))
                                 }
-                                className="text-[10px] text-gray-500 hover:text-gray-800 px-1.5"
+                                className="text-[10px] text-muted-foreground hover:text-foreground px-1.5"
                             >
                                 {reveal[s.id] ? "Hide" : "Show"}
                             </button>
@@ -485,16 +485,16 @@ function LegalDataHunterCard() {
 function IntegrationsTab() {
     return (
         <div className="space-y-4">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-foreground/80">
                 Connections to OpenClaw, MS Word, GitHub, MCP servers, legal-research databases, and 25+ other tools have their own dedicated page.
             </p>
-            <a href="/integrations" className="block border border-gray-200 rounded-lg p-4 hover:border-gray-900 transition">
+            <a href="/integrations" className="block border border-border rounded-lg p-4 hover:border-foreground transition">
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="font-medium text-sm">Open Integrations Hub</div>
-                        <div className="text-xs text-gray-500">32 integrations · OAuth · API key · MCP URL</div>
+                        <div className="text-xs text-muted-foreground">32 integrations · OAuth · API key · MCP URL</div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </div>
             </a>
         </div>
@@ -533,7 +533,7 @@ function NotificationsTab() {
     return (
         <div className="space-y-1">
             {NOTIF_DEFAULTS.map(n => (
-                <label key={n.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded cursor-pointer">
+                <label key={n.id} className="flex items-center gap-3 px-3 py-2 hover:bg-muted rounded cursor-pointer">
                     <input
                         type="checkbox"
                         checked={state[n.id] ?? n.enabled}
@@ -542,11 +542,11 @@ function NotificationsTab() {
                     />
                     <div className="flex-1">
                         <div className="text-sm">{n.label}</div>
-                        <div className="text-[10px] text-gray-500">via {n.channel}</div>
+                        <div className="text-[10px] text-muted-foreground">via {n.channel}</div>
                     </div>
                 </label>
             ))}
-            <p className="text-[11px] text-gray-500 mt-3">Preferences persist in your browser. Server-side delivery routing wires up when notification channels (email + Slack) are configured in Integrations.</p>
+            <p className="text-[11px] text-muted-foreground mt-3">Preferences persist in your browser. Server-side delivery routing wires up when notification channels (email + Slack) are configured in Integrations.</p>
         </div>
     );
 }
@@ -565,11 +565,11 @@ function SecurityTab() {
 
 function Card({ title, value, sub, cta, href }: { title: string; value: string; sub?: string; cta?: string; href?: string }) {
     return (
-        <div className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="border border-border rounded-lg p-4 flex items-center justify-between">
             <div>
-                <div className="text-xs text-gray-500 mb-0.5">{title}</div>
+                <div className="text-xs text-muted-foreground mb-0.5">{title}</div>
                 <div className="font-medium text-sm">{value}</div>
-                {sub && <div className="text-[10px] text-gray-500 mt-0.5">{sub}</div>}
+                {sub && <div className="text-[10px] text-muted-foreground mt-0.5">{sub}</div>}
             </div>
             {cta && (
                 <a href={href} className="text-xs text-blue-600 hover:underline flex items-center gap-1">

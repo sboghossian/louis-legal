@@ -61,13 +61,13 @@ export function NotificationsDrawer({ open, onClose }: Props) {
     return (
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/20" onClick={onClose} />
-            <div className="absolute right-0 top-0 bottom-0 w-[400px] bg-white shadow-xl flex flex-col">
-                <div className="px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+            <div className="absolute right-0 top-0 bottom-0 w-[400px] bg-card shadow-xl flex flex-col">
+                <div className="px-4 py-3 border-b border-border flex items-center gap-2">
                     <Bell className="w-4 h-4" />
                     <span className="font-semibold text-sm">Notifications</span>
                     {unreadCount > 0 && <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
                     <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs" onClick={markAllRead}>Mark all read</Button>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-900"><X className="w-4 h-4" /></button>
+                    <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     {items.map(n => {
@@ -76,23 +76,23 @@ export function NotificationsDrawer({ open, onClose }: Props) {
                             <button
                                 key={n.id}
                                 onClick={() => open_(n)}
-                                className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 flex items-start gap-3 ${!n.read ? "bg-blue-50/40" : ""}`}
+                                className={`w-full text-left px-4 py-3 border-b border-border hover:bg-muted flex items-start gap-3 ${!n.read ? "bg-blue-50/40" : ""}`}
                             >
                                 <div className="relative">
-                                    <Icon className="w-4 h-4 text-gray-600 mt-0.5" />
+                                    <Icon className="w-4 h-4 text-muted-foreground mt-0.5" />
                                     {!n.read && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="font-medium text-sm">{n.title}</div>
-                                    <div className="text-xs text-gray-600 line-clamp-2">{n.body}</div>
-                                    <div className="text-[10px] text-gray-400 mt-0.5">{n.when}</div>
+                                    <div className="text-xs text-muted-foreground line-clamp-2">{n.body}</div>
+                                    <div className="text-[10px] text-muted-foreground mt-0.5">{n.when}</div>
                                 </div>
                             </button>
                         );
                     })}
-                    {!items.length && <div className="p-8 text-center text-sm text-gray-500">No notifications</div>}
+                    {!items.length && <div className="p-8 text-center text-sm text-muted-foreground">No notifications</div>}
                 </div>
-                <div className="px-4 py-2 border-t border-gray-200 text-[10px] text-amber-700 bg-amber-50">
+                <div className="px-4 py-2 border-t border-border text-[10px] text-amber-700 bg-amber-50">
                     Scaffold: fixture data. Backend wire-up (notifications table + push channel) next-session.
                 </div>
             </div>

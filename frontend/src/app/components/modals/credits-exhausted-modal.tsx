@@ -34,17 +34,17 @@ export function CreditsExhaustedModal({
 
             {/* Modal */}
             <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[201] w-full max-w-md px-4">
-                <div className="relative bg-white rounded-2xl shadow-2xl p-6">
+                <div className="relative bg-card rounded-2xl shadow-2xl p-6">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
-                        <h2 className="text-3xl font-light font-eb-garamond text-gray-900">
+                        <h2 className="text-3xl font-light font-eb-garamond text-foreground">
                             Message Limit Reached
                         </h2>
                     </div>
 
                     {/* Content */}
                     <div className="space-y-4">
-                        <p className="text-gray-600">
+                        <p className="text-muted-foreground">
                             You've reached your monthly message limit of 100
                             messages.
                         </p>
@@ -58,7 +58,7 @@ export function CreditsExhaustedModal({
                             </p>
                         </div>
 
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                             Your message credits automatically reset on the
                             first day of each month.
                         </p>
@@ -68,7 +68,7 @@ export function CreditsExhaustedModal({
                     <div className="mt-6 flex gap-3">
                         <button
                             onClick={onClose}
-                            className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+                            className="flex-1 px-4 py-2.5 bg-muted hover:bg-muted text-foreground/80 rounded-lg font-medium transition-colors"
                         >
                             Close
                         </button>

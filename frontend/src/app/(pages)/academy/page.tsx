@@ -557,21 +557,21 @@ export default function AcademyPage() {
                 <BookOpenCheck className="w-6 h-6 text-amber-700" />
                 <h1 className="text-2xl font-serif font-semibold">{t("academy.title")}</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-6 max-w-2xl">
+            <p className="text-sm text-muted-foreground mb-6 max-w-2xl">
                 {t("academy.intro")}
             </p>
 
             <div className="relative mb-4">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     placeholder={t("academy.search_placeholder")}
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
                 />
             </div>
 
-            <div className="flex flex-wrap gap-1 mb-6 border-b border-gray-200">
+            <div className="flex flex-wrap gap-1 mb-6 border-b border-border">
                 <TabButton
                     label={t("academy.tab.all")}
                     count={counts.all ?? 0}
@@ -590,7 +590,7 @@ export default function AcademyPage() {
             </div>
 
             {filtered.length === 0 && (
-                <div className="text-sm text-gray-500 py-12 text-center">
+                <div className="text-sm text-muted-foreground py-12 text-center">
                     {t("academy.empty.prefix", { query: q })}
                     <button
                         type="button"
@@ -641,16 +641,16 @@ function TabButton({
             onClick={onClick}
             className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px text-sm border-b-2 transition-colors ${
                 active
-                    ? "border-gray-900 text-gray-900 font-medium"
-                    : "border-transparent text-gray-500 hover:text-gray-800"
+                    ? "border-foreground text-foreground font-medium"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
         >
             {label}
             <span
                 className={`text-[10px] px-1.5 py-0.5 rounded ${
                     active
-                        ? "bg-gray-900 text-white"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-foreground text-white"
+                        : "bg-muted text-muted-foreground"
                 }`}
             >
                 {count}
@@ -672,8 +672,8 @@ function EntryCard({
     const Icon = entry.icon;
     return (
         <div
-            className={`border rounded-xl bg-white transition-shadow ${
-                open ? "shadow-sm border-gray-300" : "border-gray-200 hover:shadow-sm"
+            className={`border rounded-xl bg-card transition-shadow ${
+                open ? "shadow-sm border-border" : "border-border hover:shadow-sm"
             }`}
         >
             <button
@@ -685,10 +685,10 @@ function EntryCard({
                     <Icon className="w-4 h-4 text-amber-700" />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm text-gray-900">
+                    <div className="font-medium text-sm text-foreground">
                         {entry.title}
                     </div>
-                    <div className="text-xs text-gray-600 mt-0.5">
+                    <div className="text-xs text-muted-foreground mt-0.5">
                         {entry.summary}
                     </div>
                 </div>
@@ -725,7 +725,7 @@ function Markdown({ text }: { text: string }) {
         blocks.push(
             <ul
                 key={`l-${blocks.length}`}
-                className="list-disc pl-5 space-y-1 mb-3 text-sm text-gray-700"
+                className="list-disc pl-5 space-y-1 mb-3 text-sm text-foreground/80"
             >
                 {listBuffer.map((item, i) => (
                     <li key={i}>
@@ -750,7 +750,7 @@ function Markdown({ text }: { text: string }) {
         blocks.push(
             <p
                 key={`p-${blocks.length}`}
-                className="text-sm text-gray-700 mb-3 leading-relaxed"
+                className="text-sm text-foreground/80 mb-3 leading-relaxed"
             >
                 <RenderInline text={line} />
             </p>,
@@ -823,7 +823,7 @@ function FormatInline({ text }: { text: string }) {
             parts.push(
                 <code
                     key={`c-${m.index}`}
-                    className="text-xs px-1 py-0.5 rounded bg-gray-100 font-mono"
+                    className="text-xs px-1 py-0.5 rounded bg-muted font-mono"
                 >
                     {m[3]}
                 </code>,

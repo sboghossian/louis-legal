@@ -27,19 +27,19 @@ export function HeaderSearchBtn({ value, onChange, placeholder = "Search…" }: 
     return (
         <div ref={ref} className="relative flex items-center">
             {open ? (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm z-10 w-72">
-                    <Search className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-1.5 shadow-sm z-10 w-72">
+                    <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <input
                         autoFocus
                         type="text"
                         placeholder={placeholder}
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
-                        className="flex-1 text-sm text-gray-700 placeholder:text-gray-400 outline-none bg-transparent"
+                        className="flex-1 text-sm text-foreground/80 placeholder:text-muted-foreground outline-none bg-transparent"
                     />
                     <button
                         onClick={() => { setOpen(false); onChange(""); }}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-muted-foreground hover:text-muted-foreground"
                     >
                         <X className="h-3.5 w-3.5" />
                     </button>
@@ -47,7 +47,7 @@ export function HeaderSearchBtn({ value, onChange, placeholder = "Search…" }: 
             ) : (
                 <button
                     onClick={() => setOpen(true)}
-                    className="flex items-center justify-center p-1.5 text-gray-500 hover:text-gray-900 transition-colors"
+                    className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 >
                     <Search className="h-4 w-4" />
                 </button>

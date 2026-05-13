@@ -218,7 +218,7 @@ function RailTooltip({ label, children }: { label: string; children: React.React
             {children}
             <span
                 role="tooltip"
-                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded-md bg-gray-900 text-white text-[11px] font-sans px-2 py-1 shadow-lg opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 motion-reduce:transition-none"
+                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded-md bg-foreground text-white text-[11px] font-sans px-2 py-1 shadow-lg opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 motion-reduce:transition-none"
             >
                 {label}
             </span>
@@ -251,7 +251,7 @@ function RailButton({ label, isActive, onClick, href, children, ariaLabel, showD
                 onClick={handle}
                 aria-label={ariaLabel ?? label}
                 title={label /* native fallback for keyboard / screenreaders that ignore CSS tooltip */}
-                className={`relative flex items-center justify-center w-10 h-10 rounded-lg transition-colors text-gray-600 hover:bg-amber-50/60 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none ${
+                className={`relative flex items-center justify-center w-10 h-10 rounded-lg transition-colors text-muted-foreground hover:bg-amber-50/60 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none ${
                     isActive ? "bg-amber-50/80 text-amber-800" : ""
                 }`}
             >
@@ -579,7 +579,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                             className="absolute -left-2 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-amber-700/80"
                                         />
                                     )}
-                                    <span className="flex items-center justify-center w-7 h-7 rounded-md border border-amber-700/30 bg-white text-amber-800 text-[12px] font-serif font-medium">
+                                    <span className="flex items-center justify-center w-7 h-7 rounded-md border border-amber-700/30 bg-card text-amber-800 text-[12px] font-serif font-medium">
                                         {activeMatter.name.charAt(0).toUpperCase()}
                                     </span>
                                     {/* activity dot */}
@@ -648,35 +648,35 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); setIsDropdownOpen((v) => !v); }}
                                 aria-label="Account menu"
-                                className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-800 text-white text-[12px] font-serif font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none"
+                                className="flex items-center justify-center w-9 h-9 rounded-full bg-foreground text-white text-[12px] font-serif font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none"
                             >
                                 {getUserInitials(user.email)}
                             </button>
                         </RailTooltip>
                         {isDropdownOpen && (
                             <div
-                                className="absolute bottom-0 left-full ml-2 w-60 bg-white rounded-lg shadow-lg border border-[#E7E2D6] p-1 z-50 whitespace-nowrap font-sans"
+                                className="absolute bottom-0 left-full ml-2 w-60 bg-card rounded-lg shadow-lg border border-[#E7E2D6] p-1 z-50 whitespace-nowrap font-sans"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <div className="px-3 py-2 border-b border-gray-100 mb-1">
-                                    <div className="text-sm font-medium text-gray-900 truncate">{getDisplayName()}</div>
-                                    <div className="text-[11px] text-gray-500">{getUserTier()}</div>
+                                <div className="px-3 py-2 border-b border-border mb-1">
+                                    <div className="text-sm font-medium text-foreground truncate">{getDisplayName()}</div>
+                                    <div className="text-[11px] text-muted-foreground">{getUserTier()}</div>
                                 </div>
                                 <button
                                     onClick={() => { router.push("/account"); setIsDropdownOpen(false); }}
-                                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
+                                    className="w-full px-3 py-2 text-left text-sm text-foreground/80 hover:bg-muted flex items-center gap-2 rounded-md"
                                 >
                                     <User className="h-4 w-4" />
                                     {t("nav.account") || "Account Settings"}
                                 </button>
                                 <button
                                     onClick={() => { router.push("/settings"); setIsDropdownOpen(false); }}
-                                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
+                                    className="w-full px-3 py-2 text-left text-sm text-foreground/80 hover:bg-muted flex items-center gap-2 rounded-md"
                                 >
                                     <SettingsIcon className="h-4 w-4" />
                                     {t("nav.settings") || "Settings"}
                                 </button>
-                                <div className="my-1 h-px bg-gray-100" />
+                                <div className="my-1 h-px bg-muted" />
                                 <button
                                     onClick={async () => {
                                         setIsDropdownOpen(false);
@@ -700,7 +700,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                     <button
                         type="button"
                         onClick={toggleExpandedPanel}
-                        className="hidden md:flex items-center justify-center w-10 h-8 rounded-lg hover:bg-amber-50/60 text-gray-500 transition-colors motion-reduce:transition-none"
+                        className="hidden md:flex items-center justify-center w-10 h-8 rounded-lg hover:bg-amber-50/60 text-muted-foreground transition-colors motion-reduce:transition-none"
                         title={expandedPanel ? "Collapse panel" : "Expand panel"}
                         aria-label={expandedPanel ? "Collapse panel" : "Expand panel"}
                     >
@@ -723,13 +723,13 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     href="/assistant"
                                     className="flex items-center gap-2 hover:opacity-80 transition-opacity motion-reduce:transition-none"
                                 >
-                                    <span className="text-2xl font-light font-serif text-gray-900">Louis</span>
+                                    <span className="text-2xl font-light font-serif text-foreground">Louis</span>
                                 </Link>
                                 <div className="relative">
                                     <button
                                         type="button"
                                         onClick={(e) => { e.stopPropagation(); setLauncherOpen((o) => !o); }}
-                                        className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-amber-50/60 transition-colors motion-reduce:transition-none text-gray-600"
+                                        className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-amber-50/60 transition-colors motion-reduce:transition-none text-muted-foreground"
                                         title="HAQQ products"
                                         aria-label="HAQQ products"
                                     >
@@ -737,46 +737,46 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     </button>
                                     {launcherOpen && (
                                         <div
-                                            className="absolute right-0 top-full mt-1 w-64 bg-white border border-[#E7E2D6] rounded-lg shadow-lg z-50 p-2 font-sans"
+                                            className="absolute right-0 top-full mt-1 w-64 bg-card border border-[#E7E2D6] rounded-lg shadow-lg z-50 p-2 font-sans"
                                             onClick={(e) => e.stopPropagation()}
                                         >
-                                            <div className="text-[10px] uppercase tracking-wide font-semibold text-gray-500 px-2 py-1">HAQQ products</div>
+                                            <div className="text-[10px] uppercase tracking-wide font-semibold text-muted-foreground px-2 py-1">HAQQ products</div>
                                             <a href="https://louis.haqq.ai" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-blue-50 text-sm">
                                                 <div className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-blue-700 text-[10px] font-bold">L</div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="font-medium">Louis</div>
-                                                    <div className="text-[10px] text-gray-500">Legal AI · you are here</div>
+                                                    <div className="text-[10px] text-muted-foreground">Legal AI · you are here</div>
                                                 </div>
                                             </a>
-                                            <a href="https://justinian.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                            <a href="https://justinian.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted text-sm">
                                                 <div className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-purple-700 text-[10px] font-bold">J</div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="font-medium">Justinian</div>
-                                                    <div className="text-[10px] text-gray-500">Legal education</div>
+                                                    <div className="text-[10px] text-muted-foreground">Legal education</div>
                                                 </div>
                                             </a>
-                                            <a href="https://justice.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                            <a href="https://justice.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted text-sm">
                                                 <div className="w-6 h-6 rounded bg-emerald-100 flex items-center justify-center text-emerald-700 text-[10px] font-bold">J</div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="font-medium">Justice</div>
-                                                    <div className="text-[10px] text-gray-500">Access to law</div>
+                                                    <div className="text-[10px] text-muted-foreground">Access to law</div>
                                                 </div>
                                             </a>
-                                            <a href="https://openclaw.org" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                            <a href="https://openclaw.org" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted text-sm">
                                                 <div className="w-6 h-6 rounded bg-amber-100 flex items-center justify-center text-amber-700 text-[10px] font-bold">O</div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="font-medium">OpenClaw</div>
-                                                    <div className="text-[10px] text-gray-500">Open-source case management</div>
+                                                    <div className="text-[10px] text-muted-foreground">Open-source case management</div>
                                                 </div>
                                             </a>
-                                            <div className="border-t border-gray-100 my-1" />
-                                            <Link href="/settings/api-keys" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                            <div className="border-t border-border my-1" />
+                                            <Link href="/settings/api-keys" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-xs text-foreground/80">
                                                 <Key className="w-3.5 h-3.5" /> API keys
                                             </Link>
-                                            <Link href="/integrations" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                            <Link href="/integrations" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-xs text-foreground/80">
                                                 <Plug className="w-3.5 h-3.5" /> Integrations
                                             </Link>
-                                            <Link href="/about" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                            <Link href="/about" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-xs text-foreground/80">
                                                 <Info className="w-3.5 h-3.5" /> About Louis
                                             </Link>
                                         </div>
@@ -795,19 +795,19 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                             className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-amber-50/50 transition-colors motion-reduce:transition-none text-left"
                                             aria-expanded={!matterSectionCollapsed}
                                         >
-                                            <span className="flex items-center justify-center w-6 h-6 rounded border border-amber-700/30 bg-white text-amber-800 text-[11px] font-serif font-medium shrink-0">
+                                            <span className="flex items-center justify-center w-6 h-6 rounded border border-amber-700/30 bg-card text-amber-800 text-[11px] font-serif font-medium shrink-0">
                                                 {activeMatter.name.charAt(0).toUpperCase()}
                                             </span>
                                             <span className="flex-1 min-w-0">
                                                 <span className="block text-[10px] uppercase tracking-wide text-amber-800/80 font-semibold leading-tight">
                                                     Active matter
                                                 </span>
-                                                <span className="block text-[13px] font-serif text-gray-900 truncate leading-tight">
+                                                <span className="block text-[13px] font-serif text-foreground truncate leading-tight">
                                                     {activeMatter.name}
                                                 </span>
                                             </span>
                                             <ChevronRight
-                                                className={`h-3.5 w-3.5 text-gray-400 transition-transform motion-reduce:transition-none ${
+                                                className={`h-3.5 w-3.5 text-muted-foreground transition-transform motion-reduce:transition-none ${
                                                     matterSectionCollapsed ? "" : "rotate-90"
                                                 }`}
                                             />
@@ -823,7 +823,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                                             className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] text-left transition-colors motion-reduce:transition-none ${
                                                                 active
                                                                     ? "bg-amber-50/70 text-amber-900"
-                                                                    : "text-gray-700 hover:bg-amber-50/40"
+                                                                    : "text-foreground/80 hover:bg-amber-50/40"
                                                             }`}
                                                         >
                                                             <Icon className="h-3.5 w-3.5 shrink-0" />
@@ -839,7 +839,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 {/* Favorites */}
                                 {favItems.length > 0 && (
                                     <div className="mb-1">
-                                        <div className="px-5 py-1 flex items-center gap-1 text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                        <div className="px-5 py-1 flex items-center gap-1 text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
                                             <Star className="w-3 h-3" />
                                             <span>{t("nav.favorites") || "Favorites"}</span>
                                         </div>
@@ -863,7 +863,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
 
                                 {/* Pinned */}
                                 <div className="mb-1">
-                                    <div className="px-5 py-1 text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                    <div className="px-5 py-1 text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
                                         {t("nav.pinned") || "Pinned"}
                                     </div>
                                     {PINNED.map(({ href, label, labelKey, icon: Icon }) => {
@@ -890,7 +890,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                         <div key={group.id} className="mt-2">
                                             <button
                                                 onClick={() => toggleGroup(group.id)}
-                                                className="w-full px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500 hover:text-gray-700 transition-colors motion-reduce:transition-none"
+                                                className="w-full px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-muted-foreground hover:text-foreground/80 transition-colors motion-reduce:transition-none"
                                             >
                                                 <span>{t(group.labelKey) || group.label}</span>
                                                 <ChevronRight
@@ -922,7 +922,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 {/* Assistant chat history (when on /assistant) */}
                                 {pathname.startsWith("/assistant") && (
                                     <div className="mt-4 px-2">
-                                        <div className="px-3 py-1 text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                        <div className="px-3 py-1 text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
                                             {t("nav.assistant_history") || "Assistant History"}
                                         </div>
                                         <div className="mt-1">
@@ -930,12 +930,12 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                                 <div className="space-y-1 px-1">
                                                     {[40, 60, 50, 70, 45].map((w, i) => (
                                                         <div key={i} className="h-8 flex items-center px-3 rounded-md">
-                                                            <div className="h-3 bg-gray-200 rounded animate-pulse" style={{ width: `${w}%` }} />
+                                                            <div className="h-3 bg-muted rounded animate-pulse" style={{ width: `${w}%` }} />
                                                         </div>
                                                     ))}
                                                 </div>
                                             ) : chats.length === 0 ? (
-                                                <div className="text-xs text-gray-500 py-2 px-3">No chats yet</div>
+                                                <div className="text-xs text-muted-foreground py-2 px-3">No chats yet</div>
                                             ) : (
                                                 <div className="space-y-1 px-1">
                                                     {chats.map((chat) => (
@@ -967,14 +967,14 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     onClick={(e) => { e.stopPropagation(); setIsDropdownOpen((v) => !v); }}
                                     className="flex items-center gap-2 flex-1 min-w-0 hover:bg-amber-50/40 rounded-md px-2 py-1.5 transition-colors motion-reduce:transition-none"
                                 >
-                                    <div className="h-7 w-7 flex-shrink-0 rounded-full bg-gray-800 flex items-center justify-center text-white text-sm font-medium font-serif">
+                                    <div className="h-7 w-7 flex-shrink-0 rounded-full bg-foreground flex items-center justify-center text-white text-sm font-medium font-serif">
                                         {getUserInitials(user.email)}
                                     </div>
                                     <div className="text-left flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-gray-900 truncate leading-tight">{getDisplayName()}</div>
-                                        <div className="text-[11px] text-gray-500 leading-tight">{getUserTier()}</div>
+                                        <div className="text-sm font-medium text-foreground truncate leading-tight">{getDisplayName()}</div>
+                                        <div className="text-[11px] text-muted-foreground leading-tight">{getUserTier()}</div>
                                     </div>
-                                    <ChevronsUpDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                                    <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                                 </button>
                             </div>
                         </div>
@@ -1000,7 +1000,7 @@ function PanelRow({ icon, label, active, onClick, onFavToggle, isFav }: PanelRow
         <div className="px-2.5 py-0.5 group/item">
             <div
                 className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors motion-reduce:transition-none ${
-                    active ? "bg-amber-50/70 text-amber-900" : "hover:bg-amber-50/40 text-gray-700"
+                    active ? "bg-amber-50/70 text-amber-900" : "hover:bg-amber-50/40 text-foreground/80"
                 }`}
             >
                 <button
@@ -1016,7 +1016,7 @@ function PanelRow({ icon, label, active, onClick, onFavToggle, isFav }: PanelRow
                         className={`transition-opacity motion-reduce:transition-none ${
                             isFav
                                 ? "opacity-100 text-amber-600"
-                                : "opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-amber-600"
+                                : "opacity-0 group-hover/item:opacity-100 text-muted-foreground hover:text-amber-600"
                         }`}
                         aria-label={isFav ? "Unpin from favorites" : "Pin to favorites"}
                         title={isFav ? "Unpin from favorites" : "Pin to favorites"}

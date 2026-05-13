@@ -80,7 +80,7 @@ export function VaultSettingsPanel({ onRewrapAll }: Props) {
 
     return (
         <div className="space-y-6">
-            <section className="rounded-lg border border-stone-200 bg-white p-4">
+            <section className="rounded-lg border border-stone-200 bg-card p-4">
                 <h3 className="font-serif text-sm font-semibold text-stone-900 mb-1">
                     Change passphrase
                 </h3>
@@ -95,7 +95,7 @@ export function VaultSettingsPanel({ onRewrapAll }: Props) {
                     onChange={(e) => setPass1(e.target.value)}
                     placeholder="New passphrase (12+ characters)"
                     autoComplete="new-password"
-                    className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono mb-2"
+                    className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono mb-2"
                 />
                 <input
                     type="password"
@@ -103,7 +103,7 @@ export function VaultSettingsPanel({ onRewrapAll }: Props) {
                     onChange={(e) => setPass2(e.target.value)}
                     placeholder="Confirm new passphrase"
                     autoComplete="new-password"
-                    className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono mb-3"
+                    className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono mb-3"
                 />
                 {err && <p className="text-xs text-red-700 mb-2">{err}</p>}
                 {msg && (
@@ -119,7 +119,7 @@ export function VaultSettingsPanel({ onRewrapAll }: Props) {
                 </Button>
             </section>
 
-            <section className="rounded-lg border border-stone-200 bg-white p-4">
+            <section className="rounded-lg border border-stone-200 bg-card p-4">
                 <h3 className="font-serif text-sm font-semibold text-stone-900 mb-1">
                     Lock now
                 </h3>

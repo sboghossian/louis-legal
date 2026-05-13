@@ -90,11 +90,11 @@ export function AssistantWorkflowModal({
     return createPortal(
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/10 backdrop-blur-xs">
             <div
-                className={`w-full rounded-2xl bg-white shadow-2xl flex flex-col h-[600px] ${selected ? "max-w-4xl" : "max-w-2xl"}`}
+                className={`w-full rounded-2xl bg-card shadow-2xl flex flex-col h-[600px] ${selected ? "max-w-4xl" : "max-w-2xl"}`}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-4 shrink-0 border-b border-gray-100">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                <div className="flex items-center justify-between px-4 py-4 shrink-0 border-b border-border">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         {projectName ? (
                             <>
                                 <span>Projects</span>
@@ -120,7 +120,7 @@ export function AssistantWorkflowModal({
                     </div>
                     <button
                         onClick={onClose}
-                        className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                        className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-muted-foreground transition-colors"
                     >
                         <X className="h-4 w-4" />
                     </button>
@@ -134,17 +134,17 @@ export function AssistantWorkflowModal({
                     >
                         {/* Search */}
                         <div className="px-4 pt-3 pb-2 shrink-0">
-                            <div className="flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1">
-                                <Search className="h-3 w-3 text-gray-400 shrink-0" />
+                            <div className="flex items-center gap-1.5 rounded-md border border-border bg-muted px-2.5 py-1">
+                                <Search className="h-3 w-3 text-muted-foreground shrink-0" />
                                 <input
                                     type="text"
                                     placeholder="Search workflows…"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    className="flex-1 bg-transparent text-xs text-gray-700 placeholder:text-gray-400 outline-none"
+                                    className="flex-1 bg-transparent text-xs text-foreground/80 placeholder:text-muted-foreground outline-none"
                                 />
                                 {search && (
-                                    <button onClick={() => setSearch("")} className="text-gray-400 hover:text-gray-600">
+                                    <button onClick={() => setSearch("")} className="text-muted-foreground hover:text-muted-foreground">
                                         <X className="h-3 w-3" />
                                     </button>
                                 )}
@@ -156,18 +156,18 @@ export function AssistantWorkflowModal({
                                 {[60, 45, 75, 50, 65, 40, 55].map((w, i) => (
                                     <div
                                         key={i}
-                                        className="flex items-center justify-between gap-3 py-3 border-b border-gray-50"
+                                        className="flex items-center justify-between gap-3 py-3 border-b border-border"
                                     >
                                         <div
-                                            className="h-3 rounded bg-gray-100 animate-pulse"
+                                            className="h-3 rounded bg-muted animate-pulse"
                                             style={{ width: `${w}%` }}
                                         />
-                                        <div className="h-3 w-10 rounded bg-gray-100 animate-pulse shrink-0" />
+                                        <div className="h-3 w-10 rounded bg-muted animate-pulse shrink-0" />
                                     </div>
                                 ))}
                             </div>
                         ) : filteredWorkflows.length === 0 ? (
-                            <p className="px-4 py-8 text-sm text-center text-gray-400">
+                            <p className="px-4 py-8 text-sm text-center text-muted-foreground">
                                 {search ? "No matches found" : "No assistant workflows found"}
                             </p>
                         ) : (
@@ -180,16 +180,16 @@ export function AssistantWorkflowModal({
                                             prev?.id === wf.id ? null : wf,
                                         )
                                     }
-                                    className={`w-full flex items-center gap-3 px-4 py-3 text-xs text-left transition-colors border-b border-gray-50 ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 text-xs text-left transition-colors border-b border-border ${
                                         selected?.id === wf.id
-                                            ? "bg-gray-50"
-                                            : "hover:bg-gray-50"
+                                            ? "bg-muted"
+                                            : "hover:bg-muted"
                                     }`}
                                 >
-                                    <span className="flex-1 truncate text-gray-800">
+                                    <span className="flex-1 truncate text-foreground">
                                         {wf.title}
                                     </span>
-                                    <span className="shrink-0 text-xs text-gray-400">
+                                    <span className="shrink-0 text-xs text-muted-foreground">
                                         {wf.is_system ? "Built-in" : "Custom"}
                                     </span>
                                 </button>
@@ -199,34 +199,34 @@ export function AssistantWorkflowModal({
 
                     {/* Right panel — prompt preview */}
                     {selected && (
-                        <div className={`flex-1 border-l border-gray-100 flex flex-col overflow-hidden px-3 pb-3 transition-opacity duration-200 ${rightVisible ? "opacity-100" : "opacity-0"}`}>
+                        <div className={`flex-1 border-l border-border flex flex-col overflow-hidden px-3 pb-3 transition-opacity duration-200 ${rightVisible ? "opacity-100" : "opacity-0"}`}>
                             <div className="flex items-center justify-between py-3 shrink-0">
-                                <p className="text-xs font-medium text-gray-700">
+                                <p className="text-xs font-medium text-foreground/80">
                                     Workflow Prompt
                                 </p>
                                 <button
                                     onClick={() => setSelected(null)}
-                                    className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                                    className="rounded-lg p-1 text-muted-foreground hover:bg-muted hover:text-muted-foreground transition-colors"
                                 >
                                     <ChevronLeft className="h-3.5 w-3.5" />
                                 </button>
                             </div>
-                            <div className="flex-1 overflow-y-auto px-4 py-3 text-sm border border-gray-200 rounded-md text-gray-600 leading-relaxed font-serif bg-gray-50">
+                            <div className="flex-1 overflow-y-auto px-4 py-3 text-sm border border-border rounded-md text-muted-foreground leading-relaxed font-serif bg-muted">
                                 <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
                                     components={{
                                         h1: ({ children }) => (
-                                            <h1 className="text-base font-semibold text-gray-900 mt-4 mb-1 first:mt-0">
+                                            <h1 className="text-base font-semibold text-foreground mt-4 mb-1 first:mt-0">
                                                 {children}
                                             </h1>
                                         ),
                                         h2: ({ children }) => (
-                                            <h2 className="text-sm font-semibold text-gray-900 mt-3 mb-1 first:mt-0">
+                                            <h2 className="text-sm font-semibold text-foreground mt-3 mb-1 first:mt-0">
                                                 {children}
                                             </h2>
                                         ),
                                         h3: ({ children }) => (
-                                            <h3 className="text-xs font-semibold text-gray-900 mt-2 mb-0.5 first:mt-0">
+                                            <h3 className="text-xs font-semibold text-foreground mt-2 mb-0.5 first:mt-0">
                                                 {children}
                                             </h3>
                                         ),
@@ -249,7 +249,7 @@ export function AssistantWorkflowModal({
                                             <li>{children}</li>
                                         ),
                                         strong: ({ children }) => (
-                                            <strong className="font-semibold text-gray-800">
+                                            <strong className="font-semibold text-foreground">
                                                 {children}
                                             </strong>
                                         ),
@@ -269,11 +269,11 @@ export function AssistantWorkflowModal({
                 </div>
 
                 {/* Footer */}
-                <div className="border-t border-gray-100 px-4 py-3 flex items-center justify-end gap-2 shrink-0">
+                <div className="border-t border-border px-4 py-3 flex items-center justify-end gap-2 shrink-0">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-lg px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 transition-colors"
+                        className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
                     >
                         Cancel
                     </button>
@@ -281,7 +281,7 @@ export function AssistantWorkflowModal({
                         type="button"
                         onClick={handleUse}
                         disabled={!selected}
-                        className="rounded-lg bg-gray-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-40 transition-colors"
+                        className="rounded-lg bg-foreground px-4 py-1.5 text-sm font-medium text-white hover:bg-foreground disabled:opacity-40 transition-colors"
                     >
                         Use
                     </button>

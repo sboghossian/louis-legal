@@ -39,7 +39,7 @@ export function TextSearchWidget({
 
     return (
         <div
-            className={`flex flex-col bg-white shadow-lg border border-gray-200 rounded-md overflow-hidden min-w-[300px] ${className}`}
+            className={`flex flex-col bg-card shadow-lg border border-border rounded-md overflow-hidden min-w-[300px] ${className}`}
         >
             <div className="flex items-center gap-1 p-1">
                 <div className="flex-1 relative">
@@ -49,7 +49,7 @@ export function TextSearchWidget({
                         placeholder="Find"
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="h-8 text-sm w-full pr-[80px] rounded-sm border-gray-200 bg-gray-100/50 focus-visible:ring-0 focus-visible:border-blue-600 placeholder:text-gray-500"
+                        className="h-8 text-sm w-full pr-[80px] rounded-sm border-border bg-muted/50 focus-visible:ring-0 focus-visible:border-blue-600 placeholder:text-muted-foreground"
                         onKeyDown={(e) => {
                             if (e.key === "Escape") {
                                 onClose();
@@ -65,7 +65,7 @@ export function TextSearchWidget({
 
             {/* Results count and navigation */}
             {searchQuery && (
-                <div className="flex items-center justify-between px-2 pb-1 pt-0.5 text-xs text-gray-500">
+                <div className="flex items-center justify-between px-2 pb-1 pt-0.5 text-xs text-muted-foreground">
                     <span>
                         {matchCount > 0
                             ? `${currentMatchIdx + 1} of ${matchCount}`
@@ -75,14 +75,14 @@ export function TextSearchWidget({
                         <button
                             onClick={handlePrev}
                             disabled={matchCount === 0}
-                            className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
+                            className="p-1 hover:bg-muted rounded disabled:opacity-50"
                         >
                             <ArrowUp className="h-4 w-4" />
                         </button>
                         <button
                             onClick={handleNext}
                             disabled={matchCount === 0}
-                            className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
+                            className="p-1 hover:bg-muted rounded disabled:opacity-50"
                         >
                             <ArrowDown className="h-4 w-4" />
                         </button>

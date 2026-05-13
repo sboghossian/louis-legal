@@ -53,10 +53,10 @@ export default function ModelsAndApiKeysPage() {
                 </div>
                 <div className="space-y-4 max-w-md">
                     <div>
-                        <label className="text-sm text-gray-600 block mb-2">
+                        <label className="text-sm text-muted-foreground block mb-2">
                             Tabular review model
                         </label>
-                        <p className="text-xs text-gray-400 mb-2">
+                        <p className="text-xs text-muted-foreground mb-2">
                             We recommend using a smaller model for tabular
                             reviews to reduce token costs.
                         </p>
@@ -81,12 +81,12 @@ export default function ModelsAndApiKeysPage() {
                         API Keys
                     </h2>
                 </div>
-                <p className="text-sm text-gray-500 mb-4 max-w-xl">
+                <p className="text-sm text-muted-foreground mb-4 max-w-xl">
                     You must provide your own API keys for the app to work or
                     add your API keys into the .env file if you are running your
                     own instance of Louis.
                 </p>
-                <p className="text-xs text-gray-400 mb-4 max-w-xl">
+                <p className="text-xs text-muted-foreground mb-4 max-w-xl">
                     Title generation automatically routes to the cheapest
                     configured provider model.
                 </p>
@@ -143,18 +143,18 @@ function TabularModelDropdown({
             <DropdownMenuTrigger asChild>
                 <button
                     type="button"
-                    className="w-full h-9 rounded-md border border-gray-300 bg-white px-3 text-sm shadow-sm flex items-center justify-between gap-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black/10"
+                    className="w-full h-9 rounded-md border border-border bg-card px-3 text-sm shadow-sm flex items-center justify-between gap-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-black/10"
                 >
                     <span className="flex items-center gap-2 min-w-0">
                         {!selectedAvailable && (
                             <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-500" />
                         )}
-                        <span className="truncate text-gray-900">
+                        <span className="truncate text-foreground">
                             {selected?.label ?? "Select a model"}
                         </span>
                     </span>
                     <ChevronDown
-                        className={`h-3.5 w-3.5 shrink-0 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                        className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                     />
                 </button>
             </DropdownMenuTrigger>
@@ -169,7 +169,7 @@ function TabularModelDropdown({
                     return (
                         <div key={group}>
                             {gi > 0 && <DropdownMenuSeparator />}
-                            <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-gray-400">
+                            <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
                                 {group}
                             </DropdownMenuLabel>
                             {items.map((m) => {
@@ -189,7 +189,7 @@ function TabularModelDropdown({
                                         }
                                     >
                                         <span
-                                            className={`flex-1 ${available ? "" : "text-gray-400"}`}
+                                            className={`flex-1 ${available ? "" : "text-muted-foreground"}`}
                                         >
                                             {m.label}
                                         </span>
@@ -197,7 +197,7 @@ function TabularModelDropdown({
                                             <AlertCircle className="h-3.5 w-3.5 text-red-500 ml-1" />
                                         )}
                                         {m.id === value && available && (
-                                            <Check className="h-3.5 w-3.5 text-gray-600 ml-1" />
+                                            <Check className="h-3.5 w-3.5 text-muted-foreground ml-1" />
                                         )}
                                     </DropdownMenuItem>
                                 );
@@ -258,7 +258,7 @@ function ApiKeyField({
 
     return (
         <div>
-            <label className="text-sm text-gray-600 block mb-2">{label}</label>
+            <label className="text-sm text-muted-foreground block mb-2">{label}</label>
             {isServerConfigured && (
                 <div className="mb-2 rounded-md border border-blue-100 bg-blue-50 px-3 py-2">
                     <p className="text-xs text-blue-800">
@@ -273,7 +273,7 @@ function ApiKeyField({
                 </div>
             )}
             {hasSavedKey && !isServerConfigured && (
-                <p className="text-xs text-gray-500 mb-2">
+                <p className="text-xs text-muted-foreground mb-2">
                     A key is saved. Paste a new key to replace it.
                 </p>
             )}
@@ -299,7 +299,7 @@ function ApiKeyField({
                         type="button"
                         onClick={() => setReveal((r) => !r)}
                         disabled={isServerConfigured}
-                        className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={reveal ? "Hide key" : "Show key"}
                     >
                         {reveal ? (
@@ -312,7 +312,7 @@ function ApiKeyField({
                 <Button
                     onClick={handleSave}
                     disabled={isServerConfigured || isSaving || !dirty || saved}
-                    className="min-w-[80px] transition-all bg-black hover:bg-gray-900 text-white"
+                    className="min-w-[80px] transition-all bg-black hover:bg-foreground text-white"
                 >
                     {isSaving ? (
                         "Saving..."

@@ -44,15 +44,15 @@ export function DocViewModal({
             onClick={onClose}
         >
             <div
-                className="relative flex flex-col bg-white rounded-xl shadow-2xl w-[800px] max-w-[90vw] h-[90vh]"
+                className="relative flex flex-col bg-card rounded-xl shadow-2xl w-[800px] max-w-[90vw] h-[90vh]"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3 shrink-0">
-                    <span className="text-base font-medium font-serif text-gray-800 truncate pr-4">
+                    <span className="text-base font-medium font-serif text-foreground truncate pr-4">
                         {doc.filename}
                         {versionLabel && (
-                            <span className="ml-2 text-xs font-normal text-gray-500">
+                            <span className="ml-2 text-xs font-normal text-muted-foreground">
                                 {versionLabel}
                             </span>
                         )}
@@ -60,21 +60,21 @@ export function DocViewModal({
                     <div className="flex items-center gap-1 shrink-0">
                         <button
                             onClick={handleDownload}
-                            className="flex items-center justify-center w-6 h-6 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                            className="flex items-center justify-center w-6 h-6 rounded hover:bg-muted text-muted-foreground hover:text-foreground/80 transition-colors"
                         >
                             <Download className="h-4 w-4" />
                         </button>
                         {onDelete && (
                             <button
                                 onClick={() => { onDelete(doc); onClose(); }}
-                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"
                             >
                                 <Trash2 className="h-4 w-4" />
                             </button>
                         )}
                         <button
                             onClick={onClose}
-                            className="flex items-center justify-center w-6 h-6 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                            className="flex items-center justify-center w-6 h-6 rounded hover:bg-muted text-muted-foreground hover:text-foreground/80 transition-colors"
                         >
                             <X className="h-4 w-4" />
                         </button>

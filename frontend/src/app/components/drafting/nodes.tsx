@@ -55,7 +55,7 @@ export const KIND_STYLES: Record<NodeKind, KindStyle> = {
         icon: Users,
         laneLabel: "Human gate",
         // Dashed border for human gates per the brief.
-        base: "bg-white border-dashed border-slate-400",
+        base: "bg-card border-dashed border-slate-400",
         accent: "bg-slate-100 text-slate-700",
     },
     output: {

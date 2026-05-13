@@ -33,14 +33,14 @@ const CATEGORY_META: Record<Category, { label: string; icon: React.ComponentType
     communication:  { label: "Communication",    icon: MessageSquare, accent: "bg-amber-50 text-amber-700" },
     billing:        { label: "Billing & CRM",    icon: DollarSign,    accent: "bg-rose-50 text-rose-700" },
     "ai-mcp":       { label: "AI / MCP",          icon: Brain,         accent: "bg-indigo-50 text-indigo-700" },
-    developer:      { label: "Developer",        icon: Code,          accent: "bg-gray-100 text-gray-700" },
+    developer:      { label: "Developer",        icon: Code,          accent: "bg-muted text-foreground/80" },
 };
 
 const STATUS_STYLE: Record<Status, string> = {
     connected: "bg-green-100 text-green-700",
-    disconnected: "bg-gray-100 text-gray-600",
+    disconnected: "bg-muted text-muted-foreground",
     "needs-reauth": "bg-amber-100 text-amber-700",
-    "coming-soon": "bg-gray-100 text-gray-500",
+    "coming-soon": "bg-muted text-muted-foreground",
 };
 
 export default function IntegrationsPage() {
@@ -108,21 +108,21 @@ export default function IntegrationsPage() {
     return (
         <div className="max-w-6xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Plug className="w-5 h-5 text-gray-700" />
+                <Plug className="w-5 h-5 text-foreground/80" />
                 <h1 className="text-lg font-semibold">Integrations</h1>
                 <Badge variant="secondary">{connectedCount} connected · {all.length} available</Badge>
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
                 Connect Louis with the tools your firm uses. OpenClaw, MS Word, GitHub, MCP servers, legal data sources, billing, communication, and more.
             </p>
 
             {/* Toolbar */}
             <div className="flex gap-3 mb-4">
                 <div className="relative flex-1">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search integrations…" className="pl-9" />
                 </div>
-                <label className="flex items-center gap-2 px-3 border border-gray-200 rounded-lg text-sm cursor-pointer">
+                <label className="flex items-center gap-2 px-3 border border-border rounded-lg text-sm cursor-pointer">
                     <input type="checkbox" checked={showOnlyConnected} onChange={e => setShowOnlyConnected(e.target.checked)} />
                     Only connected
                 </label>
@@ -137,7 +137,7 @@ export default function IntegrationsPage() {
                 ))}
             </div>
 
-            {loading && <div className="text-sm text-gray-500">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
 
             {Object.entries(grouped).map(([cat, items]) => {
                 const meta = CATEGORY_META[cat as Category];
@@ -148,7 +148,7 @@ export default function IntegrationsPage() {
                             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs ${meta.accent}`}>
                                 <Icon className="w-3.5 h-3.5" /> {meta.label}
                             </span>
-                            <span className="text-xs text-gray-400">{items.length}</span>
+                            <span className="text-xs text-muted-foreground">{items.length}</span>
                         </div>
                         <div className="grid grid-cols-3 gap-3">
                             {items.map(i => (
@@ -173,7 +173,7 @@ export default function IntegrationsPage() {
                 />
             )}
 
-            <div className="mt-8 text-xs text-gray-500 border-t border-gray-200 pt-6">
+            <div className="mt-8 text-xs text-muted-foreground border-t border-border pt-6">
                 <p>
                     🔌 <strong>Building a custom integration?</strong> Use MCP (Model Context Protocol) — point Louis at any MCP server URL
                     and tools become available immediately. <a href="/docs" className="text-blue-600 underline">Docs → Integrations</a>.
@@ -196,19 +196,19 @@ function IntegrationCard({
 }) {
     const connected = i.status === "connected";
     return (
-        <div className={`border rounded-lg p-4 flex flex-col ${connected ? "border-green-300 bg-green-50/30" : "border-gray-200 bg-white"}`}>
+        <div className={`border rounded-lg p-4 flex flex-col ${connected ? "border-green-300 bg-green-50/30" : "border-border bg-card"}`}>
             <div className="flex items-start gap-2 mb-1">
                 <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm truncate">{i.name}</div>
                     <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLE[i.status]} mt-0.5`}>{i.status}</span>
                 </div>
                 {i.signupUrl && (
-                    <a href={i.signupUrl} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600" title="Provider site">
+                    <a href={i.signupUrl} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-muted-foreground" title="Provider site">
                         <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                 )}
             </div>
-            <div className="text-xs text-gray-600 mb-3 line-clamp-3 min-h-[3em]">{i.description}</div>
+            <div className="text-xs text-muted-foreground mb-3 line-clamp-3 min-h-[3em]">{i.description}</div>
             <div className="mt-auto flex items-center gap-2">
                 {i.status === "coming-soon" ? (
                     <Button size="sm" variant="outline" className="h-7 text-xs flex-1" disabled>
@@ -259,11 +259,11 @@ function ConnectModal({ integration, onClose, onConnected }: { integration: Inte
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-md">
+            <div className="bg-card rounded-lg w-full max-w-md">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
                     <div>
                         <h2 className="font-semibold">Connect {integration.name}</h2>
-                        <div className="text-xs text-gray-500 mt-0.5">{integration.description}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{integration.description}</div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
                 </div>
@@ -286,7 +286,7 @@ function ConnectModal({ integration, onClose, onConnected }: { integration: Inte
                         <div>
                             <Label className="text-xs">Server URL</Label>
                             <Input value={serverUrl} onChange={e => setServerUrl(e.target.value)} placeholder="https://mcp.example.com/v1" className="mt-1 font-mono" />
-                            <p className="text-[10px] text-gray-500 mt-1">Must implement the Model Context Protocol (MCP) spec.</p>
+                            <p className="text-[10px] text-muted-foreground mt-1">Must implement the Model Context Protocol (MCP) spec.</p>
                         </div>
                     )}
                     {integration.id === "openclaw" && (
@@ -299,11 +299,11 @@ function ConnectModal({ integration, onClose, onConnected }: { integration: Inte
                         <div>
                             <Label className="text-xs">Skills repo (optional)</Label>
                             <Input value={workspaceId} onChange={e => setWorkspaceId(e.target.value)} placeholder="orgname/louis-skills" className="mt-1 font-mono" />
-                            <p className="text-[10px] text-gray-500 mt-1">Louis will watch this repo for new skills (PR → review → merge).</p>
+                            <p className="text-[10px] text-muted-foreground mt-1">Louis will watch this repo for new skills (PR → review → merge).</p>
                         </div>
                     )}
                     {integration.signupUrl && (
-                        <p className="text-[10px] text-gray-500">
+                        <p className="text-[10px] text-muted-foreground">
                             Need an account? <a href={integration.signupUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">Sign up at {integration.name}</a>.
                         </p>
                     )}
@@ -323,7 +323,7 @@ function Chip({ children, active, onClick }: { children: React.ReactNode; active
     return (
         <button
             onClick={onClick}
-            className={`px-2.5 py-1 text-xs rounded-full border ${active ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+            className={`px-2.5 py-1 text-xs rounded-full border ${active ? "bg-foreground text-white border-foreground" : "bg-card text-foreground/80 border-border hover:bg-muted"}`}
         >
             {children}
         </button>

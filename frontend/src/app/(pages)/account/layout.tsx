@@ -33,7 +33,7 @@ export default function AccountLayout({
 
     if (authLoading) {
         return (
-            <div className="h-dvh bg-white flex items-center justify-center">
+            <div className="h-dvh bg-card flex items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
             </div>
         );
@@ -79,8 +79,8 @@ export default function AccountLayout({
                                                     }
                                                     className={`flex h-9 w-full items-center rounded-lg px-3 text-left text-sm font-medium whitespace-nowrap transition-colors ${
                                                         active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                                                            ? "bg-muted text-foreground"
+                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                                     }`}
                                                 >
                                                     {tab.label}

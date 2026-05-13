@@ -59,7 +59,7 @@ export function RowActionMenuItems({
             {onNewSubfolder && (
                 <button
                     onClick={() => { onClose(); onNewSubfolder(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <FolderPlus className="h-3.5 w-3.5 shrink-0" />
                     {newSubfolderLabel}
@@ -68,7 +68,7 @@ export function RowActionMenuItems({
             {onRename && (
                 <button
                     onClick={() => { onClose(); onRename(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <Pencil className="h-3.5 w-3.5" />
                     {renameLabel}
@@ -77,7 +77,7 @@ export function RowActionMenuItems({
             {onUpdateCmNumber && (
                 <button
                     onClick={() => { onClose(); onUpdateCmNumber(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <Hash className="h-3.5 w-3.5" />
                     Edit CM No.
@@ -86,7 +86,7 @@ export function RowActionMenuItems({
             {onDownload && (
                 <button
                     onClick={() => { onClose(); onDownload(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <Download className="h-3.5 w-3.5" />
                     Download
@@ -95,7 +95,7 @@ export function RowActionMenuItems({
             {onShowAllVersions && (
                 <button
                     onClick={() => { onClose(); onShowAllVersions(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <History className="h-3.5 w-3.5 shrink-0" />
                     Show all versions
@@ -104,7 +104,7 @@ export function RowActionMenuItems({
             {onUploadNewVersion && (
                 <button
                     onClick={() => { onClose(); onUploadNewVersion(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <Upload className="h-3.5 w-3.5 shrink-0" />
                     Upload new version
@@ -113,7 +113,7 @@ export function RowActionMenuItems({
             {onRemoveFromFolder && (
                 <button
                     onClick={() => { onClose(); onRemoveFromFolder(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <FolderMinus className="h-3.5 w-3.5 shrink-0" />
                     Remove from subfolder
@@ -122,7 +122,7 @@ export function RowActionMenuItems({
             {onUnhide && (
                 <button
                     onClick={() => { onClose(); onUnhide(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <Eye className="h-3.5 w-3.5" />
                     Unhide
@@ -131,7 +131,7 @@ export function RowActionMenuItems({
             {onHide && (
                 <button
                     onClick={() => { onClose(); onHide(); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                 >
                     <EyeOff className="h-3.5 w-3.5" />
                     Hide
@@ -199,7 +199,7 @@ export function RowActions(props: Props) {
             <button
                 ref={btnRef}
                 onClick={handleToggle}
-                className="flex items-center justify-center w-6 h-6 rounded text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors leading-none"
+                className="flex items-center justify-center w-6 h-6 rounded text-foreground/80 hover:text-foreground hover:bg-muted transition-colors leading-none"
             >
                 <span className="tracking-widest text-xs">···</span>
             </button>
@@ -207,7 +207,7 @@ export function RowActions(props: Props) {
             {open && (
                 <div
                     style={{ position: "fixed", top: coords.top, right: coords.right }}
-                    className="z-[120] w-48 rounded-xl border border-gray-100 bg-white shadow-lg overflow-hidden"
+                    className="z-[120] w-48 rounded-xl border border-border bg-card shadow-lg overflow-hidden"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <RowActionMenuItems

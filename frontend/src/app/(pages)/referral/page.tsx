@@ -46,7 +46,7 @@ export default function ShareLouisPage() {
                 <Share2 className="w-5 h-5 text-amber-700" />
                 <h1 className="text-2xl font-serif font-semibold">Share Louis</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-8 max-w-xl">
+            <p className="text-sm text-muted-foreground mb-8 max-w-xl">
                 Louis is free and open source. The most useful thing you can do
                 is tell another lawyer or legal-tech engineer about it.
             </p>
@@ -90,12 +90,12 @@ export default function ShareLouisPage() {
                 <div className="text-xs uppercase tracking-wider text-amber-700 mb-2">
                     Suggested copy
                 </div>
-                <p className="text-sm text-gray-700 font-serif leading-relaxed mb-3">
+                <p className="text-sm text-foreground/80 font-serif leading-relaxed mb-3">
                     {PITCH}
                 </p>
                 <button
                     onClick={() => copy(PITCH, "blurb")}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 hover:text-gray-900"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/80 hover:text-foreground"
                 >
                     {copied === "blurb" ? (
                         <>
@@ -128,14 +128,14 @@ function ShareCard({
     badge?: string;
 }) {
     const body = (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 flex items-center gap-3 hover:border-amber-300 hover:shadow-sm transition-all cursor-pointer">
+        <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3 hover:border-amber-300 hover:shadow-sm transition-all cursor-pointer">
             <div className="w-9 h-9 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
                 <Icon className="w-4 h-4 text-amber-700" />
             </div>
             <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-gray-900">{title}</div>
+                <div className="text-sm font-medium text-foreground">{title}</div>
                 {badge && (
-                    <div className="text-[11px] text-gray-500 truncate mt-0.5">
+                    <div className="text-[11px] text-muted-foreground truncate mt-0.5">
                         {badge}
                     </div>
                 )}

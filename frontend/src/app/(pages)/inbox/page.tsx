@@ -33,7 +33,7 @@ const KIND_ICONS: Record<EntryKind, typeof FileText> = {
 };
 
 const SEVERITY_COLORS = {
-    info: "border-gray-200 bg-white",
+    info: "border-border bg-card",
     warning: "border-amber-200 bg-amber-50/30",
     urgent: "border-red-200 bg-red-50/30",
 };
@@ -106,7 +106,7 @@ export default function InboxPage() {
     return (
         <div className="max-w-4xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Inbox className="w-5 h-5 text-gray-700" />
+                <Inbox className="w-5 h-5 text-foreground/80" />
                 <h1 className="text-2xl font-serif">Inbox</h1>
                 <Badge variant="secondary">{entries.length}</Badge>
                 {unread > 0 && (
@@ -118,7 +118,7 @@ export default function InboxPage() {
                     </Button>
                 )}
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
                 Everything that happened: matter updates, routine outputs, deadlines, team activity, system messages.
             </p>
 
@@ -127,18 +127,18 @@ export default function InboxPage() {
                     <button
                         key={f.id}
                         onClick={() => setFilter(f.id)}
-                        className={`px-2.5 py-1 text-xs rounded-full border ${filter === f.id ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+                        className={`px-2.5 py-1 text-xs rounded-full border ${filter === f.id ? "bg-foreground text-white border-foreground" : "bg-card text-foreground/80 border-border hover:bg-muted"}`}
                     >
                         {f.label}
                     </button>
                 ))}
             </div>
 
-            {loading && <div className="text-sm text-gray-500">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
 
             <div className="space-y-2">
                 {filtered.length === 0 && !loading && (
-                    <div className="border border-dashed border-gray-300 rounded-lg p-12 text-center text-sm text-gray-500">
+                    <div className="border border-dashed border-border rounded-lg p-12 text-center text-sm text-muted-foreground">
                         {filter === "unread" ? "All caught up." : "Nothing here yet."}
                     </div>
                 )}
@@ -149,21 +149,21 @@ export default function InboxPage() {
                         <button
                             key={e.id}
                             onClick={() => openEntry(e)}
-                            className={`w-full text-left border rounded-lg p-4 transition hover:border-gray-900 ${SEVERITY_COLORS[e.severity]} ${!e.read ? "" : "opacity-70"}`}
+                            className={`w-full text-left border rounded-lg p-4 transition hover:border-foreground ${SEVERITY_COLORS[e.severity]} ${!e.read ? "" : "opacity-70"}`}
                         >
                             <div className="flex items-start gap-3">
                                 <div className="relative flex-shrink-0">
-                                    <KindIcon className="w-4 h-4 mt-0.5 text-gray-600" />
+                                    <KindIcon className="w-4 h-4 mt-0.5 text-muted-foreground" />
                                     {!e.read && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-blue-600" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <span className="font-medium text-sm">{e.title}</span>
                                         {SevIcon && <SevIcon className={`w-3 h-3 ${e.severity === "urgent" ? "text-red-600" : "text-amber-600"}`} />}
-                                        <span className="text-[10px] uppercase tracking-wide text-gray-400 ml-auto">{e.kind}</span>
+                                        <span className="text-[10px] uppercase tracking-wide text-muted-foreground ml-auto">{e.kind}</span>
                                     </div>
-                                    {e.body && <div className="text-xs text-gray-600 line-clamp-2">{e.body}</div>}
-                                    <div className="text-[10px] text-gray-500 mt-1">{formatTime(e.createdAt)}</div>
+                                    {e.body && <div className="text-xs text-muted-foreground line-clamp-2">{e.body}</div>}
+                                    <div className="text-[10px] text-muted-foreground mt-1">{formatTime(e.createdAt)}</div>
                                 </div>
                             </div>
                         </button>

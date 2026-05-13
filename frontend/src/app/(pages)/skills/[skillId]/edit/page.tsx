@@ -122,14 +122,14 @@ export default function EditSkillPage({ params }: { params: Promise<{ skillId: s
         }
     }
 
-    if (loading) return <div className="p-12 text-sm text-gray-500">Loading…</div>;
+    if (loading) return <div className="p-12 text-sm text-muted-foreground">Loading…</div>;
     if (error && !skill) return <div className="p-12 text-sm text-red-600">{error}</div>;
     if (!skill) return null;
 
     return (
         <div className="max-w-3xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-5 h-5 text-gray-700" />
+                <Sparkles className="w-5 h-5 text-foreground/80" />
                 <h1 className="text-lg font-semibold">Edit skill</h1>
                 {isCustom ? (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-700">custom</Badge>
@@ -137,7 +137,7 @@ export default function EditSkillPage({ params }: { params: Promise<{ skillId: s
                     <Badge variant="secondary" className="bg-amber-100 text-amber-700">built-in (read-only)</Badge>
                 )}
             </div>
-            <div className="font-mono text-xs text-gray-500 mb-6">{skillId}</div>
+            <div className="font-mono text-xs text-muted-foreground mb-6">{skillId}</div>
 
             {!isCustom && !forceEdit && (
                 <div className="bg-amber-50 border border-amber-200 rounded p-3 mb-4 flex items-center justify-between">
@@ -164,13 +164,13 @@ export default function EditSkillPage({ params }: { params: Promise<{ skillId: s
             <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
                     <Label className="text-xs">Priority</Label>
-                    <select value={priority} onChange={e => setPriority(e.target.value)} disabled={readOnly} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm disabled:bg-gray-50">
+                    <select value={priority} onChange={e => setPriority(e.target.value)} disabled={readOnly} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm disabled:bg-muted">
                         {["P0", "P1", "P2", "P3"].map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                 </div>
                 <div>
                     <Label className="text-xs">Status</Label>
-                    <select value={status} onChange={e => setStatus(e.target.value)} disabled={readOnly} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm disabled:bg-gray-50">
+                    <select value={status} onChange={e => setStatus(e.target.value)} disabled={readOnly} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm disabled:bg-muted">
                         {["stub", "drafted", "reviewed", "shipped"].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                 </div>
@@ -199,7 +199,7 @@ export default function EditSkillPage({ params }: { params: Promise<{ skillId: s
                     onChange={e => setBody(e.target.value)}
                     rows={20}
                     disabled={readOnly}
-                    className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono disabled:bg-gray-50"
+                    className="mt-1 w-full border border-border rounded px-3 py-2 text-sm font-mono disabled:bg-muted"
                 />
             </div>
 

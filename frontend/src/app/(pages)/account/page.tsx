@@ -86,7 +86,7 @@ export default function AccountPage() {
                 </div>
                 <div className="space-y-4">
                     <div>
-                        <label className="text-sm text-gray-600 block mb-2">
+                        <label className="text-sm text-muted-foreground block mb-2">
                             Display Name
                         </label>
                         <div className="flex gap-2">
@@ -102,7 +102,7 @@ export default function AccountPage() {
                                 disabled={
                                     isSavingName || !displayName.trim() || saved
                                 }
-                                className="min-w-[80px] transition-all bg-black hover:bg-gray-900 text-white"
+                                className="min-w-[80px] transition-all bg-black hover:bg-foreground text-white"
                             >
                                 {isSavingName ? (
                                     "Saving..."
@@ -118,7 +118,7 @@ export default function AccountPage() {
                         </div>
                     </div>
                     <div>
-                        <label className="text-sm text-gray-600 block mb-2">
+                        <label className="text-sm text-muted-foreground block mb-2">
                             Organisation
                         </label>
                         <div className="flex gap-2">
@@ -139,7 +139,7 @@ export default function AccountPage() {
                                         (profile?.organisation ?? "") ||
                                     orgSaved
                                 }
-                                className="min-w-[80px] transition-all bg-black hover:bg-gray-900 text-white"
+                                className="min-w-[80px] transition-all bg-black hover:bg-foreground text-white"
                             >
                                 {isSavingOrg ? (
                                     "Saving..."
@@ -155,7 +155,7 @@ export default function AccountPage() {
                         </div>
                     </div>
                     <div>
-                        <label className="text-sm text-gray-600 block mb-2">
+                        <label className="text-sm text-muted-foreground block mb-2">
                             Email
                         </label>
                         <p className="text-base">{user?.email}</p>
@@ -171,7 +171,7 @@ export default function AccountPage() {
                     </h2>
                 </div>
                 <div>
-                    <p className="text-base font-medium text-gray-500 capitalize">
+                    <p className="text-base font-medium text-muted-foreground capitalize">
                         {profile?.tier || "Free"}
                     </p>
                 </div>
@@ -197,7 +197,7 @@ export default function AccountPage() {
                 <h2 className="text-2xl font-medium font-serif mb-1 text-red-600">
                     Danger Zone
                 </h2>
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                     Permanently delete your account and all associated data.
                     This action cannot be undone.
                 </p>

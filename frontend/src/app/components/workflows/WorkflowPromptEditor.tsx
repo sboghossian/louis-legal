@@ -41,8 +41,8 @@ function ToolbarBtn({
             }}
             className={`p-1.5 rounded transition-colors ${
                 active
-                    ? "bg-gray-200 text-gray-900"
-                    : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"
             }`}
         >
             {children}
@@ -99,9 +99,9 @@ export function WorkflowPromptEditor({
     }, [value, editor]);
 
     return (
-        <div className="flex flex-col h-full border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
             {!readOnly && editor && (
-                <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-gray-100 bg-gray-50 shrink-0">
+                <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted shrink-0">
                     <ToolbarBtn
                         onClick={() =>
                             editor
@@ -141,7 +141,7 @@ export function WorkflowPromptEditor({
                     >
                         <Heading3 className="h-4 w-4" />
                     </ToolbarBtn>
-                    <div className="w-px h-4 bg-gray-200 mx-1 shrink-0" />
+                    <div className="w-px h-4 bg-muted mx-1 shrink-0" />
                     <ToolbarBtn
                         onClick={() =>
                             editor.chain().focus().toggleBold().run()
@@ -160,7 +160,7 @@ export function WorkflowPromptEditor({
                     >
                         <Italic className="h-4 w-4" />
                     </ToolbarBtn>
-                    <div className="w-px h-4 bg-gray-200 mx-1 shrink-0" />
+                    <div className="w-px h-4 bg-muted mx-1 shrink-0" />
                     <ToolbarBtn
                         onClick={() =>
                             editor.chain().focus().toggleBulletList().run()

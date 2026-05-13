@@ -31,7 +31,7 @@ const LAST_UPDATED = "2026-05-13";
 
 export default function TransparencyPage() {
     return (
-        <article className="max-w-3xl mx-auto px-6 md:px-10 py-12 font-serif text-gray-800">
+        <article className="max-w-3xl mx-auto px-6 md:px-10 py-12 font-serif text-foreground">
             <header className="mb-10 not-prose">
                 <div className="flex items-center gap-2 mb-3 text-amber-700">
                     <ShieldCheck className="w-5 h-5" />
@@ -42,7 +42,7 @@ export default function TransparencyPage() {
                 <h1 className="text-3xl md:text-4xl font-light tracking-tight leading-tight mb-3">
                     How Louis is built, what it does, and what it doesn&apos;t.
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                     Last updated <time dateTime={LAST_UPDATED}>{LAST_UPDATED}</time>.
                     Published in alignment with Regulation (EU) 2024/1689
                     (AI Act). Self-hosted operators should publish their own
@@ -188,7 +188,7 @@ export default function TransparencyPage() {
                     contact the maintainer at the email listed on the
                     repository.
                 </p>
-                <p className="text-sm text-gray-500 mt-4">
+                <p className="text-sm text-muted-foreground mt-4">
                     Self-hosting an instance of Louis? You become the
                     controller for the data your users process. Replace this
                     page with your organisation&apos;s disclosure. See the{" "}

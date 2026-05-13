@@ -33,26 +33,26 @@ export function ApiKeyMissingModal({ open, onClose, provider, message }: Props) 
             onClick={onClose}
         >
             <div
-                className="w-full max-w-md rounded-2xl bg-white shadow-2xl flex flex-col"
+                className="w-full max-w-md rounded-2xl bg-card shadow-2xl flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-2">
                     <div className="flex items-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-amber-600" />
-                        <h2 className="text-base font-medium text-gray-900">
+                        <h2 className="text-base font-medium text-foreground">
                             API key required
                         </h2>
                     </div>
                     <button
                         onClick={onClose}
-                        className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                        className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-muted-foreground"
                     >
                         <X className="h-4 w-4" />
                     </button>
                 </div>
 
                 <div className="px-5 pb-2 pt-1">
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                         {body}
                     </p>
                 </div>
@@ -60,13 +60,13 @@ export function ApiKeyMissingModal({ open, onClose, provider, message }: Props) 
                 <div className="flex justify-end gap-2 px-5 pb-5 pt-3">
                     <button
                         onClick={onClose}
-                        className="rounded-lg px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                        className="rounded-lg px-4 py-1.5 text-sm font-medium text-foreground/80 hover:bg-muted"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleGoToAccount}
-                        className="rounded-lg bg-gray-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-gray-700"
+                        className="rounded-lg bg-foreground px-4 py-1.5 text-sm font-medium text-white hover:bg-foreground"
                     >
                         Go to account settings
                     </button>

@@ -83,7 +83,7 @@ function VaultPageInner() {
                 )}
             </div>
 
-            <p className="text-sm text-gray-600 font-serif max-w-2xl mb-6">
+            <p className="text-sm text-muted-foreground font-serif max-w-2xl mb-6">
                 {t("vault.intro")}
             </p>
 
@@ -122,11 +122,11 @@ function VaultPageInner() {
                 </div>
             )}
 
-            <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
+            <div className="border border-border rounded-lg p-5 bg-muted">
                 <h2 className="font-medium text-sm mb-2">{t("vault.next.title")}</h2>
                 <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
-                        <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
                         <Link
                             href="/customize"
                             className="text-blue-600 hover:underline"
@@ -135,7 +135,7 @@ function VaultPageInner() {
                         </Link>
                     </li>
                     <li className="flex items-center gap-2">
-                        <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
                         <Link
                             href="/projects"
                             className="text-blue-600 hover:underline"
@@ -144,7 +144,7 @@ function VaultPageInner() {
                         </Link>
                     </li>
                     <li className="flex items-center gap-2">
-                        <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
                         <Link
                             href="/docs#vault"
                             className="text-blue-600 hover:underline"
@@ -201,12 +201,12 @@ function Feature({
     desc: string;
 }) {
     return (
-        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+        <div className="border border-border rounded-lg p-4 bg-card">
             <div className="flex items-center gap-2 mb-1">
                 <Icon className="w-4 h-4 text-amber-700" />
                 <span className="font-medium text-sm">{title}</span>
             </div>
-            <p className="text-xs text-gray-600 font-serif leading-relaxed">
+            <p className="text-xs text-muted-foreground font-serif leading-relaxed">
                 {desc}
             </p>
         </div>

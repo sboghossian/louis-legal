@@ -13,8 +13,8 @@ export function UserMessage({ content, files, workflow }: Props) {
 
     return (
         <div className="w-full flex justify-end">
-            <div className="max-w-[80%] bg-gray-100 rounded-xl px-4 py-3">
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">{content}</p>
+            <div className="max-w-[80%] bg-muted rounded-xl px-4 py-3">
+                <p className="text-sm text-foreground whitespace-pre-wrap">{content}</p>
                 {(workflow || hasFiles) && (
                     <div className="flex flex-wrap justify-end gap-1.5 mt-3">
                         {workflow && (

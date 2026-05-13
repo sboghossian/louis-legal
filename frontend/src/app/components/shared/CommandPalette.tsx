@@ -390,10 +390,10 @@ export function CommandPalette() {
                 role="dialog"
                 aria-modal="true"
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-xl rounded-2xl bg-white border border-gray-200 shadow-2xl overflow-hidden"
+                className="w-full max-w-xl rounded-2xl bg-card border border-border shadow-2xl overflow-hidden"
             >
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
-                    <Search className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+                    <Search className="w-4 h-4 text-muted-foreground" />
                     <input
                         ref={inputRef}
                         value={q}
@@ -405,20 +405,20 @@ export function CommandPalette() {
                         placeholder="Jump to a page, chat, project, prompt — or type to search"
                         className="flex-1 outline-none text-sm bg-transparent"
                     />
-                    <kbd className="hidden sm:inline-block text-[10px] text-gray-400 font-mono px-1.5 py-0.5 rounded bg-gray-100 border border-gray-200">
+                    <kbd className="hidden sm:inline-block text-[10px] text-muted-foreground font-mono px-1.5 py-0.5 rounded bg-muted border border-border">
                         Esc
                     </kbd>
                 </div>
 
                 <div className="max-h-[60vh] overflow-y-auto py-1">
                     {filtered.length === 0 ? (
-                        <div className="px-4 py-8 text-center text-sm text-gray-500">
+                        <div className="px-4 py-8 text-center text-sm text-muted-foreground">
                             Nothing matches &quot;{q}&quot;.
                         </div>
                     ) : (
                         grouped.map((g) => (
                             <div key={g.section} className="py-1">
-                                <div className="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-medium">
+                                <div className="px-4 py-1 text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
                                     {g.section}
                                 </div>
                                 {g.items.map((it) => {
@@ -436,23 +436,23 @@ export function CommandPalette() {
                                             }}
                                             className={`w-full flex items-center gap-3 px-4 py-2 text-left ${
                                                 active
-                                                    ? "bg-gray-100"
-                                                    : "hover:bg-gray-50"
+                                                    ? "bg-muted"
+                                                    : "hover:bg-muted"
                                             }`}
                                         >
-                                            <Icon className="w-4 h-4 text-gray-500 shrink-0" />
+                                            <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
                                             <div className="flex-1 min-w-0">
-                                                <div className="text-sm text-gray-900 truncate">
+                                                <div className="text-sm text-foreground truncate">
                                                     {it.label}
                                                 </div>
                                                 {it.sublabel && (
-                                                    <div className="text-[11px] text-gray-500 truncate">
+                                                    <div className="text-[11px] text-muted-foreground truncate">
                                                         {it.sublabel}
                                                     </div>
                                                 )}
                                             </div>
                                             {active && (
-                                                <kbd className="text-[10px] text-gray-400 font-mono px-1.5 py-0.5 rounded bg-white border border-gray-200">
+                                                <kbd className="text-[10px] text-muted-foreground font-mono px-1.5 py-0.5 rounded bg-card border border-border">
                                                     ↵
                                                 </kbd>
                                             )}
@@ -464,7 +464,7 @@ export function CommandPalette() {
                     )}
                 </div>
 
-                <div className="flex items-center justify-between px-4 py-2 border-t border-gray-100 text-[10px] text-gray-500">
+                <div className="flex items-center justify-between px-4 py-2 border-t border-border text-[10px] text-muted-foreground">
                     <div className="flex items-center gap-3">
                         <span>
                             <kbd className="font-mono">↑</kbd>{" "}
@@ -475,13 +475,13 @@ export function CommandPalette() {
                         </span>
                     </div>
                     <div className="flex items-center gap-1">
-                        <kbd className="text-[10px] text-gray-400 font-mono px-1.5 py-0.5 rounded bg-white border border-gray-200">
+                        <kbd className="text-[10px] text-muted-foreground font-mono px-1.5 py-0.5 rounded bg-card border border-border">
                             {typeof navigator !== "undefined" &&
                             /mac/i.test(navigator.platform)
                                 ? "⌘"
                                 : "Ctrl"}
                         </kbd>
-                        <kbd className="text-[10px] text-gray-400 font-mono px-1.5 py-0.5 rounded bg-white border border-gray-200">
+                        <kbd className="text-[10px] text-muted-foreground font-mono px-1.5 py-0.5 rounded bg-card border border-border">
                             K
                         </kbd>
                     </div>

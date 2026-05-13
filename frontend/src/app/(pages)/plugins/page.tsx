@@ -108,7 +108,7 @@ export default function PluginsPage() {
                         value={q}
                         onChange={(e) => setQ(e.target.value)}
                         placeholder={t("plugins.search_placeholder")}
-                        className="pl-9 bg-white/60 border-stone-300 focus-visible:ring-amber-600/30"
+                        className="pl-9 bg-card/60 border-stone-300 focus-visible:ring-amber-600/30"
                     />
                 </div>
 
@@ -171,7 +171,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
     const { t } = useLocale();
     const Icon = ICON_MAP[plugin.icon] ?? Blocks;
     return (
-        <div className="group bg-white border border-stone-200 rounded-xl p-5 flex flex-col hover:border-amber-300 hover:shadow-[0_2px_24px_-12px_rgba(180,140,40,0.25)] transition-all">
+        <div className="group bg-card border border-stone-200 rounded-xl p-5 flex flex-col hover:border-amber-300 hover:shadow-[0_2px_24px_-12px_rgba(180,140,40,0.25)] transition-all">
             <div className="flex items-start gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200/60 flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-amber-700" />

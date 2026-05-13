@@ -127,7 +127,7 @@ export function PassphraseUnlockModal({
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") tryPassphrase();
                                 }}
-                                className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono"
+                                className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono"
                                 placeholder={t("vault.unlock.placeholder")}
                             />
                             <button
@@ -189,7 +189,7 @@ export function PassphraseUnlockModal({
                             value={phrase}
                             onChange={(e) => setPhrase(e.target.value)}
                             rows={4}
-                            className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono mb-3"
+                            className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono mb-3"
                             placeholder={t("vault.recovery.placeholder")}
                         />
 

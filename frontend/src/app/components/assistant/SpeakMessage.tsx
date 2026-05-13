@@ -131,7 +131,7 @@ export function SpeakMessage({ messageId, text, autoPlay = false }: Props) {
     if (state === "idle") {
         return (
             <button
-                className="p-1.5 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                className="p-1.5 rounded text-muted-foreground hover:text-foreground/80 hover:bg-muted transition-colors"
                 title="Read aloud"
                 onClick={start}
                 aria-label="Read message aloud"
@@ -147,7 +147,7 @@ export function SpeakMessage({ messageId, text, autoPlay = false }: Props) {
                 className={`p-1.5 rounded transition-colors ${
                     state === "speaking"
                         ? "text-amber-700 bg-amber-50 hover:bg-amber-100"
-                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        : "text-muted-foreground hover:text-foreground/80 hover:bg-muted"
                 }`}
                 title={state === "speaking" ? "Pause" : "Resume"}
                 onClick={togglePause}
@@ -160,7 +160,7 @@ export function SpeakMessage({ messageId, text, autoPlay = false }: Props) {
                 )}
             </button>
             <button
-                className="p-1.5 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                className="p-1.5 rounded text-muted-foreground hover:text-foreground/80 hover:bg-muted transition-colors"
                 title="Stop"
                 onClick={stop}
                 aria-label="Stop playback"

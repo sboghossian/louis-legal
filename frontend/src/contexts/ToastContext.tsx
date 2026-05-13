@@ -97,7 +97,7 @@ const VARIANT_STYLES: Record<
     ToastVariant,
     { ring: string; icon: React.ComponentType<{ className?: string }>; iconClass: string }
 > = {
-    info:    { ring: "ring-gray-200",       icon: Info,         iconClass: "text-gray-500" },
+    info:    { ring: "ring-gray-200",       icon: Info,         iconClass: "text-muted-foreground" },
     success: { ring: "ring-emerald-200",    icon: CheckCircle2, iconClass: "text-emerald-600" },
     error:   { ring: "ring-red-200",        icon: AlertTriangle, iconClass: "text-red-600" },
 };
@@ -133,15 +133,15 @@ function ToastViewport({
                         key={e.id}
                         role="status"
                         onClick={() => onDismiss(e.id)}
-                        className={`pointer-events-auto bg-white border border-gray-200 ${v.ring} ring-2 rounded-xl shadow-lg px-4 py-3 flex items-start gap-3 cursor-pointer transition-all`}
+                        className={`pointer-events-auto bg-card border border-border ${v.ring} ring-2 rounded-xl shadow-lg px-4 py-3 flex items-start gap-3 cursor-pointer transition-all`}
                     >
                         <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${v.iconClass}`} />
                         <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-foreground">
                                 {e.title}
                             </div>
                             {e.description && (
-                                <div className="text-xs text-gray-600 mt-0.5">
+                                <div className="text-xs text-muted-foreground mt-0.5">
                                     {e.description}
                                 </div>
                             )}
@@ -152,7 +152,7 @@ function ToastViewport({
                                 ev.stopPropagation();
                                 onDismiss(e.id);
                             }}
-                            className="text-gray-400 hover:text-gray-700"
+                            className="text-muted-foreground hover:text-foreground/80"
                             aria-label="Dismiss"
                         >
                             <X className="w-3.5 h-3.5" />

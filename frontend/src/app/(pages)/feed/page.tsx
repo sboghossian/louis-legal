@@ -189,14 +189,14 @@ export default function FeedPage() {
                     {t("feed.title")}
                 </h1>
                 {savingTopics && (
-                    <span className="text-xs text-gray-500 ml-2">{t("feed.saving")}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{t("feed.saving")}</span>
                 )}
                 <button
                     type="button"
                     onClick={() => topics && refresh(topics)}
                     disabled={refreshing || !topics}
                     aria-label={t("action.refresh")}
-                    className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm border border-border bg-card hover:bg-muted disabled:opacity-50"
                 >
                     <RefreshCw
                         className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`}
@@ -204,7 +204,7 @@ export default function FeedPage() {
                     {t("action.refresh")}
                 </button>
             </div>
-            <p className="text-sm text-gray-600 font-serif mb-5 max-w-2xl">
+            <p className="text-sm text-muted-foreground font-serif mb-5 max-w-2xl">
                 {t("feed.intro")}
             </p>
 
@@ -214,8 +214,8 @@ export default function FeedPage() {
                     onClick={() => setActiveTopicId("all")}
                     className={`px-3 py-1 text-xs rounded-full border transition-colors ${
                         activeTopicId === "all"
-                            ? "bg-gray-900 text-white border-gray-900"
-                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                            ? "bg-foreground text-white border-foreground"
+                            : "bg-card text-foreground/80 border-border hover:bg-muted"
                     }`}
                 >
                     {t("feed.all")}
@@ -226,8 +226,8 @@ export default function FeedPage() {
                             onClick={() => setActiveTopicId(t.id)}
                             className={`px-3 py-1 text-xs rounded-l-full border-y border-l transition-colors ${
                                 activeTopicId === t.id
-                                    ? "bg-gray-900 text-white border-gray-900"
-                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                    ? "bg-foreground text-white border-foreground"
+                                    : "bg-card text-foreground/80 border-border hover:bg-muted"
                             }`}
                         >
                             {t.label}
@@ -238,8 +238,8 @@ export default function FeedPage() {
                             aria-label={`Remove ${t.label}`}
                             className={`px-1.5 py-1 text-xs rounded-r-full border-y border-r ${
                                 activeTopicId === t.id
-                                    ? "bg-gray-900 text-white border-gray-900 hover:bg-gray-800"
-                                    : "bg-white text-gray-400 border-gray-300 hover:text-gray-700 hover:bg-gray-50"
+                                    ? "bg-foreground text-white border-foreground hover:bg-foreground"
+                                    : "bg-card text-muted-foreground border-border hover:text-foreground/80 hover:bg-muted"
                             }`}
                         >
                             <X className="w-3 h-3" />
@@ -248,7 +248,7 @@ export default function FeedPage() {
                 ))}
                 <button
                     onClick={() => setShowAdd((v) => !v)}
-                    className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-full border border-dashed border-gray-400 text-gray-600 hover:bg-gray-50"
+                    className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-full border border-dashed border-border text-muted-foreground hover:bg-muted"
                 >
                     <Plus className="w-3 h-3" />
                     {t("feed.add_topic")}
@@ -265,9 +265,9 @@ export default function FeedPage() {
 
             {/* Add-topic form */}
             {showAdd && (
-                <div className="border border-gray-200 rounded-lg p-4 mb-5 bg-gray-50 space-y-3">
+                <div className="border border-border rounded-lg p-4 mb-5 bg-muted space-y-3">
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-foreground/80 mb-1">
                             {t("feed.topic_name")}
                         </label>
                         <input
@@ -275,12 +275,12 @@ export default function FeedPage() {
                             value={newLabel}
                             onChange={(e) => setNewLabel(e.target.value)}
                             placeholder="e.g. EU AI Act"
-                            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
+                            className="w-full px-3 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
                         />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-foreground/80 mb-1">
                                 {t("feed.subreddits")}
                             </label>
                             <textarea
@@ -288,11 +288,11 @@ export default function FeedPage() {
                                 onChange={(e) => setNewSubs(e.target.value)}
                                 placeholder="r/law, r/legaladvice"
                                 rows={2}
-                                className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400 font-mono"
+                                className="w-full px-3 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400 font-mono"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-foreground/80 mb-1">
                                 {t("feed.keywords")}
                             </label>
                             <textarea
@@ -300,21 +300,21 @@ export default function FeedPage() {
                                 onChange={(e) => setNewKeywords(e.target.value)}
                                 placeholder="EU AI Act, AI Act enforcement"
                                 rows={2}
-                                className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
+                                className="w-full px-3 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
                             />
                         </div>
                     </div>
                     <div className="flex items-center justify-end gap-2">
                         <button
                             onClick={() => setShowAdd(false)}
-                            className="px-3 py-1.5 text-xs rounded-md text-gray-600 hover:bg-gray-100"
+                            className="px-3 py-1.5 text-xs rounded-md text-muted-foreground hover:bg-muted"
                         >
                             {t("action.cancel")}
                         </button>
                         <button
                             onClick={addTopic}
                             disabled={!newLabel.trim()}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-foreground text-white hover:bg-foreground disabled:opacity-50"
                         >
                             <Save className="w-3 h-3" />
                             {t("feed.save_topic")}
@@ -331,7 +331,7 @@ export default function FeedPage() {
 
             {/* Feed */}
             {loading ? (
-                <ul className="divide-y divide-gray-100 border border-gray-200 rounded-lg bg-white">
+                <ul className="divide-y divide-border border border-border rounded-lg bg-card">
                     {Array.from({ length: 6 }).map((_, i) => (
                         <li key={i} className="p-3 flex gap-3">
                             <Skeleton className="w-16 h-16 rounded-md shrink-0" />
@@ -344,18 +344,18 @@ export default function FeedPage() {
                     ))}
                 </ul>
             ) : filtered.length === 0 ? (
-                <div className="text-sm text-gray-500 py-12 text-center">
+                <div className="text-sm text-muted-foreground py-12 text-center">
                     {t("feed.empty")}
                 </div>
             ) : (
-                <ul className="divide-y divide-gray-100 border border-gray-200 rounded-lg bg-white">
+                <ul className="divide-y divide-border border border-border rounded-lg bg-card">
                     {filtered.map((item) => (
                         <li key={item.id}>
                             <a
                                 href={item.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex gap-3 p-3 hover:bg-gray-50 transition-colors"
+                                className="flex gap-3 p-3 hover:bg-muted transition-colors"
                             >
                                 {item.thumbnail ? (
                                     /* eslint-disable-next-line @next/next/no-img-element */
@@ -365,12 +365,12 @@ export default function FeedPage() {
                                         className="w-16 h-16 rounded-md object-cover shrink-0"
                                     />
                                 ) : (
-                                    <div className="w-16 h-16 rounded-md bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+                                    <div className="w-16 h-16 rounded-md bg-muted flex items-center justify-center text-muted-foreground shrink-0">
                                         <Rss className="w-5 h-5" />
                                     </div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 text-[10px] uppercase tracking-wide text-gray-500 mb-0.5">
+                                    <div className="flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground mb-0.5">
                                         <span className="font-medium text-amber-700">
                                             {item.topicLabel}
                                         </span>
@@ -379,15 +379,15 @@ export default function FeedPage() {
                                         <span>·</span>
                                         <span>{timeAgo(item.createdUtc)} ago</span>
                                     </div>
-                                    <h3 className="text-sm font-medium text-gray-900 leading-snug">
+                                    <h3 className="text-sm font-medium text-foreground leading-snug">
                                         {item.title}
                                     </h3>
                                     {item.excerpt && (
-                                        <p className="text-xs text-gray-600 mt-1 line-clamp-2 font-serif">
+                                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 font-serif">
                                             {item.excerpt}
                                         </p>
                                     )}
-                                    <div className="flex items-center gap-3 mt-1.5 text-[11px] text-gray-500">
+                                    <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
                                         <span>↑ {item.score}</span>
                                         <span className="inline-flex items-center gap-1">
                                             <MessageSquare className="w-3 h-3" />
@@ -408,7 +408,7 @@ export default function FeedPage() {
                 </ul>
             )}
 
-            <div className="mt-6 text-[11px] text-gray-400 text-center">
+            <div className="mt-6 text-[11px] text-muted-foreground text-center">
                 {t("feed.footer")}
                 {!isAuthenticated && ` · ${t("feed.footer.signin")}`}
             </div>

@@ -18,7 +18,7 @@ export default function HomeRedirect() {
         router.replace("/assistant");
     }, [router]);
     return (
-        <div className="flex h-full items-center justify-center text-sm text-gray-500">
+        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             Opening Louis…
         </div>
     );

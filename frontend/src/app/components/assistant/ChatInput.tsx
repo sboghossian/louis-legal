@@ -344,7 +344,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     return (
         <>
             <div className="w-full">
-                <div className="border border-gray-300 rounded-[16px] md:rounded-[20px] bg-white">
+                <div className="border border-border rounded-[16px] md:rounded-[20px] bg-card">
                     {/* Attached chips */}
                     {(selectedWorkflow || attachedDocs.length > 0) && (
                         <div className="flex flex-wrap gap-1.5 px-2 pt-2">
@@ -359,7 +359,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                         onClick={() =>
                                             setSelectedWorkflow(null)
                                         }
-                                        className="rounded-full p-0.5 ml-0.5 text-white/60 hover:text-white hover:bg-white/20 transition-colors"
+                                        className="rounded-full p-0.5 ml-0.5 text-white/60 hover:text-white hover:bg-card/20 transition-colors"
                                     >
                                         <X className="h-2.5 w-2.5" />
                                     </button>
@@ -390,7 +390,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                                     ),
                                                 )
                                             }
-                                            className="rounded-full p-0.5 ml-0.5 text-white/60 hover:text-white hover:bg-white/20 transition-colors"
+                                            className="rounded-full p-0.5 ml-0.5 text-white/60 hover:text-white hover:bg-card/20 transition-colors"
                                         >
                                             <X className="h-2.5 w-2.5" />
                                         </button>
@@ -416,7 +416,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                             value={value}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}
-                            className="w-full resize-none text-sm overflow-hidden border-0 text-base p-0 bg-transparent outline-none placeholder:text-gray-400 leading-6 max-h-48"
+                            className="w-full resize-none text-sm overflow-hidden border-0 text-base p-0 bg-transparent outline-none placeholder:text-muted-foreground leading-6 max-h-48"
                         />
                     </div>
 
@@ -437,7 +437,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                     type="button"
                                     onClick={onProjectsClick}
                                     aria-label="Open projects"
-                                    className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                                    className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-muted-foreground hover:bg-muted hover:text-foreground/80 transition-colors"
                                 >
                                     <FolderOpen className="h-3.5 w-3.5" />
                                     <span className="hidden sm:inline">
@@ -450,7 +450,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                     type="button"
                                     onClick={() => setWorkflowModalOpen(true)}
                                     aria-label="Open workflows"
-                                    className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors ${selectedWorkflow ? "text-blue-600 hover:bg-blue-50" : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"}`}
+                                    className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors ${selectedWorkflow ? "text-blue-600 hover:bg-blue-50" : "text-muted-foreground hover:bg-muted hover:text-foreground/80"}`}
                                 >
                                     {selectedWorkflow ? (
                                         <Check className="h-3.5 w-3.5" />
@@ -468,7 +468,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                     onClick={() => setVoiceModeOpen(true)}
                                     aria-label="Open voice mode"
                                     title="Voice mode — continuous dictation with spoken replies"
-                                    className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                                    className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-muted-foreground hover:bg-muted hover:text-foreground/80 transition-colors"
                                 >
                                     <AudioLines className="h-3.5 w-3.5" />
                                     <span className="hidden sm:inline">
@@ -495,7 +495,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                     className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors ${
                                         isRecording
                                             ? "text-red-600 bg-red-50 hover:bg-red-100"
-                                            : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                                            : "text-muted-foreground hover:bg-muted hover:text-foreground/80"
                                     }`}
                                 >
                                     {isRecording ? (
@@ -532,7 +532,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                 className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors cursor-pointer ${
                                     autoRoute
                                         ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
-                                        : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                                        : "text-muted-foreground hover:bg-muted hover:text-foreground/80"
                                 }`}
                             >
                                 <Sparkles className="h-3.5 w-3.5" />

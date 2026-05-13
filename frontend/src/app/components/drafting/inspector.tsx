@@ -141,7 +141,7 @@ function Header({
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-white hover:text-slate-700"
+                    className="rounded-lg p-1 text-slate-400 hover:bg-card hover:text-slate-700"
                     aria-label="Close inspector"
                 >
                     <X className="h-4 w-4" />
@@ -154,7 +154,7 @@ function Header({
                 {node.title}
             </div>
             <div className="mt-1 text-sm text-slate-500">{node.subtitle}</div>
-            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700 shadow-sm">
+            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-[11px] font-medium text-slate-700 shadow-sm">
                 <StatusIcon
                     className={[
                         "h-3 w-3",
@@ -184,15 +184,15 @@ function Identity({
         <section className="mt-5">
             <SectionLabel title="Identity" />
             {editing ? (
-                <div className="space-y-2 rounded-xl border border-[#E7E2D6] bg-white p-3">
+                <div className="space-y-2 rounded-xl border border-[#E7E2D6] bg-card p-3">
                     <input
-                        className="w-full rounded-md border border-[#E7E2D6] bg-white px-2 py-1 text-sm"
+                        className="w-full rounded-md border border-[#E7E2D6] bg-card px-2 py-1 text-sm"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Title"
                     />
                     <textarea
-                        className="w-full rounded-md border border-[#E7E2D6] bg-white px-2 py-1 text-sm"
+                        className="w-full rounded-md border border-[#E7E2D6] bg-card px-2 py-1 text-sm"
                         value={subtitle}
                         rows={2}
                         onChange={(e) => setSubtitle(e.target.value)}
@@ -226,7 +226,7 @@ function Identity({
                 <button
                     type="button"
                     onClick={() => setEditing(true)}
-                    className="flex w-full items-center justify-between gap-2 rounded-xl border border-transparent px-1 py-1 text-left hover:border-[#E7E2D6] hover:bg-white"
+                    className="flex w-full items-center justify-between gap-2 rounded-xl border border-transparent px-1 py-1 text-left hover:border-[#E7E2D6] hover:bg-card"
                 >
                     <span className="text-xs text-slate-500">Tap to rename</span>
                     <Pencil className="h-3.5 w-3.5 text-slate-400" />
@@ -262,7 +262,7 @@ function SkillsEditor({
     return (
         <section className="mt-5">
             <SectionLabel title="What skill should fire here?" />
-            <div className="space-y-2 rounded-xl border border-[#E7E2D6] bg-white p-3">
+            <div className="space-y-2 rounded-xl border border-[#E7E2D6] bg-card p-3">
                 {node.skills.length === 0 ? (
                     <div className="text-xs text-slate-500">
                         No skill wired yet. Pick one below.
@@ -308,7 +308,7 @@ function SkillsEditor({
                         className="w-full rounded-md border border-[#E7E2D6] bg-[#FBF8F2] px-2 py-1.5 text-xs"
                     />
                     {filtered.length > 0 && (
-                        <div className="mt-1 max-h-44 overflow-y-auto rounded-md border border-[#E7E2D6] bg-white shadow-sm">
+                        <div className="mt-1 max-h-44 overflow-y-auto rounded-md border border-[#E7E2D6] bg-card shadow-sm">
                             {filtered.map((s) => (
                                 <button
                                     key={s}
@@ -343,7 +343,7 @@ function GateEditor({
     return (
         <section className="mt-5">
             <SectionLabel title="Approval gate" />
-            <div className="space-y-3 rounded-xl border border-[#E7E2D6] bg-white p-3">
+            <div className="space-y-3 rounded-xl border border-[#E7E2D6] bg-card p-3">
                 <label className="block text-xs text-slate-500">
                     What's the question?
                     <textarea
@@ -385,7 +385,7 @@ function GateEditor({
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
                                 placeholder="Optional reason if rejecting"
-                                className="rounded-md border border-amber-200 bg-white px-2 py-1 text-xs"
+                                className="rounded-md border border-amber-200 bg-card px-2 py-1 text-xs"
                             />
                             <div className="flex gap-2">
                                 <button
@@ -430,7 +430,7 @@ function Column({ label, items }: { label: string; items: string[] }) {
     return (
         <div>
             <SectionLabel title={label} />
-            <div className="rounded-xl border border-[#E7E2D6] bg-white p-2">
+            <div className="rounded-xl border border-[#E7E2D6] bg-card p-2">
                 {items.length === 0 ? (
                     <div className="px-1 py-1 text-xs italic text-slate-400">
                         none
@@ -456,7 +456,7 @@ function History({ node }: { node: BoardNode }) {
     return (
         <section className="mt-5">
             <SectionLabel title="History" />
-            <div className="rounded-xl border border-[#E7E2D6] bg-white p-3">
+            <div className="rounded-xl border border-[#E7E2D6] bg-card p-3">
                 {node.history.length === 0 ? (
                     <div className="text-xs italic text-slate-400">
                         Nothing has happened yet.

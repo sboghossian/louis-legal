@@ -72,23 +72,23 @@ export default function ApiKeysPage() {
     return (
         <div className="max-w-4xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Key className="w-5 h-5 text-gray-700" />
+                <Key className="w-5 h-5 text-foreground/80" />
                 <h1 className="text-lg font-semibold">API Keys</h1>
                 <Badge variant="secondary">{keys.length} configured</Badge>
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
                 Bring your own API keys for chat, drafting, research. Louis uses your default key per provider. Your tokens, your provider bill.
             </p>
 
             <TokenSpendWidget />
 
-            {loading && <div className="text-sm text-gray-500">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
 
             {/* Configured keys */}
             {keys.length > 0 && (
                 <div className="mb-8">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-3">Your keys</h2>
-                    <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Your keys</h2>
+                    <div className="border border-border rounded-lg divide-y divide-border">
                         {keys.map(k => {
                             const provider = providers.find(p => p.code === k.provider);
                             return (
@@ -97,16 +97,16 @@ export default function ApiKeysPage() {
                                         <div className="flex items-center gap-2">
                                             <span className="font-medium text-sm">{provider?.name || k.provider}</span>
                                             {k.isDefault && <Badge variant="secondary" className="bg-green-100 text-green-700 text-[10px]">default</Badge>}
-                                            {k.label && <span className="text-xs text-gray-500">· {k.label}</span>}
+                                            {k.label && <span className="text-xs text-muted-foreground">· {k.label}</span>}
                                         </div>
-                                        <div className="text-xs text-gray-500 font-mono mt-0.5">{k.keyMasked}</div>
+                                        <div className="text-xs text-muted-foreground font-mono mt-0.5">{k.keyMasked}</div>
                                     </div>
                                     {!k.isDefault && (
                                         <button onClick={() => setDefault(k.id)} className="text-[10px] text-blue-600 hover:underline" title="Make default">
                                             <Star className="w-3.5 h-3.5" />
                                         </button>
                                     )}
-                                    <button onClick={() => remove(k.id, k.label || k.provider)} className="text-gray-400 hover:text-red-600" title="Delete">
+                                    <button onClick={() => remove(k.id, k.label || k.provider)} className="text-muted-foreground hover:text-red-600" title="Delete">
                                         <Trash2 className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
@@ -117,12 +117,12 @@ export default function ApiKeysPage() {
             )}
 
             {/* Add a key — provider catalog */}
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-3">Available providers</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Available providers</h2>
             <div className="grid grid-cols-2 gap-3">
                 {providers.map(p => {
                     const userKeys = keys.filter(k => k.provider === p.code);
                     return (
-                        <div key={p.code} className="border border-gray-200 rounded-lg p-4 flex flex-col">
+                        <div key={p.code} className="border border-border rounded-lg p-4 flex flex-col">
                             <div className="flex items-start gap-2 mb-2">
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-0.5">
@@ -130,11 +130,11 @@ export default function ApiKeysPage() {
                                         {userKeys.length > 0 && <Badge variant="secondary" className="bg-green-100 text-green-700 text-[10px]">{userKeys.length} key{userKeys.length === 1 ? "" : "s"}</Badge>}
                                         {p.hasKey && userKeys.length === 0 && <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-[10px]">env default</Badge>}
                                     </div>
-                                    <div className="text-xs text-gray-500 line-clamp-2">{p.description}</div>
+                                    <div className="text-xs text-muted-foreground line-clamp-2">{p.description}</div>
                                 </div>
                             </div>
                             <div className="mt-auto flex items-center justify-between pt-2">
-                                <a href={p.signupUrl} target="_blank" rel="noreferrer" className="text-[10px] text-gray-500 hover:underline inline-flex items-center gap-1">
+                                <a href={p.signupUrl} target="_blank" rel="noreferrer" className="text-[10px] text-muted-foreground hover:underline inline-flex items-center gap-1">
                                     Get key <ExternalLink className="w-3 h-3" />
                                 </a>
                                 <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setAdding(p)}>
@@ -150,7 +150,7 @@ export default function ApiKeysPage() {
                 <AddKeyModal provider={adding} onClose={() => setAdding(null)} onAdded={() => { setAdding(null); refresh(); }} />
             )}
 
-            <div className="mt-8 text-xs text-gray-500">
+            <div className="mt-8 text-xs text-muted-foreground">
                 <p>
                     🔒 Keys are stored encrypted at rest with your tenant&apos;s isolated key.
                     Louis never sends keys to model providers other than the direct API call;
@@ -190,11 +190,11 @@ function AddKeyModal({ provider, onClose, onAdded }: { provider: Provider; onClo
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-md">
+            <div className="bg-card rounded-lg w-full max-w-md">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
                     <div>
                         <h2 className="font-semibold">Add {provider.name} key</h2>
-                        <div className="text-xs text-gray-500 mt-0.5">{provider.description}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{provider.description}</div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
                 </div>
@@ -211,7 +211,7 @@ function AddKeyModal({ provider, onClose, onAdded }: { provider: Provider; onClo
                             />
                             <button
                                 onClick={() => setShow(s => !s)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                             >
                                 <Eye className="w-4 h-4" />
                             </button>
@@ -226,7 +226,7 @@ function AddKeyModal({ provider, onClose, onAdded }: { provider: Provider; onClo
                         Use as default for {provider.name}
                     </label>
                     {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded p-2 text-xs">{error}</div>}
-                    <p className="text-[10px] text-gray-500">
+                    <p className="text-[10px] text-muted-foreground">
                         Need a key? <a href={provider.signupUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">Sign up at {provider.name}</a>.
                     </p>
                 </div>
@@ -327,9 +327,9 @@ function TokenSpendWidget() {
         <div className="mb-8 rounded-xl border border-[#e7e2d6] bg-[#fbf8f2] p-5">
             <div className="flex items-center gap-2 mb-1">
                 <Coins className="w-4 h-4 text-amber-700" />
-                <h2 className="text-sm font-semibold text-gray-900">Your token spend (local)</h2>
+                <h2 className="text-sm font-semibold text-foreground">Your token spend (local)</h2>
             </div>
-            <p className="text-xs text-gray-600 mb-4">
+            <p className="text-xs text-muted-foreground mb-4">
                 Tracked from your browser only. The authoritative bill is what
                 your AI provider invoices you — open your provider dashboard
                 for the source of truth.
@@ -339,7 +339,7 @@ function TokenSpendWidget() {
                 <SpendCell label="Last 7d" usd={buckets.week} />
                 <SpendCell label="Last 30d" usd={buckets.month} />
             </div>
-            <div className="mt-4 flex items-center justify-between gap-3 text-xs text-gray-600">
+            <div className="mt-4 flex items-center justify-between gap-3 text-xs text-muted-foreground">
                 <span>
                     {buckets.turns} turn{buckets.turns === 1 ? "" : "s"} in the last 30 days
                 </span>
@@ -352,7 +352,7 @@ function TokenSpendWidget() {
                         value={alertThreshold || ""}
                         onChange={(e) => saveThreshold(Number(e.target.value))}
                         placeholder="0.25"
-                        className="w-20 px-2 py-1 border border-gray-300 rounded text-xs"
+                        className="w-20 px-2 py-1 border border-border rounded text-xs"
                     />
                     <span>USD / turn</span>
                 </label>
@@ -371,11 +371,11 @@ function TokenSpendWidget() {
 
 function SpendCell({ label, usd }: { label: string; usd: number }) {
     return (
-        <div className="rounded-lg border border-[#e7e2d6] bg-white p-3">
-            <div className="text-[10px] uppercase tracking-wider text-gray-500 mb-0.5">
+        <div className="rounded-lg border border-[#e7e2d6] bg-card p-3">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
                 {label}
             </div>
-            <div className="font-serif text-xl text-gray-900">
+            <div className="font-serif text-xl text-foreground">
                 {usd === 0 ? "$0.00" : `$${usd.toFixed(2)}`}
             </div>
         </div>

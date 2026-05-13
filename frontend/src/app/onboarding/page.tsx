@@ -198,16 +198,16 @@ export default function OnboardingPage() {
 
     return (
         <div className="min-h-screen bg-[color:var(--louis-cream)] flex items-center justify-center p-6">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl border border-[color:var(--louis-rule)]">
+            <div className="bg-card rounded-2xl shadow-xl w-full max-w-2xl border border-[color:var(--louis-rule)]">
                 {/* Progress bar */}
                 <div className="px-8 pt-6">
                     <div className="flex items-center gap-2 mb-2">
                         <LouisMark size={26} />
                         <span className="font-serif text-lg">Louis</span>
-                        <span className="text-xs text-gray-500 ml-auto">Step {stepIdx + 1} of {STEPS.length}</span>
+                        <span className="text-xs text-muted-foreground ml-auto">Step {stepIdx + 1} of {STEPS.length}</span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
-                        <div className="bg-gray-900 h-1.5 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                    <div className="w-full bg-muted rounded-full h-1.5">
+                        <div className="bg-foreground h-1.5 rounded-full transition-all" style={{ width: `${progress}%` }} />
                     </div>
                 </div>
 
@@ -215,11 +215,11 @@ export default function OnboardingPage() {
                     {step === "welcome" && (
                         <div className="text-center">
                             <h1 className="text-3xl font-semibold mb-2">Welcome to Louis.</h1>
-                            <p className="text-gray-600 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 The MENA-first legal AI infrastructure — comfort-first UX, 982 vetted skills, jurisdiction-aware drafting,
                                 and a transparent skill router. Built on the open-source Mike fork, extended for HAQQ.
                             </p>
-                            <p className="text-sm text-gray-500 mb-8">
+                            <p className="text-sm text-muted-foreground mb-8">
                                 We&apos;ll ask 6 quick questions to tailor Louis to your work. Takes under 2 minutes.
                             </p>
                             <Button size="lg" onClick={next}>
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
                                     <button
                                         key={s}
                                         onClick={() => setSource(s)}
-                                        className={`text-left px-4 py-3 border rounded-lg text-sm transition ${source === s ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 hover:border-gray-400"}`}
+                                        className={`text-left px-4 py-3 border rounded-lg text-sm transition ${source === s ? "border-foreground bg-foreground text-white" : "border-border hover:border-border"}`}
                                     >
                                         {s}
                                     </button>
@@ -251,7 +251,7 @@ export default function OnboardingPage() {
                                     <button
                                         key={r}
                                         onClick={() => setRole(r)}
-                                        className={`text-left px-4 py-3 border rounded-lg text-sm transition ${role === r ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 hover:border-gray-400"}`}
+                                        className={`text-left px-4 py-3 border rounded-lg text-sm transition ${role === r ? "border-foreground bg-foreground text-white" : "border-border hover:border-border"}`}
                                     >
                                         {r}
                                     </button>
@@ -273,7 +273,7 @@ export default function OnboardingPage() {
                                         <button
                                             key={j}
                                             onClick={() => toggleMulti(j, setJurisdictions, jurisdictions)}
-                                            className={`text-left px-3 py-2 border rounded-lg text-xs transition ${active ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 hover:border-gray-400"}`}
+                                            className={`text-left px-3 py-2 border rounded-lg text-xs transition ${active ? "border-foreground bg-foreground text-white" : "border-border hover:border-border"}`}
                                         >
                                             {active && <Check className="w-3 h-3 inline mr-1" />}
                                             {j}
@@ -293,7 +293,7 @@ export default function OnboardingPage() {
                                         <button
                                             key={p}
                                             onClick={() => toggleMulti(p, setPracticeAreas, practiceAreas)}
-                                            className={`text-left px-3 py-2 border rounded-lg text-xs transition ${active ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 hover:border-gray-400"}`}
+                                            className={`text-left px-3 py-2 border rounded-lg text-xs transition ${active ? "border-foreground bg-foreground text-white" : "border-border hover:border-border"}`}
                                         >
                                             {active && <Check className="w-3 h-3 inline mr-1" />}
                                             {p}
@@ -313,7 +313,7 @@ export default function OnboardingPage() {
                                         <button
                                             key={u}
                                             onClick={() => toggleMulti(u, setUseCases, useCases)}
-                                            className={`text-left px-3 py-2 border rounded-lg text-sm transition ${active ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 hover:border-gray-400"}`}
+                                            className={`text-left px-3 py-2 border rounded-lg text-sm transition ${active ? "border-foreground bg-foreground text-white" : "border-border hover:border-border"}`}
                                         >
                                             {active && <Check className="w-3 h-3 inline mr-1" />}
                                             {u}
@@ -331,7 +331,7 @@ export default function OnboardingPage() {
                                     <button
                                         key={l.code}
                                         onClick={() => setLanguage(l.code)}
-                                        className={`px-4 py-6 border rounded-lg text-center transition ${language === l.code ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 hover:border-gray-400"}`}
+                                        className={`px-4 py-6 border rounded-lg text-center transition ${language === l.code ? "border-foreground bg-foreground text-white" : "border-border hover:border-border"}`}
                                     >
                                         <div className="font-semibold mb-1">{l.name}</div>
                                         <div className="text-xs opacity-70">{l.code.toUpperCase()}</div>
@@ -347,10 +347,10 @@ export default function OnboardingPage() {
                                 <Check className="w-8 h-8 text-emerald-600" />
                             </div>
                             <h1 className="text-2xl font-semibold mb-2">You&apos;re all set.</h1>
-                            <p className="text-gray-600 mb-2">
+                            <p className="text-muted-foreground mb-2">
                                 Louis is configured for {role || "you"}{jurisdictions.length > 0 ? `, working across ${jurisdictions.length} jurisdiction${jurisdictions.length === 1 ? "" : "s"}` : ""}.
                             </p>
-                            <p className="text-gray-500 text-sm mb-8">
+                            <p className="text-muted-foreground text-sm mb-8">
                                 Tip: connect an API key in Settings → API Keys to use your own Claude / OpenAI / Gemini account.
                                 <br/>Tip: check the Skills library to see what Louis can do.
                             </p>
@@ -368,7 +368,7 @@ export default function OnboardingPage() {
                         <Button variant="ghost" onClick={back}>
                             <ArrowLeft className="w-4 h-4 mr-1" /> Back
                         </Button>
-                        <button onClick={() => setStep("done")} className="text-xs text-gray-500 hover:underline">
+                        <button onClick={() => setStep("done")} className="text-xs text-muted-foreground hover:underline">
                             Skip for now
                         </button>
                         <Button onClick={next}>
@@ -385,7 +385,7 @@ function Step({ title, subtitle, children }: { title: string; subtitle: string; 
     return (
         <div>
             <h2 className="text-xl font-semibold mb-1">{title}</h2>
-            <p className="text-sm text-gray-500 mb-5">{subtitle}</p>
+            <p className="text-sm text-muted-foreground mb-5">{subtitle}</p>
             {children}
         </div>
     );

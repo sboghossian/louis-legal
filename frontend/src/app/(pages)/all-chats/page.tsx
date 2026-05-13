@@ -26,7 +26,7 @@ const CAT_COLOR: Record<string, string> = {
     translate: "bg-yellow-100 text-yellow-800",
     calculate: "bg-orange-100 text-orange-700",
     advice: "bg-rose-100 text-rose-700",
-    other: "bg-gray-100 text-gray-700",
+    other: "bg-muted text-foreground/80",
 };
 
 function inferCategory(title: string): string {
@@ -108,16 +108,16 @@ export default function AllChatsPage() {
                 <h1 className="text-lg font-semibold">All chats</h1>
                 <Badge variant="secondary">{filtered.length}</Badge>
                 <div className="ml-auto flex items-center gap-2">
-                    <div className="flex items-center bg-gray-100 rounded p-0.5">
-                        <button onClick={() => setView("cards")} className={`px-2 py-1 rounded ${view === "cards" ? "bg-white shadow-sm" : "text-gray-500"}`}><LayoutGrid className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => setView("list")} className={`px-2 py-1 rounded ${view === "list" ? "bg-white shadow-sm" : "text-gray-500"}`}><List className="w-3.5 h-3.5" /></button>
+                    <div className="flex items-center bg-muted rounded p-0.5">
+                        <button onClick={() => setView("cards")} className={`px-2 py-1 rounded ${view === "cards" ? "bg-card shadow-sm" : "text-muted-foreground"}`}><LayoutGrid className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => setView("list")} className={`px-2 py-1 rounded ${view === "list" ? "bg-card shadow-sm" : "text-muted-foreground"}`}><List className="w-3.5 h-3.5" /></button>
                     </div>
                 </div>
             </div>
 
             <div className="flex gap-3 mb-6">
                 <div className="relative flex-1">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search chats…" className="pl-9" />
                 </div>
                 <Button variant="outline" size="sm" className="h-9" onClick={refresh}>
@@ -130,30 +130,30 @@ export default function AllChatsPage() {
                     <button
                         key={c}
                         onClick={() => setCategory(c)}
-                        className={`px-2.5 py-1 text-xs rounded-full border ${category === c ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+                        className={`px-2.5 py-1 text-xs rounded-full border ${category === c ? "bg-foreground text-white border-foreground" : "bg-card text-foreground/80 border-border hover:bg-muted"}`}
                     >
                         {c}
                     </button>
                 ))}
             </div>
 
-            {loading && <div className="text-sm text-gray-500 py-6 text-center">loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground py-6 text-center">loading…</div>}
             {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 text-sm">{error}</div>}
 
             {!loading && view === "cards" && (
                 <div className="grid grid-cols-2 gap-4">
                     {filtered.map(c => (
-                        <div key={c.id} className="group relative border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition-all">
+                        <div key={c.id} className="group relative border border-border rounded-lg p-4 hover:border-border hover:shadow-sm transition-all">
                             <button onClick={() => router.push(`/assistant/chat/${c.id}`)} className="block w-full text-left">
                                 <div className="flex items-center justify-between mb-2">
                                     <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other}`}>{c.category}</span>
-                                    <span className="text-[10px] text-gray-500">{c.when}</span>
+                                    <span className="text-[10px] text-muted-foreground">{c.when}</span>
                                 </div>
                                 <div className="font-medium text-sm mb-1.5 line-clamp-2">{c.title}</div>
                             </button>
                             <button
                                 onClick={() => remove(c.id, c.title)}
-                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-600 transition-opacity"
                                 title="Delete chat"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -164,19 +164,19 @@ export default function AllChatsPage() {
             )}
 
             {!loading && view === "list" && (
-                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                <div className="border border-border rounded-lg divide-y divide-border">
                     {filtered.map(c => (
-                        <div key={c.id} className="group w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50">
+                        <div key={c.id} className="group w-full flex items-center gap-3 px-4 py-3 hover:bg-muted">
                             <button onClick={() => router.push(`/assistant/chat/${c.id}`)} className="flex-1 flex items-center gap-3 text-left">
                                 <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other} w-20 text-center flex-shrink-0`}>{c.category}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="font-medium text-sm truncate">{c.title}</div>
                                 </div>
-                                <span className="text-[10px] text-gray-500 w-20 text-right flex-shrink-0">{c.when}</span>
+                                <span className="text-[10px] text-muted-foreground w-20 text-right flex-shrink-0">{c.when}</span>
                             </button>
                             <button
                                 onClick={() => remove(c.id, c.title)}
-                                className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity"
+                                className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-600 transition-opacity"
                                 title="Delete chat"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -187,7 +187,7 @@ export default function AllChatsPage() {
             )}
 
             {!loading && !filtered.length && (
-                <div className="text-center py-12 text-sm text-gray-500">
+                <div className="text-center py-12 text-sm text-muted-foreground">
                     {chats.length === 0 ? "No chats yet — start one from /assistant." : "No chats match the filters."}
                 </div>
             )}

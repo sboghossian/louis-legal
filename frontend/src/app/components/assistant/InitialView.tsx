@@ -126,7 +126,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                         </div>
                         <h1
                             ref={textRef}
-                            className="absolute text-4xl font-serif font-light text-gray-900 whitespace-nowrap"
+                            className="absolute text-4xl font-serif font-light text-foreground whitespace-nowrap"
                             style={{
                                 left: "50%",
                                 transform: loaded
@@ -151,7 +151,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
 
                     {/* Quick prompts */}
                     <div className="mt-6">
-                        <p className="text-[10px] uppercase tracking-wide text-gray-400 text-center mb-3">
+                        <p className="text-[10px] uppercase tracking-wide text-muted-foreground text-center mb-3">
                             Try one of these
                         </p>
                         <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
@@ -168,7 +168,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                                     onClick={() =>
                                         onSubmit({ role: "user", content: p })
                                     }
-                                    className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full border border-gray-200 transition-colors"
+                                    className="px-3 py-1.5 text-xs bg-muted hover:bg-muted text-foreground/80 rounded-full border border-border transition-colors"
                                 >
                                     {p}
                                 </button>
@@ -193,13 +193,13 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                                 onClick={() =>
                                     router.push(`/assistant/chat/${c.id}`)
                                 }
-                                className="flex-1 min-w-[220px] max-w-[280px] text-left border border-gray-200 rounded-xl bg-white p-3 hover:border-gray-400 hover:shadow-sm transition"
+                                className="flex-1 min-w-[220px] max-w-[280px] text-left border border-border rounded-xl bg-card p-3 hover:border-border hover:shadow-sm transition"
                             >
-                                <MessageSquare className="w-4 h-4 text-gray-500 mb-2" />
-                                <div className="font-medium text-sm text-gray-900 line-clamp-2">
+                                <MessageSquare className="w-4 h-4 text-muted-foreground mb-2" />
+                                <div className="font-medium text-sm text-foreground line-clamp-2">
                                     {c.title || "Untitled chat"}
                                 </div>
-                                <div className="text-[10px] text-gray-500 mt-1">
+                                <div className="text-[10px] text-muted-foreground mt-1">
                                     {relativeTime(c.created_at)}
                                 </div>
                             </button>
@@ -220,14 +220,14 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                                 onClick={() =>
                                     router.push(`/projects/${p.id}/assistant`)
                                 }
-                                className="flex-1 min-w-[220px] max-w-[280px] text-left border border-gray-200 rounded-xl bg-white p-3 hover:border-gray-400 hover:shadow-sm transition"
+                                className="flex-1 min-w-[220px] max-w-[280px] text-left border border-border rounded-xl bg-card p-3 hover:border-border hover:shadow-sm transition"
                             >
                                 <FolderOpen className="w-4 h-4 text-amber-700 mb-2" />
-                                <div className="font-medium text-sm text-gray-900 line-clamp-2">
+                                <div className="font-medium text-sm text-foreground line-clamp-2">
                                     {p.name}
                                 </div>
                                 {p.cm_number && (
-                                    <div className="text-[10px] text-gray-500 mt-1 font-mono">
+                                    <div className="text-[10px] text-muted-foreground mt-1 font-mono">
                                         {p.cm_number}
                                     </div>
                                 )}
@@ -259,7 +259,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                 </WidgetRow>
 
                 <div className="text-center">
-                    <p className="text-xs text-gray-500 mt-4">
+                    <p className="text-xs text-muted-foreground mt-4">
                         Louis provides legal information, not legal advice. AI
                         can make mistakes.
                     </p>
@@ -288,14 +288,14 @@ function WidgetRow({
     return (
         <section>
             <div className="flex items-center justify-between mb-2">
-                <h2 className="text-[10px] uppercase tracking-wide text-gray-500 font-semibold">
+                <h2 className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
                     {title}
                 </h2>
                 {actionLabel && onAction && (
                     <button
                         type="button"
                         onClick={onAction}
-                        className="text-xs text-gray-500 hover:text-gray-900"
+                        className="text-xs text-muted-foreground hover:text-foreground"
                     >
                         {actionLabel}
                     </button>
@@ -323,14 +323,14 @@ function ShortcutCard({
     return (
         <button
             onClick={() => router.push(href)}
-            className="flex-1 min-w-[220px] max-w-[280px] text-left border border-gray-200 rounded-xl bg-white p-3 hover:border-gray-400 hover:shadow-sm transition group"
+            className="flex-1 min-w-[220px] max-w-[280px] text-left border border-border rounded-xl bg-card p-3 hover:border-border hover:shadow-sm transition group"
         >
             <div className="flex items-center justify-between mb-2">
                 <Icon className="w-4 h-4 text-amber-700" />
-                <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-900 transition" />
+                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition" />
             </div>
-            <div className="font-medium text-sm text-gray-900">{title}</div>
-            <div className="text-[10px] text-gray-500 mt-0.5">{sub}</div>
+            <div className="font-medium text-sm text-foreground">{title}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">{sub}</div>
         </button>
     );
 }

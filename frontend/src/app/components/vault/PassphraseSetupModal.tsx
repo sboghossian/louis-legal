@@ -147,7 +147,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                                 onChange={(e) => setPass1(e.target.value)}
                                 autoFocus
                                 autoComplete="new-password"
-                                className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono"
+                                className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono"
                                 placeholder={t("vault.setup.placeholder", { min: MIN_LEN })}
                             />
                             <button
@@ -176,7 +176,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                             value={pass2}
                             onChange={(e) => setPass2(e.target.value)}
                             autoComplete="new-password"
-                            className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono mb-4"
+                            className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono mb-4"
                         />
 
                         {error && (

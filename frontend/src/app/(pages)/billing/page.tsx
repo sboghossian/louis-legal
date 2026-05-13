@@ -22,11 +22,11 @@ export default function BillingPage() {
     return (
         <div className="max-w-2xl mx-auto px-6 md:px-10 py-12">
             <div className="rounded-2xl border border-[#e7e2d6] bg-[#fbf8f2] p-8">
-                <div className="w-10 h-10 rounded-lg bg-white border border-[#e7e2d6] flex items-center justify-center mb-4">
+                <div className="w-10 h-10 rounded-lg bg-card border border-[#e7e2d6] flex items-center justify-center mb-4">
                     <Coins className="w-4 h-4 text-amber-700" />
                 </div>
                 <h1 className="text-2xl font-serif mb-2">Louis is free.</h1>
-                <p className="text-gray-700 leading-relaxed mb-6">
+                <p className="text-foreground/80 leading-relaxed mb-6">
                     There is no plan, no seat fee, no usage charge from Louis. The
                     only cost is what you pay your AI provider for the tokens you
                     spend. Bring your own Anthropic / Gemini / OpenAI key and you
@@ -35,19 +35,19 @@ export default function BillingPage() {
                 <div className="flex flex-wrap gap-3">
                     <Link
                         href="/settings/api-keys"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gray-900 text-white hover:bg-gray-800"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-foreground text-white hover:bg-foreground"
                     >
                         Manage API keys
                         <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <Link
                         href="/settings"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-gray-300 hover:bg-white"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-border hover:bg-card"
                     >
                         Settings
                     </Link>
                 </div>
-                <p className="mt-6 text-xs text-gray-500">
+                <p className="mt-6 text-xs text-muted-foreground">
                     Redirecting to API key settings in a moment…
                 </p>
             </div>

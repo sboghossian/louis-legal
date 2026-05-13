@@ -483,23 +483,23 @@ export default function CustomizePage() {
                 <SlidersHorizontal className="w-6 h-6" />
                 <h1 className="text-2xl font-serif font-semibold">Customize</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-6 max-w-2xl">
+            <p className="text-sm text-muted-foreground mb-6 max-w-2xl">
                 Enable, upload, or create the components that shape your AI&apos;s
                 behavior.
             </p>
 
             <div className="relative mb-4">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     placeholder="Search across sources, tools, skills, jurisdictions…"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
                 />
             </div>
 
             {/* Tabs */}
-            <div className="flex flex-wrap gap-1 mb-6 border-b border-gray-200">
+            <div className="flex flex-wrap gap-1 mb-6 border-b border-border">
                 <TabButton
                     label="All"
                     count={totalCount}
@@ -528,13 +528,13 @@ export default function CustomizePage() {
             )}
 
             {loading && (
-                <div className="text-sm text-gray-500 py-12 text-center">
+                <div className="text-sm text-muted-foreground py-12 text-center">
                     Loading…
                 </div>
             )}
 
             {!loading && filteredByCat.length === 0 && (
-                <div className="text-sm text-gray-500 py-12 text-center">
+                <div className="text-sm text-muted-foreground py-12 text-center">
                     Nothing matches "{q}". Try clearing the search.
                 </div>
             )}
@@ -548,17 +548,17 @@ export default function CustomizePage() {
                             <section key={cat.id} className="mb-10">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-2">
-                                        <Icon className="w-4 h-4 text-gray-700" />
-                                        <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-700">
+                                        <Icon className="w-4 h-4 text-foreground/80" />
+                                        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground/80">
                                             {cat.label}
                                         </h2>
-                                        <span className="text-xs text-gray-400">
+                                        <span className="text-xs text-muted-foreground">
                                             {cat.items.length}
                                         </span>
                                     </div>
                                     <button
                                         type="button"
-                                        className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900"
+                                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
                                         title={`Request a new ${cat.label.toLowerCase().replace(/s$/, "")}`}
                                     >
                                         <Plus className="w-3.5 h-3.5" />
@@ -581,8 +581,8 @@ export default function CustomizePage() {
                     })}
 
             {/* Footer hub: quick links to surfaces that aren't toggles */}
-            <div className="mt-12 pt-8 border-t border-gray-200">
-                <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">
+            <div className="mt-12 pt-8 border-t border-border">
+                <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
                     Related surfaces
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -613,16 +613,16 @@ function TabButton({
             onClick={onClick}
             className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px text-sm border-b-2 transition-colors ${
                 active
-                    ? "border-gray-900 text-gray-900 font-medium"
-                    : "border-transparent text-gray-500 hover:text-gray-800"
+                    ? "border-foreground text-foreground font-medium"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
         >
             {label}
             <span
                 className={`text-[10px] px-1.5 py-0.5 rounded ${
                     active
-                        ? "bg-gray-900 text-white"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-foreground text-white"
+                        : "bg-muted text-muted-foreground"
                 }`}
             >
                 {count}
@@ -645,19 +645,19 @@ function ItemCard({
     const Icon = item.icon ?? FileText;
     return (
         <div
-            className={`border rounded-xl p-3 bg-white flex items-start gap-3 transition-shadow hover:shadow-sm ${
-                on ? "border-gray-300" : "border-gray-200"
+            className={`border rounded-xl p-3 bg-card flex items-start gap-3 transition-shadow hover:shadow-sm ${
+                on ? "border-border" : "border-border"
             }`}
         >
-            <div className="w-9 h-9 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-gray-600" />
+            <div className="w-9 h-9 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm text-gray-900 truncate">
+                <div className="font-medium text-sm text-foreground truncate">
                     {item.label}
                 </div>
                 <div
-                    className="text-xs text-gray-500 mt-0.5"
+                    className="text-xs text-muted-foreground mt-0.5"
                     style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
                 >
                     {item.description}
@@ -671,12 +671,12 @@ function ItemCard({
                 disabled={saving}
                 className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border transition-colors ${
                     on
-                        ? "bg-gray-900 border-gray-900"
-                        : "bg-gray-200 border-gray-300"
+                        ? "bg-foreground border-foreground"
+                        : "bg-muted border-border"
                 } ${saving ? "opacity-60" : ""}`}
             >
                 <span
-                    className={`pointer-events-none absolute top-0.5 left-0.5 inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    className={`pointer-events-none absolute top-0.5 left-0.5 inline-block h-4 w-4 transform rounded-full bg-card shadow transition-transform ${
                         on ? "translate-x-4" : "translate-x-0"
                     }`}
                 />
@@ -697,9 +697,9 @@ function FooterLink({
     return (
         <a
             href={href}
-            className="border border-gray-200 rounded-lg p-3 bg-white hover:border-gray-400 hover:shadow-sm transition flex items-center gap-2"
+            className="border border-border rounded-lg p-3 bg-card hover:border-border hover:shadow-sm transition flex items-center gap-2"
         >
-            <Icon className="w-4 h-4 text-gray-600" />
+            <Icon className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium">{label}</span>
         </a>
     );

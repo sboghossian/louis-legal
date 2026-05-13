@@ -32,8 +32,8 @@ export default function AboutPage() {
             <div className="text-center mb-10">
                 <div className="inline-flex items-center justify-center mb-3"><LouisMark size={56} /></div>
                 <h1 className="text-3xl font-semibold mb-2">Louis</h1>
-                <p className="text-gray-600 mb-2">MENA-first legal AI infrastructure for individuals, firms, and in-house teams.</p>
-                <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                <p className="text-muted-foreground mb-2">MENA-first legal AI infrastructure for individuals, firms, and in-house teams.</p>
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                     <Badge variant="secondary">v{VERSION}</Badge>
                     <span>·</span>
                     <a href={REPO_URL} target="_blank" rel="noreferrer" className="hover:underline inline-flex items-center gap-1">
@@ -48,7 +48,7 @@ export default function AboutPage() {
 
             {/* What Louis is */}
             <Section icon={Info} title="What Louis is">
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-3">
                     Louis is <strong>AI infrastructure for legal</strong> — the
                     open-source stack we wished existed: a chat assistant that
                     knows lawyering, a document workspace with real
@@ -59,14 +59,14 @@ export default function AboutPage() {
                     every turn toward how actual lawyers draft, review, and
                     reason.
                 </p>
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-3">
                     It&apos;s designed to feel built for lawyers — bilingual,
                     jurisdiction-aware, transparent about what the AI is
                     doing (the skill router shows which skills fired on every
                     turn), and BYO-key by default so client data never has to
                     pass through a vendor in the middle.
                 </p>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-foreground/80 leading-relaxed">
                     Underneath it&apos;s open-source: forked from{" "}
                     <a
                         href={UPSTREAM_URL}
@@ -92,11 +92,11 @@ export default function AboutPage() {
 
             {/* Why "Louis" */}
             <Section icon={Scale} title="Why we named it Louis">
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-3">
                     Some assistants are named for the founder. Some for an
                     acronym. We named ours after a character.
                 </p>
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-3">
                     On <em>Suits</em>, Harvey is the closer and Mike is the
                     self-taught savant — but{" "}
                     <strong>Louis Litt</strong> is the one who actually
@@ -107,7 +107,7 @@ export default function AboutPage() {
                     and Louis in a room and asked Donna which one would
                     actually do the work — she&apos;d pick Louis.
                 </p>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-foreground/80 leading-relaxed">
                     That&apos;s the bar we set for an AI legal workbench: not
                     the most charming and not the flashiest, but the one
                     you&apos;d hand a contract to.
@@ -116,9 +116,9 @@ export default function AboutPage() {
 
             {/* Open source */}
             <Section icon={Github} title="Open source">
-                <p className="text-sm text-gray-700 mb-3">
+                <p className="text-sm text-foreground/80 mb-3">
                     Louis is released under the MIT license — fork it, self-host it, extend it, ship your own legal AI.
-                    The whole skill library lives as plain markdown files in <code className="text-xs bg-gray-100 px-1 rounded">backend/src/skills/</code>.
+                    The whole skill library lives as plain markdown files in <code className="text-xs bg-muted px-1 rounded">backend/src/skills/</code>.
                 </p>
                 <div className="flex gap-2">
                     <a href={REPO_URL} target="_blank" rel="noreferrer">
@@ -136,11 +136,11 @@ export default function AboutPage() {
 
             {/* Stack */}
             <Section icon={BookOpen} title="What it&apos;s built on">
-                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                <div className="border border-border rounded-lg divide-y divide-border">
                     {STACK.map(s => (
                         <div key={s.layer} className="px-4 py-2.5 flex items-center justify-between text-sm">
-                            <span className="font-medium text-gray-700">{s.layer}</span>
-                            <span className="text-gray-600">{s.tech}</span>
+                            <span className="font-medium text-foreground/80">{s.layer}</span>
+                            <span className="text-muted-foreground">{s.tech}</span>
                         </div>
                     ))}
                 </div>
@@ -152,17 +152,17 @@ export default function AboutPage() {
                     {CREDITS.map(c => (
                         <li key={c.name} className="flex items-center gap-2">
                             <a href={c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline font-medium">{c.name}</a>
-                            <span className="text-gray-500">— {c.role}</span>
+                            <span className="text-muted-foreground">— {c.role}</span>
                         </li>
                     ))}
                 </ul>
-                <p className="text-xs text-gray-500 mt-4">
+                <p className="text-xs text-muted-foreground mt-4">
                     Louis stands on the shoulders of open source. If you build on top, tell us what you ship — we&apos;ll feature it.
                 </p>
             </Section>
 
             {/* Footer CTA */}
-            <div className="mt-12 text-center text-xs text-gray-500">
+            <div className="mt-12 text-center text-xs text-muted-foreground">
                 <p>Made with ❤︎ in Beirut + Dubai. Powered by Claude, Gemini, GPT.</p>
                 <p className="mt-2">
                     <Link href="/docs" className="text-blue-600 hover:underline">Documentation</Link>
@@ -182,8 +182,8 @@ function Section({ icon: Icon, title, children }: { icon: React.ComponentType<{ 
     return (
         <section className="mb-8">
             <div className="flex items-center gap-2 mb-3">
-                <Icon className="w-4 h-4 text-gray-700" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">{title}</h2>
+                <Icon className="w-4 h-4 text-foreground/80" />
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground/80">{title}</h2>
             </div>
             {children}
         </section>

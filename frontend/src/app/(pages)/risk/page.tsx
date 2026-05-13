@@ -11,7 +11,7 @@ const SEVERITY_STYLE: Record<string, { bg: string; text: string; icon: typeof Al
     P0: { bg: "bg-red-100", text: "text-red-700", icon: AlertOctagon, label: "Dealbreaker" },
     P1: { bg: "bg-amber-100", text: "text-amber-700", icon: AlertTriangle, label: "High" },
     P2: { bg: "bg-yellow-50", text: "text-yellow-800", icon: AlertCircle, label: "Medium" },
-    P3: { bg: "bg-gray-100", text: "text-gray-600", icon: Info, label: "Low" },
+    P3: { bg: "bg-muted", text: "text-muted-foreground", icon: Info, label: "Low" },
 };
 
 interface Finding {
@@ -107,20 +107,20 @@ export default function RiskScanPage() {
     return (
         <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="flex items-center gap-3 mb-2">
-                <ShieldAlert className="w-6 h-6 text-gray-700" />
+                <ShieldAlert className="w-6 h-6 text-foreground/80" />
                 <h1 className="text-2xl font-semibold">Contract Risk Scanner</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-8">
+            <p className="text-sm text-muted-foreground mb-8">
                 Rule-based red-flag detection. Paste a contract and Louis scans for missing protections, unilateral terms, and known gotchas across {`${30}+`} dimensions.
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white border border-gray-200 rounded-lg p-5">
+                <div className="bg-card border border-border rounded-lg p-5">
                     <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Contract text</h2>
+                        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Contract text</h2>
                         <div className="flex items-center gap-2">
                             <Label htmlFor="jur" className="text-xs">Jurisdiction</Label>
-                            <select id="jur" value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} className="border border-gray-300 rounded text-xs px-2 py-1">
+                            <select id="jur" value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} className="border border-border rounded text-xs px-2 py-1">
                                 <option value="">(auto)</option>
                                 <option value="UAE">UAE</option>
                                 <option value="KSA">KSA</option>
@@ -135,7 +135,7 @@ export default function RiskScanPage() {
                         value={text}
                         onChange={e => setText(e.target.value)}
                         rows={24}
-                        className="w-full border border-gray-300 rounded p-3 text-xs font-mono"
+                        className="w-full border border-border rounded p-3 text-xs font-mono"
                     />
                     <div className="flex items-center gap-2 mt-3">
                         <Button onClick={scan} disabled={loading || !text.trim()}>
@@ -149,8 +149,8 @@ export default function RiskScanPage() {
                 {/* Scoreboard / summary */}
                 <div className="space-y-4">
                     {!result && !error && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-5">
-                            <div className="text-sm text-gray-500 italic">Scan a contract to see its risk score and findings.</div>
+                        <div className="bg-card border border-border rounded-lg p-5">
+                            <div className="text-sm text-muted-foreground italic">Scan a contract to see its risk score and findings.</div>
                         </div>
                     )}
                     {error && (
@@ -163,7 +163,7 @@ export default function RiskScanPage() {
                                 <div className="text-4xl font-semibold mt-1">{result.riskScore} <span className="text-base opacity-50">/100</span></div>
                                 <div className="text-sm mt-2 opacity-90">{result.summary}</div>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-lg p-5 grid grid-cols-4 gap-3">
+                            <div className="bg-card border border-border rounded-lg p-5 grid grid-cols-4 gap-3">
                                 {(["P0", "P1", "P2", "P3"] as const).map(sev => {
                                     const s = SEVERITY_STYLE[sev];
                                     const Icon = s.icon;
@@ -179,11 +179,11 @@ export default function RiskScanPage() {
                                 })}
                             </div>
                             {Object.keys(result.countByCategory).length > 0 && (
-                                <div className="bg-white border border-gray-200 rounded-lg p-5">
-                                    <div className="text-xs uppercase tracking-wide text-gray-500 mb-2">By category</div>
+                                <div className="bg-card border border-border rounded-lg p-5">
+                                    <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">By category</div>
                                     <div className="flex flex-wrap gap-1.5">
                                         {Object.entries(result.countByCategory).sort((a,b) => b[1]-a[1]).map(([cat, n]) => (
-                                            <span key={cat} className="bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full">
+                                            <span key={cat} className="bg-muted text-foreground/80 text-xs px-2 py-0.5 rounded-full">
                                                 {cat} · {n}
                                             </span>
                                         ))}
@@ -197,10 +197,10 @@ export default function RiskScanPage() {
 
             {result && result.findings.length > 0 && (
                 <div className="space-y-6">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Findings ({result.findings.length})</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Findings ({result.findings.length})</h2>
                     {Object.entries(grouped).map(([cat, fs]) => (
                         <div key={cat}>
-                            <h3 className="text-xs uppercase tracking-wide font-semibold text-gray-600 mb-2">{cat}</h3>
+                            <h3 className="text-xs uppercase tracking-wide font-semibold text-muted-foreground mb-2">{cat}</h3>
                             <div className="space-y-2">
                                 {fs.map(f => {
                                     const s = SEVERITY_STYLE[f.severity];
@@ -212,12 +212,12 @@ export default function RiskScanPage() {
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2 flex-wrap mb-1">
                                                         <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{f.severity} · {s.label}</span>
-                                                        <span className="text-xs text-gray-500 font-mono">{f.ruleId}</span>
+                                                        <span className="text-xs text-muted-foreground font-mono">{f.ruleId}</span>
                                                     </div>
-                                                    <div className="font-medium text-gray-900">{f.title}</div>
-                                                    <div className="text-sm text-gray-700 mt-1">{f.description}</div>
+                                                    <div className="font-medium text-foreground">{f.title}</div>
+                                                    <div className="text-sm text-foreground/80 mt-1">{f.description}</div>
                                                     {f.excerpt && (
-                                                        <div className="mt-2 text-xs font-mono bg-white border border-gray-200 rounded p-2 italic">
+                                                        <div className="mt-2 text-xs font-mono bg-card border border-border rounded p-2 italic">
                                                             "…{f.excerpt}…"
                                                         </div>
                                                     )}
@@ -240,7 +240,7 @@ export default function RiskScanPage() {
                 </div>
             )}
 
-            <div className="mt-8 text-xs text-gray-500 italic text-center">
+            <div className="mt-8 text-xs text-muted-foreground italic text-center">
                 Rule-based scanning catches known patterns. Semantic risks (commercial fairness, ambiguity, hidden gotchas) require human or LLM review on top.
             </div>
         </div>

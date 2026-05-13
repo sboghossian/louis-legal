@@ -46,7 +46,7 @@ const ROLE_ICONS: Record<Role, typeof Shield> = {
 const ROLE_COLORS: Record<Role, string> = {
     owner: "bg-purple-100 text-purple-700",
     admin: "bg-blue-100 text-blue-700",
-    member: "bg-gray-100 text-gray-700",
+    member: "bg-muted text-foreground/80",
     viewer: "bg-amber-50 text-amber-700",
 };
 
@@ -116,30 +116,30 @@ export default function TeamPage() {
     return (
         <div className="max-w-5xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-gray-700" />
+                <Users className="w-5 h-5 text-foreground/80" />
                 <h1 className="text-2xl font-serif">Team</h1>
                 {team && <Badge variant="secondary">{team.name}</Badge>}
-                <Badge variant="secondary" className="bg-gray-100 text-gray-700">{members.length} member{members.length === 1 ? "" : "s"}</Badge>
+                <Badge variant="secondary" className="bg-muted text-foreground/80">{members.length} member{members.length === 1 ? "" : "s"}</Badge>
                 <Button size="sm" className="ml-auto h-7 text-xs" onClick={() => setShowInvite(true)}>
                     <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite
                 </Button>
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
                 Collaborate on matters, share skills, and route routine outputs. Role-based permissions ship on the Business plan.
             </p>
 
-            {loading && <div className="text-sm text-gray-500">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
 
             {/* Members */}
             <div className="mb-8">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-3">Members</h2>
-                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Members</h2>
+                <div className="border border-border rounded-lg divide-y divide-border">
                     {members.map(m => {
                         const RoleIcon = ROLE_ICONS[m.role];
                         const initial = (m.name || m.email).slice(0, 1).toUpperCase();
                         return (
                             <div key={m.id} className="px-4 py-3 flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700">
+                                <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-sm font-medium text-foreground/80">
                                     {initial}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -152,7 +152,7 @@ export default function TeamPage() {
                                             {m.status}
                                         </span>
                                     </div>
-                                    <div className="text-xs text-gray-500">
+                                    <div className="text-xs text-muted-foreground">
                                         {m.email}
                                         {m.lastActiveAt && ` · last seen ${formatTime(m.lastActiveAt)}`}
                                         {m.status === "invited" && ` · invited ${formatTime(m.invitedAt)}`}
@@ -163,12 +163,12 @@ export default function TeamPage() {
                                         <select
                                             value={m.role}
                                             onChange={e => changeRole(m.id, e.target.value as Role)}
-                                            className="text-xs border border-gray-300 rounded px-2 py-1"
+                                            className="text-xs border border-border rounded px-2 py-1"
                                         >
                                             {ROLES_ORDER.filter(r => r !== "owner").map(r => <option key={r} value={r}>{r}</option>)}
                                         </select>
                                         {m.status === "active" && (
-                                            <button onClick={() => changeStatus(m.id, "suspended")} className="text-xs text-gray-500 hover:text-amber-700" title="Suspend">
+                                            <button onClick={() => changeStatus(m.id, "suspended")} className="text-xs text-muted-foreground hover:text-amber-700" title="Suspend">
                                                 Suspend
                                             </button>
                                         )}
@@ -177,7 +177,7 @@ export default function TeamPage() {
                                                 Reactivate
                                             </button>
                                         )}
-                                        <button onClick={() => remove(m)} className="text-gray-400 hover:text-red-600">
+                                        <button onClick={() => remove(m)} className="text-muted-foreground hover:text-red-600">
                                             <Trash2 className="w-3.5 h-3.5" />
                                         </button>
                                     </>
@@ -191,20 +191,20 @@ export default function TeamPage() {
             {/* Roles legend */}
             {roles && (
                 <div className="mb-8">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-3">Roles</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Roles</h2>
                     <div className="grid grid-cols-2 gap-3">
                         {ROLES_ORDER.map(r => {
                             const desc = roles[r];
                             const Icon = ROLE_ICONS[r];
                             return (
-                                <div key={r} className="border border-gray-200 rounded-lg p-4">
+                                <div key={r} className="border border-border rounded-lg p-4">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${ROLE_COLORS[r]}`}>
                                             <Icon className="w-3 h-3" /> {desc.name}
                                         </span>
                                     </div>
-                                    <div className="text-xs text-gray-600 mb-2">{desc.description}</div>
-                                    <ul className="text-[11px] text-gray-700 space-y-0.5 list-disc list-inside">
+                                    <div className="text-xs text-muted-foreground mb-2">{desc.description}</div>
+                                    <ul className="text-[11px] text-foreground/80 space-y-0.5 list-disc list-inside">
                                         {desc.permissions.map((p, i) => <li key={i}>{p}</li>)}
                                     </ul>
                                 </div>
@@ -244,7 +244,7 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-md">
+            <div className="bg-card rounded-lg w-full max-w-md">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
                     <h2 className="font-semibold">Invite team member</h2>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
@@ -260,7 +260,7 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
                     </div>
                     <div>
                         <Label className="text-xs">Role</Label>
-                        <select value={role} onChange={e => setRole(e.target.value as Role)} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                        <select value={role} onChange={e => setRole(e.target.value as Role)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
                             <option value="admin">Admin — manages members + settings</option>
                             <option value="member">Member — full read + write</option>
                             <option value="viewer">Viewer — read only</option>

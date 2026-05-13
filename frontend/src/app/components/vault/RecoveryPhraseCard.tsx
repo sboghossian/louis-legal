@@ -60,7 +60,7 @@ export function RecoveryPhraseCard({ words, onAcknowledged }: Props) {
             <ol
                 className={[
                     "grid grid-cols-3 gap-2 mb-4",
-                    "rounded-md border border-amber-200/70 bg-white/80 p-3",
+                    "rounded-md border border-amber-200/70 bg-card/80 p-3",
                 ].join(" ")}
             >
                 {words.map((w, i) => (

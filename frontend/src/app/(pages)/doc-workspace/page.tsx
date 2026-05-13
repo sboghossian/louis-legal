@@ -162,7 +162,7 @@ const SEVERITY_DOT: Record<Suggestion["severity"], string> = {
 
 export default function DocWorkspacePage() {
     return (
-        <Suspense fallback={<div className="p-12 text-sm text-gray-500">loading workspace…</div>}>
+        <Suspense fallback={<div className="p-12 text-sm text-muted-foreground">loading workspace…</div>}>
             <DocWorkspaceInner />
         </Suspense>
     );
@@ -348,8 +348,8 @@ function DocWorkspaceInner() {
     return (
         <div className="flex flex-col h-full overflow-hidden">
             {/* Top bar */}
-            <div className="border-b border-gray-200 px-5 py-3 flex items-center gap-4 flex-shrink-0">
-                <FileText className="w-5 h-5 text-gray-700" />
+            <div className="border-b border-border px-5 py-3 flex items-center gap-4 flex-shrink-0">
+                <FileText className="w-5 h-5 text-foreground/80" />
                 <div className="flex-1">
                     <div className="font-semibold text-sm flex items-center gap-2">
                         {title}
@@ -357,7 +357,7 @@ function DocWorkspaceInner() {
                         {meta?.source === "live" && <Badge variant="secondary" className="text-[10px] bg-green-100 text-green-700">live</Badge>}
                         {loadError && <Badge variant="secondary" className="text-[10px] bg-red-100 text-red-700">{loadError}</Badge>}
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center gap-3">
+                    <div className="text-xs text-muted-foreground flex items-center gap-3">
                         <span className="flex items-center gap-1"><Save className="w-3 h-3" /> saved {DOC_DEFAULT.savedAt}</span>
                         {wordCount != null && <span>{wordCount} words</span>}
                         {readingMin != null && <span>{readingMin} min read</span>}
@@ -366,14 +366,14 @@ function DocWorkspaceInner() {
                 </div>
 
                 {/* View mode toggle */}
-                <div className="flex items-center bg-gray-100 rounded-md p-0.5">
+                <div className="flex items-center bg-muted rounded-md p-0.5">
                     {(["edit", "review", "read", "compare"] as const).map(v => {
                         const Icon = v === "edit" ? Edit3 : v === "review" ? ListChecks : v === "read" ? Glasses : GitCompare;
                         return (
                             <button
                                 key={v}
                                 onClick={() => setView(v)}
-                                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded ${view === v ? "bg-white shadow-sm font-medium" : "text-gray-600 hover:text-gray-900"}`}
+                                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded ${view === v ? "bg-card shadow-sm font-medium" : "text-muted-foreground hover:text-foreground"}`}
                             >
                                 <Icon className="w-3.5 h-3.5" />
                                 {v}
@@ -384,7 +384,7 @@ function DocWorkspaceInner() {
 
                 {/* Tone slider */}
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 w-12 text-right">tone</span>
+                    <span className="text-xs text-muted-foreground w-12 text-right">tone</span>
                     <input
                         type="range"
                         min={0} max={100} step={1}
@@ -392,7 +392,7 @@ function DocWorkspaceInner() {
                         onChange={e => setTone(parseInt(e.target.value))}
                         className="w-20 accent-gray-900"
                     />
-                    <span className="text-xs font-medium text-gray-700 w-14">{toneLabel}</span>
+                    <span className="text-xs font-medium text-foreground/80 w-14">{toneLabel}</span>
                 </div>
 
                 <Button size="sm" variant="outline" onClick={openInBoard}>
@@ -406,8 +406,8 @@ function DocWorkspaceInner() {
 
             <div className="flex flex-1 overflow-hidden">
                 {/* Left pane: tabs + tab content */}
-                <div className={`border-r border-gray-200 flex flex-col flex-shrink-0 transition-all ${leftCollapsed ? "w-12" : "w-[340px]"}`}>
-                    <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
+                <div className={`border-r border-border flex flex-col flex-shrink-0 transition-all ${leftCollapsed ? "w-12" : "w-[340px]"}`}>
+                    <div className="flex items-center justify-between px-3 py-2 border-b border-border">
                         {!leftCollapsed && (
                             <div className="flex gap-1">
                                 <DocTabBtn icon={MessageSquare}  label="Chat"        active={tab === "chat"}        onClick={() => setTab("chat")} />
@@ -417,7 +417,7 @@ function DocWorkspaceInner() {
                                 <DocTabBtn icon={MessageCircle}  label="Comments"    active={tab === "comments"}    onClick={() => setTab("comments")} badge={comments.length} />
                             </div>
                         )}
-                        <button onClick={() => setLeftCollapsed(c => !c)} className="text-gray-500 hover:text-gray-900 ml-auto">
+                        <button onClick={() => setLeftCollapsed(c => !c)} className="text-muted-foreground hover:text-foreground ml-auto">
                             {leftCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
                         </button>
                     </div>
@@ -442,9 +442,9 @@ function DocWorkspaceInner() {
                 </div>
 
                 {/* Center: document — rich-text editor (edit) or block view (review/read/compare). */}
-                <div className="flex-1 overflow-hidden bg-gray-50 relative">
+                <div className="flex-1 overflow-hidden bg-muted relative">
                     {view === "edit" ? (
-                        <Suspense fallback={<div className="p-12 text-sm text-gray-500">loading editor…</div>}>
+                        <Suspense fallback={<div className="p-12 text-sm text-muted-foreground">loading editor…</div>}>
                             {editorSaveBanner && (
                                 <div className={`absolute top-2 right-2 z-10 px-3 py-1.5 text-xs rounded-md shadow-sm border ${
                                     editorSaveBanner.kind === "offline" ? "bg-amber-50 border-amber-200 text-amber-900" :
@@ -517,7 +517,7 @@ function DocWorkspaceInner() {
                                             <select
                                                 value={compareVersionId ?? ""}
                                                 onChange={e => e.target.value && loadCompareVersion(e.target.value)}
-                                                className="text-xs border border-amber-300 rounded px-2 py-0.5 bg-white"
+                                                className="text-xs border border-amber-300 rounded px-2 py-0.5 bg-card"
                                             >
                                                 <option value="">— pick a version —</option>
                                                 {versions.slice(1).map(v => (
@@ -528,7 +528,7 @@ function DocWorkspaceInner() {
                                         <button className="underline" onClick={() => setView("edit")}>back to edit</button>
                                     </div>
                                 )}
-                                <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-sm">
+                                <div className="bg-card border border-border rounded-lg p-10 shadow-sm">
                                     {visibleBlocks.map(b => (
                                         <DocBlockView key={b.id} block={b} view={view} />
                                     ))}
@@ -540,19 +540,19 @@ function DocWorkspaceInner() {
 
                 {/* Right rail */}
                 {rightOpen && (
-                    <div className="w-[300px] border-l border-gray-200 flex-shrink-0 overflow-y-auto">
+                    <div className="w-[300px] border-l border-border flex-shrink-0 overflow-y-auto">
                         <Accordion title="Risk" icon={AlertTriangle} count={`${suggestions.filter(s => s.severity === "high" && s.state === "open").length} high · open`} open={accOpen.risk} onToggle={() => setAccOpen(s => ({...s, risk: !s.risk}))}>
                             <ul className="space-y-2">
                                 {suggestions.map(s => (
                                     <li key={s.id} className={`text-xs ${s.state !== "open" ? "opacity-50" : ""}`}>
                                         <div className="flex items-center gap-1.5">
                                             <span className={`w-1.5 h-1.5 rounded-full ${SEVERITY_DOT[s.severity]}`} />
-                                            <span className="font-medium text-gray-900 truncate">{s.title}</span>
+                                            <span className="font-medium text-foreground truncate">{s.title}</span>
                                         </div>
-                                        <div className="text-gray-500 ml-3 truncate">{s.section}</div>
+                                        <div className="text-muted-foreground ml-3 truncate">{s.section}</div>
                                     </li>
                                 ))}
-                                {!suggestions.length && <li className="text-xs text-gray-500">no suggestions</li>}
+                                {!suggestions.length && <li className="text-xs text-muted-foreground">no suggestions</li>}
                             </ul>
                         </Accordion>
 
@@ -560,15 +560,15 @@ function DocWorkspaceInner() {
                             <ul className="space-y-2">
                                 {partiesData.map((p, i) => (
                                     <li key={i} className="text-xs">
-                                        <div className="font-medium text-gray-900">{p.name}</div>
-                                        <div className="text-gray-500">{p.role} · {p.details}</div>
+                                        <div className="font-medium text-foreground">{p.name}</div>
+                                        <div className="text-muted-foreground">{p.role} · {p.details}</div>
                                     </li>
                                 ))}
                             </ul>
                         </Accordion>
 
                         <Accordion title="Definitions" icon={BookText} count={`${defsData.length}`} open={accOpen.defs} onToggle={() => setAccOpen(s => ({...s, defs: !s.defs}))}>
-                            <ul className="text-xs space-y-1 text-gray-700">
+                            <ul className="text-xs space-y-1 text-foreground/80">
                                 {defsData.map((d, i) => <li key={i}>· {d}</li>)}
                             </ul>
                         </Accordion>
@@ -577,19 +577,19 @@ function DocWorkspaceInner() {
                             <ul className="space-y-2">
                                 {citesData.map((c, i) => (
                                     <li key={i} className="text-xs">
-                                        <div className="font-mono text-gray-800">{c.ref}</div>
-                                        <div className="text-gray-500">{c.note}</div>
+                                        <div className="font-mono text-foreground">{c.ref}</div>
+                                        <div className="text-muted-foreground">{c.note}</div>
                                     </li>
                                 ))}
                             </ul>
                         </Accordion>
 
                         <Accordion title="Jurisdiction" icon={Scale} count={jurisdictionLabel} open={accOpen.juris} onToggle={() => setAccOpen(s => ({...s, juris: !s.juris}))}>
-                            <div className="text-xs space-y-1.5 text-gray-700">
-                                <div><span className="text-gray-500">Governing law:</span> {jurisdictionLabel}</div>
-                                <div><span className="text-gray-500">Seat of arbitration:</span> DIAC, DIFC</div>
-                                <div><span className="text-gray-500">Language:</span> English controls</div>
-                                <div><span className="text-gray-500">Notarization:</span> Not required for this document type</div>
+                            <div className="text-xs space-y-1.5 text-foreground/80">
+                                <div><span className="text-muted-foreground">Governing law:</span> {jurisdictionLabel}</div>
+                                <div><span className="text-muted-foreground">Seat of arbitration:</span> DIAC, DIFC</div>
+                                <div><span className="text-muted-foreground">Language:</span> English controls</div>
+                                <div><span className="text-muted-foreground">Notarization:</span> Not required for this document type</div>
                             </div>
                         </Accordion>
                     </div>
@@ -603,7 +603,7 @@ function DocWorkspaceInner() {
 
 function DocTabBtn({ icon: Icon, label, active, onClick, badge }: { icon: React.ComponentType<{ className?: string }>; label: string; active: boolean; onClick: () => void; badge?: number }) {
     return (
-        <button onClick={onClick} className={`flex items-center gap-1 px-2 py-1 text-xs rounded ${active ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-600 hover:bg-gray-50"}`}>
+        <button onClick={onClick} className={`flex items-center gap-1 px-2 py-1 text-xs rounded ${active ? "bg-muted text-foreground font-medium" : "text-muted-foreground hover:bg-muted"}`}>
             <Icon className="w-3.5 h-3.5" />
             {label}
             {badge != null && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4">{badge}</Badge>}
@@ -613,12 +613,12 @@ function DocTabBtn({ icon: Icon, label, active, onClick, badge }: { icon: React.
 
 function Accordion({ title, icon: Icon, count, open, onToggle, children }: { title: string; icon: React.ComponentType<{ className?: string }>; count?: string; open: boolean; onToggle: () => void; children: React.ReactNode }) {
     return (
-        <div className="border-b border-gray-200">
-            <button onClick={onToggle} className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-gray-50">
-                {open ? <ChevronDown className="w-3.5 h-3.5 text-gray-500" /> : <ChevronRight className="w-3.5 h-3.5 text-gray-500" />}
-                <Icon className="w-4 h-4 text-gray-700" />
-                <span className="text-sm font-medium text-gray-900 flex-1 text-left">{title}</span>
-                {count && <span className="text-xs text-gray-500">{count}</span>}
+        <div className="border-b border-border">
+            <button onClick={onToggle} className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-muted">
+                {open ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
+                <Icon className="w-4 h-4 text-foreground/80" />
+                <span className="text-sm font-medium text-foreground flex-1 text-left">{title}</span>
+                {count && <span className="text-xs text-muted-foreground">{count}</span>}
             </button>
             {open && <div className="px-4 pb-3">{children}</div>}
         </div>
@@ -629,8 +629,8 @@ function DocBlockView({ block, view }: { block: DocBlock; view: DocView }) {
     if (view === "review") {
         return (
             <div className={`mb-6 -mx-4 px-4 py-2 rounded ${block.changed ? "bg-yellow-50 ring-1 ring-yellow-200" : ""}`}>
-                {block.heading && <h2 className="font-semibold text-gray-900 mb-2">{block.heading}</h2>}
-                <p className="text-sm text-gray-800 leading-relaxed">{block.text}</p>
+                {block.heading && <h2 className="font-semibold text-foreground mb-2">{block.heading}</h2>}
+                <p className="text-sm text-foreground leading-relaxed">{block.text}</p>
                 {block.changed && <div className="mt-2 text-xs text-yellow-700">⚠️ this section has open suggestions</div>}
             </div>
         );
@@ -638,15 +638,15 @@ function DocBlockView({ block, view }: { block: DocBlock; view: DocView }) {
     if (view === "read") {
         return (
             <div className="mb-6">
-                {block.heading && <h2 className="text-xl font-serif text-gray-900 mb-3">{block.heading}</h2>}
-                <p className="text-base font-serif text-gray-800 leading-loose">{block.text}</p>
+                {block.heading && <h2 className="text-xl font-serif text-foreground mb-3">{block.heading}</h2>}
+                <p className="text-base font-serif text-foreground leading-loose">{block.text}</p>
             </div>
         );
     }
     return (
         <div className="mb-6">
-            {block.heading && <h2 className="font-semibold text-gray-900 mb-2">{block.heading}</h2>}
-            <p className="text-sm text-gray-800 leading-relaxed">{block.text}</p>
+            {block.heading && <h2 className="font-semibold text-foreground mb-2">{block.heading}</h2>}
+            <p className="text-sm text-foreground leading-relaxed">{block.text}</p>
         </div>
     );
 }
@@ -724,12 +724,12 @@ function ChatTab({ docId }: { docId: string }) {
         <div className="p-3 flex flex-col h-full">
             <div className="flex-1 overflow-y-auto mb-3 space-y-2">
                 {messages.length === 0 && (
-                    <div className="text-xs text-gray-600">
-                        <div className="mb-2 text-gray-900 font-medium text-sm">In-doc chat</div>
+                    <div className="text-xs text-muted-foreground">
+                        <div className="mb-2 text-foreground font-medium text-sm">In-doc chat</div>
                         <p className="mb-2">Ask Louis about this document:</p>
                         <ul className="space-y-1.5">
                             {examples.map((ex, i) => (
-                                <li key={i} onClick={() => send(ex)} className="px-2 py-1.5 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+                                <li key={i} onClick={() => send(ex)} className="px-2 py-1.5 bg-muted rounded cursor-pointer hover:bg-muted">
                                     &ldquo;{ex}&rdquo;
                                 </li>
                             ))}
@@ -737,24 +737,24 @@ function ChatTab({ docId }: { docId: string }) {
                     </div>
                 )}
                 {messages.map((m, i) => (
-                    <div key={i} className={`px-3 py-2 rounded-lg text-xs ${m.role === "user" ? "bg-blue-50 text-blue-900 ml-6" : "bg-gray-50 text-gray-800 mr-6"}`}>
-                        <div className="text-[10px] text-gray-500 uppercase mb-0.5">{m.role}</div>
+                    <div key={i} className={`px-3 py-2 rounded-lg text-xs ${m.role === "user" ? "bg-blue-50 text-blue-900 ml-6" : "bg-muted text-foreground mr-6"}`}>
+                        <div className="text-[10px] text-muted-foreground uppercase mb-0.5">{m.role}</div>
                         <div className="whitespace-pre-wrap">{m.content || <span className="opacity-50">…</span>}</div>
                     </div>
                 ))}
             </div>
-            <div className="border-t border-gray-200 pt-2">
+            <div className="border-t border-border pt-2">
                 <textarea
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(input); }}
                     rows={2}
                     placeholder="Ask about this doc… (⌘↩ to send)"
-                    className="w-full text-xs border border-gray-300 rounded p-2 resize-none"
+                    className="w-full text-xs border border-border rounded p-2 resize-none"
                     disabled={sending}
                 />
                 <div className="flex justify-between items-center mt-1">
-                    <span className="text-[10px] text-gray-500">routed via skills system</span>
+                    <span className="text-[10px] text-muted-foreground">routed via skills system</span>
                     <Button size="sm" onClick={() => send(input)} disabled={sending || !input.trim()} className="h-7 text-xs">
                         {sending ? "sending…" : "Send"}
                     </Button>
@@ -772,10 +772,10 @@ function SuggestionsTab({ suggestions, loading, onAccept, onReject, onReopen }: 
     onReopen: (id: string) => void;
 }) {
     if (loading && !suggestions.length) {
-        return <div className="p-4 text-xs text-gray-500">loading suggestions…</div>;
+        return <div className="p-4 text-xs text-muted-foreground">loading suggestions…</div>;
     }
     if (!suggestions.length) {
-        return <div className="p-4 text-xs text-gray-500">no suggestions for this document yet</div>;
+        return <div className="p-4 text-xs text-muted-foreground">no suggestions for this document yet</div>;
     }
     return (
         <div className="p-2">
@@ -787,11 +787,11 @@ function SuggestionsTab({ suggestions, loading, onAccept, onReject, onReopen }: 
                         <div className="flex items-center gap-2 mb-1">
                             <span className={`w-2 h-2 rounded-full ${SEVERITY_DOT[s.severity]}`} />
                             <span className="text-[10px] font-semibold uppercase tracking-wide">{s.severity}</span>
-                            <span className="text-[10px] text-gray-500 ml-auto truncate">{s.section}</span>
+                            <span className="text-[10px] text-muted-foreground ml-auto truncate">{s.section}</span>
                         </div>
-                        <div className="font-medium text-sm text-gray-900">{s.title}</div>
-                        <div className="text-xs text-gray-600 mt-1">{s.rationale}</div>
-                        <div className="text-xs text-gray-700 mt-2 italic">→ {s.proposed}</div>
+                        <div className="font-medium text-sm text-foreground">{s.title}</div>
+                        <div className="text-xs text-muted-foreground mt-1">{s.rationale}</div>
+                        <div className="text-xs text-foreground/80 mt-2 italic">→ {s.proposed}</div>
                         {state === "open" ? (
                             <div className="flex gap-1 mt-3">
                                 <Button size="sm" variant="default" className="h-7 text-xs" onClick={() => onAccept(s.id)}>Accept</Button>
@@ -812,7 +812,7 @@ function SuggestionsTab({ suggestions, loading, onAccept, onReject, onReopen }: 
 
 function VersionsTab({ versions }: { versions: ServerVersion[] }) {
     if (!versions.length) {
-        return <div className="p-3 text-xs text-gray-500">no versions yet</div>;
+        return <div className="p-3 text-xs text-muted-foreground">no versions yet</div>;
     }
     const labelFor = (s: string) =>
         s === "user_upload" ? "user upload" :
@@ -824,30 +824,30 @@ function VersionsTab({ versions }: { versions: ServerVersion[] }) {
     return (
         <div className="p-3">
             {versions.map((v, idx) => (
-                <div key={v.id} className="px-3 py-3 mb-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                <div key={v.id} className="px-3 py-3 mb-2 rounded-lg border border-border hover:bg-muted cursor-pointer">
                     <div className="flex items-center justify-between">
                         <span className="font-medium text-sm">{v.displayName}{idx === 0 ? " (current)" : ""}</span>
-                        <span className="text-[10px] text-gray-500">{new Date(v.createdAt).toLocaleString()}</span>
+                        <span className="text-[10px] text-muted-foreground">{new Date(v.createdAt).toLocaleString()}</span>
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">
-                        <span className="font-mono text-[10px] bg-gray-100 px-1 rounded">{labelFor(v.source)}</span>
+                    <div className="text-xs text-muted-foreground mt-1">
+                        <span className="font-mono text-[10px] bg-muted px-1 rounded">{labelFor(v.source)}</span>
                         {v.summary && <> · {v.summary}</>}
                     </div>
                 </div>
             ))}
-            <div className="mt-3 text-[10px] text-gray-500">Click a version to view, restore, or compare.</div>
+            <div className="mt-3 text-[10px] text-muted-foreground">Click a version to view, restore, or compare.</div>
         </div>
     );
 }
 
 function OutlineTab({ blocks }: { blocks: ServerBlock[] }) {
     const headings = blocks.filter(b => b.heading);
-    if (!headings.length) return <div className="p-3 text-xs text-gray-500">no headings detected in this doc</div>;
+    if (!headings.length) return <div className="p-3 text-xs text-muted-foreground">no headings detected in this doc</div>;
     return (
         <div className="p-3">
             <ul className="text-sm space-y-1">
                 {headings.map(b => (
-                    <li key={b.id} className="px-2 py-1 rounded hover:bg-gray-50 cursor-pointer">{b.heading}</li>
+                    <li key={b.id} className="px-2 py-1 rounded hover:bg-muted cursor-pointer">{b.heading}</li>
                 ))}
             </ul>
         </div>
@@ -869,25 +869,25 @@ function CommentsTab({ comments, onPost, onDelete }: {
     return (
         <div className="p-3 flex flex-col h-full">
             <div className="flex-1 overflow-y-auto mb-3">
-                {!comments.length && <div className="text-xs text-gray-500">no comments yet</div>}
+                {!comments.length && <div className="text-xs text-muted-foreground">no comments yet</div>}
                 {comments.map(c => (
-                    <div key={c.id} className="px-3 py-3 mb-2 rounded-lg border border-gray-200 group">
+                    <div key={c.id} className="px-3 py-3 mb-2 rounded-lg border border-border group">
                         <div className="flex items-center justify-between">
-                            <span className="font-medium text-sm">{c.author} <span className="text-gray-500 font-normal">{c.role}</span></span>
-                            <span className="text-[10px] text-gray-500">{new Date(c.createdAt).toLocaleString()}</span>
+                            <span className="font-medium text-sm">{c.author} <span className="text-muted-foreground font-normal">{c.role}</span></span>
+                            <span className="text-[10px] text-muted-foreground">{new Date(c.createdAt).toLocaleString()}</span>
                         </div>
-                        <div className="text-xs text-gray-700 mt-1 whitespace-pre-wrap">{c.text}</div>
+                        <div className="text-xs text-foreground/80 mt-1 whitespace-pre-wrap">{c.text}</div>
                         <button onClick={() => onDelete(c.id)} className="text-[10px] text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 mt-1">delete</button>
                     </div>
                 ))}
             </div>
-            <div className="border-t border-gray-200 pt-2">
+            <div className="border-t border-border pt-2">
                 <textarea
                     value={text}
                     onChange={e => setText(e.target.value)}
                     rows={2}
                     placeholder="Add a comment…"
-                    className="w-full text-xs border border-gray-300 rounded p-2 resize-none"
+                    className="w-full text-xs border border-border rounded p-2 resize-none"
                 />
                 <div className="flex justify-end mt-1">
                     <Button size="sm" onClick={submit} disabled={posting || !text.trim()} className="h-7 text-xs">

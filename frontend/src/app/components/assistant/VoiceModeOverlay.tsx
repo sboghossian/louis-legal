@@ -331,11 +331,11 @@ export function VoiceModeOverlay({
             }}
         >
             {/* Top bar */}
-            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-5 font-sans text-xs text-gray-500">
+            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-5 font-sans text-xs text-muted-foreground">
                 <a
                     href="#"
                     onClick={(e) => e.preventDefault()}
-                    className="hover:text-gray-800 transition-colors"
+                    className="hover:text-foreground transition-colors"
                     title={t("voice.how.tooltip")}
                 >
                     {t("voice.how")}
@@ -344,7 +344,7 @@ export function VoiceModeOverlay({
                     type="button"
                     aria-label={t("voice.aria.close")}
                     onClick={onClose}
-                    className="rounded-full p-2 text-gray-500 hover:text-gray-900 hover:bg-black/5 transition-colors"
+                    className="rounded-full p-2 text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors"
                 >
                     <X className="h-5 w-5" />
                 </button>
@@ -365,9 +365,9 @@ export function VoiceModeOverlay({
             </div>
 
             {/* Transcript */}
-            <div className="mt-10 max-w-2xl px-8 text-center font-serif text-xl text-gray-800 leading-relaxed min-h-[5rem]">
+            <div className="mt-10 max-w-2xl px-8 text-center font-serif text-xl text-foreground leading-relaxed min-h-[5rem]">
                 {words.length === 0 ? (
-                    <span className="text-gray-400 italic">
+                    <span className="text-muted-foreground italic">
                         {t("voice.prompt")}
                     </span>
                 ) : (
@@ -394,7 +394,7 @@ export function VoiceModeOverlay({
 
             {/* Bottom controls */}
             <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center gap-3 pb-10">
-                <div className="font-sans text-xs uppercase tracking-[0.18em] text-gray-500">
+                <div className="font-sans text-xs uppercase tracking-[0.18em] text-muted-foreground">
                     {statusLabel[status]}
                 </div>
                 <div className="flex items-center gap-3">
@@ -402,7 +402,7 @@ export function VoiceModeOverlay({
                         type="button"
                         onClick={togglePause}
                         aria-label={paused ? t("voice.aria.resume") : t("voice.aria.pause")}
-                        className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 border border-amber-200 text-gray-700 hover:bg-white transition-colors font-sans text-sm"
+                        className="flex items-center gap-2 h-10 px-4 rounded-full bg-card/70 border border-amber-200 text-foreground/80 hover:bg-card transition-colors font-sans text-sm"
                     >
                         {paused ? (
                             <>
@@ -430,12 +430,12 @@ export function VoiceModeOverlay({
                         type="button"
                         onClick={onClose}
                         aria-label={t("voice.aria.close")}
-                        className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 border border-gray-200 text-gray-600 hover:bg-white transition-colors font-sans text-sm"
+                        className="flex items-center gap-2 h-10 px-4 rounded-full bg-card/70 border border-border text-muted-foreground hover:bg-card transition-colors font-sans text-sm"
                     >
                         <X className="h-4 w-4" /> {t("action.close")}
                     </button>
                 </div>
-                <div className="font-sans text-[10px] text-gray-400">
+                <div className="font-sans text-[10px] text-muted-foreground">
                     Space pause · Enter send · Esc close
                 </div>
             </div>

@@ -72,10 +72,10 @@ export default function NewSkillPage() {
     return (
         <div className="max-w-3xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-5 h-5 text-gray-700" />
+                <Sparkles className="w-5 h-5 text-foreground/80" />
                 <h1 className="text-lg font-semibold">New skill</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
                 Author a custom skill. It joins the 982-skill library and becomes routable in chat immediately.
                 Use intent keywords + jurisdiction filters to control when this skill fires.
             </p>
@@ -89,7 +89,7 @@ export default function NewSkillPage() {
                         placeholder="custom.my-skill-name"
                         className="mt-1 font-mono"
                     />
-                    <p className="text-[10px] text-gray-500 mt-0.5">format: category.kebab-name</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">format: category.kebab-name</p>
                 </div>
                 <div>
                     <Label className="text-xs">Display name</Label>
@@ -105,13 +105,13 @@ export default function NewSkillPage() {
             <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
                     <Label className="text-xs">Category</Label>
-                    <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                    <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
                         {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
                 <div>
                     <Label className="text-xs">Priority</Label>
-                    <select value={priority} onChange={e => setPriority(e.target.value)} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                    <select value={priority} onChange={e => setPriority(e.target.value)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
                         {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                 </div>
@@ -125,7 +125,7 @@ export default function NewSkillPage() {
                     placeholder="e.g., draft, contract, nda"
                     className="mt-1"
                 />
-                <p className="text-[10px] text-gray-500 mt-0.5">Used by the router to decide when this skill fires</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Used by the router to decide when this skill fires</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -164,7 +164,7 @@ When the router fires this skill, this text is concatenated into the system prom
 - relevant statutes / regulations / cases
 - cross-references to other skills: [[other-skill-id]]
 `}
-                    className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono"
+                    className="mt-1 w-full border border-border rounded px-3 py-2 text-sm font-mono"
                 />
             </div>
 
@@ -181,7 +181,7 @@ When the router fires this skill, this text is concatenated into the system prom
                 </Button>
             </div>
 
-            <div className="mt-8 text-xs text-gray-500">
+            <div className="mt-8 text-xs text-muted-foreground">
                 <p>
                     💡 Tip: skills also support frontmatter linking to other skills via <code>[[skill.id]]</code> syntax in the body.
                     The router will surface them as "related" in the chat sidebar.

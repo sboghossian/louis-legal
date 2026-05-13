@@ -36,18 +36,18 @@ export function SimpleLinkDialog({
 
             {/* Dialog */}
             <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[200] w-full max-w-md px-4">
-                <div className="relative bg-white rounded-2xl shadow-2xl p-6">
+                <div className="relative bg-card rounded-2xl shadow-2xl p-6">
                     {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute right-4 top-4 text-muted-foreground hover:text-muted-foreground transition-colors"
                     >
                         <X className="h-5 w-5" />
                     </button>
 
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-3xl font-light font-eb-garamond text-gray-900">
+                        <h2 className="text-3xl font-light font-eb-garamond text-foreground">
                             Share Chat
                         </h2>
                     </div>
@@ -55,11 +55,11 @@ export function SimpleLinkDialog({
                     {/* Content */}
                     <div className="space-y-4">
                         {/* Link display */}
-                        <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            <p className="text-sm text-gray-600 mb-2 font-medium">
+                        <div className="bg-muted rounded-lg p-3 border border-border">
+                            <p className="text-sm text-muted-foreground mb-2 font-medium">
                                 Share Link
                             </p>
-                            <p className="text-sm text-gray-800 break-all font-mono">
+                            <p className="text-sm text-foreground break-all font-mono">
                                 {shareUrl}
                             </p>
                         </div>

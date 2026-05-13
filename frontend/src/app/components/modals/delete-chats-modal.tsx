@@ -32,7 +32,7 @@ export function DeleteChatsModal({
 
             {/* Modal */}
             <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-200 w-full max-w-md">
-                <div className="bg-white rounded-2xl shadow-2xl p-8">
+                <div className="bg-card rounded-2xl shadow-2xl p-8">
                     {isSuccess ? (
                         <>
                             {/* Success State */}
@@ -40,10 +40,10 @@ export function DeleteChatsModal({
                                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                                     <Check className="h-8 w-8 text-green-600" />
                                 </div>
-                                <h2 className="text-3xl font-light font-eb-garamond text-gray-900 mb-2">
+                                <h2 className="text-3xl font-light font-eb-garamond text-foreground mb-2">
                                     All Chats Deleted
                                 </h2>
-                                <p className="text-gray-600 text-sm">
+                                <p className="text-muted-foreground text-sm">
                                     Your chat history has been successfully
                                     deleted.
                                 </p>
@@ -60,7 +60,7 @@ export function DeleteChatsModal({
 
                             {/* Content */}
                             <div className="space-y-4">
-                                <p className="text-gray-600 text-sm leading-relaxed">
+                                <p className="text-muted-foreground text-sm leading-relaxed">
                                     Are you sure you want to delete all{" "}
                                     {chatCount} chat
                                     {chatCount !== 1 ? "s" : ""}? This action is
@@ -82,7 +82,7 @@ export function DeleteChatsModal({
                                         onClick={onClose}
                                         variant="outline"
                                         disabled={isDeleting}
-                                        className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+                                        className="w-full border-border text-foreground/80 hover:bg-muted"
                                     >
                                         Cancel
                                     </Button>

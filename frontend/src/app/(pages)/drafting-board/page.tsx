@@ -356,7 +356,7 @@ function TopBar({
                 <button
                     type="button"
                     onClick={onReset}
-                    className="inline-flex items-center gap-1 rounded-md border border-[#E7E2D6] bg-white px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
+                    className="inline-flex items-center gap-1 rounded-md border border-[#E7E2D6] bg-card px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
                 >
                     <RotateCcw className="h-3.5 w-3.5" /> Reset
                 </button>
@@ -398,13 +398,13 @@ function TemplateSwitcher({
             <button
                 type="button"
                 onClick={() => setOpen((o) => !o)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[#E7E2D6] bg-white px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
+                className="inline-flex items-center gap-1.5 rounded-md border border-[#E7E2D6] bg-card px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
             >
                 <LayoutTemplate className="h-3.5 w-3.5" />
                 {t("drafting.use_template")}
             </button>
             {open && (
-                <div className="absolute right-0 z-30 mt-1 w-72 overflow-hidden rounded-xl border border-[#E7E2D6] bg-white shadow-lg">
+                <div className="absolute right-0 z-30 mt-1 w-72 overflow-hidden rounded-xl border border-[#E7E2D6] bg-card shadow-lg">
                     {TEMPLATES.map((tpl) => (
                         <button
                             key={tpl.key}
@@ -461,7 +461,7 @@ function ApprovalBanner({
             <button
                 type="button"
                 onClick={onOpen}
-                className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 font-medium text-slate-800 shadow-sm hover:bg-amber-100"
+                className="inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1 font-medium text-slate-800 shadow-sm hover:bg-amber-100"
             >
                 {t("action.open")}
                 <ChevronRight className="h-3.5 w-3.5" />
@@ -594,7 +594,7 @@ function Timeline({ timeline }: { timeline: TimelineEntry[] }) {
                                   ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                                   : t.kind === "block"
                                     ? "border-red-200 bg-red-50 text-red-800"
-                                    : "border-[#E7E2D6] bg-white text-slate-600",
+                                    : "border-[#E7E2D6] bg-card text-slate-600",
                         ].join(" ")}
                     >
                         <span className="mr-2 text-[10px] text-slate-400">
@@ -654,7 +654,7 @@ function EmptyState({ onPick }: { onPick: (key: string) => void }) {
                             key={tpl.key}
                             type="button"
                             onClick={() => onPick(tpl.key)}
-                            className="group flex flex-col items-start gap-2 rounded-2xl border border-[#E7E2D6] bg-white p-4 text-left shadow-[0_10px_24px_-18px_rgba(31,41,55,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(31,41,55,0.45)]"
+                            className="group flex flex-col items-start gap-2 rounded-2xl border border-[#E7E2D6] bg-card p-4 text-left shadow-[0_10px_24px_-18px_rgba(31,41,55,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(31,41,55,0.45)]"
                         >
                             <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F0E5] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#8a743f]">
                                 <LayoutTemplate className="h-3 w-3" /> template

@@ -97,21 +97,21 @@ export default function CitationsPage() {
     return (
         <div className="max-w-5xl mx-auto px-6 py-8">
             <div className="flex items-center gap-3 mb-2">
-                <Quote className="w-6 h-6 text-gray-700" />
+                <Quote className="w-6 h-6 text-foreground/80" />
                 <h1 className="text-2xl font-semibold">Citation Engine</h1>
             </div>
-            <p className="text-sm text-gray-600 mb-8">
+            <p className="text-sm text-muted-foreground mb-8">
                 Format the same source in every legal citation style. Switching between Bluebook, OSCOLA, DIFC, ADGM, KSA, UAE, Lebanon, French (Dalloz), and EU ECLI conventions.
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Inputs */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Source</h2>
+                <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Source</h2>
 
                     <div>
                         <Label className="text-xs">Source type</Label>
-                        <select value={sourceType} onChange={e => setSourceType(e.target.value as SourceType)} className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                        <select value={sourceType} onChange={e => setSourceType(e.target.value as SourceType)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
                             <option value="case">Case / Judgment</option>
                             <option value="statute">Statute / Decree</option>
                             <option value="regulation">Regulation</option>
@@ -186,10 +186,10 @@ export default function CitationsPage() {
                 </div>
 
                 {/* Results */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-3">Renditions</h2>
+                <div className="bg-card border border-border rounded-lg p-6">
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Renditions</h2>
                     {results.length === 0 && (
-                        <div className="text-sm text-gray-500 italic py-12 text-center">
+                        <div className="text-sm text-muted-foreground italic py-12 text-center">
                             Enter source details and click Format to see citations in every supported style.
                         </div>
                     )}
@@ -198,12 +198,12 @@ export default function CitationsPage() {
                             {results.map(r => {
                                 const meta = styles.find(s => s.code === r.style);
                                 return (
-                                    <div key={r.style} className="border border-gray-200 rounded p-3">
+                                    <div key={r.style} className="border border-border rounded p-3">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-[10px] uppercase tracking-wide font-semibold text-gray-500">{meta?.name || r.style}</span>
+                                            <span className="text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">{meta?.name || r.style}</span>
                                             <button
                                                 onClick={() => navigator.clipboard.writeText(r.rendered.replace(/\*/g, ""))}
-                                                className="ml-auto text-[10px] text-gray-400 hover:text-gray-600 flex items-center gap-1"
+                                                className="ml-auto text-[10px] text-muted-foreground hover:text-muted-foreground flex items-center gap-1"
                                                 title="Copy"
                                             >
                                                 <Copy className="w-3 h-3" />
@@ -211,7 +211,7 @@ export default function CitationsPage() {
                                         </div>
                                         <div className="text-sm font-serif" dangerouslySetInnerHTML={{ __html: italicize(r.rendered) }} />
                                         {r.short && (
-                                            <div className="text-xs text-gray-500 mt-1">short: <em>{r.short.replace(/\*/g, "")}</em></div>
+                                            <div className="text-xs text-muted-foreground mt-1">short: <em>{r.short.replace(/\*/g, "")}</em></div>
                                         )}
                                         {r.warnings && r.warnings.length > 0 && (
                                             <div className="text-xs text-amber-700 mt-1">⚠ {r.warnings.join("; ")}</div>

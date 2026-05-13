@@ -215,7 +215,7 @@ function BulkEditActions({
             <button
                 onClick={() => handleAll("accept")}
                 disabled={!!busy}
-                className="px-2 py-1 text-xs rounded border border-gray-900 bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 inline-flex items-center gap-1"
+                className="px-2 py-1 text-xs rounded border border-foreground bg-foreground text-white hover:bg-foreground disabled:opacity-50 inline-flex items-center gap-1"
             >
                 {busy === "accept" && (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -225,7 +225,7 @@ function BulkEditActions({
             <button
                 onClick={() => handleAll("reject")}
                 disabled={!!busy}
-                className="px-2 py-1 text-xs rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 inline-flex items-center gap-1"
+                className="px-2 py-1 text-xs rounded border border-border bg-card text-foreground/80 hover:bg-muted disabled:opacity-50 inline-flex items-center gap-1"
             >
                 {busy === "reject" && (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -233,7 +233,7 @@ function BulkEditActions({
                 Reject all
             </button>
             {progress && (
-                <span className="text-xs font-serif text-gray-500">
+                <span className="text-xs font-serif text-muted-foreground">
                     {progress.done}/{progress.total}
                 </span>
             )}
@@ -243,7 +243,7 @@ function BulkEditActions({
                         onViewClick(first.annotation, first.filename)
                     }
                     disabled={!!busy}
-                    className="ml-auto px-2 py-1 text-xs rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                    className="ml-auto px-2 py-1 text-xs rounded border border-border bg-card text-foreground/80 hover:bg-muted disabled:opacity-50"
                 >
                     View
                 </button>
@@ -308,16 +308,16 @@ function EditCardsSection({
               : `${resolvedCount} resolved tracked ${resolvedCount === 1 ? "change" : "changes"}`;
 
     return (
-        <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
+        <div className="border border-border rounded-lg bg-card overflow-hidden">
             {/* Row 1: summary + chevron */}
             <div className="flex items-center gap-2 px-3 pt-3">
-                <p className="flex-1 min-w-0 text-sm font-serif text-gray-700 truncate">
+                <p className="flex-1 min-w-0 text-sm font-serif text-foreground/80 truncate">
                     {summary}
                 </p>
                 <button
                     onClick={() => setIsOpen((v) => !v)}
                     aria-label={isOpen ? "Collapse edits" : "Expand edits"}
-                    className="shrink-0 rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+                    className="shrink-0 rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                 >
                     <ChevronDown
                         className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "" : "-rotate-90"}`}
@@ -427,16 +427,16 @@ function ReasoningBlock({
     return (
         <div className="relative">
             {showConnector && (
-                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             <button
                 onClick={() => !isStreaming && setIsOpen((v) => !v)}
-                className="flex items-center text-sm font-serif text-gray-500 hover:text-gray-600 transition-colors"
+                className="flex items-center text-sm font-serif text-muted-foreground hover:text-muted-foreground transition-colors"
             >
                 {isStreaming ? (
-                    <div className="w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
                 ) : (
-                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-muted shrink-0" />
                 )}
                 <span className="font-medium ml-2">
                     {isStreaming
@@ -451,13 +451,13 @@ function ReasoningBlock({
                 )}
             </button>
             {showContent && (
-                <div className="mt-2 ml-[14px] text-sm font-serif text-gray-400 prose prose-sm max-w-none [&>*]:text-gray-400 [&>*]:text-sm">
+                <div className="mt-2 ml-[14px] text-sm font-serif text-muted-foreground prose prose-sm max-w-none [&>*]:text-muted-foreground [&>*]:text-sm">
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
                             code: ({ node, ...props }) => (
                                 <code
-                                    className="font-serif text-gray-600"
+                                    className="font-serif text-muted-foreground"
                                     {...props}
                                 />
                             ),
@@ -483,12 +483,12 @@ function DocReadBlock({
     isStreaming?: boolean;
 }) {
     return (
-        <div className="flex items-start text-sm font-serif text-gray-500 relative">
+        <div className="flex items-start text-sm font-serif text-muted-foreground relative">
             {showConnector && (
-                <div className="absolute bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             {isStreaming ? (
-                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
             ) : (
                 <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
             )}
@@ -501,7 +501,7 @@ function DocReadBlock({
                 ) : onClick ? (
                     <button
                         onClick={onClick}
-                        className="text-left hover:text-gray-700 transition-colors cursor-pointer"
+                        className="text-left hover:text-foreground/80 transition-colors cursor-pointer"
                     >
                         {filename}
                     </button>
@@ -531,22 +531,22 @@ function DocFindBlock({
         ? ""
         : ` (${totalMatches} ${totalMatches === 1 ? "match" : "matches"})`;
     return (
-        <div className="flex items-start text-sm font-serif text-gray-500 relative">
+        <div className="flex items-start text-sm font-serif text-muted-foreground relative">
             {showConnector && (
-                <div className="absolute bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             {isStreaming ? (
-                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
             ) : (
                 <div
-                    className={`mt-2 w-1.5 h-1.5 rounded-full shrink-0 ${totalMatches > 0 ? "bg-green-400" : "bg-gray-300"}`}
+                    className={`mt-2 w-1.5 h-1.5 rounded-full shrink-0 ${totalMatches > 0 ? "bg-green-400" : "bg-muted"}`}
                 />
             )}
             <div className="ml-2 min-w-0 flex-1 whitespace-normal break-words">
                 <span className="font-medium">{label}</span>{" "}
                 <span>
                     &ldquo;{query}&rdquo;{matchSuffix}
-                    <span className="ml-1 text-gray-400">in {filename}</span>
+                    <span className="ml-1 text-muted-foreground">in {filename}</span>
                     {isStreaming && "..."}
                 </span>
             </div>
@@ -564,12 +564,12 @@ function DocCreatedBlock({
     isStreaming?: boolean;
 }) {
     return (
-        <div className="flex items-start text-sm font-serif text-gray-500 relative">
+        <div className="flex items-start text-sm font-serif text-muted-foreground relative">
             {showConnector && (
-                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             {isStreaming ? (
-                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
             ) : (
                 <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
             )}
@@ -604,12 +604,12 @@ function DocReplicatedBlock({
     const suffix =
         !isStreaming && count > 1 ? ` ${count} times` : isStreaming ? "..." : "";
     return (
-        <div className="flex items-start text-sm font-serif text-gray-500 relative">
+        <div className="flex items-start text-sm font-serif text-muted-foreground relative">
             {showConnector && (
-                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             {isStreaming ? (
-                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
             ) : (
                 <div
                     className={`mt-2 w-1.5 h-1.5 rounded-full shrink-0 ${hasError ? "bg-red-400" : "bg-green-400"}`}
@@ -698,11 +698,11 @@ function DocDownloadBlock({
         <div className="flex items-center gap-3 px-4 py-3 min-w-0 flex-1">
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 min-w-0">
-                    <p className="text-base font-serif text-gray-900 text-wrap">
+                    <p className="text-base font-serif text-foreground text-wrap">
                         {basename}
                     </p>
                     {hasVersion && (
-                        <span className="shrink-0 inline-flex items-center rounded-md border border-gray-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
+                        <span className="shrink-0 inline-flex items-center rounded-md border border-border bg-card px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                             V{versionNumber}
                         </span>
                     )}
@@ -715,7 +715,7 @@ function DocDownloadBlock({
     const downloadIcon = spinning ? (
         <div
             aria-disabled
-            className="shrink-0 flex items-center border-l border-gray-200 px-6 bg-white text-gray-400 cursor-not-allowed"
+            className="shrink-0 flex items-center border-l border-border px-6 bg-card text-muted-foreground cursor-not-allowed"
         >
             <Loader2 size={13} className="animate-spin" />
         </div>
@@ -723,7 +723,7 @@ function DocDownloadBlock({
         <button
             type="button"
             onClick={handleDownload}
-            className="shrink-0 flex items-center border-l border-gray-200 px-6 bg-white text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors cursor-pointer"
+            className="shrink-0 flex items-center border-l border-border px-6 bg-card text-muted-foreground hover:bg-muted hover:text-muted-foreground transition-colors cursor-pointer"
         >
             <Download size={13} />
         </button>
@@ -731,11 +731,11 @@ function DocDownloadBlock({
 
     if (onOpen) {
         return (
-            <div className="flex items-stretch border border-gray-200 rounded-lg overflow-hidden w-full font-sans bg-gray-50">
+            <div className="flex items-stretch border border-border rounded-lg overflow-hidden w-full font-sans bg-muted">
                 <button
                     type="button"
                     onClick={onOpen}
-                    className="flex items-stretch flex-1 min-w-0 text-left hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="flex items-stretch flex-1 min-w-0 text-left hover:bg-muted transition-colors cursor-pointer"
                 >
                     {body}
                 </button>
@@ -746,7 +746,7 @@ function DocDownloadBlock({
 
     if (spinning) {
         return (
-            <div className="flex items-stretch border border-gray-200 rounded-lg overflow-hidden w-full font-sans bg-gray-50">
+            <div className="flex items-stretch border border-border rounded-lg overflow-hidden w-full font-sans bg-muted">
                 {body}
                 {downloadIcon}
             </div>
@@ -754,11 +754,11 @@ function DocDownloadBlock({
     }
 
     return (
-        <div className="flex items-stretch border border-gray-200 rounded-lg overflow-hidden w-full font-sans bg-gray-50">
+        <div className="flex items-stretch border border-border rounded-lg overflow-hidden w-full font-sans bg-muted">
             <button
                 type="button"
                 onClick={handleDownload}
-                className="flex items-stretch flex-1 min-w-0 text-left hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex items-stretch flex-1 min-w-0 text-left hover:bg-muted transition-colors cursor-pointer"
             >
                 {body}
             </button>
@@ -777,9 +777,9 @@ function WorkflowAppliedBlock({
     onClick?: () => void;
 }) {
     return (
-        <div className="flex items-start text-sm font-serif text-gray-500 relative">
+        <div className="flex items-start text-sm font-serif text-muted-foreground relative">
             {showConnector && (
-                <div className="absolute bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
             <div className="ml-2 min-w-0 flex-1 whitespace-normal break-words">
@@ -787,7 +787,7 @@ function WorkflowAppliedBlock({
                 {onClick ? (
                     <button
                         onClick={onClick}
-                        className="text-left hover:text-gray-700 transition-colors cursor-pointer"
+                        className="text-left hover:text-foreground/80 transition-colors cursor-pointer"
                     >
                         {title}
                     </button>
@@ -811,12 +811,12 @@ function DocEditedBlock({
     hasError?: boolean;
 }) {
     return (
-        <div className="flex items-start text-sm font-serif text-gray-500 relative">
+        <div className="flex items-start text-sm font-serif text-muted-foreground relative">
             {showConnector && (
-                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
             )}
             {isStreaming ? (
-                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                <div className="mt-2 w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
             ) : hasError ? (
                 <div className="mt-2 w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
             ) : (
@@ -879,7 +879,7 @@ function MarkdownContent({
     return (
         <div
             ref={divRef}
-            className="text-gray-900 mb-4 text-base prose prose-sm max-w-none font-serif"
+            className="text-foreground mb-4 text-base prose prose-sm max-w-none font-serif"
         >
             <ReactMarkdown
                 remarkPlugins={[
@@ -891,30 +891,30 @@ function MarkdownContent({
                     table: ({ node, ...props }) => (
                         <div className="overflow-x-auto my-4">
                             <table
-                                className="min-w-full divide-y divide-gray-300 border border-gray-200 rounded-lg overflow-hidden"
+                                className="min-w-full divide-y divide-border border border-border rounded-lg overflow-hidden"
                                 {...props}
                             />
                         </div>
                     ),
                     thead: ({ node, ...props }) => (
-                        <thead className="bg-gray-50" {...props} />
+                        <thead className="bg-muted" {...props} />
                     ),
                     tbody: ({ node, ...props }) => (
                         <tbody
-                            className="divide-y divide-gray-200 bg-white"
+                            className="divide-y divide-border bg-card"
                             {...props}
                         />
                     ),
                     tr: ({ node, ...props }) => <tr {...props} />,
                     th: ({ node, ...props }) => (
                         <th
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-foreground"
                             {...props}
                         />
                     ),
                     td: ({ node, ...props }) => (
                         <td
-                            className="whitespace-normal px-3 py-4 text-sm text-gray-900"
+                            className="whitespace-normal px-3 py-4 text-sm text-foreground"
                             {...props}
                         />
                     ),
@@ -992,7 +992,7 @@ function MarkdownContent({
                                             );
                                             onCitationClick?.(annotation);
                                         }}
-                                        className="mx-0.5 inline-flex items-center justify-center rounded-full w-4 h-4 text-[10px] font-medium transition-colors align-super bg-gray-100 text-gray-900 hover:bg-gray-200"
+                                        className="mx-0.5 inline-flex items-center justify-center rounded-full w-4 h-4 text-[10px] font-medium transition-colors align-super bg-muted text-foreground hover:bg-muted"
                                         title={tooltipText}
                                     >
                                         {idx + 1}
@@ -1002,7 +1002,7 @@ function MarkdownContent({
                         }
                         return (
                             <code
-                                className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-serif"
+                                className="bg-muted px-1.5 py-0.5 rounded text-sm font-serif"
                                 {...props}
                             >
                                 {children}
@@ -1011,7 +1011,7 @@ function MarkdownContent({
                     },
                     blockquote: ({ node, ...props }) => (
                         <blockquote
-                            className="border-l-4 border-gray-300 pl-4 italic my-4"
+                            className="border-l-4 border-border pl-4 italic my-4"
                             {...props}
                         />
                     ),
@@ -1027,7 +1027,7 @@ function MarkdownContent({
                         </a>
                     ),
                     hr: ({ node, ...props }) => (
-                        <hr className="my-6 border-gray-200" {...props} />
+                        <hr className="my-6 border-border" {...props} />
                     ),
                 }}
             >
@@ -1037,7 +1037,7 @@ function MarkdownContent({
                 the [N] chips in the body. Clicking still opens the right
                 panel for the full quote + doc preview. */}
             {citationsList.length > 0 && (
-                <ol className="mt-4 pt-3 border-t border-gray-200 space-y-1.5 list-none pl-0 text-[12.5px] text-gray-600 font-sans not-prose">
+                <ol className="mt-4 pt-3 border-t border-border space-y-1.5 list-none pl-0 text-[12.5px] text-muted-foreground font-sans not-prose">
                     {citationsList.map((c, idx) => {
                         const page = formatCitationPage(c);
                         const quote = displayCitationQuote(c);
@@ -1048,20 +1048,20 @@ function MarkdownContent({
                             >
                                 <button
                                     onClick={() => onCitationClick?.(c)}
-                                    className="shrink-0 inline-flex items-center justify-center rounded-full w-4 h-4 text-[10px] font-medium bg-gray-100 text-gray-900 hover:bg-gray-200 mt-0.5"
+                                    className="shrink-0 inline-flex items-center justify-center rounded-full w-4 h-4 text-[10px] font-medium bg-muted text-foreground hover:bg-muted mt-0.5"
                                     aria-label={`Open citation ${idx + 1}`}
                                 >
                                     {idx + 1}
                                 </button>
                                 <button
                                     onClick={() => onCitationClick?.(c)}
-                                    className="text-left flex-1 min-w-0 hover:text-gray-900"
+                                    className="text-left flex-1 min-w-0 hover:text-foreground"
                                 >
-                                    <span className="text-gray-900 font-medium">
+                                    <span className="text-foreground font-medium">
                                         {page}
                                     </span>
                                     {quote && (
-                                        <span className="text-gray-500 italic">
+                                        <span className="text-muted-foreground italic">
                                             {" "}
                                             — &ldquo;{quote.length > 180 ? quote.slice(0, 180).trim() + "…" : quote}&rdquo;
                                         </span>
@@ -1355,12 +1355,12 @@ export function AssistantMessage({
             return (
                 <div
                     key={globalIdx}
-                    className="flex items-center text-sm font-serif text-gray-500 relative"
+                    className="flex items-center text-sm font-serif text-muted-foreground relative"
                 >
                     {showConnector && (
-                        <div className="absolute bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                        <div className="absolute bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
                     )}
-                    <div className="w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
                     <span className="font-medium ml-2">
                         {toolCallLabel(event.name)}
                     </span>
@@ -1371,12 +1371,12 @@ export function AssistantMessage({
             return (
                 <div
                     key={globalIdx}
-                    className="flex items-center text-sm font-serif text-gray-500 relative"
+                    className="flex items-center text-sm font-serif text-muted-foreground relative"
                 >
                     {showConnector && (
-                        <div className="absolute bottom-0 w-[1px] bg-gray-300 top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
+                        <div className="absolute bottom-0 w-[1px] bg-muted top-[13px] left-[2.5px] h-[calc(100%+11px)]" />
                     )}
-                    <div className="w-1.5 h-1.5 rounded-full border border-gray-400 border-t-transparent animate-spin shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full border border-border border-t-transparent animate-spin shrink-0" />
                     <span className="ml-2">Thinking...</span>
                 </div>
             );
@@ -1762,7 +1762,7 @@ export function AssistantMessage({
                 <div className="flex items-center gap-1 pt-2 pb-4 md:pb-8 font-sans justify-start">
                     {!isStreaming && (
                         <button
-                            className="p-1.5 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                            className="p-1.5 rounded text-muted-foreground hover:text-foreground/80 hover:bg-muted"
                             title="Copy"
                             onClick={handleCopy}
                         >
@@ -1776,10 +1776,10 @@ export function AssistantMessage({
                     {!isStreaming && messageId && onFeedback && (
                         <>
                             <button
-                                className={`p-1.5 rounded hover:bg-gray-100 transition-colors ${
+                                className={`p-1.5 rounded hover:bg-muted transition-colors ${
                                     currentFeedback === "up"
                                         ? "text-green-600"
-                                        : "text-gray-500 hover:text-gray-700"
+                                        : "text-muted-foreground hover:text-foreground/80"
                                 }`}
                                 title="Good response"
                                 onClick={() => handleRate("up")}
@@ -1787,10 +1787,10 @@ export function AssistantMessage({
                                 <ThumbsUp className="h-3.5 w-3.5" />
                             </button>
                             <button
-                                className={`p-1.5 rounded hover:bg-gray-100 transition-colors ${
+                                className={`p-1.5 rounded hover:bg-muted transition-colors ${
                                     currentFeedback === "down"
                                         ? "text-red-600"
-                                        : "text-gray-500 hover:text-gray-700"
+                                        : "text-muted-foreground hover:text-foreground/80"
                                 }`}
                                 title="Bad response"
                                 onClick={() => handleRate("down")}
