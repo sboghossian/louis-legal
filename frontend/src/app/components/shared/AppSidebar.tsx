@@ -37,7 +37,6 @@ import {
     Inbox,
     Users,
     LogOut,
-    Rss,
     Share2,
     Star,
     Search,
@@ -52,7 +51,10 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { LouisMark } from "@/components/brand/louis-mark";
 import { SidebarChatItem } from "@/app/components/shared/SidebarChatItem";
-import { listProjects } from "@/app/lib/louisApi";
+import { listProjectsCached, getAuthHeader } from "@/app/lib/louisApi";
+
+const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Vertical command rail rebuild (May 2026)
@@ -140,7 +142,6 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/workflows",         label: "Workflows",      labelKey: "nav.workflows",     icon: Library },
             { href: "/integrations",      label: "Integrations",   labelKey: "nav.integrations",  icon: Plug },
             { href: "/plugins",           label: "Plugins",        labelKey: "nav.plugins",       icon: Blocks },
-            { href: "/feed",              label: "Newsfeed",       labelKey: "nav.newsfeed",      icon: Rss },
         ],
     },
     {
@@ -354,22 +355,53 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     }, [pathname]);
 
     // Persist URL-derived matter id to storage so the pin survives navigation
-    // away from /matters/:id. This effect only writes external state — it
-    // doesn't loop because the dep array is stable when the URL doesn't
-    // change.
+    // away from /matters/:id. The previous version used a 6-char UUID slice
+    // as the label ("Matter f4a8b2") which is unreadable; resolve the real
+    // matter name from the backend instead.
     useEffect(() => {
         if (!urlMatterId) return;
-        if (activeMatter && activeMatter.id === urlMatterId) return;
-        const next: ActiveMatter = {
-            id: urlMatterId,
-            name: activeMatter?.id === urlMatterId
-                ? activeMatter.name
-                : `Matter ${urlMatterId.slice(0, 6)}`,
+        if (activeMatter && activeMatter.id === urlMatterId && activeMatter.name && !activeMatter.name.startsWith("Matter ")) {
+            return;
+        }
+        let cancelled = false;
+        (async () => {
+            // Optimistic: show the UUID slice while we resolve so the chip
+            // doesn't flicker between empty → real. Once the backend
+            // responds we overwrite with the proper client + matter number.
+            const placeholder: ActiveMatter = {
+                id: urlMatterId,
+                name: `Matter ${urlMatterId.slice(0, 6)}`,
+            };
+            setActiveMatter(placeholder);
+            try {
+                const auth = await getAuthHeader();
+                const r = await fetch(`${API_BASE}/api/matters/${urlMatterId}`, {
+                    headers: auth,
+                    cache: "no-store",
+                });
+                if (!r.ok || cancelled) return;
+                const json = (await r.json()) as {
+                    matter?: { id: string; clientName?: string; matterNumber?: string };
+                };
+                const m = json.matter;
+                if (!m) return;
+                const next: ActiveMatter = {
+                    id: m.id,
+                    name: m.clientName
+                        ? m.matterNumber
+                            ? `${m.clientName} · ${m.matterNumber}`
+                            : m.clientName
+                        : placeholder.name,
+                };
+                try { localStorage.setItem(ACTIVE_MATTER_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+                if (!cancelled) setActiveMatter(next);
+            } catch { /* ignore — keep the placeholder */ }
+        })();
+        return () => {
+            cancelled = true;
         };
-        try { localStorage.setItem(ACTIVE_MATTER_KEY, JSON.stringify(next)); } catch { /* ignore */ }
-        setActiveMatter(next);
-    // We intentionally exclude `activeMatter` from deps — it's only read
-    // for the merge and would otherwise re-fire the effect unnecessarily.
+    // activeMatter is intentionally read inside (for the short-circuit) but
+    // excluded from deps to avoid re-fetching on every name change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [urlMatterId]);
 
@@ -398,17 +430,20 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
         });
     }, []);
 
-    // Projects → resolve chat history's project name labels.
+    // Projects → resolve chat history's project name labels. Keyed on
+    // user.id so an identity-only re-render of the user object doesn't
+    // refire the fetch; the cache in louisApi.ts absorbs duplicate calls
+    // across mounts within the TTL window.
     useEffect(() => {
-        if (!user) return;
-        listProjects()
+        if (!user?.id) return;
+        listProjectsCached()
             .then((projects) => {
                 const map: Record<string, string> = {};
                 for (const p of projects) map[p.id] = p.name;
                 setProjectNames(map);
             })
             .catch(() => {});
-    }, [user]);
+    }, [user?.id]);
 
     // Dropdown auto-close on outside click.
     useEffect(() => {
@@ -475,11 +510,6 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
         return profile.displayName || user?.email?.split("@")[0] || "";
     };
 
-    const getUserTier = () => {
-        if (!profile) return "";
-        return profile.tier || "Free";
-    };
-
     // Matter sub-links (rendered inside the expanded panel matter section).
     const matterSubLinks: NavItem[] = useMemo(() => {
         if (!activeMatter) return [];
@@ -521,17 +551,13 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 }`}
                 style={{ fontFamily: "var(--font-eb-garamond), ui-serif, serif" }}
             >
-                {/* ─── Icon rail (collapsed-only) ──────────────────────────
-                    Hide the rail when the expanded panel is open — the panel
-                    already shows the same items with labels, so showing the
-                    rail at the same time creates a "two sidebars" effect.
-                    The rail acts as a compact alternative; expanded panel is
-                    the full one. */}
+                {/* ─── Icon rail ────────────────────────────────────────
+                    Always visible (audit 3B). Used to disappear behind the
+                    expanded panel, leaving users with no quick way to jump
+                    between top-level surfaces when the panel was open. */}
                 <nav
                     aria-label="Primary"
-                    className={`flex-col items-center gap-1.5 w-16 shrink-0 border-r border-[#E7E2D6] bg-[#fbf8f2] py-3 overflow-visible ${
-                        showPanel ? "hidden" : "flex"
-                    }`}
+                    className="flex flex-col items-center gap-1.5 w-16 shrink-0 border-r border-[#E7E2D6] bg-[#fbf8f2] py-3 overflow-visible"
                 >
                     {/* Brand */}
                     <RailTooltip label="Louis · Home">
@@ -668,7 +694,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                             >
                                 <div className="px-3 py-2 border-b border-border mb-1">
                                     <div className="text-sm font-medium text-foreground truncate">{getDisplayName()}</div>
-                                    <div className="text-[11px] text-muted-foreground">{getUserTier()}</div>
+                                    <div className="text-[11px] text-muted-foreground truncate">{user.email}</div>
                                 </div>
                                 <button
                                     onClick={() => { router.push("/account"); setIsDropdownOpen(false); }}
@@ -991,7 +1017,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                     </div>
                                     <div className="text-left flex-1 min-w-0">
                                         <div className="text-sm font-medium text-foreground truncate leading-tight">{getDisplayName()}</div>
-                                        <div className="text-[11px] text-muted-foreground leading-tight">{getUserTier()}</div>
+                                        <div className="text-[11px] text-muted-foreground truncate leading-tight">{user.email}</div>
                                     </div>
                                     <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                                 </button>

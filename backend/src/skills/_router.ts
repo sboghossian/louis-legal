@@ -207,7 +207,7 @@ export function loadPlaybook(slug: PracticeArea): string {
  *     the prompt composition still works.
  *  3. Load `playbooks/<slug>.CLAUDE.md` and prepend it to the composed system
  *     prompt extras — this gives the model a high-level practice-area framing.
- *  4. Filter the ~982 skills to the practice area before scoring and trim to
+ *  4. Filter the ~983 skills to the practice area before scoring and trim to
  *     the top 8–13 entries.
  *
  * If `autoRouteModel` is false we fall back to the legacy keyword + Gemini
@@ -422,9 +422,10 @@ function routeFromIntent(
     skillIds.push("output.executive-summary-first");
   }
 
-  if (intent === "drafting") {
-    skillIds.push("output.markdown-legal-doc");
-  }
+  // Decision #29: always plain prose in chat replies — no auto-markdown
+  // for drafting turns. The user can still ask for a markdown export
+  // explicitly, in which case the export pipeline pulls in
+  // output.markdown-legal-doc through its own selector.
 
   // Bilingual: if user wrote in Arabic, add bilingual skills
   const lang = detectLanguage(message);

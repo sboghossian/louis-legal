@@ -4,37 +4,30 @@ import { requireAuth } from "../middleware/auth";
 
 export const onboardingRouter = Router();
 
-// Prefer the verified JWT userId (set by requireAuth). The legacy
-// `x-user-id` header is honored only when no token was attached, so
-// authenticated calls always key on the real Supabase user id and not
-// the shared "demo" placeholder.
-function userIdFrom(req: Request, res: Response): string {
-  return (
-    (res.locals?.userId as string) ||
-    (req.headers["x-user-id"] as string) ||
-    "demo"
-  );
-}
+onboardingRouter.use(requireAuth);
 
-onboardingRouter.get("/me", requireAuth, (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+onboardingRouter.get("/me", (_req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
   const profile = getProfile(userId);
   res.json({ profile: profile || null, complete: !!profile?.completedAt });
 });
 
-onboardingRouter.patch("/me", requireAuth, (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+onboardingRouter.patch("/me", (req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
   const profile = upsertProfile(userId, req.body ?? {});
   res.json({ profile, complete: !!profile.completedAt });
 });
 
-onboardingRouter.post("/me/complete", requireAuth, (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+onboardingRouter.post("/me/complete", (req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
   const profile = upsertProfile(userId, { ...(req.body ?? {}), completedAt: new Date().toISOString() });
   res.json({ profile, complete: true });
 });
 
-// Admin endpoint for analyzing onboarding funnels
+// Admin endpoint for analyzing onboarding funnels — same auth as every
+// other route in this router; we don't have an admin role yet, so anyone
+// authenticated can fetch the aggregate. Tighten if/when a roles concept
+// lands.
 onboardingRouter.get("/admin/profiles", (_req: Request, res: Response) => {
   const profiles = listProfiles();
   const stats = {

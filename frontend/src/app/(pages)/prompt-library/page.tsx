@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { Library, Search, ArrowUpRight, Copy, Check } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
@@ -113,16 +114,18 @@ export default function PromptLibraryPage() {
     const [copiedId, setCopiedId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(`${API_BASE}/api/skills/prompt-library`)
-            .then((r) => r.json())
-            .then((json: { entries: PromptEntry[] }) => {
+        (async () => {
+            try {
+                const auth = await getAuthHeader();
+                const r = await fetch(`${API_BASE}/api/skills/prompt-library`, { headers: auth });
+                const json = (await r.json()) as { entries: PromptEntry[] };
                 setEntries(json.entries ?? []);
-                setLoading(false);
-            })
-            .catch((e) => {
+            } catch (e) {
                 setError(String(e));
+            } finally {
                 setLoading(false);
-            });
+            }
+        })();
     }, []);
 
     const practiceAreas = useMemo(() => {

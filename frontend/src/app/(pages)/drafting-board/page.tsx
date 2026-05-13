@@ -70,6 +70,7 @@ import { useToast } from "@/contexts/ToastContext";
 import {
     loadBoard,
     saveBoard,
+    hydrateBoardFromServer,
     clearBoard,
     pickMostRecentTemplateKey,
 } from "@/app/components/drafting/storage";
@@ -130,45 +131,71 @@ function DraftingBoardInner() {
     //      user gets to pick a template explicitly. No more silent
     //      auto-seed of the M&A default on a cold first visit.
     useEffect(() => {
-        if (urlTemplate) {
-            const stored = loadBoard(urlTemplate);
-            if (stored) {
-                setBoard(stored);
-                pushTimeline(
-                    `Restored "${stored.name}" from the last session.`,
-                    "info",
-                );
+        let cancelled = false;
+        // localStorage gives us an instant paint; the server hydrate
+        // overwrites it if there's a fresher payload (cross-device
+        // case). Both feed into the same setBoard so the canvas only
+        // re-renders if the server actually returned something new.
+        (async () => {
+            if (urlTemplate) {
+                const stored = loadBoard(urlTemplate);
+                if (stored && !cancelled) {
+                    setBoard(stored);
+                    pushTimeline(
+                        `Restored "${stored.name}" from the last session.`,
+                        "info",
+                    );
+                }
+                const fromServer = await hydrateBoardFromServer(urlTemplate);
+                if (!cancelled && fromServer) {
+                    setBoard(fromServer);
+                    return;
+                }
+                if (!stored && !cancelled) {
+                    const seeded = seedBoardByKey(urlTemplate);
+                    if (seeded) {
+                        setBoard(seeded);
+                        pushTimeline(
+                            `Loaded the "${seeded.name}" template.`,
+                            "info",
+                        );
+                    }
+                }
                 return;
             }
-            const seeded = seedBoardByKey(urlTemplate);
-            if (seeded) {
-                setBoard(seeded);
-                pushTimeline(`Loaded the "${seeded.name}" template.`, "info");
-            }
-            // Unknown urlTemplate → board stays null → empty state.
-            return;
-        }
 
-        const recentKey = pickMostRecentTemplateKey();
-        if (recentKey) {
-            const stored = loadBoard(recentKey);
-            if (stored) {
-                setBoard(stored);
-                pushTimeline(
-                    `Restored "${stored.name}" from the last session.`,
-                    "info",
-                );
-                return;
+            const recentKey = pickMostRecentTemplateKey();
+            if (recentKey) {
+                const stored = loadBoard(recentKey);
+                if (stored && !cancelled) {
+                    setBoard(stored);
+                    pushTimeline(
+                        `Restored "${stored.name}" from the last session.`,
+                        "info",
+                    );
+                }
+                const fromServer = await hydrateBoardFromServer(recentKey);
+                if (!cancelled && fromServer) {
+                    setBoard(fromServer);
+                }
             }
-        }
-        // First-ever visit: no saved boards anywhere → show EmptyState.
+            // First-ever visit: no saved boards anywhere → show EmptyState.
+        })();
+        return () => {
+            cancelled = true;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [urlTemplate]);
 
     // ----- autosave on every board mutation --------------------------------
+    // Debounce by 500ms so a burst of edits coalesces into one
+    // localStorage write + one server POST. saveBoard() already
+    // dedupes server-side requests internally, but the localStorage
+    // serialise is non-trivial for large boards.
     useEffect(() => {
         if (!board) return;
-        saveBoard(board);
+        const t = setTimeout(() => saveBoard(board), 500);
+        return () => clearTimeout(t);
     }, [board]);
 
     function pushTimeline(text: string, kind: TimelineEntry["kind"] = "info") {

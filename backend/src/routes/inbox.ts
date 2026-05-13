@@ -3,16 +3,15 @@
  * and team activity. Aggregates from existing stores.
  */
 import { Router, Request, Response } from "express";
+import { requireAuth } from "../middleware/auth";
 import { listMatters } from "../matters/_store";
 import { listRoutines, listRuns } from "../routines/_store";
 
 export const inboxRouter = Router();
 
-function userIdFrom(req: Request, res: Response): string {
-  return (req.headers["x-user-id"] as string) || (res.locals?.userId as string) || "demo";
-}
+inboxRouter.use(requireAuth);
 
-export type InboxEntryKind = "matter-event" | "routine-output" | "deadline" | "system" | "team-invite" | "billing";
+export type InboxEntryKind = "matter-event" | "routine-output" | "deadline" | "system" | "team-invite";
 
 export interface InboxEntry {
   id: string;
@@ -34,7 +33,7 @@ function isRead(userId: string, entryId: string): boolean {
 }
 
 inboxRouter.get("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const entries: InboxEntry[] = [];
 
   // Recent matter events
@@ -97,14 +96,14 @@ inboxRouter.get("/", (req: Request, res: Response) => {
 });
 
 inboxRouter.post("/:id/read", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   if (!READ_STATE.has(userId)) READ_STATE.set(userId, new Set());
   READ_STATE.get(userId)!.add(req.params.id);
   res.json({ ok: true });
 });
 
 inboxRouter.post("/read-all", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   if (!READ_STATE.has(userId)) READ_STATE.set(userId, new Set());
   const set = READ_STATE.get(userId)!;
   // Just mark all currently-known IDs as read by re-running the GET logic

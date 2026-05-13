@@ -21,13 +21,11 @@
  */
 
 import { Router, Request, Response } from "express";
-import crypto from "crypto";
+import { requireAuth } from "../middleware/auth";
 
 export const skillsSyncRouter = Router();
 
-function userIdFrom(req: Request, res: Response): string {
-  return (req.headers["x-user-id"] as string) || (res.locals?.userId as string) || "demo";
-}
+skillsSyncRouter.use(requireAuth);
 
 interface SyncConfig {
   userId: string;
@@ -44,12 +42,12 @@ interface SyncConfig {
 const CONFIGS = new Map<string, SyncConfig>();
 
 skillsSyncRouter.get("/config", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   res.json({ config: CONFIGS.get(userId) || null });
 });
 
 skillsSyncRouter.post("/config", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const { repo, branch, path, token } = req.body ?? {};
   if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
     res.status(400).json({ error: "repo must be in format owner/name" });
@@ -71,13 +69,13 @@ skillsSyncRouter.post("/config", (req: Request, res: Response) => {
 });
 
 skillsSyncRouter.delete("/config", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   CONFIGS.delete(userId);
   res.status(204).end();
 });
 
 skillsSyncRouter.post("/pull", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const config = CONFIGS.get(userId);
   if (!config) { res.status(400).json({ error: "No sync config — POST /config first" }); return; }
 
@@ -99,7 +97,7 @@ skillsSyncRouter.post("/pull", (req: Request, res: Response) => {
 });
 
 skillsSyncRouter.post("/push", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const config = CONFIGS.get(userId);
   if (!config) { res.status(400).json({ error: "No sync config" }); return; }
 

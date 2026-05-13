@@ -39,9 +39,7 @@ import {
     Sparkles,
     Plug,
     Key,
-    Rss,
     Settings as SettingsIcon,
-    CreditCard,
     Users,
     Gift,
     Info,
@@ -245,23 +243,6 @@ Settings sync to your profile if signed in; otherwise persisted per browser. A b
         related: ["assistant", "skills"],
     },
     {
-        slug: "newsfeed",
-        title: "Newsfeed — Reddit on legal industry",
-        category: "work",
-        icon: Rss,
-        summary:
-            "Live Reddit threads on legal industry, customizable topics, 5-min cache.",
-        body: `
-[/feed](/feed). Default topics: Legal, Big Law, Legal Advice, Legal Tech, Legal AI, Anthropic Claude × Legal, Open source legal, Microsoft × Legal, plus named products (Harvey, Clio, Spellbook, CoCounsel, Legora, Monitz).
-
-- Filter chips switch topics; click the × on a chip to remove that topic.
-- "Add topic" — name it, list subreddits and/or keywords, save.
-- Refresh button bypasses the local memo; server caches each topic for 5 minutes.
-- Signed-in users sync topics to their profile; signed-out users see defaults.
-`,
-        open: "/feed",
-    },
-    {
         slug: "clauses",
         title: "Clause Library",
         category: "work",
@@ -443,15 +424,6 @@ Search across all tabs at the top. Toggle on/off with the switch on each card.
 Slots labeled "Configured by server admin" are read-only — the operator set that provider in \`backend/.env\` and locked it.
 `,
         open: "/settings/api-keys",
-    },
-    {
-        slug: "billing",
-        title: "Billing",
-        category: "account",
-        icon: CreditCard,
-        summary: "Plan, invoices, payment method. Stripe-backed.",
-        body: `[/billing](/billing). Plan tier (Free / Pro / Firm), monthly invoices, credit pack purchases. Connect Stripe in [/integrations](/integrations) if not configured server-side.`,
-        open: "/billing",
     },
     {
         slug: "team",

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -91,9 +92,10 @@ export default function MattersPage() {
 
     async function refresh() {
         try {
+            const auth = await getAuthHeader();
             const [listR, statsR] = await Promise.all([
-                fetch(`${API_BASE}/api/matters`, { headers: { "x-user-id": "demo" } }),
-                fetch(`${API_BASE}/api/matters/stats`, { headers: { "x-user-id": "demo" } }),
+                fetch(`${API_BASE}/api/matters`, { headers: auth }),
+                fetch(`${API_BASE}/api/matters/stats`, { headers: auth }),
             ]);
             const list = await listR.json();
             const s = await statsR.json();
@@ -126,7 +128,8 @@ export default function MattersPage() {
     async function openMatter(m: Matter) {
         setSelected(m);
         try {
-            const r = await fetch(`${API_BASE}/api/matters/${m.id}/events`, { headers: { "x-user-id": "demo" } });
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/matters/${m.id}/events`, { headers: auth });
             const j = await r.json();
             setSelectedEvents(j.events ?? []);
         } catch (e) {
@@ -302,9 +305,10 @@ function NewMatterModal({ onClose, onCreated }: { onClose: () => void; onCreated
     async function runConflictCheck() {
         const partiesToCheck = parties.filter(p => p.name.trim());
         if (partiesToCheck.length === 0) return;
+        const auth = await getAuthHeader();
         const r = await fetch(`${API_BASE}/api/matters/conflict-check`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+            headers: { "Content-Type": "application/json", ...auth },
             body: JSON.stringify({ parties: partiesToCheck.map(p => ({ name: p.name, role: p.role })) }),
         });
         const j = await r.json();
@@ -314,9 +318,10 @@ function NewMatterModal({ onClose, onCreated }: { onClose: () => void; onCreated
     async function submit() {
         setSubmitting(true);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/matters`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({
                     matterNumber,
                     clientName,
@@ -448,9 +453,10 @@ function ConflictCheckModal({ onClose }: { onClose: () => void }) {
     async function run() {
         setLoading(true);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/matters/conflict-check`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ parties: parties.filter(p => p.name.trim()) }),
             });
             const j = await r.json();

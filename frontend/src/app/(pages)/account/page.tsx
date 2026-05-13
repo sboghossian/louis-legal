@@ -177,20 +177,6 @@ export default function AccountPage() {
                 </div>
             </div>
 
-            {/* Plan */}
-            <div className="py-6">
-                <div className="flex items-center gap-2 mb-4">
-                    <h2 className="text-2xl font-medium font-serif">
-                        Usage Plan
-                    </h2>
-                </div>
-                <div>
-                    <p className="text-base font-medium text-muted-foreground capitalize">
-                        {profile?.tier || "Free"}
-                    </p>
-                </div>
-            </div>
-
             {/* Actions */}
             <div className="py-6">
                 <h2 className="text-2xl font-medium font-serif mb-4">

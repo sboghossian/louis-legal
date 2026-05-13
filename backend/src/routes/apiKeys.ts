@@ -1,13 +1,22 @@
 import { Router, Request, Response } from "express";
-import { addKey, deleteKey, listKeys, setDefault, providerHasKey, Provider } from "../apiKeys/_store";
+import { requireAuth } from "../middleware/auth";
+import {
+  aliasProvider,
+  type Provider,
+  listKeys,
+  addKey,
+  setDefault,
+  deleteKey,
+  providerHasKey,
+} from "../lib/userApiKeysExtended";
 
 export const apiKeysRouter = Router();
 
-function userIdFrom(req: Request, res: Response): string {
-  return (req.headers["x-user-id"] as string) || (res.locals?.userId as string) || "demo";
-}
+apiKeysRouter.use(requireAuth);
 
-const PROVIDERS: { code: Provider; name: string; description: string; signupUrl: string }[] = [
+// Catalog uses UI-friendly aliases (`anthropic` / `google`) — the route
+// translates them to canonical DB ids (`claude` / `gemini`) before storing.
+const PROVIDERS: { code: string; name: string; description: string; signupUrl: string }[] = [
   { code: "anthropic", name: "Anthropic (Claude)", description: "Claude Opus / Sonnet / Haiku — best for reasoning, drafting", signupUrl: "https://console.anthropic.com/" },
   { code: "openai", name: "OpenAI", description: "GPT-4o / o1 / o3 — broad capability, multimodal", signupUrl: "https://platform.openai.com/" },
   { code: "google", name: "Google (Gemini)", description: "Gemini 2.5 Flash / Pro — fast intent classification + cheap reasoning", signupUrl: "https://aistudio.google.com/" },
@@ -24,46 +33,82 @@ const PROVIDERS: { code: Provider; name: string; description: string; signupUrl:
   { code: "huggingface", name: "Hugging Face", description: "Open-source model hub + Inference API", signupUrl: "https://huggingface.co/" },
 ];
 
-apiKeysRouter.get("/providers", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
-  const enriched = PROVIDERS.map(p => ({
-    ...p,
-    hasKey: providerHasKey(userId, p.code),
-  }));
+// Inverse alias map — translate canonical DB ids back to the UI codes the
+// frontend already speaks. Keeping this here means the route is the single
+// translation seam; the store doesn't have to know about UI naming.
+function uiAlias(canonical: Provider): string {
+  if (canonical === "claude") return "anthropic";
+  if (canonical === "gemini") return "google";
+  return canonical;
+}
+
+apiKeysRouter.get("/providers", async (_req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
+  const enriched = await Promise.all(
+    PROVIDERS.map(async (p) => {
+      const canonical = aliasProvider(p.code);
+      const hasKey = canonical ? await providerHasKey(userId, canonical) : false;
+      return { ...p, hasKey };
+    }),
+  );
   res.json({ providers: enriched });
 });
 
-apiKeysRouter.get("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
-  const { provider } = req.query as { provider?: Provider };
-  res.json({ keys: listKeys(userId, provider) });
+apiKeysRouter.get("/", async (req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
+  const { provider } = req.query as { provider?: string };
+  let filter: Provider | undefined;
+  if (provider) {
+    const canonical = aliasProvider(provider);
+    if (!canonical) {
+      res.status(400).json({ error: `unsupported provider: ${provider}` });
+      return;
+    }
+    filter = canonical;
+  }
+  const keys = await listKeys(userId, filter);
+  res.json({
+    keys: keys.map((k) => ({ ...k, provider: uiAlias(k.provider) })),
+  });
 });
 
-apiKeysRouter.post("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+apiKeysRouter.post("/", async (req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
   const { provider, key, label, isDefault } = req.body ?? {};
   if (!provider || !key) {
     res.status(400).json({ error: "provider and key required" });
     return;
   }
-  if (!PROVIDERS.find(p => p.code === provider)) {
+  const canonical = aliasProvider(provider);
+  if (!canonical) {
     res.status(400).json({ error: `unsupported provider: ${provider}` });
     return;
   }
-  const created = addKey(userId, provider, key, label, isDefault);
-  res.status(201).json(created);
+  try {
+    const created = await addKey(userId, canonical, key, label, isDefault);
+    res.status(201).json({ ...created, provider: uiAlias(created.provider) });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "failed to add key";
+    res.status(500).json({ error: msg });
+  }
 });
 
-apiKeysRouter.post("/:id/default", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
-  const updated = setDefault(req.params.id, userId);
-  if (!updated) { res.status(404).json({ error: "Not found" }); return; }
-  res.json(updated);
+apiKeysRouter.post("/:id/default", async (req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
+  const updated = await setDefault(req.params.id, userId);
+  if (!updated) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  res.json({ ...updated, provider: uiAlias(updated.provider) });
 });
 
-apiKeysRouter.delete("/:id", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
-  const ok = deleteKey(req.params.id, userId);
-  if (!ok) { res.status(404).json({ error: "Not found" }); return; }
+apiKeysRouter.delete("/:id", async (req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
+  const ok = await deleteKey(req.params.id, userId);
+  if (!ok) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
   res.status(204).end();
 });

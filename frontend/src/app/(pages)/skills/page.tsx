@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 type RegistryEntry = {
     id: string;
@@ -85,7 +86,8 @@ export default function SkillsPage() {
 
     async function refreshSync() {
         try {
-            const r = await fetch(`${API_BASE}/api/skills-sync/config`, { headers: { "x-user-id": "demo" } });
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/skills-sync/config`, { headers: auth });
             if (r.ok) {
                 const j = await r.json();
                 setSyncConfig(j.config);
@@ -98,7 +100,8 @@ export default function SkillsPage() {
         if (!syncConfig) return;
         setSyncWorking("pull");
         try {
-            await fetch(`${API_BASE}/api/skills-sync/pull`, { method: "POST", headers: { "x-user-id": "demo" } });
+            const auth = await getAuthHeader();
+            await fetch(`${API_BASE}/api/skills-sync/pull`, { method: "POST", headers: auth });
             // Backend simulates ~1.5s; poll once
             await new Promise(r => setTimeout(r, 2000));
             await refreshSync();
@@ -112,7 +115,8 @@ export default function SkillsPage() {
         if (!syncConfig) return;
         setSyncWorking("push");
         try {
-            const r = await fetch(`${API_BASE}/api/skills-sync/push`, { method: "POST", headers: { "x-user-id": "demo" } });
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/skills-sync/push`, { method: "POST", headers: auth });
             const j = await r.json();
             if (j.prUrl) {
                 const ok = await confirm({
@@ -145,7 +149,8 @@ export default function SkillsPage() {
 
     async function refreshDecisions() {
         try {
-            const r = await fetch(`${API_BASE}/api/skills/route-debug`);
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/skills/route-debug`, { headers: auth });
             if (r.ok) {
                 const json = await r.json();
                 setDecisions(json.decisions ?? []);
@@ -165,9 +170,10 @@ export default function SkillsPage() {
         setTesting(true);
         setTestResult(null);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/skills/route-test`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ message: testMessage }),
             });
             if (r.ok) {
@@ -195,7 +201,8 @@ export default function SkillsPage() {
     useEffect(() => {
         (async () => {
             try {
-                const r = await fetch(`${API_BASE}/api/skills/registry`);
+                const auth = await getAuthHeader();
+                const r = await fetch(`${API_BASE}/api/skills/registry`, { headers: auth });
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
                 const json = await r.json();
                 setEntries(json.entries ?? []);
@@ -229,7 +236,8 @@ export default function SkillsPage() {
     async function openSkill(id: string) {
         setSelected(null);
         try {
-            const r = await fetch(`${API_BASE}/api/skills/${encodeURIComponent(id)}`);
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/skills/${encodeURIComponent(id)}`, { headers: auth });
             if (r.ok) setSelected(await r.json());
         } catch (e) {
             console.error(e);
@@ -404,7 +412,8 @@ export default function SkillsPage() {
                     onClose={() => setShowSyncSetup(false)}
                     onSaved={() => { setShowSyncSetup(false); refreshSync(); }}
                     onDisconnect={async () => {
-                        await fetch(`${API_BASE}/api/skills-sync/config`, { method: "DELETE", headers: { "x-user-id": "demo" } });
+                        const auth = await getAuthHeader();
+                        await fetch(`${API_BASE}/api/skills-sync/config`, { method: "DELETE", headers: auth });
                         setShowSyncSetup(false);
                         refreshSync();
                     }}
@@ -432,9 +441,10 @@ function SyncSetupModal({ initial, onClose, onSaved, onDisconnect }: {
         setSubmitting(true);
         setError(null);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/skills-sync/config`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ repo, branch, path, token: token || undefined }),
             });
             if (!r.ok) {

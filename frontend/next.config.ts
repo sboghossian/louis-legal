@@ -25,6 +25,15 @@ const nextConfig: NextConfig = {
             },
         ];
     },
+    // Billing was removed (decision #7) — Louis is 100% free, BYO API key.
+    // Keep saved links working by routing them at the edge instead of
+    // hosting placeholder pages that flash before redirecting.
+    async redirects() {
+        return [
+            { source: "/billing", destination: "/settings/api-keys", permanent: true },
+            { source: "/upgrade", destination: "/settings/api-keys", permanent: true },
+        ];
+    },
     skipTrailingSlashRedirect: true,
 };
 

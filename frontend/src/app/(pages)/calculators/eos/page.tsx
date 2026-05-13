@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -50,9 +51,10 @@ export default function EosCalculatorPage() {
         setResult(null);
         try {
             const totalDays = (parseFloat(years) || 0) * 365 + (parseFloat(months) || 0) * 30 + (parseFloat(days) || 0);
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/calculators/eos`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({
                     jurisdiction,
                     basicSalaryMonthly: parseFloat(salary),

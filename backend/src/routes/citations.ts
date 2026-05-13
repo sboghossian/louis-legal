@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
+import { requireAuth } from "../middleware/auth";
 import { formatCitation, formatAll, detectStyle, CitationStyle } from "../citations/_engine";
 
 export const citationsRouter = Router();
+
+citationsRouter.use(requireAuth);
 
 const ALL_STYLES: CitationStyle[] = ["bluebook", "oscola", "difc", "adgm", "ksa-gazette", "uae-federal", "lb-gazette", "fr-dalloz", "eu-ecli"];
 

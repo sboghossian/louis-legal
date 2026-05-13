@@ -21,17 +21,15 @@ import { citationsRouter } from "./routes/citations";
 import { riskRouter } from "./routes/risk";
 import { legalFlowsRouter } from "./routes/legalFlows";
 import { routinesRouter } from "./routes/routines";
-import { referralRouter } from "./routes/referral";
+import { draftingBoardsRouter } from "./routes/draftingBoards";
 import { onboardingRouter } from "./routes/onboarding";
 import { apiKeysRouter } from "./routes/apiKeys";
 import { integrationsRouter } from "./routes/integrations";
-import { billingRouter } from "./routes/billing";
 import { teamRouter } from "./routes/team";
 import { skillsSyncRouter } from "./routes/skillsSync";
 import { mcpRouter } from "./routes/mcp";
 import { inboxRouter } from "./routes/inbox";
 import { feedbackRouter } from "./routes/feedback";
-import { feedRouter } from "./routes/feed";
 import { authRouter } from "./routes/auth";
 import { publicApiRouter } from "./routes/public-api";
 import { eventsRouter } from "./routes/events";
@@ -160,17 +158,15 @@ app.use("/api/citations", citationsRouter);
 app.use("/api/risk", riskRouter);
 app.use("/api/legal-flows", legalFlowsRouter);
 app.use("/api/routines", routinesRouter);
-app.use("/api/referral", referralRouter);
+app.use("/api/drafting-boards", draftingBoardsRouter);
 app.use("/api/onboarding", onboardingRouter);
 app.use("/api/api-keys", apiKeysRouter);
 app.use("/api/integrations", integrationsRouter);
-app.use("/api/billing", billingRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/skills-sync", skillsSyncRouter);
 app.use("/api/mcp", mcpRouter);
 app.use("/api/inbox", inboxRouter);
 app.use("/api/feedback", feedbackRouter);
-app.use("/api/feed", feedRouter);
 
 // Auth helpers — service-role signup that bypasses the email-confirm
 // gate + Supabase's built-in mailer rate limit. Capped tightly because

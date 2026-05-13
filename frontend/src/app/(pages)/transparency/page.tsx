@@ -21,6 +21,51 @@
 import Link from "next/link";
 import { ShieldCheck, AlertTriangle, Eye, Cpu, FileSearch, Users } from "lucide-react";
 
+// EU AI Act risk classification snapshot. Self-host operators reconfigure
+// this constant in the fork before publishing — the structured widget
+// below renders directly from it, no narrative editing required.
+const RISK_CLASSIFICATION = {
+    tier: "Limited risk" as
+        | "Unacceptable"
+        | "High risk"
+        | "Limited risk"
+        | "Minimal risk",
+    article: "Title IV / Art. 50 (transparency obligations)",
+    role: "Downstream deployer of general-purpose AI models",
+    annexIII_use_case: false,
+    notes: [
+        "We orchestrate third-party foundation models; we are NOT a GPAI provider.",
+        "Generative outputs are watermarked as AI-assisted at every export surface.",
+        "Self-host operators wiring Louis into high-risk Annex III use cases (employment scoring, biometric ID, judicial decision-support) inherit Title III obligations.",
+    ],
+};
+
+const TIER_STYLES: Record<
+    typeof RISK_CLASSIFICATION.tier,
+    { bg: string; ring: string; label: string }
+> = {
+    Unacceptable: {
+        bg: "bg-red-50",
+        ring: "ring-red-200",
+        label: "Prohibited under Art. 5",
+    },
+    "High risk": {
+        bg: "bg-amber-50",
+        ring: "ring-amber-200",
+        label: "Title III obligations apply",
+    },
+    "Limited risk": {
+        bg: "bg-emerald-50",
+        ring: "ring-emerald-200",
+        label: "Title IV transparency only",
+    },
+    "Minimal risk": {
+        bg: "bg-card",
+        ring: "ring-[#e7e2d6]",
+        label: "No specific obligations",
+    },
+};
+
 export const metadata = {
     title: "Transparency report — Louis",
     description:
@@ -66,6 +111,7 @@ export default function TransparencyPage() {
             </Section>
 
             <Section icon={AlertTriangle} title="2. Risk classification">
+                <RiskWidget />
                 <p>
                     Under the AI Act&apos;s tiered framework, Louis as deployed
                     by us is <strong>limited-risk</strong>: a generative AI
@@ -199,6 +245,58 @@ export default function TransparencyPage() {
                 </p>
             </Section>
         </article>
+    );
+}
+
+function RiskWidget() {
+    const style = TIER_STYLES[RISK_CLASSIFICATION.tier];
+    return (
+        <div
+            className={`not-prose rounded-xl ring-1 ${style.ring} ${style.bg} p-5 mb-5`}
+        >
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/60">
+                    Risk tier
+                </span>
+                <span className="text-xl font-medium font-serif">
+                    {RISK_CLASSIFICATION.tier}
+                </span>
+                <span className="text-xs text-foreground/60">
+                    {style.label}
+                </span>
+            </div>
+            <dl className="text-sm grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6">
+                <div>
+                    <dt className="text-[11px] uppercase tracking-wide text-foreground/50">
+                        Reference
+                    </dt>
+                    <dd className="font-mono text-[12px]">
+                        {RISK_CLASSIFICATION.article}
+                    </dd>
+                </div>
+                <div>
+                    <dt className="text-[11px] uppercase tracking-wide text-foreground/50">
+                        Role
+                    </dt>
+                    <dd>{RISK_CLASSIFICATION.role}</dd>
+                </div>
+                <div>
+                    <dt className="text-[11px] uppercase tracking-wide text-foreground/50">
+                        Annex III use case
+                    </dt>
+                    <dd>
+                        {RISK_CLASSIFICATION.annexIII_use_case
+                            ? "Yes — high-risk obligations inherited"
+                            : "No"}
+                    </dd>
+                </div>
+            </dl>
+            <ul className="mt-3 space-y-1 text-[13px] text-foreground/80 list-disc pl-5">
+                {RISK_CLASSIFICATION.notes.map((n) => (
+                    <li key={n}>{n}</li>
+                ))}
+            </ul>
+        </div>
     );
 }
 

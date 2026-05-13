@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { readFileSync, existsSync, writeFileSync, unlinkSync } from "fs";
 import { join } from "path";
+import { requireAuth } from "../middleware/auth";
 import { loadAllSkills, getSkill, listSkills, composeSystemPrompt } from "../skills/_loader";
 import { getRecentDecisions, decisionStats } from "../skills/_observability";
 import { route as routeSkillsSync, routeAsync as routeSkillsAsync } from "../skills/_router";
@@ -37,6 +38,8 @@ function buildSkillMarkdown(input: {
 }
 
 export const skillsRouter = Router();
+
+skillsRouter.use(requireAuth);
 
 /**
  * GET /api/skills

@@ -49,9 +49,14 @@ export default function LouisLayout({
         return true;
     });
 
+    // Persist the *desktop* sidebar preference. The dep list used to watch
+    // isSidebarOpenDesktop while the body wrote isSidebarOpen — that worked
+    // by accident only because handleSidebarToggle keeps them in lockstep
+    // on desktop, and broke under resize transitions that flipped one
+    // without the other. Reading and watching the same state fixes it.
     useEffect(() => {
         if (typeof window !== "undefined" && window.innerWidth >= 768) {
-            localStorage.setItem("sidebarOpen", isSidebarOpen.toString());
+            localStorage.setItem("sidebarOpen", isSidebarOpenDesktop.toString());
         }
     }, [isSidebarOpenDesktop]);
 

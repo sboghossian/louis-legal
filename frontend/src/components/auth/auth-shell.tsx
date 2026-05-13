@@ -76,7 +76,7 @@ export function AuthShell({
                             <div className="mt-4 grid grid-cols-2 gap-3">
                                 <ValueProp
                                     icon={Sparkles}
-                                    title="982 expert skills"
+                                    title="983 expert skills"
                                     body="MENA-first jurisdictions, drafting, review, research, compliance."
                                 />
                                 <ValueProp

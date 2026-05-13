@@ -14,6 +14,7 @@
  */
 
 import { Router, Request, Response } from "express";
+import { requireAuth } from "../middleware/auth";
 import { searchClauses, getClause } from "../clauses/_data";
 import { computeEOS } from "../calculators/eos";
 import { formatAll, CitationStyle, formatCitation } from "../citations/_engine";
@@ -117,7 +118,7 @@ const TOOLS: ToolDef[] = [
   },
   {
     name: "list_skills",
-    description: "List Louis's 982-skill library with filters (category, status, priority).",
+    description: "List Louis's 983-skill library with filters (category, status, priority).",
     input_schema: {
       type: "object",
       properties: {
@@ -185,8 +186,11 @@ mcpRouter.get("/tools", (_req: Request, res: Response) => {
   res.json({ tools: TOOLS });
 });
 
-// Tool call — JSON-RPC-like shape
-mcpRouter.post("/call", async (req: Request, res: Response) => {
+// Tool call — JSON-RPC-like shape. Auth-gated because these actually run
+// LLM-adjacent operations against the caller's data. Discovery (GET /,
+// GET /tools) is intentionally public so MCP clients can negotiate before
+// they have a token.
+mcpRouter.post("/call", requireAuth, async (req: Request, res: Response) => {
   const { name, arguments: args } = req.body ?? {};
   if (!name) { res.status(400).json({ error: { code: -32602, message: "name required" } }); return; }
 

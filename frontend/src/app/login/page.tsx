@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (!authLoading && isAuthenticated) {
-            router.replace("/home");
+            router.replace("/assistant");
         }
     }, [authLoading, isAuthenticated, router]);
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
         try {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
-            router.push("/home");
+            router.push("/assistant");
         } catch (error: unknown) {
             const msg = (error as Error).message || "Sign-in failed";
             // Friendlier copy for the most common Supabase auth errors.

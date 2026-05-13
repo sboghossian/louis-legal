@@ -5,6 +5,7 @@ import { Workflow, Play, Pause, RotateCcw, Trash2, CheckCircle2, Circle, AlertCi
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -64,9 +65,10 @@ export default function LegalFlowsPage() {
     async function refresh() {
         setLoading(true);
         try {
+            const auth = await getAuthHeader();
             const [tplR, runR] = await Promise.all([
-                fetch(`${API_BASE}/api/legal-flows/templates`),
-                fetch(`${API_BASE}/api/legal-flows/runs`, { headers: { "x-user-id": "demo" } }),
+                fetch(`${API_BASE}/api/legal-flows/templates`, { headers: auth }),
+                fetch(`${API_BASE}/api/legal-flows/runs`, { headers: auth }),
             ]);
             const t = await tplR.json();
             const r = await runR.json();
@@ -80,14 +82,16 @@ export default function LegalFlowsPage() {
     useEffect(() => { refresh(); }, []);
 
     async function openTemplate(id: string) {
-        const r = await fetch(`${API_BASE}/api/legal-flows/templates/${id}`);
+        const auth = await getAuthHeader();
+        const r = await fetch(`${API_BASE}/api/legal-flows/templates/${id}`, { headers: auth });
         if (r.ok) setSelectedTpl(await r.json());
     }
 
     async function startRun(flowId: string) {
+        const auth = await getAuthHeader();
         const r = await fetch(`${API_BASE}/api/legal-flows/runs`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+            headers: { "Content-Type": "application/json", ...auth },
             body: JSON.stringify({ flowId }),
         });
         if (r.ok) {
@@ -99,14 +103,16 @@ export default function LegalFlowsPage() {
     }
 
     async function openRun(id: string) {
-        const r = await fetch(`${API_BASE}/api/legal-flows/runs/${id}`, { headers: { "x-user-id": "demo" } });
+        const auth = await getAuthHeader();
+        const r = await fetch(`${API_BASE}/api/legal-flows/runs/${id}`, { headers: auth });
         if (r.ok) setSelectedRun(await r.json());
     }
 
     async function completeStep(runId: string, note?: string) {
+        const auth = await getAuthHeader();
         const r = await fetch(`${API_BASE}/api/legal-flows/runs/${runId}/complete-step`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+            headers: { "Content-Type": "application/json", ...auth },
             body: JSON.stringify({ output: { completedAt: new Date().toISOString() }, note }),
         });
         if (r.ok) {
@@ -116,9 +122,10 @@ export default function LegalFlowsPage() {
     }
 
     async function runAction(runId: string, action: "pause" | "resume" | "abandon") {
+        const auth = await getAuthHeader();
         await fetch(`${API_BASE}/api/legal-flows/runs/${runId}/${action}`, {
             method: "POST",
-            headers: { "x-user-id": "demo" },
+            headers: auth,
         });
         await refresh();
         await openRun(runId);

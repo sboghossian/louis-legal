@@ -359,7 +359,8 @@ export default function CustomizePage() {
             // output/draft/review), and cap at the 48 highest-leverage
             // entries — matching the count shown in the HAQQ screenshot.
             try {
-                const r = await fetch(`${API_BASE}/api/skills`);
+                const skillsAuth = await authHeaders();
+                const r = await fetch(`${API_BASE}/api/skills`, { headers: skillsAuth });
                 if (r.ok) {
                     const json = await r.json();
                     const entries = (json.entries ?? []) as {

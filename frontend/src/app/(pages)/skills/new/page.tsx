@@ -76,7 +76,7 @@ export default function NewSkillPage() {
                 <h1 className="text-lg font-semibold">New skill</h1>
             </div>
             <p className="text-sm text-muted-foreground mb-6">
-                Author a custom skill. It joins the 982-skill library and becomes routable in chat immediately.
+                Author a custom skill. It joins the 983-skill library and becomes routable in chat immediately.
                 Use intent keywords + jurisdiction filters to control when this skill fires.
             </p>
 

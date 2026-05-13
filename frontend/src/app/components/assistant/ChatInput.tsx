@@ -30,6 +30,7 @@ import { ModelToggle } from "./ModelToggle";
 import { VoiceModeOverlay } from "./VoiceModeOverlay";
 import { useSelectedModel } from "@/app/hooks/useSelectedModel";
 import { useRotatingPrompt } from "@/app/hooks/useRotatingPrompt";
+import { useOnboardingProfile } from "@/app/hooks/useOnboardingProfile";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import {
@@ -37,6 +38,7 @@ import {
     isModelAvailable,
     type ModelProvider,
 } from "@/app/lib/modelAvailability";
+import { subscribeTtsSpeaking } from "@/app/lib/voice/voiceModeBus";
 import type { LouisDocument, LouisMessage } from "../shared/types";
 
 const AUTO_ROUTE_STORAGE_KEY = "louis.autoRouteModel";
@@ -86,7 +88,11 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     ref,
 ) {
     const [value, setValue] = useState("");
-    const rotatingPlaceholder = useRotatingPrompt({ enabled: value.length === 0 });
+    const onboarding = useOnboardingProfile();
+    const rotatingPlaceholder = useRotatingPrompt({
+        enabled: value.length === 0,
+        jurisdictions: onboarding?.jurisdictions ?? [],
+    });
     const [attachedDocs, setAttachedDocs] = useState<LouisDocument[]>([]);
     const [selectedWorkflow, setSelectedWorkflow] = useState<{
         id: string;
@@ -138,31 +144,70 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         if (isLoading && !wasLoadingRef.current) {
             setOverlayStatus("thinking");
         } else if (!isLoading && wasLoadingRef.current) {
-            // Reply just finished streaming. If TTS is supported the
-            // SpeakMessage auto-play will kick in; nudge our status to
-            // "speaking" briefly so the orb stops listening. The actual
-            // "back to listening" transition fires when TTS ends — we
-            // approximate it with a short delay since we don't get a
-            // direct callback from SpeakMessage. Users can also just talk
-            // — the recogniser restarts on its own.
+            // Reply just finished streaming. SpeakMessage auto-plays the
+            // reply (when TTS is supported + voice-mode is open) and
+            // publishes "speaking" on the voiceModeBus. We follow that
+            // signal — the subscription below flips us back to
+            // "listening" when TTS ends, instead of guessing at 800ms.
             setOverlayStatus("speaking");
-            const t = setTimeout(() => setOverlayStatus("listening"), 800);
-            return () => clearTimeout(t);
         }
         wasLoadingRef.current = isLoading;
     }, [isLoading, voiceModeOpen]);
 
-    // Probe browser support after mount so SSR matches.
-    if (typeof window !== "undefined" && !voiceSupported) {
+    // Subscribe to the TTS speaking signal so the orb status reflects
+    // real playback state. When TTS ends we return to "listening" if
+    // we're not actively waiting on a reply; if there's no TTS support
+    // SpeakMessage never fires, and we time out to "listening" after a
+    // short grace so the UI doesn't get stuck on "speaking".
+    useEffect(() => {
+        if (!voiceModeOpen) return;
+        let graceTimer: ReturnType<typeof setTimeout> | null = null;
+        const unsubscribe = subscribeTtsSpeaking((active) => {
+            if (active) {
+                if (graceTimer) {
+                    clearTimeout(graceTimer);
+                    graceTimer = null;
+                }
+                setOverlayStatus("speaking");
+            } else {
+                // Defer the listen flip by a tick so React batches the
+                // status with whatever next state event arrives (e.g.
+                // a new isLoading=true if the user already spoke again).
+                graceTimer = setTimeout(() => {
+                    setOverlayStatus((s) =>
+                        s === "speaking" ? "listening" : s,
+                    );
+                }, 0);
+            }
+        });
+        // Safety net: if the overlay sits on "speaking" without any
+        // TTS event firing within 8s (no-TTS browsers, mute mode), drop
+        // back to listening so the UI is usable.
+        const safety = setTimeout(() => {
+            setOverlayStatus((s) => (s === "speaking" ? "listening" : s));
+        }, 8000);
+        return () => {
+            unsubscribe();
+            if (graceTimer) clearTimeout(graceTimer);
+            clearTimeout(safety);
+        };
+    }, [voiceModeOpen]);
+
+    // Probe browser support after mount so SSR matches. Previously this
+    // called setVoiceSupported during render — illegal under React 19's
+    // strict mode and tripping the react-hooks/refs-during-render lint
+    // (with the disable above). Moving the probe into an effect runs it
+    // once on mount and keeps render pure.
+    useEffect(() => {
+        if (typeof window === "undefined") return;
         const w = window as unknown as {
             SpeechRecognition?: new () => unknown;
             webkitSpeechRecognition?: new () => unknown;
         };
         if (w.SpeechRecognition || w.webkitSpeechRecognition) {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             setVoiceSupported(true);
         }
-    }
+    }, []);
 
     function ensureRecognizer(): unknown {
         if (recognitionRef.current) return recognitionRef.current;

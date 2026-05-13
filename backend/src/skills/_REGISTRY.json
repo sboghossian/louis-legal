@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-12T12:06:40.474Z",
-  "total": 982,
+  "generated_at": "2026-05-13T16:51:38.696Z",
+  "total": 983,
   "entries": [
     {
       "id": "academy.ai-feature-explainer",
@@ -11030,6 +11030,14 @@
         "__site__"
       ],
       "filename": "site.use-case-router.md"
+    },
+    {
+      "id": "SKILL_MERGE_PLAN",
+      "name": "SKILL_MERGE_PLAN",
+      "category": "uncategorized",
+      "priority": "P3",
+      "status": "stub",
+      "filename": "SKILL_MERGE_PLAN.md"
     },
     {
       "id": "strategy.competitors",
