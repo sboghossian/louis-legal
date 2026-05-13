@@ -26,6 +26,7 @@ import {
     XCircle,
     Clock3,
 } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { BoardNode, NodeKind, NodeStatus } from "./types";
 
 interface KindStyle {
@@ -145,6 +146,7 @@ export function NodeCard({
     selected,
     onSelect,
 }: NodeCardProps) {
+    const { t } = useLocale();
     const kind = KIND_STYLES[node.kind];
     const status = STATUS_STYLES[node.status];
     const KindIcon = kind.icon;
@@ -216,7 +218,7 @@ export function NodeCard({
                                 isRunning ? "animate-spin" : "",
                             ].join(" ")}
                         />
-                        {status.label}
+                        {t(`drafting.status.${node.status}`)}
                     </span>
                 </div>
 

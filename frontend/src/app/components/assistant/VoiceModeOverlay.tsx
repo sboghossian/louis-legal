@@ -19,6 +19,7 @@ import {
 } from "@/app/lib/voice/types";
 import { detectVoiceCommand } from "@/app/lib/voice/speakToCite";
 import { setVoiceModeOpen } from "@/app/lib/voice/voiceModeBus";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type OverlayStatus = "listening" | "thinking" | "speaking" | "paused";
 
@@ -41,6 +42,7 @@ export function VoiceModeOverlay({
     onSubmitTranscript,
     externalStatus,
 }: Props) {
+    const { t } = useLocale();
     const [mounted, setMounted] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [interim, setInterim] = useState("");
@@ -311,17 +313,17 @@ export function VoiceModeOverlay({
         .slice(-30);
 
     const statusLabel: Record<OverlayStatus, string> = {
-        listening: "Listening…",
-        thinking: "Thinking…",
-        speaking: "Speaking…",
-        paused: "Paused",
+        listening: t("voice.status.listening"),
+        thinking: t("voice.status.thinking"),
+        speaking: t("voice.status.speaking"),
+        paused: t("voice.status.paused"),
     };
 
     const node = (
         <div
             role="dialog"
             aria-modal="true"
-            aria-label="Voice mode"
+            aria-label={t("voice.title")}
             className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#fbf8f2]/95 backdrop-blur-xl"
             onClick={(e) => {
                 // Click on the cream backdrop closes — children stopPropagation.
@@ -334,13 +336,13 @@ export function VoiceModeOverlay({
                     href="#"
                     onClick={(e) => e.preventDefault()}
                     className="hover:text-gray-800 transition-colors"
-                    title="Speak naturally — Louis transcribes, replies, and reads its answer aloud. Pause with space, send with enter, close with escape."
+                    title={t("voice.how.tooltip")}
                 >
-                    How does this work?
+                    {t("voice.how")}
                 </a>
                 <button
                     type="button"
-                    aria-label="Close voice mode"
+                    aria-label={t("voice.aria.close")}
                     onClick={onClose}
                     className="rounded-full p-2 text-gray-500 hover:text-gray-900 hover:bg-black/5 transition-colors"
                 >
@@ -366,7 +368,7 @@ export function VoiceModeOverlay({
             <div className="mt-10 max-w-2xl px-8 text-center font-serif text-xl text-gray-800 leading-relaxed min-h-[5rem]">
                 {words.length === 0 ? (
                     <span className="text-gray-400 italic">
-                        Speak — Louis is listening.
+                        {t("voice.prompt")}
                     </span>
                 ) : (
                     words.map((w, i) => {
@@ -399,16 +401,16 @@ export function VoiceModeOverlay({
                     <button
                         type="button"
                         onClick={togglePause}
-                        aria-label={paused ? "Resume listening" : "Pause listening"}
+                        aria-label={paused ? t("voice.aria.resume") : t("voice.aria.pause")}
                         className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 border border-amber-200 text-gray-700 hover:bg-white transition-colors font-sans text-sm"
                     >
                         {paused ? (
                             <>
-                                <Play className="h-4 w-4" /> Resume
+                                <Play className="h-4 w-4" /> {t("voice.resume")}
                             </>
                         ) : (
                             <>
-                                <Pause className="h-4 w-4" /> Pause
+                                <Pause className="h-4 w-4" /> {t("voice.pause")}
                             </>
                         )}
                     </button>
@@ -422,15 +424,15 @@ export function VoiceModeOverlay({
                         disabled={!transcript.trim()}
                         className="flex items-center gap-2 h-10 px-4 rounded-full bg-gradient-to-b from-[#c9a961] to-amber-700 text-white hover:from-amber-600 hover:to-amber-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-sans text-sm shadow"
                     >
-                        Send <ArrowRight className="h-4 w-4" />
+                        {t("action.send")} <ArrowRight className="h-4 w-4" />
                     </button>
                     <button
                         type="button"
                         onClick={onClose}
-                        aria-label="Close voice mode"
+                        aria-label={t("voice.aria.close")}
                         className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 border border-gray-200 text-gray-600 hover:bg-white transition-colors font-sans text-sm"
                     >
-                        <X className="h-4 w-4" /> Close
+                        <X className="h-4 w-4" /> {t("action.close")}
                     </button>
                 </div>
                 <div className="font-sans text-[10px] text-gray-400">

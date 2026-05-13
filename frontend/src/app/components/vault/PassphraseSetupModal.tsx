@@ -20,6 +20,7 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Eye, EyeOff } from "lucide-react";
 
+import { useLocale } from "@/contexts/LocaleContext";
 import { kdf, recovery } from "@/app/lib/crypto";
 import { RecoveryPhraseCard } from "./RecoveryPhraseCard";
 
@@ -47,6 +48,7 @@ type Stage = "passphrase" | "recovery" | "deriving";
 const MIN_LEN = 12;
 
 export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
+    const { t } = useLocale();
     const [stage, setStage] = useState<Stage>("passphrase");
     const [pass1, setPass1] = useState("");
     const [pass2, setPass2] = useState("");
@@ -67,8 +69,8 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
         if (!passOk) {
             setError(
                 pass1.length < MIN_LEN
-                    ? `Passphrase must be at least ${MIN_LEN} characters.`
-                    : "Passphrases don't match.",
+                    ? t("vault.setup.too_short", { min: MIN_LEN })
+                    : t("vault.setup.no_match"),
             );
             return;
         }
@@ -106,7 +108,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
             setError(
                 e instanceof Error
                     ? e.message
-                    : "Vault setup failed unexpectedly.",
+                    : t("vault.setup.failed"),
             );
             setStage("recovery");
         } finally {
@@ -125,20 +127,18 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                 <div className="flex items-center gap-2 mb-3">
                     <ShieldCheck className="w-5 h-5 text-amber-700" />
                     <h2 className="font-serif text-lg font-semibold text-stone-900">
-                        Set up your vault
+                        {t("vault.setup.title")}
                     </h2>
                 </div>
 
                 {stage === "passphrase" && (
                     <>
                         <p className="text-sm text-stone-700 font-serif leading-relaxed mb-5">
-                            Your passphrase is the only thing standing between
-                            the cloud and your documents. Louis never sees it
-                            and cannot recover it.
+                            {t("vault.setup.intro")}
                         </p>
 
                         <label className="block text-xs font-medium text-stone-700 mb-1">
-                            Passphrase
+                            {t("vault.setup.passphrase")}
                         </label>
                         <div className="relative mb-3">
                             <input
@@ -148,7 +148,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                                 autoFocus
                                 autoComplete="new-password"
                                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono"
-                                placeholder={`At least ${MIN_LEN} characters`}
+                                placeholder={t("vault.setup.placeholder", { min: MIN_LEN })}
                             />
                             <button
                                 type="button"
@@ -156,8 +156,8 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                                 className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-700"
                                 aria-label={
                                     reveal
-                                        ? "Hide passphrase"
-                                        : "Reveal passphrase"
+                                        ? t("vault.setup.hide")
+                                        : t("vault.setup.reveal")
                                 }
                             >
                                 {reveal ? (
@@ -169,7 +169,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                         </div>
 
                         <label className="block text-xs font-medium text-stone-700 mb-1">
-                            Confirm passphrase
+                            {t("vault.setup.confirm")}
                         </label>
                         <input
                             type={reveal ? "text" : "password"}
@@ -185,14 +185,14 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
 
                         <div className="flex gap-2 justify-end">
                             <Button variant="outline" onClick={onCancel}>
-                                Cancel
+                                {t("action.cancel")}
                             </Button>
                             <Button
                                 onClick={submitPassphrase}
                                 disabled={!passOk}
                                 className="bg-amber-700 hover:bg-amber-800 text-white"
                             >
-                                Continue
+                                {t("action.continue")}
                             </Button>
                         </div>
                     </>
@@ -208,8 +208,8 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                 {stage === "deriving" && (
                     <div className="py-12 text-center text-sm text-stone-700 font-serif">
                         {busy
-                            ? "Deriving your key (this takes a moment — 600,000 PBKDF2 iterations)…"
-                            : "Almost done…"}
+                            ? t("vault.setup.deriving")
+                            : t("vault.setup.almost_done")}
                     </div>
                 )}
             </div>

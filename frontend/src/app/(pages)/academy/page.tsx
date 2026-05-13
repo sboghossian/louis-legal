@@ -15,6 +15,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
 import {
     BookOpenCheck,
     Search,
@@ -515,15 +516,16 @@ A live demo runs at https://legal.dashable.dev (Cloudflare-tunneled). Use it for
     },
 ];
 
-const CATEGORIES: { id: Category; label: string }[] = [
-    { id: "get-started", label: "Get started" },
-    { id: "work",        label: "Work" },
-    { id: "customize",   label: "Customize" },
-    { id: "account",     label: "Account" },
-    { id: "developers",  label: "Developers" },
+const CATEGORIES: { id: Category; label: string; labelKey: string }[] = [
+    { id: "get-started", label: "Get started", labelKey: "academy.tab.get_started" },
+    { id: "work",        label: "Work",        labelKey: "academy.tab.work" },
+    { id: "customize",   label: "Customize",   labelKey: "academy.tab.customize" },
+    { id: "account",     label: "Account",     labelKey: "academy.tab.account" },
+    { id: "developers",  label: "Developers",  labelKey: "academy.tab.developers" },
 ];
 
 export default function AcademyPage() {
+    const { t } = useLocale();
     const [q, setQ] = useState("");
     const [activeCat, setActiveCat] = useState<"all" | Category>("all");
     const [openSlug, setOpenSlug] = useState<string | null>(null);
@@ -553,12 +555,10 @@ export default function AcademyPage() {
         <div className="max-w-5xl mx-auto px-6 md:px-10 py-8">
             <div className="flex items-center gap-2 mb-2">
                 <BookOpenCheck className="w-6 h-6 text-amber-700" />
-                <h1 className="text-2xl font-serif font-semibold">Academy</h1>
+                <h1 className="text-2xl font-serif font-semibold">{t("academy.title")}</h1>
             </div>
             <p className="text-sm text-gray-600 mb-6 max-w-2xl">
-                How Louis actually works, page by page. Search any feature, or
-                pick a category — every entry maps to a real surface you can
-                open right now.
+                {t("academy.intro")}
             </p>
 
             <div className="relative mb-4">
@@ -566,14 +566,14 @@ export default function AcademyPage() {
                 <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Search the docs (e.g. vault, citations, OAuth, BYO keys)…"
+                    placeholder={t("academy.search_placeholder")}
                     className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
                 />
             </div>
 
             <div className="flex flex-wrap gap-1 mb-6 border-b border-gray-200">
                 <TabButton
-                    label="All"
+                    label={t("academy.tab.all")}
                     count={counts.all ?? 0}
                     active={activeCat === "all"}
                     onClick={() => setActiveCat("all")}
@@ -581,7 +581,7 @@ export default function AcademyPage() {
                 {CATEGORIES.map((c) => (
                     <TabButton
                         key={c.id}
-                        label={c.label}
+                        label={t(c.labelKey)}
                         count={counts[c.id] ?? 0}
                         active={activeCat === c.id}
                         onClick={() => setActiveCat(c.id)}
@@ -591,8 +591,7 @@ export default function AcademyPage() {
 
             {filtered.length === 0 && (
                 <div className="text-sm text-gray-500 py-12 text-center">
-                    Nothing matches "{q}". Try a different word — or
-                    {" "}
+                    {t("academy.empty.prefix", { query: q })}
                     <button
                         type="button"
                         onClick={() => {
@@ -601,7 +600,7 @@ export default function AcademyPage() {
                         }}
                         className="underline"
                     >
-                        clear filters
+                        {t("academy.empty.clear")}
                     </button>
                     .
                 </div>
@@ -669,6 +668,7 @@ function EntryCard({
     open: boolean;
     onToggle: () => void;
 }) {
+    const { t } = useLocale();
     const Icon = entry.icon;
     return (
         <div
@@ -698,7 +698,7 @@ function EntryCard({
                         onClick={(e) => e.stopPropagation()}
                         className="text-xs text-blue-600 hover:underline shrink-0"
                     >
-                        Open →
+                        {t("action.open_arrow")}
                     </Link>
                 )}
             </button>

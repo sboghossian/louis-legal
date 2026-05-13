@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { useLocale } from "@/contexts/LocaleContext";
 import {
     VaultKeyProvider,
     useVaultKey,
@@ -45,6 +46,7 @@ export default function VaultPage() {
 }
 
 function VaultPageInner() {
+    const { t } = useLocale();
     const router = useRouter();
     const { isSetup, isUnlocked, saltB64, completeSetup, unlock } =
         useVaultKey();
@@ -66,7 +68,7 @@ function VaultPageInner() {
                 <div className="flex items-center gap-2">
                     <Lock className="w-5 h-5 text-amber-700" />
                     <h1 className="text-2xl font-serif font-semibold tracking-tight">
-                        Vault
+                        {t("vault.title")}
                     </h1>
                 </div>
                 {isUnlocked && (
@@ -76,16 +78,13 @@ function VaultPageInner() {
                         className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-stone-900"
                     >
                         <SettingsIcon className="w-3.5 h-3.5" />
-                        {showSettings ? "Hide settings" : "Vault settings"}
+                        {showSettings ? t("vault.settings.toggle.hide") : t("vault.settings.toggle.show")}
                     </button>
                 )}
             </div>
 
             <p className="text-sm text-gray-600 font-serif max-w-2xl mb-6">
-                The Vault is where privileged documents live. Each Vault
-                document is end-to-end encrypted with a key only you hold —
-                the cloud stores ciphertext and an additional server-side
-                AES layer, but cannot read the plaintext.
+                {t("vault.intro")}
             </p>
 
             {isUnlocked && (
@@ -97,23 +96,23 @@ function VaultPageInner() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
                 <Feature
                     icon={KeyRound}
-                    title="AES-256 end-to-end"
-                    desc="Documents are AES-256-GCM encrypted in your browser before upload. Even Louis's servers see only ciphertext."
+                    title={t("vault.feature.aes.title")}
+                    desc={t("vault.feature.aes.desc")}
                 />
                 <Feature
                     icon={ShieldCheck}
-                    title="Privilege-aware routing"
-                    desc="The skill router won't include Vault documents in any chat unless you explicitly opt in per document."
+                    title={t("vault.feature.routing.title")}
+                    desc={t("vault.feature.routing.desc")}
                 />
                 <Feature
                     icon={History}
-                    title="Audit log per read"
-                    desc="Every access to a Vault document is logged with the user, time, and which chat opened it."
+                    title={t("vault.feature.audit.title")}
+                    desc={t("vault.feature.audit.desc")}
                 />
                 <Feature
                     icon={Lock}
-                    title="You hold the key"
-                    desc="Your passphrase derives a key that never leaves your browser. Lose it and the data is gone — by design."
+                    title={t("vault.feature.key.title")}
+                    desc={t("vault.feature.key.desc")}
                 />
             </div>
 
@@ -124,7 +123,7 @@ function VaultPageInner() {
             )}
 
             <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
-                <h2 className="font-medium text-sm mb-2">Where to go next</h2>
+                <h2 className="font-medium text-sm mb-2">{t("vault.next.title")}</h2>
                 <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
                         <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
@@ -132,7 +131,7 @@ function VaultPageInner() {
                             href="/customize"
                             className="text-blue-600 hover:underline"
                         >
-                            Turn on Vault toggles in /customize → Vault
+                            {t("vault.next.customize")}
                         </Link>
                     </li>
                     <li className="flex items-center gap-2">
@@ -141,8 +140,7 @@ function VaultPageInner() {
                             href="/projects"
                             className="text-blue-600 hover:underline"
                         >
-                            Open Projects — mark one as a Vault project to
-                            apply protections to every file inside
+                            {t("vault.next.projects")}
                         </Link>
                     </li>
                     <li className="flex items-center gap-2">
@@ -151,7 +149,7 @@ function VaultPageInner() {
                             href="/docs#vault"
                             className="text-blue-600 hover:underline"
                         >
-                            Read the technical details in /docs → Vault
+                            {t("vault.next.docs")}
                         </Link>
                     </li>
                 </ul>
@@ -160,13 +158,13 @@ function VaultPageInner() {
             <div className="mt-8 flex gap-3">
                 <Button onClick={() => router.push("/projects")}>
                     <FolderOpen className="w-3.5 h-3.5 mr-1" />
-                    Open Projects
+                    {t("vault.cta.projects")}
                 </Button>
                 <Button
                     variant="outline"
                     onClick={() => router.push("/customize")}
                 >
-                    Configure Vault
+                    {t("vault.cta.configure")}
                 </Button>
             </div>
 

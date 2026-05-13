@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -40,6 +41,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function PluginsPage() {
+    const { t } = useLocale();
     const [plugins, setPlugins] = useState<PluginManifest[]>([]);
     const [loading, setLoading] = useState(true);
     const [q, setQ] = useState("");
@@ -79,14 +81,14 @@ export default function PluginsPage() {
                     <div className="flex items-center gap-2 mb-3">
                         <Blocks className="w-5 h-5 text-amber-700" />
                         <span className="text-xs uppercase tracking-[0.18em] text-amber-700 font-medium">
-                            Marketplace
+                            {t("plugins.eyebrow")}
                         </span>
                     </div>
                     <h1
                         className="text-4xl font-serif text-stone-900 mb-3"
                         style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
                     >
-                        Louis plug-ins
+                        {t("plugins.title")}
                     </h1>
                     <p className="text-stone-600 max-w-2xl leading-relaxed">
                         First-party extensions, maintained in-house by the Louis team.
@@ -105,18 +107,18 @@ export default function PluginsPage() {
                     <Input
                         value={q}
                         onChange={(e) => setQ(e.target.value)}
-                        placeholder="Search plug-ins…"
+                        placeholder={t("plugins.search_placeholder")}
                         className="pl-9 bg-white/60 border-stone-300 focus-visible:ring-amber-600/30"
                     />
                 </div>
 
                 {loading && (
-                    <div className="text-sm text-stone-500">Loading marketplace…</div>
+                    <div className="text-sm text-stone-500">{t("plugins.loading")}</div>
                 )}
 
                 {!loading && filtered.length === 0 && (
                     <div className="text-sm text-stone-500">
-                        No plug-ins match that search.
+                        {t("plugins.empty")}
                     </div>
                 )}
 
@@ -132,7 +134,7 @@ export default function PluginsPage() {
                         className="text-lg font-serif text-stone-900 mb-2"
                         style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
                     >
-                        Building your own plug-in?
+                        {t("plugins.build_title")}
                     </h3>
                     <p className="text-sm text-stone-600 max-w-2xl mb-4">
                         Use the Louis SDK and the SSE event stream to wire any external
@@ -147,7 +149,7 @@ export default function PluginsPage() {
                             href="/docs"
                             className="inline-flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-800 font-medium"
                         >
-                            Read the docs <ExternalLink className="w-3.5 h-3.5" />
+                            {t("plugins.read_docs")} <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                         <span className="text-stone-300">·</span>
                         <a
@@ -156,7 +158,7 @@ export default function PluginsPage() {
                             rel="noreferrer"
                             className="inline-flex items-center gap-1.5 text-sm text-stone-600 hover:text-stone-800"
                         >
-                            <Github className="w-3.5 h-3.5" /> Plug-in repo
+                            <Github className="w-3.5 h-3.5" /> {t("plugins.repo")}
                         </a>
                     </div>
                 </div>
@@ -166,6 +168,7 @@ export default function PluginsPage() {
 }
 
 function PluginCard({ plugin }: { plugin: PluginManifest }) {
+    const { t } = useLocale();
     const Icon = ICON_MAP[plugin.icon] ?? Blocks;
     return (
         <div className="group bg-white border border-stone-200 rounded-xl p-5 flex flex-col hover:border-amber-300 hover:shadow-[0_2px_24px_-12px_rgba(180,140,40,0.25)] transition-all">
@@ -186,7 +189,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
                         {plugin.verified && (
                             <BadgeCheck
                                 className="w-4 h-4 text-amber-600 shrink-0"
-                                aria-label="Verified by Louis team"
+                                aria-label={t("plugins.verified")}
                             />
                         )}
                     </div>
@@ -213,7 +216,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
                         target="_blank"
                         rel="noreferrer"
                         className="text-stone-400 hover:text-stone-700 transition-colors"
-                        title="View source on GitHub"
+                        title={t("plugins.view_source")}
                     >
                         <Github className="w-4 h-4" />
                     </a>
@@ -223,7 +226,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
                         className="h-7 text-xs bg-amber-700 hover:bg-amber-800 text-white"
                     >
                         <a href={plugin.install_url} target="_blank" rel="noreferrer">
-                            Install
+                            {t("action.install")}
                         </a>
                     </Button>
                 </div>

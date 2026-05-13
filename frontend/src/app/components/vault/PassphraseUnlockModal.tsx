@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { KeyRound, Eye, EyeOff, RotateCcw } from "lucide-react";
 
+import { useLocale } from "@/contexts/LocaleContext";
 import { kdf, recovery } from "@/app/lib/crypto";
 
 interface Props {
@@ -39,6 +40,7 @@ export function PassphraseUnlockModal({
     onCancel,
     onUnlocked,
 }: Props) {
+    const { t } = useLocale();
     const [mode, setMode] = useState<Mode>("passphrase");
     const [pass, setPass] = useState("");
     const [reveal, setReveal] = useState(false);
@@ -60,7 +62,7 @@ export function PassphraseUnlockModal({
             setError(
                 e instanceof Error
                     ? e.message
-                    : "Couldn't derive key. Try again.",
+                    : t("vault.unlock.derive_failed"),
             );
         } finally {
             setBusy(false);
@@ -70,16 +72,12 @@ export function PassphraseUnlockModal({
     const tryRecovery = async () => {
         setError(null);
         if (!recoverySaltB64) {
-            setError(
-                "Recovery is unavailable for this account. Contact support.",
-            );
+            setError(t("vault.recovery.unavailable"));
             return;
         }
         const words = recovery.normalizePhrase(phrase);
         if (!(await recovery.validateRecoveryPhrase(words))) {
-            setError(
-                "That's not a valid 12-word recovery phrase. Check spelling and word order.",
-            );
+            setError(t("vault.recovery.invalid"));
             return;
         }
         setBusy(true);
@@ -92,7 +90,7 @@ export function PassphraseUnlockModal({
             setError(
                 e instanceof Error
                     ? e.message
-                    : "Couldn't derive key from recovery phrase.",
+                    : t("vault.recovery.derive_failed"),
             );
         } finally {
             setBusy(false);
@@ -110,14 +108,14 @@ export function PassphraseUnlockModal({
                 <div className="flex items-center gap-2 mb-3">
                     <KeyRound className="w-5 h-5 text-amber-700" />
                     <h2 className="font-serif text-lg font-semibold text-stone-900">
-                        Unlock your vault
+                        {t("vault.unlock.title")}
                     </h2>
                 </div>
 
                 {mode === "passphrase" ? (
                     <>
                         <p className="text-sm text-stone-700 font-serif mb-4">
-                            Enter your passphrase to decrypt your vault.
+                            {t("vault.unlock.intro")}
                         </p>
                         <div className="relative mb-3">
                             <input
@@ -130,7 +128,7 @@ export function PassphraseUnlockModal({
                                     if (e.key === "Enter") tryPassphrase();
                                 }}
                                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono"
-                                placeholder="Your passphrase"
+                                placeholder={t("vault.unlock.placeholder")}
                             />
                             <button
                                 type="button"
@@ -138,8 +136,8 @@ export function PassphraseUnlockModal({
                                 className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-700"
                                 aria-label={
                                     reveal
-                                        ? "Hide passphrase"
-                                        : "Reveal passphrase"
+                                        ? t("vault.setup.hide")
+                                        : t("vault.setup.reveal")
                                 }
                             >
                                 {reveal ? (
@@ -159,7 +157,7 @@ export function PassphraseUnlockModal({
                             className="inline-flex items-center gap-1 text-xs text-amber-800 hover:underline mb-4"
                         >
                             <RotateCcw className="w-3 h-3" />
-                            I lost my passphrase — use recovery phrase
+                            {t("vault.unlock.lost")}
                         </button>
 
                         {error && (
@@ -168,33 +166,31 @@ export function PassphraseUnlockModal({
 
                         <div className="flex gap-2 justify-end">
                             <Button variant="outline" onClick={onCancel}>
-                                Cancel
+                                {t("action.cancel")}
                             </Button>
                             <Button
                                 onClick={tryPassphrase}
                                 disabled={pass.length === 0 || busy}
                                 className="bg-amber-700 hover:bg-amber-800 text-white"
                             >
-                                {busy ? "Unlocking…" : "Unlock"}
+                                {busy ? t("vault.unlock.busy") : t("vault.unlock.button")}
                             </Button>
                         </div>
                     </>
                 ) : (
                     <>
                         <p className="text-sm text-stone-700 font-serif mb-2">
-                            Paste your 12-word recovery phrase. Words can be
-                            separated by spaces or new lines.
+                            {t("vault.recovery.intro")}
                         </p>
                         <p className="text-xs text-stone-500 font-serif mb-3">
-                            After unlocking this way, set a new passphrase
-                            from Settings.
+                            {t("vault.recovery.reminder")}
                         </p>
                         <textarea
                             value={phrase}
                             onChange={(e) => setPhrase(e.target.value)}
                             rows={4}
                             className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-mono mb-3"
-                            placeholder="word1 word2 word3 …"
+                            placeholder={t("vault.recovery.placeholder")}
                         />
 
                         <button
@@ -205,7 +201,7 @@ export function PassphraseUnlockModal({
                             }}
                             className="text-xs text-stone-600 hover:underline mb-3 block"
                         >
-                            ← Back to passphrase
+                            {t("vault.recovery.back")}
                         </button>
 
                         {error && (
@@ -214,14 +210,14 @@ export function PassphraseUnlockModal({
 
                         <div className="flex gap-2 justify-end">
                             <Button variant="outline" onClick={onCancel}>
-                                Cancel
+                                {t("action.cancel")}
                             </Button>
                             <Button
                                 onClick={tryRecovery}
                                 disabled={phrase.trim().length === 0 || busy}
                                 className="bg-amber-700 hover:bg-amber-800 text-white"
                             >
-                                {busy ? "Recovering…" : "Recover"}
+                                {busy ? t("vault.recovery.busy") : t("vault.recovery.button")}
                             </Button>
                         </div>
                     </>

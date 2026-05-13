@@ -41,6 +41,8 @@ import {
     ChevronRight,
 } from "lucide-react";
 
+import { useLocale } from "@/contexts/LocaleContext";
+
 import type { Board, BoardNode } from "@/app/components/drafting/types";
 import {
     computeLayout,
@@ -335,6 +337,7 @@ function TopBar({
     onReset: () => void;
     onPick: (key: string) => void;
 }) {
+    const { t } = useLocale();
     return (
         <div className="flex items-center justify-between gap-4 border-b border-[#E7E2D6] bg-[#FBF8F2]/90 px-6 py-3 backdrop-blur">
             <div className="flex items-center gap-3">
@@ -342,10 +345,10 @@ function TopBar({
                     className="font-serif text-xl text-slate-900"
                     style={{ fontFamily: "var(--font-eb-garamond)" }}
                 >
-                    {board.name}
+                    {t(`drafting.template.${board.templateKey}`)}
                 </span>
                 <span className="text-[11px] text-slate-500">
-                    Drafting board · {board.nodes.length} steps
+                    {t("drafting.steps", { count: board.nodes.length })}
                 </span>
             </div>
             <div className="flex items-center gap-2">
@@ -388,6 +391,7 @@ function TemplateSwitcher({
     current: string;
     onPick: (key: string) => void;
 }) {
+    const { t } = useLocale();
     const [open, setOpen] = useState(false);
     return (
         <div className="relative">
@@ -397,30 +401,30 @@ function TemplateSwitcher({
                 className="inline-flex items-center gap-1.5 rounded-md border border-[#E7E2D6] bg-white px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
             >
                 <LayoutTemplate className="h-3.5 w-3.5" />
-                Use a template
+                {t("drafting.use_template")}
             </button>
             {open && (
                 <div className="absolute right-0 z-30 mt-1 w-72 overflow-hidden rounded-xl border border-[#E7E2D6] bg-white shadow-lg">
-                    {TEMPLATES.map((t) => (
+                    {TEMPLATES.map((tpl) => (
                         <button
-                            key={t.key}
+                            key={tpl.key}
                             type="button"
                             onClick={() => {
-                                onPick(t.key);
+                                onPick(tpl.key);
                                 setOpen(false);
                             }}
                             className={[
                                 "flex w-full items-start gap-2 px-3 py-2 text-left text-xs hover:bg-[#F5F0E5]",
-                                current === t.key ? "bg-[#F5F0E5]" : "",
+                                current === tpl.key ? "bg-[#F5F0E5]" : "",
                             ].join(" ")}
                         >
                             <Sparkles className="mt-0.5 h-3.5 w-3.5 text-[#C9A961]" />
                             <div className="flex-1">
                                 <div className="font-medium text-slate-900">
-                                    {t.label}
+                                    {t(`drafting.template.${tpl.key}`)}
                                 </div>
                                 <div className="mt-0.5 text-[11px] text-slate-500">
-                                    {t.blurb}
+                                    {tpl.blurb}
                                 </div>
                             </div>
                         </button>
@@ -442,6 +446,7 @@ function ApprovalBanner({
     node: BoardNode;
     onOpen: () => void;
 }) {
+    const { t } = useLocale();
     return (
         <div className="flex items-center justify-between gap-3 border-b border-amber-200/70 bg-amber-50/80 px-6 py-2.5 text-xs text-amber-900">
             <div className="flex items-center gap-2">
@@ -449,8 +454,8 @@ function ApprovalBanner({
                     <AlertTriangle className="h-3.5 w-3.5" />
                 </span>
                 <span>
-                    <span className="font-medium">{node.title}</span> needs your
-                    approval{node.approver ? ` — ${node.approver}` : ""}.
+                    {t("drafting.needs_approval", { title: node.title })}
+                    {node.approver ? ` — ${node.approver}` : ""}.
                 </span>
             </div>
             <button
@@ -458,7 +463,7 @@ function ApprovalBanner({
                 onClick={onOpen}
                 className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 font-medium text-slate-800 shadow-sm hover:bg-amber-100"
             >
-                Open
+                {t("action.open")}
                 <ChevronRight className="h-3.5 w-3.5" />
             </button>
         </div>
@@ -620,6 +625,7 @@ function fmt(ms: number): string {
 // ---------------------------------------------------------------------------
 
 function EmptyState({ onPick }: { onPick: (key: string) => void }) {
+    const { t } = useLocale();
     return (
         <div
             className="flex min-h-screen w-full items-center justify-center px-6 py-12"
@@ -634,7 +640,7 @@ function EmptyState({ onPick }: { onPick: (key: string) => void }) {
                         className="mt-4 font-serif text-3xl text-slate-900"
                         style={{ fontFamily: "var(--font-eb-garamond)" }}
                     >
-                        Start from a template
+                        {t("drafting.start_template")}
                     </h1>
                     <p className="mt-2 text-sm text-slate-600">
                         Pick a workflow shape that's close to your matter. Louis
@@ -643,11 +649,11 @@ function EmptyState({ onPick }: { onPick: (key: string) => void }) {
                     </p>
                 </div>
                 <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {TEMPLATES.map((t) => (
+                    {TEMPLATES.map((tpl) => (
                         <button
-                            key={t.key}
+                            key={tpl.key}
                             type="button"
-                            onClick={() => onPick(t.key)}
+                            onClick={() => onPick(tpl.key)}
                             className="group flex flex-col items-start gap-2 rounded-2xl border border-[#E7E2D6] bg-white p-4 text-left shadow-[0_10px_24px_-18px_rgba(31,41,55,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(31,41,55,0.45)]"
                         >
                             <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F0E5] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#8a743f]">
@@ -659,11 +665,11 @@ function EmptyState({ onPick }: { onPick: (key: string) => void }) {
                                     fontFamily: "var(--font-eb-garamond)",
                                 }}
                             >
-                                {t.label}
+                                {t(`drafting.template.${tpl.key}`)}
                             </div>
-                            <p className="text-xs text-slate-600">{t.blurb}</p>
+                            <p className="text-xs text-slate-600">{tpl.blurb}</p>
                             <div className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-[#8a743f]">
-                                Open this template
+                                {t("drafting.open_template")}
                                 <ChevronRight className="h-3 w-3" />
                             </div>
                         </button>
