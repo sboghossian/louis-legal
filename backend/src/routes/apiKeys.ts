@@ -12,6 +12,7 @@ const PROVIDERS: { code: Provider; name: string; description: string; signupUrl:
   { code: "openai", name: "OpenAI", description: "GPT-4o / o1 / o3 — broad capability, multimodal", signupUrl: "https://platform.openai.com/" },
   { code: "google", name: "Google (Gemini)", description: "Gemini 2.5 Flash / Pro — fast intent classification + cheap reasoning", signupUrl: "https://aistudio.google.com/" },
   { code: "voyage", name: "Voyage AI", description: "Embeddings — legal-domain retrieval (voyage-2-large)", signupUrl: "https://voyageai.com/" },
+  { code: "cohere", name: "Cohere", description: "Multilingual embeddings + reranker for retrieval (embed-multilingual-v3.0 / rerank-multilingual-v3.0)", signupUrl: "https://dashboard.cohere.com/" },
   { code: "groq", name: "Groq", description: "Llama / Mixtral at <1s latency", signupUrl: "https://console.groq.com/" },
   { code: "deepseek", name: "DeepSeek", description: "Open-weights reasoning model with strong benchmarks", signupUrl: "https://platform.deepseek.com/" },
   { code: "mistral", name: "Mistral AI", description: "Mistral Large / Codestral — European data residency", signupUrl: "https://console.mistral.ai/" },

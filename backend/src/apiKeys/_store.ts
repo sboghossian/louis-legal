@@ -26,6 +26,7 @@ export type Provider =
   | "openai"
   | "google"
   | "voyage"
+  | "cohere"
   | "groq"
   | "deepseek"
   | "mistral"
@@ -122,6 +123,7 @@ export function getDefaultKeyValue(userId: string, provider: Provider): string |
     openai: "OPENAI_API_KEY",
     google: "GEMINI_API_KEY",
     voyage: "VOYAGE_API_KEY",
+    cohere: "COHERE_API_KEY",
     groq: "GROQ_API_KEY",
     deepseek: "DEEPSEEK_API_KEY",
     mistral: "MISTRAL_API_KEY",
