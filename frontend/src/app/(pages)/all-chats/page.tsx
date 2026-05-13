@@ -188,7 +188,14 @@ export default function AllChatsPage() {
 
             {!loading && !filtered.length && (
                 <div className="text-center py-12 text-sm text-muted-foreground">
-                    {chats.length === 0 ? "No chats yet — start one from /assistant." : "No chats match the filters."}
+                    {chats.length === 0 ? (
+                        <>
+                            <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-50" />
+                            <div className="font-medium text-foreground mb-1">No chats yet</div>
+                            <div className="mb-3">Start your first conversation with Louis.</div>
+                            <Button size="sm" onClick={() => router.push("/assistant")}>Open assistant</Button>
+                        </>
+                    ) : "No chats match the filters."}
                 </div>
             )}
         </div>

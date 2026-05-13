@@ -390,7 +390,7 @@ function DocWorkspaceInner() {
                         min={0} max={100} step={1}
                         value={tone}
                         onChange={e => setTone(parseInt(e.target.value))}
-                        className="w-20 accent-gray-900"
+                        className="w-20 accent-foreground"
                     />
                     <span className="text-xs font-medium text-foreground/80 w-14">{toneLabel}</span>
                 </div>

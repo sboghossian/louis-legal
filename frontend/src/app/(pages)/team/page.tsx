@@ -133,6 +133,16 @@ export default function TeamPage() {
             {/* Members */}
             <div className="mb-8">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Members</h2>
+                {!loading && members.length === 0 ? (
+                    <div className="border border-dashed border-border rounded-lg p-12 text-center">
+                        <Users className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                        <div className="text-sm font-medium text-foreground mb-1">No teammates yet</div>
+                        <div className="text-xs text-muted-foreground mb-4">Invite collaborators to share matters, skills, and routines.</div>
+                        <Button size="sm" onClick={() => setShowInvite(true)}>
+                            <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite your first teammate
+                        </Button>
+                    </div>
+                ) : (
                 <div className="border border-border rounded-lg divide-y divide-border">
                     {members.map(m => {
                         const RoleIcon = ROLE_ICONS[m.role];
@@ -186,6 +196,7 @@ export default function TeamPage() {
                         );
                     })}
                 </div>
+                )}
             </div>
 
             {/* Roles legend */}

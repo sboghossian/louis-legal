@@ -9,6 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppearanceTab } from "./AppearanceTab";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/contexts/UserProfileContext";
 import {
     DEFAULT_VOICE_PREFS,
     isSpeechRecognitionSupported,
@@ -82,13 +84,18 @@ export default function SettingsPage() {
 }
 
 function ProfileTab() {
+    const { user } = useAuth();
+    const { profile } = useUserProfile();
+    const displayName =
+        profile?.displayName?.trim() || user?.email?.split("@")[0] || "—";
+    const email = user?.email || "—";
+    const organisation = profile?.organisation?.trim() || "—";
     return (
         <div className="space-y-4">
-            <Card title="Display name" value="Stephane Boghossian" cta="Change" href="/account" />
-            <Card title="Email" value="stephane.boghossian@haqq.ai" sub="Verified" />
-            <Card title="Organisation" value="HAQQ" cta="Change" href="/account" />
-            <Card title="Workspace" value="HAQQ — Beirut · Partner" />
-            <Card title="Language preference" value="English (auto-detect input)" cta="Change" />
+            <Card title="Display name" value={displayName} cta="Change" href="/account" />
+            <Card title="Email" value={email} sub={user?.email ? "Verified" : undefined} />
+            <Card title="Organisation" value={organisation} cta="Change" href="/account" />
+            <Card title="Language preference" value="Set in Appearance" />
             <Note>Profile + identity management is in <a href="/account" className="underline">/account</a>.</Note>
         </div>
     );
@@ -128,7 +135,7 @@ function ModelsTab() {
                     type="checkbox"
                     checked={autoRouteModel}
                     onChange={toggleAutoRoute}
-                    className="accent-gray-900 mt-0.5"
+                    className="accent-foreground mt-0.5"
                 />
                 <div className="flex-1">
                     <div className="font-medium text-sm">Auto-route model & playbook</div>
@@ -231,7 +238,7 @@ function VoiceSection() {
                             type="checkbox"
                             checked={prefs.enabled}
                             onChange={(e) => update("enabled", e.target.checked)}
-                            className="accent-gray-900"
+                            className="accent-foreground"
                         />
                         <div className="flex-1">
                             <div className="text-sm font-medium">
@@ -538,7 +545,7 @@ function NotificationsTab() {
                         type="checkbox"
                         checked={state[n.id] ?? n.enabled}
                         onChange={() => toggle(n.id)}
-                        className="accent-gray-900"
+                        className="accent-foreground"
                     />
                     <div className="flex-1">
                         <div className="text-sm">{n.label}</div>
