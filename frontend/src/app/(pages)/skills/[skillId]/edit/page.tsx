@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -32,6 +33,7 @@ interface Skill {
 export default function EditSkillPage({ params }: { params: Promise<{ skillId: string }> }) {
     const { skillId } = use(params);
     const router = useRouter();
+    const confirm = useConfirm();
     const [skill, setSkill] = useState<Skill | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -109,7 +111,12 @@ export default function EditSkillPage({ params }: { params: Promise<{ skillId: s
     }
 
     async function remove() {
-        if (!confirm(`Delete skill "${skillId}"? This is permanent.`)) return;
+        const ok = await confirm({
+            title: "Delete this skill?",
+            message: `"${skillId}" will be permanently removed. This cannot be undone.`,
+            destructive: true,
+        });
+        if (!ok) return;
         try {
             const r = await fetch(`${API_BASE}/api/skills/${encodeURIComponent(skillId)}`, { method: "DELETE" });
             if (!r.ok) {

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -71,6 +72,7 @@ function formatTime(iso?: string): string {
 }
 
 export default function TeamPage() {
+    const confirm = useConfirm();
     const [team, setTeam] = useState<Team | null>(null);
     const [members, setMembers] = useState<TeamMember[]>([]);
     const [roles, setRoles] = useState<Record<Role, RoleDescription> | null>(null);
@@ -104,7 +106,13 @@ export default function TeamPage() {
     }
 
     async function remove(member: TeamMember) {
-        if (!confirm(`Remove ${member.name || member.email} from team?`)) return;
+        const ok = await confirm({
+            title: `Remove ${member.name || member.email}?`,
+            message: "They will lose access to this team immediately.",
+            confirmLabel: "Remove",
+            destructive: true,
+        });
+        if (!ok) return;
         const headers = await authHeaders();
         await fetch(`${API_BASE}/api/team/members/${member.id}`, {
             method: "DELETE",

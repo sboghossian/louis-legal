@@ -317,6 +317,14 @@ const en: Dict = {
     "voice.aria.pause": "Pause listening",
     "voice.aria.resume": "Resume listening",
     "voice.aria.close": "Close voice mode",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "Are you sure?",
+    "dialog.confirm.message": "This action will continue.",
+    "dialog.confirm.cancel": "Cancel",
+    "dialog.confirm.continue": "Continue",
+    "dialog.destructive.continue": "Yes, delete",
+    "dialog.toast.error.title": "Something went wrong",
 };
 
 const fr: Dict = {
@@ -568,6 +576,14 @@ const fr: Dict = {
     "voice.aria.pause": "Mettre l’écoute en pause",
     "voice.aria.resume": "Reprendre l’écoute",
     "voice.aria.close": "Fermer le mode vocal",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "En êtes-vous sûr ?",
+    "dialog.confirm.message": "Cette action va se poursuivre.",
+    "dialog.confirm.cancel": "Annuler",
+    "dialog.confirm.continue": "Continuer",
+    "dialog.destructive.continue": "Oui, supprimer",
+    "dialog.toast.error.title": "Une erreur est survenue",
 };
 
 const ar: Dict = {
@@ -819,6 +835,14 @@ const ar: Dict = {
     "voice.aria.pause": "إيقاف الاستماع مؤقتًا",
     "voice.aria.resume": "استئناف الاستماع",
     "voice.aria.close": "إغلاق الوضع الصوتي",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "هل أنت متأكد؟",
+    "dialog.confirm.message": "سيتم متابعة هذا الإجراء.",
+    "dialog.confirm.cancel": "إلغاء",
+    "dialog.confirm.continue": "متابعة",
+    "dialog.destructive.continue": "نعم، احذف",
+    "dialog.toast.error.title": "حدث خطأ ما",
 };
 
 const es: Dict = {
@@ -1069,6 +1093,14 @@ const es: Dict = {
     "voice.aria.pause": "Pausar la escucha",
     "voice.aria.resume": "Reanudar la escucha",
     "voice.aria.close": "Cerrar el modo voz",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "¿Estás seguro?",
+    "dialog.confirm.message": "Esta acción continuará.",
+    "dialog.confirm.cancel": "Cancelar",
+    "dialog.confirm.continue": "Continuar",
+    "dialog.destructive.continue": "Sí, eliminar",
+    "dialog.toast.error.title": "Algo salió mal",
 };
 
 const de: Dict = {
@@ -1319,6 +1351,14 @@ const de: Dict = {
     "voice.aria.pause": "Zuhören pausieren",
     "voice.aria.resume": "Zuhören fortsetzen",
     "voice.aria.close": "Sprachmodus schließen",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "Bist du sicher?",
+    "dialog.confirm.message": "Diese Aktion wird fortgesetzt.",
+    "dialog.confirm.cancel": "Abbrechen",
+    "dialog.confirm.continue": "Fortfahren",
+    "dialog.destructive.continue": "Ja, löschen",
+    "dialog.toast.error.title": "Etwas ist schiefgelaufen",
 };
 
 const it: Dict = {
@@ -1569,6 +1609,14 @@ const it: Dict = {
     "voice.aria.pause": "Metti in pausa l’ascolto",
     "voice.aria.resume": "Riprendi l’ascolto",
     "voice.aria.close": "Chiudi la modalità voce",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "Sei sicuro?",
+    "dialog.confirm.message": "Questa azione proseguirà.",
+    "dialog.confirm.cancel": "Annulla",
+    "dialog.confirm.continue": "Continua",
+    "dialog.destructive.continue": "Sì, elimina",
+    "dialog.toast.error.title": "Qualcosa è andato storto",
 };
 
 const pt: Dict = {
@@ -1818,6 +1866,14 @@ const pt: Dict = {
     "voice.aria.pause": "Pausar a escuta",
     "voice.aria.resume": "Retomar a escuta",
     "voice.aria.close": "Fechar o modo de voz",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "Tem certeza?",
+    "dialog.confirm.message": "Esta ação irá continuar.",
+    "dialog.confirm.cancel": "Cancelar",
+    "dialog.confirm.continue": "Continuar",
+    "dialog.destructive.continue": "Sim, excluir",
+    "dialog.toast.error.title": "Algo deu errado",
 };
 
 const zh: Dict = {
@@ -2063,6 +2119,14 @@ const zh: Dict = {
     "voice.aria.pause": "暂停聆听",
     "voice.aria.resume": "继续聆听",
     "voice.aria.close": "关闭语音模式",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "确定吗？",
+    "dialog.confirm.message": "此操作将继续。",
+    "dialog.confirm.cancel": "取消",
+    "dialog.confirm.continue": "继续",
+    "dialog.destructive.continue": "是的，删除",
+    "dialog.toast.error.title": "出现问题",
 };
 
 const ja: Dict = {
@@ -2312,6 +2376,14 @@ const ja: Dict = {
     "voice.aria.pause": "聞き取りを一時停止",
     "voice.aria.resume": "聞き取りを再開",
     "voice.aria.close": "音声モードを閉じる",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "よろしいですか？",
+    "dialog.confirm.message": "この操作を続行します。",
+    "dialog.confirm.cancel": "キャンセル",
+    "dialog.confirm.continue": "続行",
+    "dialog.destructive.continue": "はい、削除します",
+    "dialog.toast.error.title": "問題が発生しました",
 };
 
 const ru: Dict = {
@@ -2562,6 +2634,14 @@ const ru: Dict = {
     "voice.aria.pause": "Приостановить прослушивание",
     "voice.aria.resume": "Возобновить прослушивание",
     "voice.aria.close": "Закрыть голосовой режим",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "Вы уверены?",
+    "dialog.confirm.message": "Это действие будет продолжено.",
+    "dialog.confirm.cancel": "Отмена",
+    "dialog.confirm.continue": "Продолжить",
+    "dialog.destructive.continue": "Да, удалить",
+    "dialog.toast.error.title": "Что-то пошло не так",
 };
 
 const tr: Dict = {
@@ -2812,6 +2892,14 @@ const tr: Dict = {
     "voice.aria.pause": "Dinlemeyi duraklat",
     "voice.aria.resume": "Dinlemeyi sürdür",
     "voice.aria.close": "Sesli modu kapat",
+
+    // Confirm dialog + generic toast labels
+    "dialog.confirm.title": "Emin misiniz?",
+    "dialog.confirm.message": "Bu işlem devam edecek.",
+    "dialog.confirm.cancel": "İptal",
+    "dialog.confirm.continue": "Devam et",
+    "dialog.destructive.continue": "Evet, sil",
+    "dialog.toast.error.title": "Bir şeyler ters gitti",
 };
 
 export const DICTIONARIES: Record<Locale, Dict> = {

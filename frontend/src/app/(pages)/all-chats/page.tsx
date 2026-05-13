@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { listChats, deleteChat } from "@/app/lib/louisApi";
 import type { LouisChat } from "@/app/components/shared/types";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
+import { useToast } from "@/contexts/ToastContext";
 
 interface ChatRow {
     id: string;
@@ -52,6 +54,8 @@ function relativeTime(iso: string): string {
 
 export default function AllChatsPage() {
     const router = useRouter();
+    const confirm = useConfirm();
+    const { toast } = useToast();
     const [chats, setChats] = useState<LouisChat[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -92,12 +96,21 @@ export default function AllChatsPage() {
     }, [rows, q, category]);
 
     async function remove(id: string, title: string) {
-        if (!confirm(`Delete chat "${title}"?`)) return;
+        const ok = await confirm({
+            title: "Delete this chat?",
+            message: `"${title}" will be permanently removed.`,
+            destructive: true,
+        });
+        if (!ok) return;
         try {
             await deleteChat(id);
             refresh();
         } catch (e) {
-            alert(`Delete failed: ${(e as Error).message}`);
+            toast({
+                title: "Delete failed",
+                description: (e as Error).message,
+                variant: "error",
+            });
         }
     }
 

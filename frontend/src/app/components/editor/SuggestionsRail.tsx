@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Editor } from "@tiptap/react";
 import { Check, X, MessageCircle, History, ListChecks, Trash2 } from "lucide-react";
 import { collectComments, collectTrackChanges } from "./utils/extract";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 import styles from "./editor.module.css";
 
 export interface VersionSnapshot {
@@ -240,6 +241,7 @@ function VersionsPanel({
     versions: VersionSnapshot[];
     onChanged: () => void;
 }) {
+    const confirm = useConfirm();
     if (!editor) return null;
 
     function saveNow() {
@@ -261,9 +263,14 @@ function VersionsPanel({
         }
     }
 
-    function restore(v: VersionSnapshot) {
+    async function restore(v: VersionSnapshot) {
         if (!editor) return;
-        if (!confirm(`Restore version from ${new Date(v.createdAt).toLocaleString()}? Your current draft will be replaced (a fresh snapshot is taken first).`)) return;
+        const ok = await confirm({
+            title: "Restore this version?",
+            message: `Your current draft will be replaced with the snapshot from ${new Date(v.createdAt).toLocaleString()}. A fresh snapshot is taken first so you can roll back.`,
+            confirmLabel: "Restore",
+        });
+        if (!ok) return;
         saveNow();
         editor.commands.setContent(v.html, { emitUpdate: true });
     }

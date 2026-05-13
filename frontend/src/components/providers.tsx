@@ -5,6 +5,7 @@ import { UserProfileProvider } from "@/contexts/UserProfileContext";
 import { AppearanceProvider } from "@/contexts/AppearanceContext";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { ConfirmDialogProvider } from "@/app/contexts/ConfirmDialog";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -12,7 +13,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <UserProfileProvider>
                 <AppearanceProvider>
                     <LocaleProvider>
-                        <ToastProvider>{children}</ToastProvider>
+                        <ToastProvider>
+                            <ConfirmDialogProvider>
+                                {children}
+                            </ConfirmDialogProvider>
+                        </ToastProvider>
                     </LocaleProvider>
                 </AppearanceProvider>
             </UserProfileProvider>

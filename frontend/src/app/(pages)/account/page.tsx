@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { LogOut, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useToast } from "@/contexts/ToastContext";
 import { deleteAccount } from "@/app/lib/louisApi";
 
 export default function AccountPage() {
     const router = useRouter();
     const { user, signOut } = useAuth();
     const { profile, updateDisplayName, updateOrganisation } = useUserProfile();
+    const { toast } = useToast();
     const [displayName, setDisplayName] = useState("");
     const [isSavingName, setIsSavingName] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -45,7 +47,11 @@ export default function AccountPage() {
         } catch {
             setIsDeleting(false);
             setDeleteConfirm(false);
-            alert("Failed to delete account. Please try again.");
+            toast({
+                title: "Failed to delete account",
+                description: "Please try again.",
+                variant: "error",
+            });
         }
     };
 
@@ -58,7 +64,11 @@ export default function AccountPage() {
             setSaved(true);
             setTimeout(() => setSaved(false), 2000);
         } else {
-            alert("Failed to update display name. Please try again.");
+            toast({
+                title: "Failed to update display name",
+                description: "Please try again.",
+                variant: "error",
+            });
         }
     };
 
@@ -71,7 +81,11 @@ export default function AccountPage() {
             setOrgSaved(true);
             setTimeout(() => setOrgSaved(false), 2000);
         } else {
-            alert("Failed to update organisation. Please try again.");
+            toast({
+                title: "Failed to update organisation",
+                description: "Please try again.",
+                variant: "error",
+            });
         }
     };
 

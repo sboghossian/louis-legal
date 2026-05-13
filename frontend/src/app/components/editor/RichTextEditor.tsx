@@ -25,6 +25,7 @@ import { BottomBar } from "./BottomBar";
 import { buildExtensions } from "./extensions";
 import type { CommentAttrs } from "./extensions/comment-mark";
 import { blocksToHTML, htmlToBlocks, type ServerBlock } from "./utils/blocks";
+import { useToast } from "@/contexts/ToastContext";
 import styles from "./editor.module.css";
 
 export interface RichTextEditorProps {
@@ -89,6 +90,7 @@ export function RichTextEditor({
     onPersist,
     onRemoteSave,
 }: RichTextEditorProps) {
+    const { toast } = useToast();
     const [suggestMode, setSuggestMode] = useState(false);
     const [tone, setTone]               = useState(50);
     const [railOpen, setRailOpen]       = useState(railOpenProp);
@@ -301,7 +303,11 @@ export function RichTextEditor({
         if (!editor) return;
         const { from, to } = editor.state.selection;
         if (from === to) {
-            alert("Select some text first, then click Comment.");
+            toast({
+                title: "Select some text first",
+                description: "Highlight a passage, then click Comment.",
+                variant: "info",
+            });
             return;
         }
         const text = window.prompt("Comment");

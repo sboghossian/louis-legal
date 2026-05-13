@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -29,6 +30,7 @@ interface ApiKey {
 }
 
 export default function ApiKeysPage() {
+    const confirm = useConfirm();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [keys, setKeys] = useState<ApiKey[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +63,12 @@ export default function ApiKeysPage() {
     }
 
     async function remove(id: string, label: string) {
-        if (!confirm(`Delete key "${label}"?`)) return;
+        const ok = await confirm({
+            title: "Delete this API key?",
+            message: `"${label}" will be removed. You can add it back at any time.`,
+            destructive: true,
+        });
+        if (!ok) return;
         await fetch(`${API_BASE}/api/api-keys/${id}`, {
             method: "DELETE",
             headers: { "x-user-id": "demo" },

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -52,6 +53,7 @@ const STATUS_STYLE: Record<Status, string> = {
 };
 
 export default function IntegrationsPage() {
+    const confirm = useConfirm();
     const [all, setAll] = useState<Integration[]>([]);
     const [loading, setLoading] = useState(true);
     const [q, setQ] = useState("");
@@ -107,7 +109,13 @@ export default function IntegrationsPage() {
     }
 
     async function disconnect(integration: Integration) {
-        if (!confirm(`Disconnect ${integration.name}?`)) return;
+        const ok = await confirm({
+            title: `Disconnect ${integration.name}?`,
+            message: "Louis will stop using this integration until you reconnect.",
+            confirmLabel: "Disconnect",
+            destructive: true,
+        });
+        if (!ok) return;
         const headers = await authHeaders();
         await fetch(`${API_BASE}/api/integrations/${integration.id}/disconnect`, {
             method: "POST",

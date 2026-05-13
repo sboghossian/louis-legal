@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 
 type RegistryEntry = {
     id: string;
@@ -74,6 +75,7 @@ interface SyncConfig {
 
 export default function SkillsPage() {
     const router = useRouter();
+    const confirm = useConfirm();
     const [view, setView] = useState<"library" | "observability">("library");
     const [syncConfig, setSyncConfig] = useState<SyncConfig | null>(null);
     const [showSyncSetup, setShowSyncSetup] = useState(false);
@@ -111,7 +113,12 @@ export default function SkillsPage() {
             const r = await fetch(`${API_BASE}/api/skills-sync/push`, { method: "POST", headers: { "x-user-id": "demo" } });
             const j = await r.json();
             if (j.prUrl) {
-                if (confirm(`PR opened: ${j.prUrl}\n\nOpen in browser?`)) {
+                const ok = await confirm({
+                    title: "Pull request opened",
+                    message: `${j.prUrl}\n\nOpen it in a new tab?`,
+                    confirmLabel: "Open in browser",
+                });
+                if (ok) {
                     window.open(j.prUrl, "_blank");
                 }
             }

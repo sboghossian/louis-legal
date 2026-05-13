@@ -13,6 +13,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useToast } from "@/contexts/ToastContext";
 import type { ApiKeyState } from "@/app/lib/louisApi";
 import { MODELS } from "@/app/components/assistant/ModelToggle";
 import {
@@ -225,6 +226,7 @@ function ApiKeyField({
     onSave: (value: string) => Promise<boolean>;
     onRemove: () => Promise<boolean>;
 }) {
+    const { toast } = useToast();
     const [value, setValue] = useState("");
     const [reveal, setReveal] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -245,7 +247,11 @@ function ApiKeyField({
             setSaved(true);
             setTimeout(() => setSaved(false), 2000);
         } else {
-            alert(`Failed to save ${label}.`);
+            toast({
+                title: `Failed to save ${label}`,
+                description: "Check the key and try again.",
+                variant: "error",
+            });
         }
     };
 
@@ -253,7 +259,13 @@ function ApiKeyField({
         setIsSaving(true);
         const ok = await onRemove();
         setIsSaving(false);
-        if (!ok) alert(`Failed to remove ${label}.`);
+        if (!ok) {
+            toast({
+                title: `Failed to remove ${label}`,
+                description: "Please try again.",
+                variant: "error",
+            });
+        }
     };
 
     return (

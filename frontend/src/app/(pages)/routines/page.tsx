@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useConfirm } from "@/app/contexts/ConfirmDialog";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -70,6 +71,7 @@ function formatTime(iso?: string): string {
 }
 
 export default function RoutinesPage() {
+    const confirm = useConfirm();
     const [routines, setRoutines] = useState<Routine[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -114,7 +116,12 @@ export default function RoutinesPage() {
     }
 
     async function remove(r: Routine) {
-        if (!confirm(`Delete routine "${r.title}"?`)) return;
+        const ok = await confirm({
+            title: "Delete this routine?",
+            message: `"${r.title}" will stop running and its history will be removed.`,
+            destructive: true,
+        });
+        if (!ok) return;
         await fetch(`${API_BASE}/api/routines/${r.id}`, {
             method: "DELETE",
             headers: { "x-user-id": "demo" },
