@@ -43,7 +43,26 @@ export default function ApiKeysPage() {
             ]);
             const pj = await pr.json();
             const kj = await kr.json();
-            setProviders(pj.providers ?? []);
+            // Augment the backend catalog with Cohere if the backend hasn't
+            // shipped it yet — the retrieval pipeline (Cohere multilingual
+            // embeddings + rerank) needs a card here so BYO users can paste
+            // their key. Backend store/router patches are tracked in
+            // docs/EMBEDDINGS.md.
+            const backendProviders: Provider[] = pj.providers ?? [];
+            const hasCohere = backendProviders.some(p => p.code === "cohere");
+            const merged: Provider[] = hasCohere
+                ? backendProviders
+                : [
+                      ...backendProviders,
+                      {
+                          code: "cohere",
+                          name: "Cohere",
+                          description: "Multilingual embeddings + reranker for retrieval (embed-multilingual-v3.0 / rerank-multilingual-v3.0)",
+                          signupUrl: "https://dashboard.cohere.com/",
+                          hasKey: false,
+                      },
+                  ];
+            setProviders(merged);
             setKeys(kj.keys ?? []);
         } finally {
             setLoading(false);
