@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
     PanelLeft,
+    PanelLeftClose,
     MessageSquare,
     FolderOpen,
     Table2,
@@ -520,10 +521,17 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 }`}
                 style={{ fontFamily: "var(--font-eb-garamond), ui-serif, serif" }}
             >
-                {/* ─── Icon rail (always visible on desktop) ──────────────── */}
+                {/* ─── Icon rail (collapsed-only) ──────────────────────────
+                    Hide the rail when the expanded panel is open — the panel
+                    already shows the same items with labels, so showing the
+                    rail at the same time creates a "two sidebars" effect.
+                    The rail acts as a compact alternative; expanded panel is
+                    the full one. */}
                 <nav
                     aria-label="Primary"
-                    className="flex flex-col items-center gap-1.5 w-16 shrink-0 border-r border-[#E7E2D6] bg-[#fbf8f2] py-3 overflow-visible"
+                    className={`flex-col items-center gap-1.5 w-16 shrink-0 border-r border-[#E7E2D6] bg-[#fbf8f2] py-3 overflow-visible ${
+                        showPanel ? "hidden" : "flex"
+                    }`}
                 >
                     {/* Brand */}
                     <RailTooltip label="Louis · Home">
@@ -717,7 +725,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                 >
                     {showPanel && (
                         <div className="flex flex-col h-full min-w-[15rem] w-60">
-                            {/* Header — brand wordmark + product launcher */}
+                            {/* Header — brand wordmark + product launcher + collapse */}
                             <div className="flex items-center justify-between px-4 py-3 border-b border-[#E7E2D6]">
                                 <Link
                                     href="/assistant"
@@ -725,7 +733,17 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 >
                                     <span className="text-2xl font-light font-serif text-foreground">Louis</span>
                                 </Link>
-                                <div className="relative">
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={toggleExpandedPanel}
+                                        className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-amber-50/60 transition-colors motion-reduce:transition-none text-muted-foreground"
+                                        title="Collapse panel"
+                                        aria-label="Collapse panel"
+                                    >
+                                        <PanelLeftClose className="h-4 w-4" />
+                                    </button>
+                                    <div className="relative">
                                     <button
                                         type="button"
                                         onClick={(e) => { e.stopPropagation(); setLauncherOpen((o) => !o); }}
@@ -781,6 +799,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                             </Link>
                                         </div>
                                     )}
+                                    </div>
                                 </div>
                             </div>
 
