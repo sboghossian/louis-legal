@@ -3,6 +3,7 @@
 import {
     useState,
     useCallback,
+    useEffect,
     useRef,
     forwardRef,
     useImperativeHandle,
@@ -16,6 +17,7 @@ import {
     Library,
     Mic,
     MicOff,
+    Sparkles,
     Square,
     X,
 } from "lucide-react";
@@ -33,6 +35,24 @@ import {
     type ModelProvider,
 } from "@/app/lib/modelAvailability";
 import type { LouisDocument, LouisMessage } from "../shared/types";
+
+const AUTO_ROUTE_STORAGE_KEY = "louis.autoRouteModel";
+
+/**
+ * Read the persisted auto-route preference. Defaults to `true` for new users —
+ * matches the Settings page checkbox default. Stored as "1"/"0".
+ */
+function readAutoRoutePref(): boolean {
+    if (typeof window === "undefined") return true;
+    const raw = window.localStorage.getItem(AUTO_ROUTE_STORAGE_KEY);
+    if (raw === null) return true;
+    return raw === "1";
+}
+
+function writeAutoRoutePref(next: boolean): void {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(AUTO_ROUTE_STORAGE_KEY, next ? "1" : "0");
+}
 
 export interface ChatInputHandle {
     addDoc: (doc: LouisDocument) => void;
@@ -70,6 +90,17 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         title: string;
     } | null>(null);
     const [model, setModel] = useSelectedModel();
+    // Local auto-route state mirrors `localStorage.louis.autoRouteModel`. The
+    // Settings page also writes to the same key; we re-read on mount so the
+    // checkbox state stays in sync. Default ON for new users.
+    const [autoRoute, setAutoRouteState] = useState<boolean>(true);
+    useEffect(() => {
+        setAutoRouteState(readAutoRoutePref());
+    }, []);
+    const setAutoRoute = useCallback((next: boolean) => {
+        setAutoRouteState(next);
+        writeAutoRoutePref(next);
+    }, []);
     const { profile } = useUserProfile();
     const apiKeys = profile?.apiKeys;
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -217,7 +248,10 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     const handleSubmit = () => {
         const query = value.trim();
         if (!query || isLoading) return;
-        if (apiKeys && !isModelAvailable(model, apiKeys)) {
+        // When auto-route is ON, skip the per-provider key check — the
+        // backend classifier picks among the user's available keys and
+        // falls back to the env default otherwise.
+        if (!autoRoute && apiKeys && !isModelAvailable(model, apiKeys)) {
             setApiKeyModalProvider(getModelProvider(model));
             return;
         }
@@ -234,12 +268,28 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         const wf = selectedWorkflow;
         setSelectedWorkflow(null);
 
+        // Precedence on the server: composer pick > classifier recommendation
+        // > env default. When auto-route is ON we omit `model` entirely so
+        // the backend's classifier picks per-turn. When OFF, the explicit
+        // composer pick wins regardless of `autoRouteModel`.
+        //
+        // TODO(out-of-scope: frontend/src/app/hooks/useAssistantChat.ts):
+        //   the hook should pluck `autoRouteModel` off `message` and forward
+        //   it as a top-level field in the streamChat() / streamProjectChat()
+        //   POST body. Today the backend defaults to ON when the flag is
+        //   absent, so the precedence still works correctly for both "auto"
+        //   and "explicit pick" — but a user who explicitly disables
+        //   auto-route in Settings AND leaves the composer on a real model
+        //   gets identical behavior (the explicit pick wins anyway). The
+        //   only un-served case is "auto OFF but composer empty" — which is
+        //   unreachable from the UI today because toggling auto OFF auto-
+        //   selects a real model.
         onSubmit?.({
             role: "user",
             content: query,
             files: files.length > 0 ? files : undefined,
             workflow: wf ?? undefined,
-            model,
+            model: autoRoute ? undefined : model,
         });
     };
 
@@ -414,11 +464,40 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                         </div>
 
                         <div className="flex items-center gap-1">
-                            <ModelToggle
-                                value={model}
-                                onChange={setModel}
-                                apiKeys={apiKeys}
-                            />
+                            {/* Auto-route toggle. ON = let the backend's
+                                classifier pick the model per turn (recommended
+                                default). OFF = pin to the model in ModelToggle.
+                                Mirrors the Settings page checkbox. */}
+                            <button
+                                type="button"
+                                onClick={() => setAutoRoute(!autoRoute)}
+                                aria-pressed={autoRoute}
+                                aria-label={
+                                    autoRoute
+                                        ? "Auto-route on — classifier picks model"
+                                        : "Auto-route off — using selected model"
+                                }
+                                title={
+                                    autoRoute
+                                        ? "Auto-route on. Click to pin a specific model."
+                                        : "Auto-route off. Click to let the classifier pick."
+                                }
+                                className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors cursor-pointer ${
+                                    autoRoute
+                                        ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                                        : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                                }`}
+                            >
+                                <Sparkles className="h-3.5 w-3.5" />
+                                <span className="hidden sm:inline">Auto</span>
+                            </button>
+                            {!autoRoute && (
+                                <ModelToggle
+                                    value={model}
+                                    onChange={setModel}
+                                    apiKeys={apiKeys}
+                                />
+                            )}
                             <button
                                 type="button"
                                 className="relative bg-gradient-to-b from-neutral-700 to-black text-white rounded-[10px] h-8 w-8 flex items-center justify-center cursor-pointer disabled:cursor-default disabled:from-neutral-600 disabled:to-black backdrop-blur-xl border border-white/30 active:enabled:scale-95 transition-all duration-150"

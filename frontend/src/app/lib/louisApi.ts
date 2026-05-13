@@ -590,7 +590,11 @@ export async function streamChat(payload: {
     }[];
     chat_id?: string;
     project_id?: string;
-    model?: string;
+    /** Composer pick. `null` (or omitted) means "let the backend decide". */
+    model?: string | null;
+    /** When true (default), backend falls back to classifier `recommendedModel`
+     *  whenever `model` is null/omitted. Persisted in `localStorage.louis.autoRouteModel`. */
+    autoRouteModel?: boolean;
     signal?: AbortSignal;
 }): Promise<Response> {
     const { signal, ...body } = payload;

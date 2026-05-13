@@ -84,11 +84,26 @@ function parseChatMessages(value: unknown):
 function parseOptionalModel(value: unknown):
     | { ok: true; model: string | undefined }
     | { ok: false; detail: string } {
-    if (value === undefined) return { ok: true, model: undefined };
-    if (typeof value !== "string" || !value.trim()) {
-        return { ok: false, detail: "model must be a non-empty string" };
+    if (value === undefined || value === null) {
+        return { ok: true, model: undefined };
     }
-    return { ok: true, model: value.trim() };
+    if (typeof value !== "string") {
+        return { ok: false, detail: "model must be a string, null, or omitted" };
+    }
+    const trimmed = value.trim();
+    // Treat "" and "auto" as "no composer pick — let the router decide".
+    if (!trimmed || trimmed.toLowerCase() === "auto") {
+        return { ok: true, model: undefined };
+    }
+    return { ok: true, model: trimmed };
+}
+
+function parseOptionalBool(value: unknown):
+    | { ok: true; value: boolean | undefined }
+    | { ok: false; detail: string } {
+    if (value === undefined || value === null) return { ok: true, value: undefined };
+    if (typeof value === "boolean") return { ok: true, value };
+    return { ok: false, detail: "autoRouteModel must be a boolean" };
 }
 
 async function validateAccessibleProjectId(
@@ -435,17 +450,25 @@ chatRouter.post("/", requireAuth, async (req, res) => {
     if (!parsedModel.ok) {
         return void res.status(400).json({ detail: parsedModel.detail });
     }
+    const parsedAutoRoute = parseOptionalBool(body.autoRouteModel);
+    if (!parsedAutoRoute.ok) {
+        return void res.status(400).json({ detail: parsedAutoRoute.detail });
+    }
 
     const messages = parsedMessages.messages;
     const chat_id = parsedChatId.chatId;
     const project_id = parsedProjectId.projectId;
-    const model = parsedModel.model;
+    // Composer pick — `undefined` means "no pick" (either omitted or "auto").
+    const composerModel = parsedModel.model;
+    // Default ON if the client didn't send the flag at all.
+    const autoRouteModel = parsedAutoRoute.value ?? true;
 
     devLog("[chat/stream] incoming request", {
         userId,
         chat_id,
         project_id,
-        model,
+        composerModel,
+        autoRouteModel,
         messageCount: messages?.length,
     });
 
@@ -543,10 +566,34 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         hasDocuments: docAvailability.length > 0,
         userId,
         chatId: chatId ?? undefined,
+        autoRouteModel,
     });
     devLog("[chat/stream] route decision", {
         skills: routeDecision.skillIds.length,
         intent: routeDecision.intent,
+        recommendedModel: routeDecision.recommendedModel,
+        playbookSlug: routeDecision.playbookSlug,
+        routingConfidence: routeDecision.routingConfidence,
+    });
+
+    // Precedence: explicit composer pick > classifier recommendation (only
+    // when the user enabled auto-route) > env default (resolved downstream in
+    // chatTools.resolveModel). `chosenModel === undefined` lets the downstream
+    // resolver pick DEFAULT_MAIN_MODEL.
+    let chosenModel: string | undefined = composerModel;
+    let chosenModelSource: "composer" | "classifier" | "env-default" = "composer";
+    if (!chosenModel) {
+        if (autoRouteModel && routeDecision.recommendedModel) {
+            chosenModel = routeDecision.recommendedModel;
+            chosenModelSource = "classifier";
+        } else {
+            chosenModel = undefined;
+            chosenModelSource = "env-default";
+        }
+    }
+    devLog("[chat/stream] chosen model", {
+        chosenModel,
+        chosenModelSource,
     });
 
     const apiMessages = buildMessages(
@@ -576,6 +623,31 @@ chatRouter.post("/", requireAuth, async (req, res) => {
     try {
         write(`data: ${JSON.stringify({ type: "chat_id", chatId })}\n\n`);
 
+        // Surface the routing decision to the client so the UI can render
+        // a "model + playbook" badge under the assistant message. `model`
+        // here is the *final* chosen model (may be null if we fell through
+        // to the env default — the frontend can ignore that case).
+        //
+        // TODO(out-of-scope: frontend/src/app/hooks/useAssistantChat.ts +
+        //   frontend/src/app/components/assistant/AssistantMessage.tsx):
+        //   the hook should capture this event onto the assistant message
+        //   (e.g. as `message.routing = { model, playbookSlug, ... }`) and
+        //   the message component should render a tiny badge like
+        //   "Sonnet 4.6 · corporate-ma" beneath the bubble. The wire shape
+        //   below is the contract; existing clients that don't handle this
+        //   event type already ignore unknown SSE types safely.
+        write(
+            `data: ${JSON.stringify({
+                type: "routing",
+                model: chosenModel ?? null,
+                modelSource: chosenModelSource,
+                playbookSlug: routeDecision.playbookSlug,
+                routingConfidence: routeDecision.routingConfidence,
+                intent: routeDecision.intent,
+                autoRouteModel,
+            })}\n\n`,
+        );
+
         const { fullText, events } = await runLLMStream({
             apiMessages,
             docStore,
@@ -584,7 +656,7 @@ chatRouter.post("/", requireAuth, async (req, res) => {
             db,
             write,
             workflowStore,
-            model,
+            model: chosenModel,
             apiKeys,
             projectId: resolvedProjectId,
         });
