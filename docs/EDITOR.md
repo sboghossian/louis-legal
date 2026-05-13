@@ -42,20 +42,99 @@ frontend/src/app/components/editor/
 
 ### Data flow
 
-1. `doc-workspace/page.tsx` fetches `/api/doc-workspace/:docId/content` and
-   gets `ServerBlock[]` (`{ id, heading?, text?, changed? }`).
-2. `RichTextEditor` converts blocks to HTML once at mount via
-   `blocksToHTML(initialBlocks)`. A localStorage draft (key
-   `louis.docDraft.<docId>`) takes precedence if present.
+1. `doc-workspace/page.tsx` fetches `GET /api/doc-workspace/:docId/content`.
+   The response now carries **both** legacy and rich shapes:
+
+   ```jsonc
+   {
+     "blocks":              [/* legacy ServerBlock[] for review/read/compare */],
+     "htmlContent":         "<h2>…</h2><p>…</p>" /* or null */,
+     "htmlContentVersion":  3,
+     "htmlContentSavedAt":  "2026-05-13T09:14:22.103Z",
+     "source":              "live-html" | "live" | "fixture" | …,
+     "filename":            "acme-globex-msa-v3.docx"
+   }
+   ```
+
+   Precedence: when `htmlContent` is non-null, the editor loads from it —
+   this is what preserves inline bold/italic/links AND the custom
+   `comment` / `insertion` / `deletion` marks across reloads. Otherwise
+   the editor falls back to `blocksToHTML(initialBlocks)` for the
+   first-ever render of a freshly-uploaded doc.
+
+2. `RichTextEditor` mounts with `initialHtml` + `initialHtmlVersion`. A
+   crash-recovery localStorage draft (key `louis.docDraft.<docId>`) takes
+   precedence over both — this only matters when the user typed during a
+   network outage and we couldn't push to the server.
+
 3. As the user types, TipTap mutates an in-memory ProseMirror state. After
    every keystroke we debounce 1.5s, then:
-   - write the current HTML to `localStorage[louis.docDraft.<docId>]`
-   - call `onPersist(htmlToBlocks(html), html)` so the page can stash
-     authoritative blocks
-   - update the bottom-bar saved-at timestamp
+
+   - call `onRemoteSave(html, version)` →
+     `PUT /api/doc-workspace/:docId/content` (see Persistence below)
+   - on success: bump the local version counter, clear any offline draft,
+     update the bottom-bar saved-at timestamp
+   - on 409 conflict: surface a banner ("Another tab edited this doc")
+     with a Reload button
+   - on network failure: write to `localStorage[louis.docDraft.<docId>]`
+     and show an "Offline — changes saved locally" badge
+   - regardless of remote result, call `onPersist(htmlToBlocks(html), html)`
+     so the page can stash authoritative blocks for the
+     review/read/compare views
+
 4. A separate 5s heartbeat snapshots the current HTML into
    `louis.docVersions.<docId>` (capped at 20 entries). The Versions panel
-   reads and restores from this key.
+   reads and restores from this key. (Localstorage-only by design — these
+   are casual undo points, not a replacement for the authoritative
+   server-side history in `document_versions`.)
+
+### Persistence (PUT /api/doc-workspace/:docId/content)
+
+```http
+PUT /api/doc-workspace/{docId}/content
+Authorization: Bearer {supabase_access_token}
+Content-Type: application/json
+
+{ "html": "<h2>…</h2><p>…</p>", "version": 3 }
+```
+
+Responses:
+
+| Status | Body                                                                  | Meaning                                          |
+| ------ | --------------------------------------------------------------------- | ------------------------------------------------ |
+| 200    | `{ ok: true, version: 4, savedAt: "2026-05-13T09:14:22Z" }`           | Saved. New version counter is `version`.         |
+| 400    | `{ error: "html_required" }` / `{ error: "version_required" }`        | Malformed body.                                  |
+| 403    | `{ error: "forbidden" }`                                              | Not the doc owner.                               |
+| 404    | `{ error: "doc_not_found" }`                                          | No such doc.                                     |
+| 409    | `{ error: "version_conflict", currentVersion: 5, message: "…" }`      | Another writer is ahead. Reload + retry.         |
+| 413    | `{ error: "html_too_large", maxBytes: 5242880 }`                      | Payload over 5 MiB.                              |
+
+The HTML lands in `public.documents.html_content`. The legacy `blocks`
+column (well, the legacy extraction path that reads from the storage
+object) is **not** dropped — it's still the read path for any doc whose
+`html_content` is null, i.e. anything uploaded before this feature
+shipped, and for historical version reads (`?versionId=…`).
+
+### Schema versioning
+
+The migration adds two columns:
+
+- `html_content TEXT` — the authoritative HTML.
+- `html_content_version INT DEFAULT 1` — optimistic-concurrency counter.
+  Bumped by 1 on every accepted PUT. The frontend echoes the version it
+  saw on its most recent GET; if the server's value is ahead, we 409.
+
+The version counter does **double duty**:
+
+1. **Race detection** between concurrent editors (two browser tabs, a
+   webhook-driven AI edit, etc.).
+2. **Schema migration headroom**. If we ever change how comments or
+   track-changes are encoded (e.g. move from inline marks to a sidecar
+   `doc_annotations` table, or store ProseMirror JSON instead of HTML),
+   the counter is the natural place to stash a per-row schema marker —
+   on read, the route can re-shape the payload to match the latest
+   client. Until then, `html_content_version = N` simply means "the
+   N-th save".
 
 ### Custom marks
 
@@ -159,18 +238,61 @@ Tabbed:
 - `.md` and `.html` export.
 - Lazy-loaded editor module in `doc-workspace/page.tsx`.
 
+### Out of scope (this iteration) — TODOs
+
+- **TODO(editor.page-wiring)** — `frontend/src/app/(pages)/doc-workspace/page.tsx`
+  still mounts `<RichTextEditor>` with only the legacy props (no
+  `initialHtml`, `initialHtmlVersion`, or `onRemoteSave`). Until that page
+  is updated, the editor falls back to its standalone localStorage-only
+  autosave path (the same behaviour as before this commit), but the new
+  server endpoint is fully wired and ready. The wire-up is:
+
+  ```tsx
+  <RichTextEditor
+      docId={docId}
+      title={title}
+      initialBlocks={blocksForRender}
+      initialHtml={contentHtml /* from GET /content */}
+      initialHtmlVersion={contentHtmlVersion ?? 1}
+      onRemoteSave={async (html, version) => {
+          const headers = await authHeaders();
+          const r = await fetch(`${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/content`, {
+              method: "PUT",
+              headers: { ...headers, "Content-Type": "application/json" },
+              body: JSON.stringify({ html, version }),
+          });
+          if (r.status === 409) {
+              const j = await r.json();
+              return { ok: false, conflict: true, currentVersion: j.currentVersion };
+          }
+          if (!r.ok) return { ok: false, network: true };
+          const j = await r.json();
+          return { ok: true, version: j.version, savedAt: j.savedAt };
+      }}
+      onPersist={(blocks /*, html */) => setContentBlocks(blocks)}
+  />
+  ```
+
+  That page is outside the file scope of this commit; ship it in the
+  follow-up. While doing so, also re-export `RemoteSaveResult` from
+  `frontend/src/app/components/editor/index.ts` so the page can import a
+  typed return shape:
+
+  ```ts
+  // frontend/src/app/components/editor/index.ts
+  export type { RichTextEditorProps, RemoteSaveResult } from "./RichTextEditor";
+  ```
+
+  (Skipped here only because `index.ts` is outside the file scope of this
+  commit; the type is already exported from `RichTextEditor.tsx`, so a
+  deep import is the workaround in the interim.)
+
 ### Out of scope (v1) — TODOs
 
 - `.docx` export currently emits an HTML payload with a `.docx` filename and
   a console warning. The `docx` npm package is already a dep; a real builder
   walking the ProseMirror doc and emitting `Paragraph`/`TextRun` is the next
   step. **TODO(editor.docx)** in `utils/export.ts`.
-- Backend persistence: there's no `PUT /api/doc-workspace/:docId/content`
-  endpoint yet. The editor autosaves to `localStorage.louis.docDraft.<docId>`
-  and exposes the current blocks via `onPersist`, but a refresh on a
-  different device gives you the server's last-known content. **TODO(editor.persistence)**
-  — backend route in `backend/src/routes/docWorkspace.ts` is out of file
-  scope for this PR.
 - Suggest-mode deletions: typing → tracked. Backspacing → still hard
   deletes. Real "intercept Backspace, convert to deletion mark" needs
   keymap-level work that respects IME / composition events.
@@ -212,8 +334,21 @@ runs it locally.)
    (e.g. an insertion that wraps a deletion stays semantically distinct).
 4. **localStorage as the version store** — explicitly requested in the
    prompt. Cap at 20 entries to avoid quota issues on long documents.
-5. **HTML as the canonical storage format** — the editor stores HTML in
-   localStorage and converts to/from `ServerBlock[]` only at the boundary.
-   This loses some inline formatting on the round-trip back to blocks
-   (since blocks have no inline structure), but the editor itself never
-   re-loads from blocks during an editing session.
+5. **HTML as the canonical storage format** — the editor stores HTML
+   server-side (in `public.documents.html_content`, see Persistence above)
+   and converts to/from `ServerBlock[]` only for the legacy read paths
+   (review/read/compare views, exports, AI chat context). Inline
+   formatting and the custom comment / insertion / deletion marks all
+   survive the round-trip; the lossy direction is HTML → blocks, which
+   is fine because the editor never re-loads from blocks during an
+   editing session.
+6. **`blocks jsonb` / extraction read path kept indefinitely** — we did
+   *not* drop the existing storage-object extraction; docs uploaded
+   before this feature shipped (and historical `?versionId=…` reads of
+   any doc) still need it. Deprecation can happen later once every
+   live doc has had at least one rich-editor save.
+7. **Single `html_content_version` counter (not per-field)** — comments
+   and track-changes ride inside the HTML as ProseMirror marks, so a
+   single counter suffices for race-detection across all of them. If we
+   later split comments into a `doc_annotations` sidecar table, that
+   table will get its own counter; the document-body counter stays put.

@@ -65,8 +65,10 @@ export function blocksToHTML(blocks: ServerBlock[]): string {
  * Walk an HTMLElement subtree and emit ServerBlock[]. Headings start a new
  * block; following paragraphs/lists/blockquotes append to the current block's
  * text. We do NOT try to round-trip inline formatting back into the block
- * shape — the editor keeps the canonical HTML in localStorage and only emits
- * blocks so the backend's old API surface keeps working.
+ * shape — the editor persists the canonical HTML via the PUT
+ * /api/doc-workspace/:docId/content endpoint (see docs/EDITOR.md) and only
+ * emits blocks so the legacy read paths (review/read/compare views, exports,
+ * AI chat context) keep working.
  */
 export function htmlToBlocks(html: string): ServerBlock[] {
     if (typeof document === "undefined") return [];

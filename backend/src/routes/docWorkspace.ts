@@ -223,6 +223,9 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
           { id: "b6", heading: "6. Limitation of Liability", text: "PROVIDER'S LIABILITY SHALL NOT EXCEED THE FEES PAID IN THE TWENTY-FOUR (24) MONTHS PRECEDING THE CLAIM." },
           { id: "b7", heading: "7. Governing Law and Dispute Resolution", text: "This Agreement is governed by English law. Disputes shall be resolved in the courts of England and Wales." },
         ],
+        htmlContent: null,
+        htmlContentVersion: 1,
+        htmlContentSavedAt: null,
         source: "fixture",
         versionId: "v2",
       });
@@ -238,6 +241,9 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
         { id: "b6", heading: "6. Limitation of Liability", text: "EACH PARTY'S TOTAL CUMULATIVE LIABILITY UNDER THIS AGREEMENT SHALL NOT EXCEED THE FEES PAID OR PAYABLE IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM, EXCEPT FOR (I) BREACH OF CONFIDENTIALITY, (II) IP INDEMNIFICATION, (III) WILLFUL MISCONDUCT OR FRAUD.", changed: true },
         { id: "b7", heading: "7. Governing Law and Dispute Resolution", text: "This Agreement is governed by the laws of the Emirate of Dubai and applicable UAE federal laws. Disputes shall be resolved by binding arbitration under the DIAC Arbitration Rules, seat Dubai (DIFC), in English." },
       ],
+      htmlContent: null,
+      htmlContentVersion: 1,
+      htmlContentSavedAt: null,
       source: "fixture",
       versionId: "v3",
     });
@@ -248,10 +254,26 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
   const db = createServerSupabase();
   const { data: doc } = await db
     .from("documents")
-    .select("id, filename, file_type, user_id")
+    .select("id, filename, file_type, user_id, html_content, html_content_version, html_content_saved_at")
     .eq("id", docId).single();
   if (!doc || doc.user_id !== userId) {
     res.status(404).json({ error: "doc_not_found" });
+    return;
+  }
+
+  // If the editor has previously persisted authoritative HTML (and the caller
+  // isn't asking for a specific historical versionId), return that as the
+  // canonical content. The frontend prefers `htmlContent` when present and
+  // falls back to `blocks` for legacy / read-only views.
+  if (!versionId && typeof doc.html_content === "string" && doc.html_content.length > 0) {
+    res.json({
+      blocks: [],
+      htmlContent: doc.html_content,
+      htmlContentVersion: doc.html_content_version ?? 1,
+      htmlContentSavedAt: doc.html_content_saved_at ?? null,
+      source: "live-html",
+      filename: doc.filename,
+    });
     return;
   }
 
@@ -262,12 +284,24 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
       active = await loadActiveVersion(docId, db);
     }
     if (!active) {
-      res.json({ blocks: [], source: "live-empty" });
+      res.json({
+        blocks: [],
+        htmlContent: null,
+        htmlContentVersion: doc.html_content_version ?? 1,
+        htmlContentSavedAt: doc.html_content_saved_at ?? null,
+        source: "live-empty",
+      });
       return;
     }
     const raw = await downloadFile(active.storage_path);
     if (!raw) {
-      res.json({ blocks: [], source: "live-missing" });
+      res.json({
+        blocks: [],
+        htmlContent: null,
+        htmlContentVersion: doc.html_content_version ?? 1,
+        htmlContentSavedAt: doc.html_content_saved_at ?? null,
+        source: "live-missing",
+      });
       return;
     }
     let text = "";
@@ -300,10 +334,111 @@ docWorkspaceRouter.get("/:docId/content", requireAuth, async (req, res) => {
         }
       }
     }
-    res.json({ blocks, source: "live", filename: doc.filename });
+    res.json({
+      blocks,
+      htmlContent: null,
+      htmlContentVersion: doc.html_content_version ?? 1,
+      htmlContentSavedAt: doc.html_content_saved_at ?? null,
+      source: "live",
+      filename: doc.filename,
+    });
   } catch (e) {
     res.status(500).json({ error: "extract_failed", detail: (e as Error).message });
   }
+});
+
+/**
+ * PUT /api/doc-workspace/:docId/content
+ * Body: { html: string, version: number }
+ *
+ * Persists the editor's authoritative HTML for `docId`. `version` is the
+ * optimistic-concurrency counter the client received from the most recent
+ * GET (or previous PUT). If it doesn't match the current row's
+ * `html_content_version`, we reject with 409 so the client can reload the
+ * latest content rather than overwriting another tab's edits.
+ *
+ * Why a separate counter (not the DOCX `document_versions.version_number`):
+ * autosave ticks on every 1.5s debounce; we don't want to inflate the
+ * human-visible version timeline. `html_content_version` is purely a
+ * monotonic counter for race-detection on the HTML payload.
+ */
+docWorkspaceRouter.put("/:docId/content", requireAuth, async (req, res) => {
+  const userId = res.locals.userId as string;
+  const { docId } = req.params;
+  const body = req.body as { html?: unknown; version?: unknown };
+
+  if (typeof body.html !== "string") {
+    res.status(400).json({ error: "html_required" });
+    return;
+  }
+  if (typeof body.version !== "number" || !Number.isFinite(body.version)) {
+    res.status(400).json({ error: "version_required" });
+    return;
+  }
+
+  // Soft cap so a runaway client can't push gigabytes into a TEXT column.
+  // 5 MB is generous for a long contract with track-changes marks.
+  const MAX_HTML_BYTES = 5 * 1024 * 1024;
+  if (Buffer.byteLength(body.html, "utf8") > MAX_HTML_BYTES) {
+    res.status(413).json({ error: "html_too_large", maxBytes: MAX_HTML_BYTES });
+    return;
+  }
+
+  if (docId === "demo") {
+    // The demo fixture doesn't have a DB row; pretend the save succeeded so
+    // the editor doesn't get stuck retrying on the marketing tour.
+    res.json({
+      ok: true,
+      version: (typeof body.version === "number" ? body.version : 1) + 1,
+      savedAt: new Date().toISOString(),
+      source: "fixture",
+    });
+    return;
+  }
+
+  const db = createServerSupabase();
+  const { data: doc, error: readErr } = await db
+    .from("documents")
+    .select("id, user_id, html_content_version")
+    .eq("id", docId)
+    .single();
+  if (readErr || !doc) {
+    res.status(404).json({ error: "doc_not_found" });
+    return;
+  }
+  if (doc.user_id !== userId) {
+    res.status(403).json({ error: "forbidden" });
+    return;
+  }
+
+  const currentVersion = doc.html_content_version ?? 1;
+  if (body.version !== currentVersion) {
+    res.status(409).json({
+      error: "version_conflict",
+      currentVersion,
+      message: "Another tab or device saved newer content. Reload to continue.",
+    });
+    return;
+  }
+
+  const nextVersion = currentVersion + 1;
+  const savedAt = new Date().toISOString();
+  const { error: writeErr } = await db
+    .from("documents")
+    .update({
+      html_content: body.html,
+      html_content_version: nextVersion,
+      html_content_saved_at: savedAt,
+      updated_at: savedAt,
+    })
+    .eq("id", docId)
+    .eq("html_content_version", currentVersion); // belt-and-braces CAS
+  if (writeErr) {
+    res.status(500).json({ error: "save_failed", detail: writeErr.message });
+    return;
+  }
+
+  res.json({ ok: true, version: nextVersion, savedAt });
 });
 
 /**
