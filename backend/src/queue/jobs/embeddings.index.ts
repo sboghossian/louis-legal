@@ -1,19 +1,35 @@
 /**
  * Job: embeddings.index
  *
- * Chunk a document's parsed text, embed each chunk, and write the vectors
- * into the matter-scoped index.
+ * Chunk a document's parsed text, embed each chunk via the configured
+ * provider (Cohere multilingual v3 by default), and upsert the vectors
+ * into pgvector-backed `public.document_chunks`.
  *
- * Status: stub. The real implementation lands when Cohere multilingual is
- * integrated for HAQQ Legal AI's Arabic/French/English corpus. For now we
- * record the requested work so the upstream documents.parse job can chain
- * cleanly and the queue dashboard shows real job lineage.
+ * Upstream: `documents.parse` enqueues this with `{ documentId, userId,
+ * filename, text }`. Downstream: retrieval surfaces hit
+ * `embeddings/retrieval.ts::retrieve()` which now reads from the same
+ * table this job writes to.
+ *
+ * Failure modes:
+ *   - No Cohere key reachable → embedding throws → caught, returns
+ *     stub:true with embedded=0. Doc parse still succeeds.
+ *   - pgvector / table missing → store layer returns skipped:true and
+ *     logs once. Job returns stub:false (embeddings *were* computed),
+ *     indexed=0 (nothing persisted).
+ *   - Both succeed → stub:false, embedded == indexed == chunks.length.
  */
 
 export const JOB_NAME = "embeddings.index";
 
 export interface EmbeddingsIndexJobData {
   documentId: string;
+  /**
+   * Owner of the document — denormalized into every chunk row for
+   * future RLS predicates. Optional because legacy callers (pre this
+   * change) didn't supply it; documents.parse always does going
+   * forward.
+   */
+  userId?: string;
   filename?: string;
   text: string;
   /** Optional override of chunk size in characters. */
@@ -26,7 +42,7 @@ export interface EmbeddingsIndexResult {
   chunks: number;
   embedded: number;
   indexed: number;
-  /** True while the embedding integration is pending. */
+  /** True when the embedding pass was a no-op (no Cohere key reachable). */
   stub: boolean;
 }
 
@@ -38,7 +54,13 @@ interface JobLike {
 export async function handleEmbeddingsIndex(
   job: JobLike,
 ): Promise<EmbeddingsIndexResult> {
-  const { documentId, text, chunkSize = 1500, chunkOverlap = 200 } = job.data;
+  const {
+    documentId,
+    userId,
+    text,
+    chunkSize = 1500,
+    chunkOverlap = 200,
+  } = job.data;
   await job.log?.(
     `indexing document=${documentId} textLen=${text.length} chunk=${chunkSize}/${chunkOverlap}`,
   );
@@ -50,31 +72,39 @@ export async function handleEmbeddingsIndex(
   // Naive char-based chunking; the real implementation should respect
   // sentence + paragraph boundaries and use the same tokenizer as the
   // embedding model.
-  const chunks: string[] = [];
+  const chunkTexts: string[] = [];
   for (let i = 0; i < text.length; i += chunkSize - chunkOverlap) {
-    chunks.push(text.slice(i, i + chunkSize));
+    chunkTexts.push(text.slice(i, i + chunkSize));
     if (i + chunkSize >= text.length) break;
   }
+  const chunks = chunkTexts.map((t, i) => ({ index: i, text: t }));
 
-  // Call Cohere multilingual embeddings if a key is reachable. We
-  // dynamic-import to keep the worker boot fast and to let the SDK be
-  // optional (no install → graceful no-op).
   let embedded = 0;
+  let indexed = 0;
   let stub = true;
   try {
     const { embedTexts } = await import("../../providers/cohere");
-    const vectors = await embedTexts(chunks, {
+    const vectors = await embedTexts(chunkTexts, {
       model: "embed-multilingual-v3.0",
     });
     embedded = vectors.length;
     stub = false;
-    // Vector persistence still pending — pgvector table + upsert lands
-    // with the embeddings BullMQ worker integration. For now the
-    // embeddings stream is computed; downstream retrieval will start
-    // returning real results once `vectorIndex.upsert` exists.
-    // TODO(embeddings.persistence)
+
+    // Persist to pgvector. The store gracefully degrades to a no-op
+    // when the migration hasn't been applied yet, so this is safe to
+    // call from day one.
+    const { upsertChunks } = await import("../../embeddings/store");
+    const upsert = await upsertChunks({
+      documentId,
+      userId: userId ?? null,
+      chunks,
+      vectors,
+      provider: "cohere",
+      model: "embed-multilingual-v3.0",
+    });
+    indexed = upsert.inserted;
     await job.log?.(
-      `embedded ${embedded} chunks via cohere multilingual; persistence pending`,
+      `embedded ${embedded} chunks via cohere multilingual; indexed=${indexed}${upsert.skipped ? " (pgvector missing)" : ""}`,
     );
   } catch (e) {
     await job.log?.(
@@ -86,7 +116,7 @@ export async function handleEmbeddingsIndex(
     documentId,
     chunks: chunks.length,
     embedded,
-    indexed: 0,
+    indexed,
     stub,
   };
 }

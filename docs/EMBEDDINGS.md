@@ -62,6 +62,100 @@ model that holds up.
   burn the user's Cohere quota silently — but if they configured Cohere
   at all, they get the better experience by default.
 
+## Schema
+
+Vectors are persisted in `public.document_chunks`, installed by the
+migration `backend/migrations/2026-05-13-pgvector-embeddings.sql`:
+
+```sql
+create extension if not exists vector;
+
+create table public.document_chunks (
+  id            uuid primary key default gen_random_uuid(),
+  document_id   uuid not null,             -- no FK by design (see migration header)
+  user_id       uuid,                      -- denormalized for RLS predicates
+  chunk_index   int  not null,
+  chunk_text    text not null,
+  embedding     vector(1024),              -- Cohere multilingual v3
+  provider      text not null default 'cohere',
+  model         text not null default 'embed-multilingual-v3.0',
+  created_at    timestamptz not null default now(),
+  metadata      jsonb not null default '{}'::jsonb
+);
+
+create index idx_document_chunks_embedding_ivfflat
+  on public.document_chunks using ivfflat (embedding vector_cosine_ops)
+  with (lists = 100);
+create index idx_document_chunks_document      on public.document_chunks (document_id);
+create index idx_document_chunks_user_document on public.document_chunks (user_id, document_id);
+```
+
+RLS is enabled and `revoke all from anon, authenticated` — only the
+backend service role reads/writes this table today.
+
+**Important first-run step**: after the first big backfill (~10K
+chunks), run `ANALYZE public.document_chunks;`. IVFFlat recall is
+noticeably worse until the planner has real stats. Re-analyze after
+any major reindex pass.
+
+### Persistence layer
+
+`backend/src/embeddings/store.ts` exposes:
+
+- `upsertChunks({ documentId, userId, chunks, vectors })` — **replace-all
+  semantics** (deletes existing rows for the doc first, then batch-inserts
+  in groups of 100). Picked over idempotent upsert because chunk indices
+  drift between re-runs (different chunk size, different tokenizer) — a
+  clean slate is simpler than reasoning about partial overlaps.
+- `topK({ queryVector, k, filters })` — cosine top-K, returns
+  `{ chunkId, documentId, text, similarity }[]`. Optional
+  `filters.documentId` / `filters.userId` compose with AND.
+- `deleteByDocument(documentId)` — used by `embeddings.delete` (see
+  `backend/src/queue/jobs/embeddings.delete.ts`).
+
+All three gracefully degrade to a no-op (with a one-shot warning) when
+the migration hasn't been applied, so the API surface keeps working in
+fresh dev environments.
+
+### Retrieval entry point
+
+`backend/src/embeddings/retrieval.ts::retrieve(query, options)` is the
+canonical RAG entry point: it embeds the query (`inputType:
+"search_query"`), pulls a pool from `store.topK`, optionally re-ranks
+via Cohere, and trims to `k` (default 10).
+
+## Re-index existing docs
+
+After a provider switch — or just to backfill after applying the
+pgvector migration to an existing tenant — re-run every document
+through the embeddings job. Minimal one-liner script template:
+
+```ts
+// usage: tsx backend/scripts/reindex-embeddings.ts
+import { queues } from "../src/queue";
+import { createServerSupabase } from "../src/lib/supabase";
+
+const sb = createServerSupabase();
+const { data } = await sb
+  .from("documents")
+  .select("id, user_id, text_content")
+  .not("text_content", "is", null);
+
+for (const doc of data ?? []) {
+  await queues.embeddings.add("embeddings.index", {
+    documentId: doc.id,
+    userId: doc.user_id,
+    text: doc.text_content,
+  });
+}
+```
+
+Run analyze after the queue drains:
+
+```sql
+ANALYZE public.document_chunks;
+```
+
 ## Migrating an existing index when the provider changes
 
 Vector spaces are **not** comparable across providers:
@@ -72,8 +166,9 @@ Vector spaces are **not** comparable across providers:
 
 Switching `EMBEDDINGS_PROVIDER` requires re-embedding every stored chunk.
 
-One-liner script stub (drop into `backend/scripts/reindex-embeddings.ts`
-once the pgvector table lands):
+One-liner script stub (drop into `backend/scripts/reindex-embeddings.ts`;
+the pgvector table is now live — see "Re-index existing docs" above
+for the queue-driven variant):
 
 ```ts
 // usage: tsx scripts/reindex-embeddings.ts --provider cohere --batch 96
@@ -101,13 +196,24 @@ touch files outside the embeddings scope and need a follow-up PR.
   and signup URL `https://dashboard.cohere.com/`. Until then the frontend
   card is augmented locally (see the api-keys page) so users see the
   option, but `POST /api/api-keys` will 400 for `provider: "cohere"`.
-- **Embeddings queue worker** (`backend/src/queue/worker.ts`) — the
-  `"embeddings"` queue is declared but unprocessed. Hook it up so document
-  uploads enqueue chunk embedding jobs that call `embed()` from this
-  dispatcher.
-- **pgvector table + SQL migration** — add `documents_chunks.embedding
-  vector(1024)` with an HNSW or IVFFlat index. Today retrieval helpers
-  exist but there's nothing to read.
-- **Citation / clauses / matters routes** — once chunks exist, plug
-  `retrieve()` into the search handlers. The dispatcher is provider-aware
-  so callers don't need to know which model produced the stored vector.
+- **Register `embeddings.delete` in the worker** —
+  `backend/src/queue/worker.ts` doesn't yet import
+  `handleEmbeddingsDelete`. The job is enqueueable today (it routes to
+  the existing `embeddings` queue via the prefix) but won't run until
+  the handler is added to the `HANDLERS` map.
+- **Enqueue `embeddings.delete` from `routes/documents.ts`** — the
+  DELETE handler should call
+  `queues.embeddings.add("embeddings.delete", { documentId })` after
+  removing the row so chunk vectors don't linger.
+- **`match_chunks` SQL function** — `store.topK` currently pulls a
+  candidate window and computes cosine in JS rather than letting the
+  IVFFlat index do the heavy lifting via `ORDER BY embedding <=>
+  $1::vector`. Adding an RPC like
+  `match_chunks(query vector, k int, doc_id uuid, user_id uuid)` and
+  flipping `topK` over to `supabase.rpc("match_chunks", ...)` is the
+  next perf step. The text-literal vector cast is already wired
+  through (`vectorLiteral()`); the RPC just needs a one-statement
+  SQL body.
+- **Citation / clauses / matters routes** — plug `retrieve()` into
+  the search handlers. The dispatcher is provider-aware so callers
+  don't need to know which model produced the stored vector.

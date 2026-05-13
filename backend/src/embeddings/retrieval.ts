@@ -8,7 +8,8 @@
  * clause-library lookup, citation linker — share one implementation.
  */
 
-import { rerank as cohereRerank, type RerankDocument } from "../providers/cohere";
+import { rerank as cohereRerank, hasCohereEnvKey, type RerankDocument } from "../providers/cohere";
+import { topK as storeTopK, type TopKFilters } from "./store";
 
 /** A candidate document carrying its vector, text, and arbitrary metadata. */
 export interface ScoredCandidate<M = Record<string, unknown>> {
@@ -90,4 +91,95 @@ export async function rerankCandidates<M>(
     ...candidates[r.index],
     score: r.relevanceScore,
   }));
+}
+
+// ---------------------------------------------------------------------------
+// retrieve() — full DB-backed pipeline (embed → pgvector top-K → rerank)
+// ---------------------------------------------------------------------------
+
+export interface RetrieveOptions {
+  /** Final result count after optional rerank. Default 10 (8-13 sweet spot). */
+  k?: number;
+  /** Filter candidate pool to a single document / owner. */
+  filters?: TopKFilters;
+  /**
+   * Pre-rerank pool size. Default = max(40, k * 4) — the dispatcher's
+   * documented heuristic for letting rerank pick winners.
+   */
+  preRerankK?: number;
+  /**
+   * `undefined` = auto (rerank ON when a Cohere key is reachable).
+   * `true`  = force ON (caller must have a key).
+   * `false` = force OFF (return raw vector top-K).
+   */
+  rerank?: boolean;
+  /** Cohere rerank model override. */
+  rerankModel?: string;
+  /** Per-user BYO Cohere key — used for both embed + rerank. */
+  cohereApiKey?: string;
+}
+
+/**
+ * Full retrieval round-trip against the persisted pgvector index.
+ *
+ * Flow:
+ *   1. Embed the query (Cohere multilingual v3 by default,
+ *      `inputType: "search_query"` for asymmetric retrieval).
+ *   2. Pull a generous candidate pool from `document_chunks` via the
+ *      store's cosine top-K.
+ *   3. Optionally re-rank with Cohere if a key is reachable.
+ *   4. Trim to the final `k` (default 10).
+ *
+ * This is the function every retrieval surface (clauses, citations,
+ * RAG chat) should call. Callers don't need to know which provider
+ * produced the stored vectors — the persisted `provider` / `model`
+ * columns are advisory only.
+ */
+export async function retrieve(
+  query: string,
+  options: RetrieveOptions = {},
+): Promise<ScoredCandidate<{ documentId: string; chunkId: string }>[]> {
+  const k = Math.max(1, Math.min(50, options.k ?? 10));
+  const preRerankK = Math.max(k, options.preRerankK ?? Math.max(40, k * 4));
+
+  // Lazy import to avoid the embeddings dispatcher pulling in providers
+  // at module-load time (keeps the worker bundle small).
+  const { embedQuery } = await import("./index");
+
+  const queryVector = await embedQuery(query, {
+    apiKey: options.cohereApiKey,
+  }).catch(() => [] as number[]);
+
+  if (queryVector.length === 0) return [];
+
+  const hits = await storeTopK({
+    queryVector,
+    k: preRerankK,
+    filters: options.filters,
+  });
+  if (hits.length === 0) return [];
+
+  const candidates: ScoredCandidate<{ documentId: string; chunkId: string }>[] =
+    hits.map((h) => ({
+      id: h.chunkId,
+      text: h.text,
+      score: h.similarity,
+      metadata: { documentId: h.documentId, chunkId: h.chunkId },
+    }));
+
+  const wantRerank = decideRerank(options);
+  if (!wantRerank) return candidates.slice(0, k);
+
+  return rerankCandidates(query, candidates, {
+    topN: k,
+    model: options.rerankModel,
+    apiKey: options.cohereApiKey,
+  });
+}
+
+function decideRerank(options: RetrieveOptions): boolean {
+  if (options.rerank === false) return false;
+  if (options.rerank === true) return true;
+  if (options.cohereApiKey?.trim()) return true;
+  return hasCohereEnvKey();
 }

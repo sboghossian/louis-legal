@@ -43,7 +43,7 @@ interface JobLike {
 export async function handleDocumentsParse(
   job: JobLike,
 ): Promise<DocumentsParseResult> {
-  const { documentId, storagePath, fileType, filename } = job.data;
+  const { userId, documentId, storagePath, fileType, filename } = job.data;
   await job.log?.(`parsing document=${documentId} type=${fileType}`);
 
   // Dynamic import keeps the worker bundle from pulling AWS SDK at import
@@ -118,6 +118,7 @@ export async function handleDocumentsParse(
     "embeddings.index",
     {
       documentId,
+      userId,
       filename,
       text,
       // chunking decided by the embeddings job
