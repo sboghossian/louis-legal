@@ -70,9 +70,8 @@ import {
     loadBoard,
     saveBoard,
     clearBoard,
+    pickMostRecentTemplateKey,
 } from "@/app/components/drafting/storage";
-
-const DEFAULT_TEMPLATE = "ma";
 
 interface TimelineEntry {
     at: number;
@@ -117,21 +116,48 @@ function DraftingBoardInner() {
     boardRef.current = board;
     runningRef.current = running;
 
-    // ----- bootstrap: load from URL ?template= or localStorage -------------
+    // ----- bootstrap ------------------------------------------------------
+    // Priority order:
+    //   1. ?template=<key> in the URL → restore that board if saved, else
+    //      seed it fresh (preserves the deep-link behaviour).
+    //   2. Any board already saved under `louis.drafting-board.*` → load the
+    //      most-recently-touched one (return-visit UX).
+    //   3. Otherwise → leave `board` null so <EmptyState> renders and the
+    //      user gets to pick a template explicitly. No more silent
+    //      auto-seed of the M&A default on a cold first visit.
     useEffect(() => {
-        const key = urlTemplate ?? DEFAULT_TEMPLATE;
-        const stored = loadBoard(key);
-        if (stored) {
-            setBoard(stored);
-            pushTimeline(`Restored "${stored.name}" from the last session.`, "info");
+        if (urlTemplate) {
+            const stored = loadBoard(urlTemplate);
+            if (stored) {
+                setBoard(stored);
+                pushTimeline(
+                    `Restored "${stored.name}" from the last session.`,
+                    "info",
+                );
+                return;
+            }
+            const seeded = seedBoardByKey(urlTemplate);
+            if (seeded) {
+                setBoard(seeded);
+                pushTimeline(`Loaded the "${seeded.name}" template.`, "info");
+            }
+            // Unknown urlTemplate → board stays null → empty state.
             return;
         }
-        const seeded = seedBoardByKey(key);
-        if (seeded) {
-            setBoard(seeded);
-            pushTimeline(`Loaded the "${seeded.name}" template.`, "info");
+
+        const recentKey = pickMostRecentTemplateKey();
+        if (recentKey) {
+            const stored = loadBoard(recentKey);
+            if (stored) {
+                setBoard(stored);
+                pushTimeline(
+                    `Restored "${stored.name}" from the last session.`,
+                    "info",
+                );
+                return;
+            }
         }
-        // If urlTemplate doesn't match anything, board stays null → empty state.
+        // First-ever visit: no saved boards anywhere → show EmptyState.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [urlTemplate]);
 
