@@ -30,6 +30,7 @@ import { ModelToggle } from "./ModelToggle";
 import { VoiceModeOverlay } from "./VoiceModeOverlay";
 import { useSelectedModel } from "@/app/hooks/useSelectedModel";
 import { useRotatingPrompt } from "@/app/hooks/useRotatingPrompt";
+import { useOnboardingProfile } from "@/app/hooks/useOnboardingProfile";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import {
@@ -87,7 +88,11 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
     ref,
 ) {
     const [value, setValue] = useState("");
-    const rotatingPlaceholder = useRotatingPrompt({ enabled: value.length === 0 });
+    const onboarding = useOnboardingProfile();
+    const rotatingPlaceholder = useRotatingPrompt({
+        enabled: value.length === 0,
+        jurisdictions: onboarding?.jurisdictions ?? [],
+    });
     const [attachedDocs, setAttachedDocs] = useState<LouisDocument[]>([]);
     const [selectedWorkflow, setSelectedWorkflow] = useState<{
         id: string;

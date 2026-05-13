@@ -5,13 +5,15 @@ import { useLocale } from "@/contexts/LocaleContext";
 
 /**
  * useRotatingPrompt — pick a placeholder sample for the composer that
- * matches the user's current locale, and rotate it on a slow tick when
- * the input is empty. Locales we don't have curated samples for fall
- * back to a generic English list.
+ * matches the user's current locale (and, where we have them, the
+ * user's primary jurisdiction), rotating on a slow tick when the input
+ * is empty.
  *
- * Keyed by `locale` so the moment a user switches language, the
- * suggestions retune too. Samples lean on real legal tasks: drafting,
- * review, research, jurisdiction-flavored questions.
+ * Decision #53: rotating sample prompts should match the user's
+ * jurisdiction. We layer that on top of locale by sorting samples that
+ * mention the user's jurisdiction in the sample text to the front of
+ * the queue. Falls back to the generic locale samples (or English)
+ * when nothing matches.
  */
 
 const SAMPLES_BY_LOCALE: Record<string, string[]> = {
@@ -84,24 +86,70 @@ const SAMPLES_BY_LOCALE: Record<string, string[]> = {
     ],
 };
 
+// Jurisdiction tokens that, if present in a sample, mark it as
+// jurisdiction-relevant for that selector. Keyed loosely so a profile
+// jurisdiction of "UAE" / "DIFC" / "ADGM" / "Dubai" all hit the same
+// UAE-flavoured samples without needing per-jurisdiction sample lists.
+const JURISDICTION_TOKENS: Record<string, RegExp> = {
+    UAE: /\b(UAE|DIFC|ADGM|Dubai|Emirat)\b/i,
+    KSA: /\b(KSA|Saudi)\b/i,
+    Bahrain: /\bBahrain\b/i,
+    Qatar: /\bQatar\b/i,
+    Oman: /\bOman\b/i,
+    Kuwait: /\bKuwait\b/i,
+    Egypt: /\bEgypt\b/i,
+    Lebanon: /\bLebanon\b/i,
+    France: /\b(France|français|french)\b/i,
+    UK: /\b(UK|English law|United Kingdom)\b/i,
+    EU: /\b(EU|European)\b/i,
+    Germany: /\b(Germany|german|deutsch)\b/i,
+    Spain: /\b(Spain|spanish|españ)\b/i,
+    Italy: /\b(Italy|italian|italiano)\b/i,
+    Brazil: /\b(Brazil|brazilian|brasil)\b/i,
+    China: /\b(China|chinese)\b/i,
+    Japan: /\b(Japan|japanese|日本)\b/i,
+    Russia: /\b(Russia|russian|росси)\b/i,
+    Turkey: /\b(Turkey|türk)\b/i,
+};
+
+function sortByJurisdiction(samples: string[], jurisdictions: string[]): string[] {
+    if (!jurisdictions.length) return samples;
+    const tokens = jurisdictions
+        .map((j) => JURISDICTION_TOKENS[j])
+        .filter((rx): rx is RegExp => !!rx);
+    if (!tokens.length) return samples;
+    const matches: string[] = [];
+    const rest: string[] = [];
+    for (const s of samples) {
+        if (tokens.some((rx) => rx.test(s))) matches.push(s);
+        else rest.push(s);
+    }
+    return matches.length ? [...matches, ...rest] : samples;
+}
+
 export function useRotatingPrompt({
     enabled = true,
     intervalMs = 6500,
+    jurisdictions = [],
 }: {
     enabled?: boolean;
     intervalMs?: number;
+    /** User profile jurisdictions (e.g. ["UAE", "KSA"]). Matching
+     *  samples get sorted to the front of the rotation queue. */
+    jurisdictions?: string[];
 } = {}): string {
     const { locale } = useLocale();
-    const samples = useMemo(
-        () => SAMPLES_BY_LOCALE[locale] ?? SAMPLES_BY_LOCALE.en,
-        [locale],
-    );
-    const [index, setIndex] = useState(() => Math.floor(Math.random() * samples.length));
+    const samples = useMemo(() => {
+        const base = SAMPLES_BY_LOCALE[locale] ?? SAMPLES_BY_LOCALE.en;
+        return sortByJurisdiction(base, jurisdictions);
+    }, [locale, jurisdictions]);
+    const [index, setIndex] = useState(() => 0);
 
     useEffect(() => {
-        // Reset to a random offset when the locale changes so the user
-        // doesn't see the same index from a different language.
-        setIndex(Math.floor(Math.random() * samples.length));
+        // Reset to the top when locale or jurisdictions change so the
+        // first thing the user sees is a jurisdiction-relevant sample,
+        // not a random offset that buries the match.
+        setIndex(0);
     }, [samples]);
 
     useEffect(() => {
