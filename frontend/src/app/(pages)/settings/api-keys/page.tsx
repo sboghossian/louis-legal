@@ -1,12 +1,29 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Key, ExternalLink, X, Eye, Check, Trash2, Star, Coins, AlertCircle } from "lucide-react";
+import { Key, ExternalLink, X, Eye, Check, Trash2, Star, Coins, AlertCircle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
+import { getAuthHeader } from "@/app/lib/louisApi";
+import { useUserProfile } from "@/contexts/UserProfileContext";
+import { MODELS } from "@/app/components/assistant/ModelToggle";
+import {
+    isModelAvailable,
+    modelGroupToProvider,
+    providerLabel,
+} from "@/app/lib/modelAvailability";
+import type { ApiKeyState } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -39,9 +56,10 @@ export default function ApiKeysPage() {
     async function refresh() {
         setLoading(true);
         try {
+            const auth = await getAuthHeader();
             const [pr, kr] = await Promise.all([
-                fetch(`${API_BASE}/api/api-keys/providers`, { headers: { "x-user-id": "demo" } }),
-                fetch(`${API_BASE}/api/api-keys`, { headers: { "x-user-id": "demo" } }),
+                fetch(`${API_BASE}/api/api-keys/providers`, { headers: auth }),
+                fetch(`${API_BASE}/api/api-keys`, { headers: auth }),
             ]);
             const pj = await pr.json();
             const kj = await kr.json();
@@ -55,9 +73,10 @@ export default function ApiKeysPage() {
     useEffect(() => { refresh(); }, []);
 
     async function setDefault(id: string) {
+        const auth = await getAuthHeader();
         await fetch(`${API_BASE}/api/api-keys/${id}/default`, {
             method: "POST",
-            headers: { "x-user-id": "demo" },
+            headers: auth,
         });
         refresh();
     }
@@ -69,9 +88,10 @@ export default function ApiKeysPage() {
             destructive: true,
         });
         if (!ok) return;
+        const auth = await getAuthHeader();
         await fetch(`${API_BASE}/api/api-keys/${id}`, {
             method: "DELETE",
-            headers: { "x-user-id": "demo" },
+            headers: auth,
         });
         refresh();
     }
@@ -88,6 +108,8 @@ export default function ApiKeysPage() {
             </p>
 
             <TokenSpendWidget />
+
+            <ModelPreferencesSection />
 
             {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
 
@@ -159,9 +181,9 @@ export default function ApiKeysPage() {
 
             <div className="mt-8 text-xs text-muted-foreground">
                 <p>
-                    🔒 Keys are stored encrypted at rest with your tenant&apos;s isolated key.
-                    Louis never sends keys to model providers other than the direct API call;
-                    plaintext is held in-memory only for the duration of each request.
+                    Keys are encrypted with AES-256-GCM at rest. Louis only
+                    decrypts a key to forward your request to the provider you
+                    selected — they are never shared with any other party.
                 </p>
             </div>
         </div>
@@ -181,9 +203,10 @@ function AddKeyModal({ provider, onClose, onAdded }: { provider: Provider; onClo
         setSubmitting(true);
         setError(null);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/api-keys`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ provider: provider.code, key: key.trim(), label, isDefault: makeDefault }),
             });
             if (!r.ok) throw new Error((await r.json()).error || `HTTP ${r.status}`);
@@ -373,6 +396,130 @@ function TokenSpendWidget() {
                 </div>
             )}
         </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// ModelPreferencesSection
+// ---------------------------------------------------------------------------
+// Hosts the per-task model dropdown that used to live on the now-redirected
+// /account/models surface (audit 1B). The 3-provider Supabase status comes
+// from `useUserProfile`, which talks to the legacy /user/api-keys/:provider
+// route — that store writes into the same `user_api_keys` table as the
+// 14-provider extended store above, so the two surfaces stay in sync.
+function ModelPreferencesSection() {
+    const { profile, updateModelPreference } = useUserProfile();
+    if (!profile) return null;
+    return (
+        <div className="mb-8">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+                Model preferences
+            </h2>
+            <div className="rounded-lg border border-border bg-card p-4 max-w-md">
+                <Label className="text-xs text-muted-foreground mb-2 block">
+                    Tabular review model
+                </Label>
+                <p className="text-[11px] text-muted-foreground mb-2">
+                    A cheaper / faster model is recommended for high-volume
+                    extraction. Chat composer model stays user-selectable per
+                    turn.
+                </p>
+                <TabularModelDropdown
+                    value={profile.tabularModel ?? "gemini-3-flash-preview"}
+                    apiKeys={profile.apiKeys}
+                    onChange={(id) => updateModelPreference("tabularModel", id)}
+                />
+            </div>
+        </div>
+    );
+}
+
+function TabularModelDropdown({
+    value,
+    onChange,
+    apiKeys,
+}: {
+    value: string;
+    onChange: (id: string) => void;
+    apiKeys?: ApiKeyState;
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const selected = MODELS.find((m) => m.id === value);
+    const selectedAvailable = apiKeys ? isModelAvailable(value, apiKeys) : true;
+    const groups: ("Anthropic" | "Google" | "OpenAI")[] = [
+        "Anthropic",
+        "Google",
+        "OpenAI",
+    ];
+    return (
+        <DropdownMenu onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+                <button
+                    type="button"
+                    className="w-full h-9 rounded-md border border-border bg-card px-3 text-sm shadow-sm flex items-center justify-between gap-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-black/10"
+                >
+                    <span className="flex items-center gap-2 min-w-0">
+                        {!selectedAvailable && (
+                            <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-500" />
+                        )}
+                        <span className="truncate text-foreground">
+                            {selected?.label ?? "Select a model"}
+                        </span>
+                    </span>
+                    <ChevronDown
+                        className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                    />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+                className="z-50"
+                style={{ width: "var(--radix-dropdown-menu-trigger-width)" }}
+                align="start"
+            >
+                {groups.map((group, gi) => {
+                    const items = MODELS.filter((m) => m.group === group);
+                    if (items.length === 0) return null;
+                    return (
+                        <div key={group}>
+                            {gi > 0 && <DropdownMenuSeparator />}
+                            <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                                {group}
+                            </DropdownMenuLabel>
+                            {items.map((m) => {
+                                const provider = modelGroupToProvider(m.group);
+                                const available = apiKeys
+                                    ? isModelAvailable(m.id, apiKeys)
+                                    : true;
+                                return (
+                                    <DropdownMenuItem
+                                        key={m.id}
+                                        className="cursor-pointer"
+                                        onSelect={() => onChange(m.id)}
+                                        title={
+                                            !available
+                                                ? `Add a ${providerLabel(provider)} API key to use this model`
+                                                : undefined
+                                        }
+                                    >
+                                        <span
+                                            className={`flex-1 ${available ? "" : "text-muted-foreground"}`}
+                                        >
+                                            {m.label}
+                                        </span>
+                                        {!available && (
+                                            <AlertCircle className="h-3.5 w-3.5 text-red-500 ml-1" />
+                                        )}
+                                        {m.id === value && available && (
+                                            <Check className="h-3.5 w-3.5 text-muted-foreground ml-1" />
+                                        )}
+                                    </DropdownMenuItem>
+                                );
+                            })}
+                        </div>
+                    );
+                })}
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
 

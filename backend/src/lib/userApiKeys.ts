@@ -144,17 +144,27 @@ export async function getUserApiKeys(
         openai: null,
     };
 
+    // After the 2026-05-13 schema extension a user can hold multiple keys
+    // per provider (e.g. dev / prod). Prefer the row flagged `is_default`,
+    // fall back to the most-recent row if no default is set (older rows
+    // pre-migration default-backfilled to true, so this is a safety net).
     const { data, error } = await db
         .from("user_api_keys")
-        .select("provider, encrypted_key, iv, auth_tag")
-        .eq("user_id", userId);
+        .select("provider, encrypted_key, iv, auth_tag, is_default, created_at")
+        .eq("user_id", userId)
+        .order("is_default", { ascending: false })
+        .order("created_at", { ascending: false });
     if (error) throw error;
 
-    for (const row of (data ?? []) as EncryptedKeyRow[]) {
+    const seen = new Set<ApiKeyProvider>();
+    for (const row of (data ?? []) as (EncryptedKeyRow & { is_default?: boolean; created_at?: string })[]) {
         const provider = normalizeApiKeyProvider(row.provider);
-        if (!provider) continue;
+        if (!provider || seen.has(provider)) continue;
         const decrypted = decrypt(row);
-        if (decrypted?.trim()) apiKeys[provider] = decrypted;
+        if (decrypted?.trim()) {
+            apiKeys[provider] = decrypted;
+            seen.add(provider);
+        }
     }
 
     // Env keys fill in only where the user hasn't supplied their own.
@@ -183,14 +193,25 @@ export async function saveUserApiKey(
         return;
     }
 
-    const { error } = await db.from("user_api_keys").upsert(
-        {
-            user_id: userId,
-            provider,
-            ...encrypt(normalized),
-            updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id,provider" },
-    );
+    // After the migration multiple rows can coexist per (user, provider).
+    // This shim keeps the legacy single-key-per-provider semantics for
+    // callers of `saveUserApiKey`: wipe everything for that provider,
+    // then insert the new default row. The extended store
+    // (lib/userApiKeysExtended.ts) is the one to use when you want
+    // multi-key semantics.
+    const { error: deleteErr } = await db
+        .from("user_api_keys")
+        .delete()
+        .eq("user_id", userId)
+        .eq("provider", provider);
+    if (deleteErr) throw deleteErr;
+
+    const { error } = await db.from("user_api_keys").insert({
+        user_id: userId,
+        provider,
+        is_default: true,
+        ...encrypt(normalized),
+        updated_at: new Date().toISOString(),
+    });
     if (error) throw error;
 }
