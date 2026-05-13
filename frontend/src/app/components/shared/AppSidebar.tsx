@@ -51,7 +51,10 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { LouisMark } from "@/components/brand/louis-mark";
 import { SidebarChatItem } from "@/app/components/shared/SidebarChatItem";
-import { listProjects } from "@/app/lib/louisApi";
+import { listProjects, getAuthHeader } from "@/app/lib/louisApi";
+
+const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Vertical command rail rebuild (May 2026)
@@ -352,22 +355,53 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     }, [pathname]);
 
     // Persist URL-derived matter id to storage so the pin survives navigation
-    // away from /matters/:id. This effect only writes external state — it
-    // doesn't loop because the dep array is stable when the URL doesn't
-    // change.
+    // away from /matters/:id. The previous version used a 6-char UUID slice
+    // as the label ("Matter f4a8b2") which is unreadable; resolve the real
+    // matter name from the backend instead.
     useEffect(() => {
         if (!urlMatterId) return;
-        if (activeMatter && activeMatter.id === urlMatterId) return;
-        const next: ActiveMatter = {
-            id: urlMatterId,
-            name: activeMatter?.id === urlMatterId
-                ? activeMatter.name
-                : `Matter ${urlMatterId.slice(0, 6)}`,
+        if (activeMatter && activeMatter.id === urlMatterId && activeMatter.name && !activeMatter.name.startsWith("Matter ")) {
+            return;
+        }
+        let cancelled = false;
+        (async () => {
+            // Optimistic: show the UUID slice while we resolve so the chip
+            // doesn't flicker between empty → real. Once the backend
+            // responds we overwrite with the proper client + matter number.
+            const placeholder: ActiveMatter = {
+                id: urlMatterId,
+                name: `Matter ${urlMatterId.slice(0, 6)}`,
+            };
+            setActiveMatter(placeholder);
+            try {
+                const auth = await getAuthHeader();
+                const r = await fetch(`${API_BASE}/api/matters/${urlMatterId}`, {
+                    headers: auth,
+                    cache: "no-store",
+                });
+                if (!r.ok || cancelled) return;
+                const json = (await r.json()) as {
+                    matter?: { id: string; clientName?: string; matterNumber?: string };
+                };
+                const m = json.matter;
+                if (!m) return;
+                const next: ActiveMatter = {
+                    id: m.id,
+                    name: m.clientName
+                        ? m.matterNumber
+                            ? `${m.clientName} · ${m.matterNumber}`
+                            : m.clientName
+                        : placeholder.name,
+                };
+                try { localStorage.setItem(ACTIVE_MATTER_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+                if (!cancelled) setActiveMatter(next);
+            } catch { /* ignore — keep the placeholder */ }
+        })();
+        return () => {
+            cancelled = true;
         };
-        try { localStorage.setItem(ACTIVE_MATTER_KEY, JSON.stringify(next)); } catch { /* ignore */ }
-        setActiveMatter(next);
-    // We intentionally exclude `activeMatter` from deps — it's only read
-    // for the merge and would otherwise re-fire the effect unnecessarily.
+    // activeMatter is intentionally read inside (for the short-circuit) but
+    // excluded from deps to avoid re-fetching on every name change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [urlMatterId]);
 
