@@ -85,6 +85,20 @@ function ProfileTab() {
 }
 
 function ModelsTab() {
+    const [autoRouteModel, setAutoRouteModel] = useState<boolean>(() => {
+        if (typeof window === "undefined") return true;
+        const stored = window.localStorage.getItem("louis.autoRouteModel");
+        return stored === null ? true : stored === "1";
+    });
+    function toggleAutoRoute() {
+        setAutoRouteModel((prev) => {
+            const next = !prev;
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("louis.autoRouteModel", next ? "1" : "0");
+            }
+            return next;
+        });
+    }
     return (
         <div className="space-y-4">
             <p className="text-sm text-gray-700">
@@ -99,6 +113,20 @@ function ModelsTab() {
                     <ChevronRight className="w-4 h-4 text-gray-400" />
                 </div>
             </a>
+            <label className="flex items-start gap-3 border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-900 transition">
+                <input
+                    type="checkbox"
+                    checked={autoRouteModel}
+                    onChange={toggleAutoRoute}
+                    className="accent-gray-900 mt-0.5"
+                />
+                <div className="flex-1">
+                    <div className="font-medium text-sm">Auto-route model & playbook</div>
+                    <div className="text-xs text-gray-500">
+                        Let Louis pick the cheapest capable model and the matching practice-area playbook for each message. Your composer pick always wins when set.
+                    </div>
+                </div>
+            </label>
             <Note>
                 The skill router defaults to Gemini Flash for intent classification (cheap + fast).
                 Override via env <code>SKILLS_CLASSIFIER_MODEL</code>.

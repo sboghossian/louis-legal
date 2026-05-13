@@ -4,8 +4,17 @@
  * This is a v1 keyword-based router. Future v2: replace with an LLM intent classifier
  * (using `router.intent-detection` as the system prompt).
  */
+import { readFileSync, existsSync } from "fs";
+import { join } from "path";
 import { composeSystemPrompt, getSkill, loadAllSkills } from "./_loader";
-import { classifyWithLLM } from "./_llm-classifier";
+import {
+  classifyWithLLM,
+  classifyForRouting,
+  PRACTICE_AREAS,
+  type PracticeArea,
+  type RoutingClassification,
+  type RoutingIntent,
+} from "./_llm-classifier";
 import { logRouteDecision } from "./_observability";
 
 export type Persona = "louis-twin" | "partner" | "associate" | "junior" | "in-house-counsel";
@@ -25,6 +34,19 @@ export interface RouteContext {
   userId?: string;
   chatId?: string;
   projectId?: string;
+  /** Matter tags (jurisdiction, practice-area-hint, matter id, etc.). Used by classifier. */
+  matterTags?: string[];
+  /** Last 3 turns of chat history (will be truncated). Used by classifier. */
+  chatHistory?: Array<{ role: "user" | "assistant"; content: string }>;
+  /** User's BYO provider keys, looked up per request. */
+  apiKeys?: { anthropic?: string; gemini?: string };
+  /**
+   * User preference: auto-pick the model based on classifier. Defaults to true.
+   * The caller still applies precedence (user composer pick > classifier > env default).
+   */
+  autoRouteModel?: boolean;
+  /** If true, allow the classifier to fall back to server-side API keys. Default false. */
+  allowServerClassifierKeys?: boolean;
 }
 
 export interface RouteDecision {
@@ -35,9 +57,17 @@ export interface RouteDecision {
     primary: string;
     practiceArea?: string;
     jurisdiction?: string;
+    /** Narrower routing intent from `classifyForRouting`. */
+    routingIntent?: RoutingIntent;
   };
   /** Where the intent classification came from. */
-  classifierSource: "keyword" | "llm-fallback" | "hybrid";
+  classifierSource: "keyword" | "llm-fallback" | "hybrid" | "auto-route";
+  /** Model the classifier recommends (null = no opinion; caller may pass through to env default). */
+  recommendedModel: string | null;
+  /** Practice-area playbook slug picked by the classifier (matches `playbooks/<slug>.CLAUDE.md`). */
+  playbookSlug: PracticeArea | null;
+  /** Confidence score from the classifier (0..1). */
+  routingConfidence: number;
   /** The composed system-prompt extra. May be empty string. */
   systemPromptExtra: string;
 }
@@ -139,34 +169,113 @@ export function route(ctx: RouteContext): RouteDecision {
   });
 }
 
+// ----- playbook loader -----
+
+const PLAYBOOKS_DIR = join(__dirname, "playbooks");
+const _playbookCache: Map<PracticeArea, string> = new Map();
+
 /**
- * Async router: keyword first, fall back to Gemini if intent is chitchat.
+ * Load `playbooks/<slug>.CLAUDE.md` and return the body (frontmatter stripped).
+ * Cached. Returns empty string if missing — caller treats that as "no playbook".
+ */
+export function loadPlaybook(slug: PracticeArea): string {
+  const hit = _playbookCache.get(slug);
+  if (hit !== undefined) return hit;
+  const path = join(PLAYBOOKS_DIR, `${slug}.CLAUDE.md`);
+  if (!existsSync(path)) {
+    _playbookCache.set(slug, "");
+    return "";
+  }
+  const raw = readFileSync(path, "utf-8");
+  // Strip YAML frontmatter (if present)
+  let body = raw;
+  if (raw.startsWith("---")) {
+    const end = raw.indexOf("\n---", 3);
+    if (end >= 0) body = raw.slice(end + 4).replace(/^\n/, "");
+  }
+  _playbookCache.set(slug, body);
+  return body;
+}
+
+/**
+ * Async router. New flow when `autoRouteModel` is on (default):
+ *
+ *  1. Run `classifyForRouting` to get a practice area + recommended model +
+ *     narrow intent. The classifier is cheap (Haiku/Gemini Flash) and falls
+ *     back to keyword heuristics, so it always returns something.
+ *  2. Map the classifier intent into the legacy keyword intent so the rest of
+ *     the prompt composition still works.
+ *  3. Load `playbooks/<slug>.CLAUDE.md` and prepend it to the composed system
+ *     prompt extras — this gives the model a high-level practice-area framing.
+ *  4. Filter the ~982 skills to the practice area before scoring and trim to
+ *     the top 8–13 entries.
+ *
+ * If `autoRouteModel` is false we fall back to the legacy keyword + Gemini
+ * fallback path used since v1.
+ *
  * Logs the decision into the in-memory ring buffer for /api/skills/route-debug.
  */
 export async function routeAsync(ctx: RouteContext): Promise<RouteDecision> {
   const started = Date.now();
   const message = ctx.message;
+  const autoRoute = ctx.autoRouteModel !== false; // default ON
+
+  let classification: RoutingClassification | undefined;
+  if (autoRoute) {
+    classification = await classifyForRouting({
+      message,
+      matterTags: ctx.matterTags,
+      history: ctx.chatHistory?.slice(-3),
+      apiKeys: ctx.apiKeys,
+      allowServerKeys: ctx.allowServerClassifierKeys,
+    });
+  }
+
+  // Default to keyword-based detection — classifier augments / overrides.
   let primary = detectIntent(message);
   let docType = detectDocType(message);
   let jurisdiction = detectJurisdiction(message);
-  let classifierSource: "keyword" | "llm-fallback" | "hybrid" = "keyword";
+  let classifierSource: RouteDecision["classifierSource"] = "keyword";
 
-  // Fallback: if keyword says chitchat but the message is non-trivial, try LLM
-  const messageWords = message.trim().split(/\s+/).filter(Boolean).length;
-  if (primary === "chitchat" && messageWords >= 3) {
-    const llm = await classifyWithLLM(message);
-    if (llm && llm.confidence >= 0.6 && llm.primary !== "chitchat") {
-      primary = llm.primary;
-      classifierSource = "llm-fallback";
-      if (!jurisdiction && llm.jurisdiction) jurisdiction = llm.jurisdiction;
-      if (!docType && llm.practiceArea) {
-        // Best-effort: pick a representative doc type for the practice area
-        docType = guessDocTypeForArea(llm.practiceArea, message);
+  if (classification) {
+    classifierSource = "auto-route";
+    // Translate the narrow routing intent into the legacy intent enum the
+    // routeFromIntent switch expects.
+    primary = mapRoutingIntentToLegacy(classification.intent);
+    // If the classifier nominates a practice area but keyword detection has no
+    // docType, synthesise one for skill picking.
+    if (classification.practiceArea && !docType) {
+      docType = guessDocTypeForArea(classification.practiceArea, message);
+    }
+  } else {
+    // Legacy v1 fallback: if keyword says chitchat but the message is
+    // non-trivial, try the wider Gemini classifier.
+    const messageWords = message.trim().split(/\s+/).filter(Boolean).length;
+    if (primary === "chitchat" && messageWords >= 3) {
+      const llm = await classifyWithLLM(message);
+      if (llm && llm.confidence >= 0.6 && llm.primary !== "chitchat") {
+        primary = llm.primary;
+        classifierSource = "llm-fallback";
+        if (!jurisdiction && llm.jurisdiction) jurisdiction = llm.jurisdiction;
+        if (!docType && llm.practiceArea) {
+          docType = guessDocTypeForArea(llm.practiceArea, message);
+        }
       }
     }
   }
 
-  const decision = routeFromIntent(ctx, { primary, docType, jurisdiction, classifierSource });
+  const playbookSlug: PracticeArea | null = classification?.practiceArea ?? null;
+  const decision = routeFromIntent(ctx, {
+    primary,
+    docType,
+    jurisdiction,
+    classifierSource,
+    playbookSlug,
+    routingIntent: classification?.intent,
+    recommendedModel: classification?.recommendedModel ?? null,
+    routingConfidence: classification?.confidence ?? 0,
+  });
+
   // Log
   logRouteDecision({
     ts: new Date().toISOString(),
@@ -180,10 +289,26 @@ export async function routeAsync(ctx: RouteContext): Promise<RouteDecision> {
     skillIds: decision.skillIds,
     skillCount: decision.skillIds.length,
     systemPromptChars: decision.systemPromptExtra.length,
-    classifierSource: decision.classifierSource,
+    // _observability accepts a narrower enum; map "auto-route" -> "hybrid"
+    classifierSource: decision.classifierSource === "auto-route" ? "hybrid" : decision.classifierSource,
     latencyMs: Date.now() - started,
   });
   return decision;
+}
+
+function mapRoutingIntentToLegacy(intent: RoutingIntent): string {
+  switch (intent) {
+    case "draft":      return "drafting";
+    case "redline":    return "review";
+    case "review":     return "review";
+    case "research":   return "research";
+    case "summarize":  return "summarize";
+    case "extract":    return "summarize";
+    case "calc":       return "calculate";
+    case "compliance": return "advice";
+    case "strategy":   return "advice";
+    default:           return "chitchat";
+  }
 }
 
 function guessDocTypeForArea(area: string, _message: string): { id: string; practiceArea: string } | null {
@@ -202,7 +327,11 @@ function routeFromIntent(
     primary: string;
     docType: { id: string; practiceArea: string } | null;
     jurisdiction?: string;
-    classifierSource: "keyword" | "llm-fallback" | "hybrid";
+    classifierSource: RouteDecision["classifierSource"];
+    playbookSlug?: PracticeArea | null;
+    routingIntent?: RoutingIntent;
+    recommendedModel?: string | null;
+    routingConfidence?: number;
   },
 ): RouteDecision {
   const { message } = ctx;
@@ -306,7 +435,9 @@ function routeFromIntent(
     }
   }
 
-  // Filter to skills that actually exist; dedupe
+  // ----- practice-area filter + skill trim -----
+
+  // Filter to skills that actually exist; dedupe.
   loadAllSkills();
   const seen = new Set<string>();
   const valid: string[] = [];
@@ -316,16 +447,86 @@ function routeFromIntent(
     if (getSkill(id)) valid.push(id);
   }
 
-  const systemPromptExtra = valid.length ? composeSystemPrompt(valid) : "";
+  // If the classifier picked a practice area, filter the variable / docType
+  // skills down to that area before composing the prompt. Always-on skills
+  // (persona, safety, heuristic, output) are kept regardless. Trim the
+  // remainder so the system prompt stays within a 8–13 skill budget.
+  const slug = classified.playbookSlug ?? null;
+  let filtered = valid;
+  if (slug) {
+    filtered = filterSkillsToPracticeArea(valid, slug);
+  }
+  const trimmed = trimSkillList(filtered, 13);
+
+  // ----- compose system prompt: playbook first, then skills -----
+
+  const composed = trimmed.length ? composeSystemPrompt(trimmed) : "";
+  const playbookBody = slug ? loadPlaybook(slug) : "";
+  const systemPromptExtra = [
+    playbookBody ? `## PLAYBOOK: ${slug}\n\n${playbookBody}` : "",
+    composed,
+  ].filter(Boolean).join("\n\n---\n\n");
 
   return {
-    skillIds: valid,
+    skillIds: trimmed,
     intent: {
       primary: intent,
-      practiceArea: docType?.practiceArea,
+      practiceArea: slug ?? docType?.practiceArea,
       jurisdiction,
+      routingIntent: classified.routingIntent,
     },
     classifierSource: classified.classifierSource,
+    recommendedModel: classified.recommendedModel ?? null,
+    playbookSlug: slug,
+    routingConfidence: classified.routingConfidence ?? 0,
     systemPromptExtra,
   };
 }
+
+/** Categories that are not practice-area-specific and should never be filtered out. */
+const ALWAYS_ON_CATEGORIES = new Set([
+  "persona",
+  "conversation",
+  "safety",
+  "heuristic",
+  "output",
+  "router",
+  "onboarding",
+  "voice",
+  "tool",      // calculators etc. — keep
+]);
+
+function filterSkillsToPracticeArea(ids: string[], slug: PracticeArea): string[] {
+  return ids.filter(id => {
+    const s = getSkill(id);
+    if (!s) return false;
+    const cat = s.frontmatter.category;
+    if (ALWAYS_ON_CATEGORIES.has(cat)) return true;
+    const pa = s.frontmatter.practice_area;
+    if (!pa) return true; // skill not tagged → keep (don't drop legacy skills)
+    // Accept both exact match and family match (e.g. "corporate" matches "corporate-commercial")
+    return pa === slug || slug.startsWith(`${pa}-`) || pa.startsWith(`${slug.split("-")[0]}`);
+  });
+}
+
+/**
+ * Keep at most `max` skills. Always-on categories survive first, then
+ * remaining slots are filled in original order so docType / intent skills
+ * win over generic output skills.
+ */
+function trimSkillList(ids: string[], max: number): string[] {
+  if (ids.length <= max) return ids;
+  const alwaysOn: string[] = [];
+  const rest: string[] = [];
+  for (const id of ids) {
+    const s = getSkill(id);
+    if (s && ALWAYS_ON_CATEGORIES.has(s.frontmatter.category)) alwaysOn.push(id);
+    else rest.push(id);
+  }
+  const room = Math.max(0, max - alwaysOn.length);
+  return [...alwaysOn, ...rest.slice(0, room)];
+}
+
+// Re-export for callers that want to use the practice-area type alongside the router
+export { PRACTICE_AREAS };
+export type { PracticeArea, RoutingIntent };
