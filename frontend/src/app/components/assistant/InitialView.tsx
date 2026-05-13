@@ -21,7 +21,6 @@ import {
     FolderOpen,
     MessageSquare,
     BookMarked,
-    Rss,
     ArrowRight,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -245,12 +244,6 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                         title={t("assistant.shortcut.prompts.title")}
                         sub={t("assistant.shortcut.prompts.sub")}
                         href="/prompt-library"
-                    />
-                    <ShortcutCard
-                        icon={Rss}
-                        title={t("assistant.shortcut.feed.title")}
-                        sub={t("assistant.shortcut.feed.sub")}
-                        href="/feed"
                     />
                     <ShortcutCard
                         icon={FolderOpen}

@@ -39,7 +39,6 @@ import {
     Sparkles,
     Plug,
     Key,
-    Rss,
     Settings as SettingsIcon,
     Users,
     Gift,
@@ -242,23 +241,6 @@ Settings sync to your profile if signed in; otherwise persisted per browser. A b
 `,
         open: "/prompt-library",
         related: ["assistant", "skills"],
-    },
-    {
-        slug: "newsfeed",
-        title: "Newsfeed — Reddit on legal industry",
-        category: "work",
-        icon: Rss,
-        summary:
-            "Live Reddit threads on legal industry, customizable topics, 5-min cache.",
-        body: `
-[/feed](/feed). Default topics: Legal, Big Law, Legal Advice, Legal Tech, Legal AI, Anthropic Claude × Legal, Open source legal, Microsoft × Legal, plus named products (Harvey, Clio, Spellbook, CoCounsel, Legora, Monitz).
-
-- Filter chips switch topics; click the × on a chip to remove that topic.
-- "Add topic" — name it, list subreddits and/or keywords, save.
-- Refresh button bypasses the local memo; server caches each topic for 5 minutes.
-- Signed-in users sync topics to their profile; signed-out users see defaults.
-`,
-        open: "/feed",
     },
     {
         slug: "clauses",

@@ -24,7 +24,6 @@ import {
     Library,
     BookMarked,
     Briefcase,
-    Rss,
     Lock,
     ShieldCheck,
     KeyRound,
@@ -46,7 +45,6 @@ import {
     WorkflowsMock,
     PromptLibraryMock,
     VaultMock,
-    NewsfeedMock,
 } from "@/components/marketing/feature-mocks";
 
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
@@ -277,13 +275,6 @@ const FEATURES: FeatureSpec[] = [
         body: "Encrypted matter storage. AES-256 at rest, privilege-aware skill routing, audit log per access, per-client isolation, expiring shares.",
         Mock: VaultMock,
         href: "/vault",
-    },
-    {
-        icon: Rss,
-        title: "Newsfeed",
-        body: "Reddit-backed legal industry stream — drafting, big law, legal AI launches, regulator news. Add your own topics; Louis aggregates one feed.",
-        Mock: NewsfeedMock,
-        href: "/feed",
     },
 ];
 

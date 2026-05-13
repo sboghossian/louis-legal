@@ -31,7 +31,6 @@ import {
     MessageSquare,
     Inbox,
     FolderOpen,
-    Rss,
     MessageSquareDashed,
     Network,
     FileText,
@@ -64,7 +63,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
     listChats,
     listProjects,
-    type FeedTopic,
 } from "@/app/lib/louisApi";
 import type {
     LouisChat,
@@ -86,7 +84,6 @@ interface PaletteItem {
 
 const STATIC_NAV: { href: string; label: string; icon: LucideIcon }[] = [
     { href: "/assistant",       label: "Assistant",       icon: MessageSquare },
-    { href: "/feed",            label: "Newsfeed",        icon: Rss },
     { href: "/inbox",           label: "Inbox",           icon: Inbox },
     { href: "/all-chats",       label: "All Chats",       icon: MessageSquareDashed },
     { href: "/projects",        label: "Projects",        icon: FolderOpen },
@@ -491,5 +488,3 @@ export function CommandPalette() {
     );
 }
 
-// `FeedTopic` re-export so future consumers can pull it from this module.
-export type { FeedTopic };

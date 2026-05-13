@@ -344,36 +344,6 @@ export function VaultMock({ className }: MockProps) {
 // Newsfeed
 // ---------------------------------------------------------------------------
 
-export function NewsfeedMock({ className }: MockProps) {
-    const items = [
-        { sub: "r/BigLaw", t: "How firms are pricing AI hours" },
-        { sub: "r/LegalAdvice", t: "DIFC vs onshore — vendor MSA" },
-        { sub: "r/LegalTech", t: "Spellbook v3 vs Harvey on M&A" },
-        { sub: "r/Law", t: "EU AI Act — practical compliance" },
-    ];
-    return (
-        <div className={`${FRAME} ${className ?? ""}`}>
-            <div className="absolute inset-3 flex flex-col gap-1 text-[7px]">
-                {items.map((n, i) => (
-                    <div
-                        key={n.t}
-                        className="flex items-start gap-1.5 p-1 rounded border border-gray-200 bg-white louis-rise"
-                        style={{ animationDelay: `${i * 0.1}s` }}
-                    >
-                        <div className="w-4 h-4 rounded bg-amber-100 border border-amber-200 flex items-center justify-center text-[6px] text-amber-700 font-medium shrink-0">
-                            r/
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-gray-800 truncate font-medium">{n.t}</div>
-                            <div className="text-gray-400 text-[6px]">{n.sub} · 4h</div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
 // ---------------------------------------------------------------------------
 // Hero — composite mock of the workbench
 // ---------------------------------------------------------------------------

@@ -208,33 +208,6 @@ export async function updateUserProfile(payload: {
     });
 }
 
-// ---------------------------------------------------------------------------
-// Reddit-backed newsfeed
-// ---------------------------------------------------------------------------
-
-export async function getFeedDefaults(): Promise<{ topics: FeedTopic[] }> {
-    const r = await fetch(`${API_BASE}/api/feed/defaults`, {
-        cache: "no-store",
-    });
-    if (!r.ok) throw new Error(`Feed defaults failed: ${r.status}`);
-    return r.json();
-}
-
-export async function fetchFeed(topics: FeedTopic[]): Promise<{
-    topics: FeedTopic[];
-    items: FeedItem[];
-    fetchedAt: number;
-}> {
-    const r = await fetch(`${API_BASE}/api/feed`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topics }),
-        cache: "no-store",
-    });
-    if (!r.ok) throw new Error(`Feed fetch failed: ${r.status}`);
-    return r.json();
-}
-
 export type ApiKeyProvider = "claude" | "gemini" | "openai";
 export type ApiKeySource = "user" | "env" | null;
 export type ApiKeyState = Record<

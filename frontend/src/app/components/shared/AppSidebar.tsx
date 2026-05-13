@@ -37,7 +37,6 @@ import {
     Inbox,
     Users,
     LogOut,
-    Rss,
     Share2,
     Star,
     Search,
@@ -140,7 +139,6 @@ const NAV_GROUPS: NavGroup[] = [
             { href: "/workflows",         label: "Workflows",      labelKey: "nav.workflows",     icon: Library },
             { href: "/integrations",      label: "Integrations",   labelKey: "nav.integrations",  icon: Plug },
             { href: "/plugins",           label: "Plugins",        labelKey: "nav.plugins",       icon: Blocks },
-            { href: "/feed",              label: "Newsfeed",       labelKey: "nav.newsfeed",      icon: Rss },
         ],
     },
     {
