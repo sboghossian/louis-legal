@@ -85,12 +85,12 @@ export default function PluginsPage() {
                         </span>
                     </div>
                     <h1
-                        className="text-4xl font-serif text-stone-900 mb-3"
+                        className="text-4xl font-serif text-foreground mb-3"
                         style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
                     >
                         {t("plugins.title")}
                     </h1>
-                    <p className="text-stone-600 max-w-2xl leading-relaxed">
+                    <p className="text-muted-foreground max-w-2xl leading-relaxed">
                         First-party extensions, maintained in-house by the Louis team.
                         Each plug-in is open-source, AGPL-licensed, and built against
                         the public{" "}
@@ -103,21 +103,21 @@ export default function PluginsPage() {
 
                 {/* Search */}
                 <div className="relative mb-8 max-w-md">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         value={q}
                         onChange={(e) => setQ(e.target.value)}
                         placeholder={t("plugins.search_placeholder")}
-                        className="pl-9 bg-card/60 border-stone-300 focus-visible:ring-amber-600/30"
+                        className="pl-9 bg-card/60 border-border focus-visible:ring-amber-600/30"
                     />
                 </div>
 
                 {loading && (
-                    <div className="text-sm text-stone-500">{t("plugins.loading")}</div>
+                    <div className="text-sm text-muted-foreground">{t("plugins.loading")}</div>
                 )}
 
                 {!loading && filtered.length === 0 && (
-                    <div className="text-sm text-stone-500">
+                    <div className="text-sm text-muted-foreground">
                         {t("plugins.empty")}
                     </div>
                 )}
@@ -129,17 +129,17 @@ export default function PluginsPage() {
                 </div>
 
                 {/* Footer band — pointers to building your own */}
-                <div className="mt-16 border-t border-stone-200 pt-8">
+                <div className="mt-16 border-t border-border pt-8">
                     <h3
-                        className="text-lg font-serif text-stone-900 mb-2"
+                        className="text-lg font-serif text-foreground mb-2"
                         style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
                     >
                         {t("plugins.build_title")}
                     </h3>
-                    <p className="text-sm text-stone-600 max-w-2xl mb-4">
+                    <p className="text-sm text-muted-foreground max-w-2xl mb-4">
                         Use the Louis SDK and the SSE event stream to wire any external
                         tool into Louis. Mint an API token, point your plug-in at{" "}
-                        <code className="px-1.5 py-0.5 bg-stone-100 rounded text-xs text-amber-800">
+                        <code className="px-1.5 py-0.5 bg-muted rounded text-xs text-amber-800">
                             /api/v1/events
                         </code>
                         , and react to matters, documents, and chat turns in real time.
@@ -151,12 +151,12 @@ export default function PluginsPage() {
                         >
                             {t("plugins.read_docs")} <ExternalLink className="w-3.5 h-3.5" />
                         </a>
-                        <span className="text-stone-300">·</span>
+                        <span className="text-muted-foreground/60">·</span>
                         <a
                             href="https://github.com/sboghossian/louis-plugins"
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 text-sm text-stone-600 hover:text-stone-800"
+                            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
                         >
                             <Github className="w-3.5 h-3.5" /> {t("plugins.repo")}
                         </a>
@@ -171,7 +171,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
     const { t } = useLocale();
     const Icon = ICON_MAP[plugin.icon] ?? Blocks;
     return (
-        <div className="group bg-card border border-stone-200 rounded-xl p-5 flex flex-col hover:border-amber-300 hover:shadow-[0_2px_24px_-12px_rgba(180,140,40,0.25)] transition-all">
+        <div className="group bg-card border border-border rounded-xl p-5 flex flex-col hover:border-amber-300 hover:shadow-[0_2px_24px_-12px_rgba(180,140,40,0.25)] transition-all">
             <div className="flex items-start gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200/60 flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-amber-700" />
@@ -179,7 +179,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                         <h3
-                            className="font-serif text-base text-stone-900 truncate"
+                            className="font-serif text-base text-foreground truncate"
                             style={{
                                 fontFamily: "var(--font-serif), Georgia, serif",
                             }}
@@ -193,20 +193,20 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
                             />
                         )}
                     </div>
-                    <div className="text-[11px] text-stone-500 mt-0.5">
+                    <div className="text-[11px] text-muted-foreground mt-0.5">
                         {plugin.author} · v{plugin.version}
                     </div>
                 </div>
             </div>
 
-            <p className="text-sm text-stone-600 leading-relaxed mb-4 line-clamp-4 min-h-[5em]">
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-4 min-h-[5em]">
                 {plugin.description}
             </p>
 
             <div className="mt-auto flex items-center gap-2">
                 <Badge
                     variant="secondary"
-                    className="bg-stone-100 text-stone-700 capitalize text-[10px] font-medium"
+                    className="bg-muted text-foreground/80 capitalize text-[10px] font-medium"
                 >
                     {plugin.category}
                 </Badge>
@@ -215,7 +215,7 @@ function PluginCard({ plugin }: { plugin: PluginManifest }) {
                         href={plugin.repo_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-stone-400 hover:text-stone-700 transition-colors"
+                        className="text-muted-foreground hover:text-foreground/80 transition-colors"
                         title={t("plugins.view_source")}
                     >
                         <Github className="w-4 h-4" />

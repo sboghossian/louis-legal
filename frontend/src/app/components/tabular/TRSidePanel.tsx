@@ -46,7 +46,7 @@ interface Props {
 
 const FLAG_BADGE: Record<string, string> = {
     green: "bg-emerald-600 backdrop-blur-md border border-emerald-300/20 text-white shadow-md",
-    grey: "bg-slate-500 backdrop-blur-md border border-slate-300/20 text-white shadow-md",
+    grey: "bg-muted0 backdrop-blur-md border border-border/20 text-white shadow-md",
     yellow: "bg-amber-500 backdrop-blur-md border border-amber-300/20 text-white shadow-md",
     red: "bg-red-600 backdrop-blur-md border border-red-300/20 text-white shadow-md",
 };
@@ -128,14 +128,14 @@ export function TRSidePanel({
                     {/* Doc header */}
                     <div className="flex items-center gap-2 pt-3 shrink-0 border-b border-white/30">
                         <p
-                            className="flex-1 truncate text-sm font-semibold font-sans text-slate-700 font-serif"
+                            className="flex-1 truncate text-sm font-semibold font-sans text-foreground/80 font-serif"
                             title={doc.filename}
                         >
                             {doc.filename}
                         </p>
                         <button
                             onClick={() => setDocCitation(undefined)}
-                            className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-card/40 hover:text-slate-600"
+                            className="shrink-0 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-card/40 hover:text-muted-foreground"
                         >
                             <X className="h-4 w-4" />
                         </button>
@@ -198,11 +198,11 @@ export function TRSidePanel({
                             }
                             disabled={!prevColumn}
                             title={prevColumn ? prevColumn.name : undefined}
-                            className="rounded-lg p-0.5 text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-900 disabled:opacity-30 disabled:cursor-default"
+                            className="rounded-lg p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:cursor-default"
                         >
                             <ChevronLeft className="h-4 w-4" />
                         </button>
-                        <span className="text-xs text-slate-600 font-sans tabular-nums">
+                        <span className="text-xs text-muted-foreground font-sans tabular-nums">
                             {currentPos + 1} / {sortedColumns.length}
                         </span>
                         <button
@@ -211,7 +211,7 @@ export function TRSidePanel({
                             }
                             disabled={!nextColumn}
                             title={nextColumn ? nextColumn.name : undefined}
-                            className="rounded-lg p-0.5 text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-900 disabled:opacity-30 disabled:cursor-default"
+                            className="rounded-lg p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:cursor-default"
                         >
                             <ChevronRight className="h-4 w-4" />
                         </button>
@@ -228,7 +228,7 @@ export function TRSidePanel({
                             }}
                             disabled={regenerating}
                             title="Regenerate"
-                            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:opacity-40"
+                            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground disabled:opacity-40"
                         >
                             {regenerating ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -239,7 +239,7 @@ export function TRSidePanel({
                     )}
                     <button
                         onClick={onClose}
-                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                        className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground"
                     >
                         <X className="h-4 w-4" />
                     </button>
@@ -250,7 +250,7 @@ export function TRSidePanel({
                     <div className="pb-2 px-5">
                         {/* Column name */}
                         <div className="mb-1">
-                            <span className="text-lg font-semibold text-slate-900">
+                            <span className="text-lg font-semibold text-foreground">
                                 {column.name}
                             </span>
                         </div>
@@ -277,7 +277,7 @@ export function TRSidePanel({
                             <h4 className="mb-2 text-sm font-semibold tracking-wider font-sans">
                                 Results
                             </h4>
-                            <div className="text-xs leading-relaxed text-slate-600">
+                            <div className="text-xs leading-relaxed text-muted-foreground">
                                 <MarkdownContent
                                     citations={summaryCitations}
                                     onCitationClick={setDocCitation}
@@ -294,7 +294,7 @@ export function TRSidePanel({
                                 <h4 className="mb-2 text-sm font-semibold tracking-wider font-sans">
                                     Reasoning
                                 </h4>
-                                <div className="text-xs leading-relaxed text-slate-600">
+                                <div className="text-xs leading-relaxed text-muted-foreground">
                                     <MarkdownContent
                                         citations={reasoningCitations}
                                         onCitationClick={setDocCitation}

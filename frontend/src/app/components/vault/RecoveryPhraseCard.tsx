@@ -47,11 +47,11 @@ export function RecoveryPhraseCard({ words, onAcknowledged }: Props) {
         >
             <div className="flex items-center gap-2 mb-2">
                 <ShieldAlert className="w-4 h-4 text-amber-800" />
-                <h3 className="font-serif text-base font-semibold text-stone-900">
+                <h3 className="font-serif text-base font-semibold text-foreground">
                     Your recovery phrase
                 </h3>
             </div>
-            <p className="text-sm text-stone-700 font-serif leading-relaxed mb-4">
+            <p className="text-sm text-foreground/80 font-serif leading-relaxed mb-4">
                 Write these 12 words down on paper and store them somewhere
                 safe. If you forget your passphrase, this is the only way to
                 regain access — Louis cannot recover it for you.
@@ -66,9 +66,9 @@ export function RecoveryPhraseCard({ words, onAcknowledged }: Props) {
                 {words.map((w, i) => (
                     <li
                         key={i}
-                        className="flex items-baseline gap-1.5 text-sm font-mono text-stone-900"
+                        className="flex items-baseline gap-1.5 text-sm font-mono text-foreground"
                     >
-                        <span className="text-[10px] text-stone-400 w-4 text-right">
+                        <span className="text-[10px] text-muted-foreground w-4 text-right">
                             {i + 1}.
                         </span>
                         <span>{w}</span>
@@ -97,7 +97,7 @@ export function RecoveryPhraseCard({ words, onAcknowledged }: Props) {
                 </button>
             </div>
 
-            <label className="flex items-start gap-2 text-sm text-stone-800 font-serif mb-4 cursor-pointer">
+            <label className="flex items-start gap-2 text-sm text-foreground font-serif mb-4 cursor-pointer">
                 <input
                     type="checkbox"
                     checked={ack}

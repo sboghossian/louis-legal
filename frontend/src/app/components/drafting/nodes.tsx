@@ -43,7 +43,7 @@ export const KIND_STYLES: Record<NodeKind, KindStyle> = {
         icon: FileText,
         laneLabel: "Input",
         base: "bg-[#F5F0E5]/70 border-[#E7E2D6]",
-        accent: "bg-slate-100 text-slate-600",
+        accent: "bg-muted text-muted-foreground",
     },
     agent: {
         icon: Sparkles,
@@ -55,8 +55,8 @@ export const KIND_STYLES: Record<NodeKind, KindStyle> = {
         icon: Users,
         laneLabel: "Human gate",
         // Dashed border for human gates per the brief.
-        base: "bg-card border-dashed border-slate-400",
-        accent: "bg-slate-100 text-slate-700",
+        base: "bg-card border-dashed border-border",
+        accent: "bg-muted text-foreground/80",
     },
     output: {
         icon: CheckCircle2,
@@ -85,7 +85,7 @@ export const STATUS_STYLES: Record<NodeStatus, StatusStyle> = {
     idle: {
         label: "Idle",
         cardOverride: "",
-        chip: "bg-slate-100 text-slate-600",
+        chip: "bg-muted text-muted-foreground",
         icon: Clock3,
     },
     running: {
@@ -201,7 +201,7 @@ export function NodeCard({
                         >
                             <KindIcon className="h-3.5 w-3.5" />
                         </span>
-                        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+                        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                             {kind.laneLabel}
                         </span>
                     </div>
@@ -224,18 +224,18 @@ export function NodeCard({
 
                 <div className="mt-2 flex-1">
                     <div
-                        className="font-serif text-[15px] leading-tight text-slate-900"
+                        className="font-serif text-[15px] leading-tight text-foreground"
                         style={{ fontFamily: "var(--font-eb-garamond)" }}
                     >
                         {node.title}
                     </div>
-                    <div className="mt-1 line-clamp-2 text-[11px] text-slate-500">
+                    <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
                         {node.subtitle}
                     </div>
                 </div>
 
                 {/* Pulsing dot rail at the bottom while running. */}
-                <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
+                <div className="mt-2 flex items-center justify-between text-[10px] text-muted-foreground">
                     {node.skills.length > 0 ? (
                         <span className="truncate font-mono">
                             {node.skills.length === 1

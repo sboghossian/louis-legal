@@ -75,7 +75,7 @@ function VaultPageInner() {
                     <button
                         type="button"
                         onClick={() => setShowSettings((v) => !v)}
-                        className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-stone-900"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                     >
                         <SettingsIcon className="w-3.5 h-3.5" />
                         {showSettings ? t("vault.settings.toggle.hide") : t("vault.settings.toggle.show")}

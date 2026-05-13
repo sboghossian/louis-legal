@@ -134,27 +134,27 @@ function Header({
                     >
                         <KindIcon className="h-3.5 w-3.5" />
                     </span>
-                    <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+                    <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                         {kind.laneLabel}
                     </span>
                 </div>
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-card hover:text-slate-700"
+                    className="rounded-lg p-1 text-muted-foreground hover:bg-card hover:text-foreground/80"
                     aria-label="Close inspector"
                 >
                     <X className="h-4 w-4" />
                 </button>
             </div>
             <div
-                className="mt-3 font-serif text-2xl leading-tight text-slate-900"
+                className="mt-3 font-serif text-2xl leading-tight text-foreground"
                 style={{ fontFamily: "var(--font-eb-garamond)" }}
             >
                 {node.title}
             </div>
-            <div className="mt-1 text-sm text-slate-500">{node.subtitle}</div>
-            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-[11px] font-medium text-slate-700 shadow-sm">
+            <div className="mt-1 text-sm text-muted-foreground">{node.subtitle}</div>
+            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-[11px] font-medium text-foreground/80 shadow-sm">
                 <StatusIcon
                     className={[
                         "h-3 w-3",
@@ -163,7 +163,7 @@ function Header({
                 />
                 {status.label}
                 {node.reason && (
-                    <span className="ml-1 text-slate-400">· {node.reason}</span>
+                    <span className="ml-1 text-muted-foreground">· {node.reason}</span>
                 )}
             </div>
         </div>
@@ -206,7 +206,7 @@ function Identity({
                                 setSubtitle(node.subtitle);
                                 setEditing(false);
                             }}
-                            className="rounded-md px-2 py-1 text-slate-500 hover:bg-slate-100"
+                            className="rounded-md px-2 py-1 text-muted-foreground hover:bg-muted"
                         >
                             Cancel
                         </button>
@@ -216,7 +216,7 @@ function Identity({
                                 onPatch(node.id, { title, subtitle });
                                 setEditing(false);
                             }}
-                            className="rounded-md bg-slate-900 px-2 py-1 text-white hover:bg-slate-800"
+                            className="rounded-md bg-foreground px-2 py-1 text-white hover:bg-foreground/90"
                         >
                             Save
                         </button>
@@ -228,8 +228,8 @@ function Identity({
                     onClick={() => setEditing(true)}
                     className="flex w-full items-center justify-between gap-2 rounded-xl border border-transparent px-1 py-1 text-left hover:border-[#E7E2D6] hover:bg-card"
                 >
-                    <span className="text-xs text-slate-500">Tap to rename</span>
-                    <Pencil className="h-3.5 w-3.5 text-slate-400" />
+                    <span className="text-xs text-muted-foreground">Tap to rename</span>
+                    <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
             )}
         </section>
@@ -264,7 +264,7 @@ function SkillsEditor({
             <SectionLabel title="What skill should fire here?" />
             <div className="space-y-2 rounded-xl border border-[#E7E2D6] bg-card p-3">
                 {node.skills.length === 0 ? (
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-muted-foreground">
                         No skill wired yet. Pick one below.
                     </div>
                 ) : (
@@ -314,10 +314,10 @@ function SkillsEditor({
                                     key={s}
                                     type="button"
                                     onClick={() => add(s)}
-                                    className="flex w-full items-center justify-between px-2 py-1 text-left font-mono text-[11px] text-slate-700 hover:bg-amber-50"
+                                    className="flex w-full items-center justify-between px-2 py-1 text-left font-mono text-[11px] text-foreground/80 hover:bg-amber-50"
                                 >
                                     <span>{s}</span>
-                                    <Plus className="h-3 w-3 text-slate-400" />
+                                    <Plus className="h-3 w-3 text-muted-foreground" />
                                 </button>
                             ))}
                         </div>
@@ -344,7 +344,7 @@ function GateEditor({
         <section className="mt-5">
             <SectionLabel title="Approval gate" />
             <div className="space-y-3 rounded-xl border border-[#E7E2D6] bg-card p-3">
-                <label className="block text-xs text-slate-500">
+                <label className="block text-xs text-muted-foreground">
                     What's the question?
                     <textarea
                         className="mt-1 w-full rounded-md border border-[#E7E2D6] bg-[#FBF8F2] px-2 py-1 text-sm"
@@ -357,7 +357,7 @@ function GateEditor({
                         }
                     />
                 </label>
-                <label className="block text-xs text-slate-500">
+                <label className="block text-xs text-muted-foreground">
                     Who approves?
                     <select
                         className="mt-1 w-full rounded-md border border-[#E7E2D6] bg-[#FBF8F2] px-2 py-1 text-sm"
@@ -432,7 +432,7 @@ function Column({ label, items }: { label: string; items: string[] }) {
             <SectionLabel title={label} />
             <div className="rounded-xl border border-[#E7E2D6] bg-card p-2">
                 {items.length === 0 ? (
-                    <div className="px-1 py-1 text-xs italic text-slate-400">
+                    <div className="px-1 py-1 text-xs italic text-muted-foreground">
                         none
                     </div>
                 ) : (
@@ -440,7 +440,7 @@ function Column({ label, items }: { label: string; items: string[] }) {
                         {items.map((s) => (
                             <li
                                 key={s}
-                                className="rounded-md px-1.5 py-1 text-xs text-slate-700"
+                                className="rounded-md px-1.5 py-1 text-xs text-foreground/80"
                             >
                                 {s}
                             </li>
@@ -458,7 +458,7 @@ function History({ node }: { node: BoardNode }) {
             <SectionLabel title="History" />
             <div className="rounded-xl border border-[#E7E2D6] bg-card p-3">
                 {node.history.length === 0 ? (
-                    <div className="text-xs italic text-slate-400">
+                    <div className="text-xs italic text-muted-foreground">
                         Nothing has happened yet.
                     </div>
                 ) : (
@@ -469,21 +469,21 @@ function History({ node }: { node: BoardNode }) {
                                 className="flex items-start gap-2 text-xs"
                             >
                                 <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-[#C9A961]" />
-                                <span className="flex-1 text-slate-600">
-                                    <span className="font-medium text-slate-800">
+                                <span className="flex-1 text-muted-foreground">
+                                    <span className="font-medium text-foreground">
                                         {STATUS_STYLES[h.from].label}
                                     </span>{" "}
                                     →{" "}
-                                    <span className="font-medium text-slate-800">
+                                    <span className="font-medium text-foreground">
                                         {STATUS_STYLES[h.to].label}
                                     </span>
                                     {h.note && (
-                                        <span className="block text-[11px] text-slate-500">
+                                        <span className="block text-[11px] text-muted-foreground">
                                             {h.note}
                                         </span>
                                     )}
                                 </span>
-                                <span className="text-[10px] text-slate-400">
+                                <span className="text-[10px] text-muted-foreground">
                                     {fmtTime(h.at)}
                                 </span>
                             </li>
@@ -497,7 +497,7 @@ function History({ node }: { node: BoardNode }) {
 
 function SectionLabel({ title }: { title: string }) {
     return (
-        <div className="mb-1.5 px-1 text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+        <div className="mb-1.5 px-1 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             {title}
         </div>
     );

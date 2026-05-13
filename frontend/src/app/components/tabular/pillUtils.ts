@@ -40,7 +40,7 @@ export function getPillClass(content: string, column?: ColumnConfig): string {
     if (column?.format === "currency") {
         return (
             CURRENCY_COLORS[content.toUpperCase()] ??
-            "bg-slate-100 text-slate-700"
+            "bg-muted text-foreground/80"
         );
     }
     if (column?.format === "tag" && column.tags?.length) {

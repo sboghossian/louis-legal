@@ -88,7 +88,7 @@ export default function DraftingBoardPage() {
     return (
         <Suspense
             fallback={
-                <div className="p-12 text-sm text-slate-500">
+                <div className="p-12 text-sm text-muted-foreground">
                     Opening the drafting board…
                 </div>
             }
@@ -342,12 +342,12 @@ function TopBar({
         <div className="flex items-center justify-between gap-4 border-b border-[#E7E2D6] bg-[#FBF8F2]/90 px-6 py-3 backdrop-blur">
             <div className="flex items-center gap-3">
                 <span
-                    className="font-serif text-xl text-slate-900"
+                    className="font-serif text-xl text-foreground"
                     style={{ fontFamily: "var(--font-eb-garamond)" }}
                 >
                     {t(`drafting.template.${board.templateKey}`)}
                 </span>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-muted-foreground">
                     {t("drafting.steps", { count: board.nodes.length })}
                 </span>
             </div>
@@ -356,7 +356,7 @@ function TopBar({
                 <button
                     type="button"
                     onClick={onReset}
-                    className="inline-flex items-center gap-1 rounded-md border border-[#E7E2D6] bg-card px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
+                    className="inline-flex items-center gap-1 rounded-md border border-[#E7E2D6] bg-card px-2.5 py-1.5 text-xs text-foreground/80 hover:bg-[#F5F0E5]"
                 >
                     <RotateCcw className="h-3.5 w-3.5" /> Reset
                 </button>
@@ -364,7 +364,7 @@ function TopBar({
                     <button
                         type="button"
                         onClick={onPause}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800"
+                        className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-white hover:bg-foreground/90"
                     >
                         <span className="louis-pulse h-2 w-2 rounded-full bg-[#C9A961]" />
                         Pause
@@ -398,7 +398,7 @@ function TemplateSwitcher({
             <button
                 type="button"
                 onClick={() => setOpen((o) => !o)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[#E7E2D6] bg-card px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
+                className="inline-flex items-center gap-1.5 rounded-md border border-[#E7E2D6] bg-card px-2.5 py-1.5 text-xs text-foreground/80 hover:bg-[#F5F0E5]"
             >
                 <LayoutTemplate className="h-3.5 w-3.5" />
                 {t("drafting.use_template")}
@@ -420,10 +420,10 @@ function TemplateSwitcher({
                         >
                             <Sparkles className="mt-0.5 h-3.5 w-3.5 text-[#C9A961]" />
                             <div className="flex-1">
-                                <div className="font-medium text-slate-900">
+                                <div className="font-medium text-foreground">
                                     {t(`drafting.template.${tpl.key}`)}
                                 </div>
-                                <div className="mt-0.5 text-[11px] text-slate-500">
+                                <div className="mt-0.5 text-[11px] text-muted-foreground">
                                     {tpl.blurb}
                                 </div>
                             </div>
@@ -461,7 +461,7 @@ function ApprovalBanner({
             <button
                 type="button"
                 onClick={onOpen}
-                className="inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1 font-medium text-slate-800 shadow-sm hover:bg-amber-100"
+                className="inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1 font-medium text-foreground shadow-sm hover:bg-amber-100"
             >
                 {t("action.open")}
                 <ChevronRight className="h-3.5 w-3.5" />
@@ -576,7 +576,7 @@ function Timeline({ timeline }: { timeline: TimelineEntry[] }) {
 
     return (
         <div className="shrink-0 border-t border-[#E7E2D6] bg-[#FBF8F2]/95 px-6 py-2">
-            <div className="mb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+            <div className="mb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                 Run log
             </div>
             <div
@@ -594,10 +594,10 @@ function Timeline({ timeline }: { timeline: TimelineEntry[] }) {
                                   ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                                   : t.kind === "block"
                                     ? "border-red-200 bg-red-50 text-red-800"
-                                    : "border-[#E7E2D6] bg-card text-slate-600",
+                                    : "border-[#E7E2D6] bg-card text-muted-foreground",
                         ].join(" ")}
                     >
-                        <span className="mr-2 text-[10px] text-slate-400">
+                        <span className="mr-2 text-[10px] text-muted-foreground">
                             {fmt(t.at)}
                         </span>
                         {t.text}
@@ -637,12 +637,12 @@ function EmptyState({ onPick }: { onPick: (key: string) => void }) {
                         <Sparkles className="h-5 w-5 text-[#C9A961]" />
                     </div>
                     <h1
-                        className="mt-4 font-serif text-3xl text-slate-900"
+                        className="mt-4 font-serif text-3xl text-foreground"
                         style={{ fontFamily: "var(--font-eb-garamond)" }}
                     >
                         {t("drafting.start_template")}
                     </h1>
-                    <p className="mt-2 text-sm text-slate-600">
+                    <p className="mt-2 text-sm text-muted-foreground">
                         Pick a workflow shape that's close to your matter. Louis
                         will wire the skills and pause at the human gates so you
                         always have the last word.
@@ -660,14 +660,14 @@ function EmptyState({ onPick }: { onPick: (key: string) => void }) {
                                 <LayoutTemplate className="h-3 w-3" /> template
                             </span>
                             <div
-                                className="font-serif text-xl text-slate-900"
+                                className="font-serif text-xl text-foreground"
                                 style={{
                                     fontFamily: "var(--font-eb-garamond)",
                                 }}
                             >
                                 {t(`drafting.template.${tpl.key}`)}
                             </div>
-                            <p className="text-xs text-slate-600">{tpl.blurb}</p>
+                            <p className="text-xs text-muted-foreground">{tpl.blurb}</p>
                             <div className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-[#8a743f]">
                                 {t("drafting.open_template")}
                                 <ChevronRight className="h-3 w-3" />

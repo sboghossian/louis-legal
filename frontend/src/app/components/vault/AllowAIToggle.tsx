@@ -40,13 +40,13 @@ export function AllowAIToggle({ allowed, onChange, documentName }: Props) {
             <div
                 className={[
                     "rounded-md border border-amber-300 bg-amber-50 p-3",
-                    "text-xs text-stone-800 font-serif",
+                    "text-xs text-foreground font-serif",
                 ].join(" ")}
             >
                 <div className="flex items-start gap-2 mb-2">
                     <AlertTriangle className="w-4 h-4 text-amber-700 mt-0.5" />
                     <div>
-                        <p className="font-medium text-stone-900 mb-1">
+                        <p className="font-medium text-foreground mb-1">
                             Allow Louis to read{" "}
                             {documentName ? (
                                 <span className="font-mono">
@@ -68,7 +68,7 @@ export function AllowAIToggle({ allowed, onChange, documentName }: Props) {
                     <button
                         type="button"
                         onClick={() => setConfirming(false)}
-                        className="text-xs text-stone-600 hover:underline"
+                        className="text-xs text-muted-foreground hover:underline"
                     >
                         Cancel
                     </button>
@@ -109,9 +109,9 @@ export function AllowAIToggle({ allowed, onChange, documentName }: Props) {
             onClick={() => setConfirming(true)}
             className={[
                 "inline-flex items-center gap-1.5 text-xs",
-                "rounded-md border border-stone-300 bg-stone-50",
-                "px-2.5 py-1 text-stone-700",
-                "hover:bg-stone-100",
+                "rounded-md border border-border bg-muted",
+                "px-2.5 py-1 text-foreground/80",
+                "hover:bg-muted",
             ].join(" ")}
             title="Temporarily decrypt this document so Louis can use it."
         >

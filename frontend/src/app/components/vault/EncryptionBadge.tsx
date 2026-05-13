@@ -51,8 +51,8 @@ export function EncryptionBadge({ status, compact, className = "" }: Props) {
                 title="Encrypted at rest on the server. The cloud can still read this."
                 className={[
                     "inline-flex items-center gap-1 rounded-full",
-                    "border border-stone-200 bg-stone-50",
-                    "text-[11px] font-medium text-stone-600",
+                    "border border-border bg-muted",
+                    "text-[11px] font-medium text-muted-foreground",
                     compact ? "px-1.5 py-0.5" : "px-2 py-0.5",
                     className,
                 ].join(" ")}
@@ -69,8 +69,8 @@ export function EncryptionBadge({ status, compact, className = "" }: Props) {
                 title="Unlock the vault with your passphrase to read this."
                 className={[
                     "inline-flex items-center gap-1 rounded-full",
-                    "border border-stone-300 bg-stone-100",
-                    "text-[11px] font-medium text-stone-700",
+                    "border border-border bg-muted",
+                    "text-[11px] font-medium text-foreground/80",
                     compact ? "px-1.5 py-0.5" : "px-2 py-0.5",
                     className,
                 ].join(" ")}

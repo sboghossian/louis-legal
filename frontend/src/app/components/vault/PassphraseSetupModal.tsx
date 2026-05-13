@@ -121,23 +121,23 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
             role="dialog"
             aria-modal="true"
             aria-label="Set up your vault encryption passphrase"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/40 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4"
         >
-            <div className="w-full max-w-xl rounded-xl bg-stone-50 border border-stone-200 shadow-xl p-6">
+            <div className="w-full max-w-xl rounded-xl bg-muted border border-border shadow-xl p-6">
                 <div className="flex items-center gap-2 mb-3">
                     <ShieldCheck className="w-5 h-5 text-amber-700" />
-                    <h2 className="font-serif text-lg font-semibold text-stone-900">
+                    <h2 className="font-serif text-lg font-semibold text-foreground">
                         {t("vault.setup.title")}
                     </h2>
                 </div>
 
                 {stage === "passphrase" && (
                     <>
-                        <p className="text-sm text-stone-700 font-serif leading-relaxed mb-5">
+                        <p className="text-sm text-foreground/80 font-serif leading-relaxed mb-5">
                             {t("vault.setup.intro")}
                         </p>
 
-                        <label className="block text-xs font-medium text-stone-700 mb-1">
+                        <label className="block text-xs font-medium text-foreground/80 mb-1">
                             {t("vault.setup.passphrase")}
                         </label>
                         <div className="relative mb-3">
@@ -147,13 +147,13 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                                 onChange={(e) => setPass1(e.target.value)}
                                 autoFocus
                                 autoComplete="new-password"
-                                className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono"
+                                className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm font-mono"
                                 placeholder={t("vault.setup.placeholder", { min: MIN_LEN })}
                             />
                             <button
                                 type="button"
                                 onClick={() => setReveal((v) => !v)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-700"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80"
                                 aria-label={
                                     reveal
                                         ? t("vault.setup.hide")
@@ -168,7 +168,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                             </button>
                         </div>
 
-                        <label className="block text-xs font-medium text-stone-700 mb-1">
+                        <label className="block text-xs font-medium text-foreground/80 mb-1">
                             {t("vault.setup.confirm")}
                         </label>
                         <input
@@ -176,7 +176,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                             value={pass2}
                             onChange={(e) => setPass2(e.target.value)}
                             autoComplete="new-password"
-                            className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono mb-4"
+                            className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm font-mono mb-4"
                         />
 
                         {error && (
@@ -206,7 +206,7 @@ export function PassphraseSetupModal({ open, onCancel, onComplete }: Props) {
                 )}
 
                 {stage === "deriving" && (
-                    <div className="py-12 text-center text-sm text-stone-700 font-serif">
+                    <div className="py-12 text-center text-sm text-foreground/80 font-serif">
                         {busy
                             ? t("vault.setup.deriving")
                             : t("vault.setup.almost_done")}

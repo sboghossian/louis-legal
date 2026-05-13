@@ -102,19 +102,19 @@ export function PassphraseUnlockModal({
             role="dialog"
             aria-modal="true"
             aria-label="Unlock your vault"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/40 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4"
         >
-            <div className="w-full max-w-md rounded-xl bg-stone-50 border border-stone-200 shadow-xl p-6">
+            <div className="w-full max-w-md rounded-xl bg-muted border border-border shadow-xl p-6">
                 <div className="flex items-center gap-2 mb-3">
                     <KeyRound className="w-5 h-5 text-amber-700" />
-                    <h2 className="font-serif text-lg font-semibold text-stone-900">
+                    <h2 className="font-serif text-lg font-semibold text-foreground">
                         {t("vault.unlock.title")}
                     </h2>
                 </div>
 
                 {mode === "passphrase" ? (
                     <>
-                        <p className="text-sm text-stone-700 font-serif mb-4">
+                        <p className="text-sm text-foreground/80 font-serif mb-4">
                             {t("vault.unlock.intro")}
                         </p>
                         <div className="relative mb-3">
@@ -127,13 +127,13 @@ export function PassphraseUnlockModal({
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") tryPassphrase();
                                 }}
-                                className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono"
+                                className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm font-mono"
                                 placeholder={t("vault.unlock.placeholder")}
                             />
                             <button
                                 type="button"
                                 onClick={() => setReveal((v) => !v)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-700"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80"
                                 aria-label={
                                     reveal
                                         ? t("vault.setup.hide")
@@ -179,17 +179,17 @@ export function PassphraseUnlockModal({
                     </>
                 ) : (
                     <>
-                        <p className="text-sm text-stone-700 font-serif mb-2">
+                        <p className="text-sm text-foreground/80 font-serif mb-2">
                             {t("vault.recovery.intro")}
                         </p>
-                        <p className="text-xs text-stone-500 font-serif mb-3">
+                        <p className="text-xs text-muted-foreground font-serif mb-3">
                             {t("vault.recovery.reminder")}
                         </p>
                         <textarea
                             value={phrase}
                             onChange={(e) => setPhrase(e.target.value)}
                             rows={4}
-                            className="w-full rounded-md border border-stone-300 bg-card px-3 py-2 text-sm font-mono mb-3"
+                            className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm font-mono mb-3"
                             placeholder={t("vault.recovery.placeholder")}
                         />
 
@@ -199,7 +199,7 @@ export function PassphraseUnlockModal({
                                 setMode("passphrase");
                                 setError(null);
                             }}
-                            className="text-xs text-stone-600 hover:underline mb-3 block"
+                            className="text-xs text-muted-foreground hover:underline mb-3 block"
                         >
                             {t("vault.recovery.back")}
                         </button>
