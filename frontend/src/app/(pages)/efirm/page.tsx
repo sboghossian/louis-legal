@@ -10,8 +10,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+async function authHeaders(): Promise<Record<string, string>> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+}
 
 // e-Firm: B2B view onto matters + billing + team. Pulls live data from
 // /api/matters (with stats). Falls back to demo state if no matters open.
@@ -77,9 +85,10 @@ export default function EFirmPage() {
     useEffect(() => {
         (async () => {
             try {
+                const headers = await authHeaders();
                 const [mr, sr] = await Promise.all([
-                    fetch(`${API_BASE}/api/matters`, { headers: { "x-user-id": "demo" } }),
-                    fetch(`${API_BASE}/api/matters/stats`, { headers: { "x-user-id": "demo" } }),
+                    fetch(`${API_BASE}/api/matters`, { headers }),
+                    fetch(`${API_BASE}/api/matters/stats`, { headers }),
                 ]);
                 const mj = await mr.json();
                 const sj = await sr.json();

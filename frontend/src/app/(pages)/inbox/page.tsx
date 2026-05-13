@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation";
 import { Inbox, FileText, Repeat, Calendar, Sparkles, UserPlus, CreditCard, CheckCheck, AlertCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+async function authHeaders(): Promise<Record<string, string>> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+}
 
 type EntryKind = "matter-event" | "routine-output" | "deadline" | "system" | "team-invite" | "billing";
 
@@ -63,7 +71,8 @@ export default function InboxPage() {
     async function refresh() {
         setLoading(true);
         try {
-            const r = await fetch(`${API_BASE}/api/inbox`, { headers: { "x-user-id": "demo" } });
+            const headers = await authHeaders();
+            const r = await fetch(`${API_BASE}/api/inbox`, { headers });
             const j = await r.json();
             setEntries(j.entries ?? []);
             setUnread(j.unread ?? 0);
@@ -75,11 +84,13 @@ export default function InboxPage() {
 
     async function markRead(id: string) {
         setEntries(prev => prev.map(e => e.id === id ? { ...e, read: true } : e));
-        await fetch(`${API_BASE}/api/inbox/${id}/read`, { method: "POST", headers: { "x-user-id": "demo" } });
+        const headers = await authHeaders();
+        await fetch(`${API_BASE}/api/inbox/${id}/read`, { method: "POST", headers });
     }
 
     async function markAllRead() {
-        await fetch(`${API_BASE}/api/inbox/read-all`, { method: "POST", headers: { "x-user-id": "demo" } });
+        const headers = await authHeaders();
+        await fetch(`${API_BASE}/api/inbox/read-all`, { method: "POST", headers });
         refresh();
     }
 

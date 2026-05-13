@@ -6,8 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+async function authHeaders(): Promise<Record<string, string>> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+}
 
 type Role = "owner" | "admin" | "member" | "viewer";
 
@@ -72,7 +80,8 @@ export default function TeamPage() {
     async function refresh() {
         setLoading(true);
         try {
-            const r = await fetch(`${API_BASE}/api/team/me`, { headers: { "x-user-id": "demo" } });
+            const headers = await authHeaders();
+            const r = await fetch(`${API_BASE}/api/team/me`, { headers });
             const j = await r.json();
             setTeam(j.team);
             setMembers(j.members ?? []);
@@ -85,9 +94,10 @@ export default function TeamPage() {
     useEffect(() => { refresh(); }, []);
 
     async function changeRole(memberId: string, role: Role) {
+        const headers = await authHeaders();
         await fetch(`${API_BASE}/api/team/members/${memberId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+            headers: { ...headers, "Content-Type": "application/json" },
             body: JSON.stringify({ role }),
         });
         refresh();
@@ -95,17 +105,19 @@ export default function TeamPage() {
 
     async function remove(member: TeamMember) {
         if (!confirm(`Remove ${member.name || member.email} from team?`)) return;
+        const headers = await authHeaders();
         await fetch(`${API_BASE}/api/team/members/${member.id}`, {
             method: "DELETE",
-            headers: { "x-user-id": "demo" },
+            headers,
         });
         refresh();
     }
 
     async function changeStatus(memberId: string, status: TeamMember["status"]) {
+        const headers = await authHeaders();
         await fetch(`${API_BASE}/api/team/members/${memberId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+            headers: { ...headers, "Content-Type": "application/json" },
             body: JSON.stringify({ status }),
         });
         refresh();
@@ -242,9 +254,10 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
         if (!email.trim()) return;
         setSubmitting(true);
         try {
+            const headers = await authHeaders();
             const r = await fetch(`${API_BASE}/api/team/invite`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { ...headers, "Content-Type": "application/json" },
                 body: JSON.stringify({ email, name, role }),
             });
             if (r.ok) onSent();

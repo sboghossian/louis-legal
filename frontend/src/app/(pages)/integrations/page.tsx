@@ -6,8 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+async function authHeaders(): Promise<Record<string, string>> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+}
 
 type Status = "connected" | "disconnected" | "needs-reauth" | "coming-soon";
 type Category = "legal-tool" | "productivity" | "communication" | "billing" | "ai-mcp" | "developer" | "research";
@@ -54,7 +62,8 @@ export default function IntegrationsPage() {
     async function refresh() {
         setLoading(true);
         try {
-            const r = await fetch(`${API_BASE}/api/integrations/catalog`, { headers: { "x-user-id": "demo" } });
+            const headers = await authHeaders();
+            const r = await fetch(`${API_BASE}/api/integrations/catalog`, { headers });
             const j = await r.json();
             setAll(j.catalog ?? []);
         } finally {
@@ -85,9 +94,10 @@ export default function IntegrationsPage() {
 
     async function quickConnect(integration: Integration) {
         if (integration.authType === "none") {
+            const headers = await authHeaders();
             await fetch(`${API_BASE}/api/integrations/${integration.id}/connect`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { ...headers, "Content-Type": "application/json" },
                 body: JSON.stringify({ config: {} }),
             });
             refresh();
@@ -98,9 +108,10 @@ export default function IntegrationsPage() {
 
     async function disconnect(integration: Integration) {
         if (!confirm(`Disconnect ${integration.name}?`)) return;
+        const headers = await authHeaders();
         await fetch(`${API_BASE}/api/integrations/${integration.id}/disconnect`, {
             method: "POST",
-            headers: { "x-user-id": "demo" },
+            headers,
         });
         refresh();
     }
@@ -246,9 +257,10 @@ function ConnectModal({ integration, onClose, onConnected }: { integration: Inte
             if (integration.authType === "api-key") config.apiKey = apiKey;
             if (integration.authType === "url") config.serverUrl = serverUrl;
             if (workspaceId) config.workspaceId = workspaceId;
+            const headers = await authHeaders();
             await fetch(`${API_BASE}/api/integrations/${integration.id}/connect`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { ...headers, "Content-Type": "application/json" },
                 body: JSON.stringify({ config }),
             });
             onConnected();
