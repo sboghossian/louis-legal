@@ -314,8 +314,15 @@ function DocWorkspaceInner() {
 
     const toneLabel = tone < 33 ? "plain" : tone < 67 ? "balanced" : "formal";
 
-    // Use real content if loaded; otherwise fall back to the fixture
-    const blocksForRender = contentBlocks.length ? contentBlocks : DOC_BLOCKS;
+    // Demo mode = the marketing tour preview path. Only here do we fall back
+    // to the DOC_* fixtures when state is empty. For real docs, missing data
+    // renders as empty-state copy / "—" so users never see Acme x Globex.
+    const isDemo = docId === "demo";
+
+    // Use real content if loaded; otherwise fall back to the fixture (demo only).
+    const blocksForRender = contentBlocks.length
+        ? contentBlocks
+        : (isDemo ? DOC_BLOCKS : []);
     const visibleBlocks = useMemo(() => {
         if (view === "compare") {
             // Only show blocks where current differs from compare baseline
@@ -335,15 +342,24 @@ function DocWorkspaceInner() {
         return new Map(compareBlocks.map(b => [b.heading ?? b.id, b]));
     }, [compareBlocks]);
 
-    const title = meta?.title || DOC_DEFAULT.title;
-    const wordCount = meta?.wordCount ?? DOC_DEFAULT.wordCount;
-    const readingMin = meta?.readingMin ?? DOC_DEFAULT.readingMin;
-    const partiesData = meta?.parties && meta.parties.length ? meta.parties : DOC_PARTIES;
-    const defsData = meta?.definitions && meta.definitions.length ? meta.definitions : DOC_DEFS;
-    const citesData = meta?.citations && meta.citations.length ? meta.citations : DOC_CITES;
+    // Title fallback chain:
+    //   demo → fixture title;
+    //   real doc → backend title, else filename, else "(untitled document)"
+    const title = isDemo
+        ? (meta?.title || DOC_DEFAULT.title)
+        : (meta?.title || meta?.filename || (loading ? "Loading…" : "(untitled document)"));
+    const wordCount = meta?.wordCount ?? (isDemo ? DOC_DEFAULT.wordCount : null);
+    const readingMin = meta?.readingMin ?? (isDemo ? DOC_DEFAULT.readingMin : null);
+    const hasParties = !!(meta?.parties && meta.parties.length);
+    const hasDefs = !!(meta?.definitions && meta.definitions.length);
+    const hasCites = !!(meta?.citations && meta.citations.length);
+    const partiesData = hasParties ? meta!.parties : (isDemo ? DOC_PARTIES : []);
+    const defsData = hasDefs ? meta!.definitions : (isDemo ? DOC_DEFS : []);
+    const citesData = hasCites ? meta!.citations : (isDemo ? DOC_CITES : []);
     const jurisdictionLabel = meta?.jurisdiction
         ? `${meta.jurisdiction.primary}${meta.jurisdiction.secondary?.length ? " / " + meta.jurisdiction.secondary.join(", ") : ""}`
-        : "UAE / DIFC";
+        : (isDemo ? "UAE / DIFC" : "—");
+    const hasJurisdiction = !!meta?.jurisdiction;
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
@@ -358,7 +374,7 @@ function DocWorkspaceInner() {
                         {loadError && <Badge variant="secondary" className="text-[10px] bg-red-100 text-red-700">{loadError}</Badge>}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center gap-3">
-                        <span className="flex items-center gap-1"><Save className="w-3 h-3" /> saved {DOC_DEFAULT.savedAt}</span>
+                        {isDemo && <span className="flex items-center gap-1"><Save className="w-3 h-3" /> saved {DOC_DEFAULT.savedAt}</span>}
                         {wordCount != null && <span>{wordCount} words</span>}
                         {readingMin != null && <span>{readingMin} min read</span>}
                         <span className="font-mono opacity-50">docId: {docId}</span>
@@ -529,9 +545,15 @@ function DocWorkspaceInner() {
                                     </div>
                                 )}
                                 <div className="bg-card border border-border rounded-lg p-10 shadow-sm">
-                                    {visibleBlocks.map(b => (
-                                        <DocBlockView key={b.id} block={b} view={view} />
-                                    ))}
+                                    {visibleBlocks.length ? (
+                                        visibleBlocks.map(b => (
+                                            <DocBlockView key={b.id} block={b} view={view} />
+                                        ))
+                                    ) : (
+                                        <div className="text-sm text-muted-foreground text-center py-8">
+                                            {view === "compare" ? "No differences to show." : "Document is empty."}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -556,41 +578,87 @@ function DocWorkspaceInner() {
                             </ul>
                         </Accordion>
 
-                        <Accordion title="Parties" icon={Users} count={`${partiesData.length}`} open={accOpen.parties} onToggle={() => setAccOpen(s => ({...s, parties: !s.parties}))}>
-                            <ul className="space-y-2">
-                                {partiesData.map((p, i) => (
-                                    <li key={i} className="text-xs">
-                                        <div className="font-medium text-foreground">{p.name}</div>
-                                        <div className="text-muted-foreground">{p.role} · {p.details}</div>
-                                    </li>
-                                ))}
-                            </ul>
+                        <Accordion title="Parties" icon={Users} count={partiesData.length ? `${partiesData.length}` : "—"} open={accOpen.parties} onToggle={() => setAccOpen(s => ({...s, parties: !s.parties}))}>
+                            {partiesData.length ? (
+                                <ul className="space-y-2">
+                                    {partiesData.map((p, i) => (
+                                        <li key={i} className="text-xs">
+                                            <div className="font-medium text-foreground">{p.name}</div>
+                                            <div className="text-muted-foreground">{p.role} · {p.details}</div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="text-xs text-muted-foreground">
+                                    <div className="mb-1.5">No parties recorded yet.</div>
+                                    {/* TODO: wire to a real "add party" endpoint once the backend exposes one. */}
+                                    <button
+                                        type="button"
+                                        onClick={() => { /* no-op until backend supports parties CRUD */ }}
+                                        className="text-foreground underline-offset-2 hover:underline disabled:opacity-50"
+                                        disabled
+                                        title="Coming soon — backend endpoint not available"
+                                    >
+                                        + Add party
+                                    </button>
+                                </div>
+                            )}
                         </Accordion>
 
-                        <Accordion title="Definitions" icon={BookText} count={`${defsData.length}`} open={accOpen.defs} onToggle={() => setAccOpen(s => ({...s, defs: !s.defs}))}>
-                            <ul className="text-xs space-y-1 text-foreground/80">
-                                {defsData.map((d, i) => <li key={i}>· {d}</li>)}
-                            </ul>
+                        <Accordion title="Definitions" icon={BookText} count={defsData.length ? `${defsData.length}` : "—"} open={accOpen.defs} onToggle={() => setAccOpen(s => ({...s, defs: !s.defs}))}>
+                            {defsData.length ? (
+                                <ul className="text-xs space-y-1 text-foreground/80">
+                                    {defsData.map((d, i) => <li key={i}>· {d}</li>)}
+                                </ul>
+                            ) : (
+                                <div className="text-xs text-muted-foreground">
+                                    <div className="mb-1.5">No defined terms extracted.</div>
+                                    <button
+                                        type="button"
+                                        onClick={() => router.push("/assistant?prefill=Extract+defined+terms")}
+                                        className="text-foreground underline underline-offset-2 hover:opacity-80"
+                                    >
+                                        Run /extract-defs to populate
+                                    </button>
+                                </div>
+                            )}
                         </Accordion>
 
-                        <Accordion title="Citations" icon={Quote} count={`${citesData.length}`} open={accOpen.cites} onToggle={() => setAccOpen(s => ({...s, cites: !s.cites}))}>
-                            <ul className="space-y-2">
-                                {citesData.map((c, i) => (
-                                    <li key={i} className="text-xs">
-                                        <div className="font-mono text-foreground">{c.ref}</div>
-                                        <div className="text-muted-foreground">{c.note}</div>
-                                    </li>
-                                ))}
-                            </ul>
+                        <Accordion title="Citations" icon={Quote} count={citesData.length ? `${citesData.length}` : "—"} open={accOpen.cites} onToggle={() => setAccOpen(s => ({...s, cites: !s.cites}))}>
+                            {citesData.length ? (
+                                <ul className="space-y-2">
+                                    {citesData.map((c, i) => (
+                                        <li key={i} className="text-xs">
+                                            <div className="font-mono text-foreground">{c.ref}</div>
+                                            <div className="text-muted-foreground">{c.note}</div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="text-xs text-muted-foreground">
+                                    <div className="mb-1.5">No citations found.</div>
+                                    <button
+                                        type="button"
+                                        onClick={() => router.push("/assistant?prefill=Extract+citations")}
+                                        className="text-foreground underline underline-offset-2 hover:opacity-80"
+                                    >
+                                        Run /extract-citations to populate
+                                    </button>
+                                </div>
+                            )}
                         </Accordion>
 
                         <Accordion title="Jurisdiction" icon={Scale} count={jurisdictionLabel} open={accOpen.juris} onToggle={() => setAccOpen(s => ({...s, juris: !s.juris}))}>
-                            <div className="text-xs space-y-1.5 text-foreground/80">
-                                <div><span className="text-muted-foreground">Governing law:</span> {jurisdictionLabel}</div>
-                                <div><span className="text-muted-foreground">Seat of arbitration:</span> DIAC, DIFC</div>
-                                <div><span className="text-muted-foreground">Language:</span> English controls</div>
-                                <div><span className="text-muted-foreground">Notarization:</span> Not required for this document type</div>
-                            </div>
+                            {hasJurisdiction || isDemo ? (
+                                <div className="text-xs space-y-1.5 text-foreground/80">
+                                    <div><span className="text-muted-foreground">Governing law:</span> {jurisdictionLabel}</div>
+                                    <div><span className="text-muted-foreground">Seat of arbitration:</span> {isDemo ? "DIAC, DIFC" : "—"}</div>
+                                    <div><span className="text-muted-foreground">Language:</span> {isDemo ? "English controls" : "—"}</div>
+                                    <div><span className="text-muted-foreground">Notarization:</span> {isDemo ? "Not required for this document type" : "—"}</div>
+                                </div>
+                            ) : (
+                                <div className="text-xs text-muted-foreground">No jurisdiction detected yet.</div>
+                            )}
                         </Accordion>
                     </div>
                 )}
@@ -812,7 +880,7 @@ function SuggestionsTab({ suggestions, loading, onAccept, onReject, onReopen }: 
 
 function VersionsTab({ versions }: { versions: ServerVersion[] }) {
     if (!versions.length) {
-        return <div className="p-3 text-xs text-muted-foreground">no versions yet</div>;
+        return <div className="p-3 text-xs text-muted-foreground">Only the current version</div>;
     }
     const labelFor = (s: string) =>
         s === "user_upload" ? "user upload" :
@@ -869,7 +937,7 @@ function CommentsTab({ comments, onPost, onDelete }: {
     return (
         <div className="p-3 flex flex-col h-full">
             <div className="flex-1 overflow-y-auto mb-3">
-                {!comments.length && <div className="text-xs text-muted-foreground">no comments yet</div>}
+                {!comments.length && <div className="text-xs text-muted-foreground">No comments yet — be the first to add one below.</div>}
                 {comments.map(c => (
                     <div key={c.id} className="px-3 py-3 mb-2 rounded-lg border border-border group">
                         <div className="flex items-center justify-between">
@@ -898,3 +966,22 @@ function CommentsTab({ comments, onPost, onDelete }: {
         </div>
     );
 }
+
+// ---------------------------------------------------------------------------
+// TODOs — backend gaps surfaced while gating the DOC_* fixtures (2026-05-13)
+// ---------------------------------------------------------------------------
+// 1. Parties CRUD: the "+ Add party" affordance in the right rail is disabled
+//    because there is no endpoint to persist a party. Add e.g.
+//      POST   /api/doc-workspace/:docId/parties   { role, name, details }
+//      DELETE /api/doc-workspace/:docId/parties/:partyId
+//    and extend `DocMetadata.parties` (already there) so the optimistic update
+//    is straightforward.
+// 2. Extract slash-commands: `/extract-defs` and `/extract-citations` deep-link
+//    to `/assistant?prefill=…` for now. If a first-class extraction endpoint
+//    is exposed, replace those links with a button that calls it and merges
+//    the results into `meta.definitions` / `meta.citations` without leaving
+//    the workspace.
+// 3. Demo-mode signal: we currently gate fixtures on `docId === "demo"`.
+//    Long-term, the backend should return `source: "fixture" | "live"` (it
+//    already does in DocMetadata) and we should trust that flag instead of
+//    string-matching on docId.
