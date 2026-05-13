@@ -33,6 +33,9 @@ import { inboxRouter } from "./routes/inbox";
 import { feedbackRouter } from "./routes/feedback";
 import { feedRouter } from "./routes/feed";
 import { authRouter } from "./routes/auth";
+import { publicApiRouter } from "./routes/public-api";
+import { eventsRouter } from "./routes/events";
+import { pluginsRouter } from "./routes/plugins";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -179,6 +182,14 @@ const signupLimiter = makeLimiter({
 });
 app.use("/api/auth/signup", signupLimiter);
 app.use("/api/auth", authRouter);
+
+// Public developer platform — versioned, token-authenticated REST surface
+// for firm devs. Mounted after the internal routes so it can never shadow
+// them. The `/api/v1/events` SSE stream and `/api/v1/plugins` marketplace
+// share the same `pk_louis_…` auth model (see routes/public-api.ts).
+app.use("/api/v1", publicApiRouter);
+app.use("/api/v1/events", eventsRouter);
+app.use("/api/v1/plugins", pluginsRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
