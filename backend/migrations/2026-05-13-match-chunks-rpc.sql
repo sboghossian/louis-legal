@@ -50,4 +50,5 @@ revoke all on function public.match_chunks(vector, int, uuid, uuid) from authent
 comment on function public.match_chunks is
     'IVFFlat-indexed cosine search over document_chunks. Returns the top `match_count` rows by similarity (1 - cosine distance), optionally filtered by document_id and/or user_id. Service-role only.';
 
-insert into public._migrations (name) values ('2026-05-13-match-chunks-rpc');
+insert into public._migrations (id) values ('2026-05-13-match-chunks-rpc')
+on conflict (id) do nothing;

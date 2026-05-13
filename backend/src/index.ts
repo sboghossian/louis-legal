@@ -212,7 +212,7 @@ app.get("/health/ready", async (_req, res) => {
   try {
     const { createServerSupabase } = await import("./lib/supabase");
     const db = createServerSupabase();
-    const { error } = await db.from("_migrations").select("name").limit(1);
+    const { error } = await db.from("_migrations").select("id").limit(1);
     checks.supabase = error
       ? { status: "down", ms: Date.now() - t0, detail: error.message }
       : { status: "ok", ms: Date.now() - t0 };
