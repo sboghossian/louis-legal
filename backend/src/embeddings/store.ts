@@ -234,26 +234,52 @@ export async function topK(args: TopKArgs): Promise<TopKHit[]> {
   const literal = vectorLiteral(queryVector);
   const limit = Math.max(1, Math.min(200, k));
 
-  // The supabase-js builder can't express `embedding <=> $1::vector` so
-  // we go through a server-side RPC if it exists; failing that we fall
-  // back to raw SQL via the REST `rpc` surface using a parameterized
-  // query. To keep the migration tiny we don't introduce an RPC here —
-  // instead we use the `postgrest`-equivalent `.select()` with a
-  // computed column + `.order()` on a foreign-table-like alias, but
-  // PostgREST doesn't allow that either. So: build a SQL string and
-  // call `rpc("execute_sql", ...)` if available, OR use the
-  // experimental REST-direct query API. In practice, the simplest
-  // working path here is a stored function that we add lazily — but
-  // since we promised not to expand the migration scope, we ship a
-  // raw `postgrest`-friendly path that uses the `embedding` column
-  // and orders client-side. That is the safe fallback below.
-  //
-  // Strategy: pull a generous candidate window (limit * 4, capped at
-  // 1000) filtered by document_id/user_id, hand-compute cosine
-  // similarity locally, and return the top `k`. This works without
-  // touching the SQL surface and is correct; it just doesn't benefit
-  // from the ivfflat index. As soon as we add an `match_chunks` RPC
-  // (TODO in docs/EMBEDDINGS.md) we flip this to a one-call query.
+  // Preferred path: call the `match_chunks` Postgres RPC (added in
+  // 2026-05-13-match-chunks-rpc). It runs `embedding <=> $1` server-side
+  // so the ivfflat index actually fires. Round-trip: one call.
+  try {
+    const rpc = await supabase.rpc("match_chunks", {
+      query_vector: literal,
+      match_count: limit,
+      filter_document_id: filters?.documentId ?? null,
+      filter_user_id: filters?.userId ?? null,
+    });
+    if (!rpc.error && Array.isArray(rpc.data)) {
+      return (rpc.data as Array<{
+        id: string;
+        document_id: string;
+        chunk_text: string;
+        similarity: number;
+      }>).map((r) => ({
+        chunkId: r.id,
+        documentId: r.document_id,
+        text: r.chunk_text,
+        similarity: r.similarity,
+      }));
+    }
+    // PostgREST returns code 42883 when the function is missing
+    // (function … does not exist). Fall through to the JS path so the
+    // app still works pre-migration.
+    if (rpc.error && !/does not exist|42883/i.test(rpc.error.message)) {
+      // Treat unexpected errors as missing-vector (extension absent in dev).
+      if (isMissingVectorError(rpc.error)) {
+        warnOnce(`rpc match_chunks: ${rpc.error.message}`);
+        return [];
+      }
+      // Real error → log + fall through to JS path so retrieval keeps working.
+      warnOnce(`rpc match_chunks fallback: ${rpc.error.message}`);
+    }
+  } catch (err) {
+    if (isMissingVectorError(err)) {
+      warnOnce(`rpc match_chunks: ${(err as Error).message}`);
+      return [];
+    }
+    // Network-level RPC failure — drop to the JS fallback below.
+  }
+
+  // Fallback: candidate-window + JS-side cosine sort. Correct but
+  // doesn't benefit from the ivfflat index. Only runs when the RPC
+  // is unavailable (pre-migration boxes or extension-less dev).
   const candidateLimit = Math.min(1000, Math.max(limit * 4, limit));
 
   let query = supabase

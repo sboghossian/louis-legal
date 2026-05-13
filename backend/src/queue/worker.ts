@@ -42,6 +42,10 @@ import {
   handleEmbeddingsIndex,
 } from "./jobs/embeddings.index";
 import {
+  JOB_NAME as EMBEDDINGS_DELETE,
+  handleEmbeddingsDelete,
+} from "./jobs/embeddings.delete";
+import {
   JOB_NAME as NOTIFICATIONS_DELIVER,
   handleNotificationsDeliver,
 } from "./jobs/notifications.deliver";
@@ -57,6 +61,7 @@ const HANDLERS: Record<string, AnyHandler> = {
   [SKILL_CACHE_WARM]: handleSkillCacheWarm,
   [DOCUMENTS_PARSE]: handleDocumentsParse,
   [EMBEDDINGS_INDEX]: handleEmbeddingsIndex,
+  [EMBEDDINGS_DELETE]: handleEmbeddingsDelete,
   [NOTIFICATIONS_DELIVER]: handleNotificationsDeliver,
 };
 

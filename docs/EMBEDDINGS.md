@@ -196,24 +196,17 @@ touch files outside the embeddings scope and need a follow-up PR.
   and signup URL `https://dashboard.cohere.com/`. Until then the frontend
   card is augmented locally (see the api-keys page) so users see the
   option, but `POST /api/api-keys` will 400 for `provider: "cohere"`.
-- **Register `embeddings.delete` in the worker** —
-  `backend/src/queue/worker.ts` doesn't yet import
-  `handleEmbeddingsDelete`. The job is enqueueable today (it routes to
-  the existing `embeddings` queue via the prefix) but won't run until
-  the handler is added to the `HANDLERS` map.
-- **Enqueue `embeddings.delete` from `routes/documents.ts`** — the
-  DELETE handler should call
-  `queues.embeddings.add("embeddings.delete", { documentId })` after
-  removing the row so chunk vectors don't linger.
-- **`match_chunks` SQL function** — `store.topK` currently pulls a
-  candidate window and computes cosine in JS rather than letting the
-  IVFFlat index do the heavy lifting via `ORDER BY embedding <=>
-  $1::vector`. Adding an RPC like
-  `match_chunks(query vector, k int, doc_id uuid, user_id uuid)` and
-  flipping `topK` over to `supabase.rpc("match_chunks", ...)` is the
-  next perf step. The text-literal vector cast is already wired
-  through (`vectorLiteral()`); the RPC just needs a one-statement
-  SQL body.
+- ~~**Register `embeddings.delete` in the worker**~~ — ✅ shipped. The
+  handler is now in `HANDLERS` in `backend/src/queue/worker.ts`.
+- ~~**Enqueue `embeddings.delete` from `routes/documents.ts`**~~ — ✅
+  shipped. The DELETE handler fire-and-forgets a job after the row
+  delete so chunk vectors don't linger.
+- ~~**`match_chunks` SQL function**~~ — ✅ shipped in migration
+  `2026-05-13-match-chunks-rpc.sql`. `store.topK` now calls
+  `supabase.rpc("match_chunks", { query_vector, match_count,
+  filter_document_id, filter_user_id })` first; the JS-side
+  candidate-window fallback only runs when the RPC is missing
+  (pre-migration boxes or extension-less dev).
 - **Citation / clauses / matters routes** — plug `retrieve()` into
   the search handlers. The dispatcher is provider-aware so callers
   don't need to know which model produced the stored vector.

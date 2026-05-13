@@ -88,6 +88,22 @@ documentsRouter.delete("/:documentId", requireAuth, async (req, res) => {
     ),
   );
   await db.from("documents").delete().eq("id", documentId);
+
+  // Fire-and-forget: drop the document's embedding chunks from pgvector.
+  // We don't block the response on the queue dispatch; if Redis is down
+  // the queue's no-op fallback skips the work and a downstream cron can
+  // sweep orphan chunks. See backend/src/queue/jobs/embeddings.delete.ts.
+  try {
+    const { queues } = await import("../queue/index");
+    void queues.embeddings.add(
+      "embeddings.delete",
+      { documentId },
+      { priority: 10 },
+    );
+  } catch (e) {
+    console.warn("[documents.delete] failed to enqueue embeddings.delete:", e);
+  }
+
   res.status(204).send();
 });
 
