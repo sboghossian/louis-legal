@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
     PanelLeft,
     MessageSquare,
@@ -10,7 +10,6 @@ import {
     Library,
     User,
     ChevronsUpDown,
-    ChevronDown,
     Sparkles,
     Network,
     SlidersHorizontal,
@@ -40,6 +39,8 @@ import {
     Rss,
     Share2,
     Star,
+    Search,
+    GraduationCap,
 } from "lucide-react";
 import { NotificationsDrawer } from "./NotificationsDrawer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,10 +49,36 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useChatHistoryContext } from "@/app/contexts/ChatHistoryContext";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { LouisIcon } from "@/components/chat/louis-icon";
 import { LouisMark } from "@/components/brand/louis-mark";
 import { SidebarChatItem } from "@/app/components/shared/SidebarChatItem";
 import { listProjects } from "@/app/lib/louisApi";
+
+// ──────────────────────────────────────────────────────────────────────────
+// Vertical command rail rebuild (May 2026)
+//
+// Two zones (desktop):
+//   1. Icon rail — always 64px, brand at top, pinned/favorited icons stacked,
+//      separators, then bottom utility cluster (search, academy, share,
+//      avatar). Tooltip on hover.
+//   2. Optional 240px panel — slides out when expanded. Shows the active
+//      matter section, full text labels for grouped nav, favorites, chat
+//      history, etc.
+//
+// Mobile (<768px): when `isOpen` is true the entire shell (rail + panel)
+// behaves as a slide-out drawer triggered from MobileBottomNav's Menu.
+// When `isOpen` is false we render nothing — mobile users navigate from
+// MobileBottomNav.
+//
+// State that persists in localStorage:
+//   - louis.sidebar.expanded     bool   (desktop panel open?)
+//   - louis.sidebar.favorites    string[] (kept from old file)
+//   - louis.sidebar.groups       Record<id, collapsed> (kept; drives panel)
+//   - louis.activeMatter         { id, name, number? } | null
+//        Other surfaces (matter detail pages) can write to this key to
+//        light up the active-matter pin. We don't have a global matter
+//        context yet — TODO: when one is introduced, swap this for a real
+//        context subscription.
+// ──────────────────────────────────────────────────────────────────────────
 
 interface NavItem {
     href: string;
@@ -65,14 +92,11 @@ interface NavGroup {
     label: string;
     labelKey: string;
     items: NavItem[];
-    /** Whether this group is collapsed by default. */
+    /** Whether this group is collapsed by default in the expanded panel. */
     defaultCollapsed?: boolean;
 }
 
-// Pinned items always show (never collapsed). Top-of-mind daily actions.
-// Home is intentionally NOT pinned anymore — /assistant is now the unified
-// entry surface (dashboard widgets + composer in one). /home stays as a
-// redirect so old links resolve.
+// Pinned items always show in the icon rail. Top-of-mind daily actions.
 const PINNED: NavItem[] = [
     { href: "/assistant",  label: "Assistant", labelKey: "nav.assistant", icon: MessageSquare },
     { href: "/inbox",      label: "Inbox",     labelKey: "nav.inbox",     icon: Inbox },
@@ -80,9 +104,9 @@ const PINNED: NavItem[] = [
     { href: "/projects",   label: "Projects",  labelKey: "nav.projects",  icon: FolderOpen },
 ];
 
-// Workbench + Practice merged into a single Work group per the HAQQ
-// prototype direction. Customize collapses Skills/Workflows/Integrations
-// since they're all surfaced again from inside /customize.
+// Workbench + Practice merged into a single Work group. Customize collapses
+// Skills/Workflows/Integrations since they're all surfaced again from
+// inside /customize.
 const NAV_GROUPS: NavGroup[] = [
     {
         id: "work",
@@ -135,18 +159,18 @@ const NAV_GROUPS: NavGroup[] = [
         labelKey: "nav.more",
         defaultCollapsed: true,
         items: [
-            { href: "/academy",  label: "Academy",   labelKey: "nav.academy",  icon: BookOpenCheck },
-            { href: "/referral", label: "Share Louis", labelKey: "nav.share", icon: Share2 },
-            { href: "/about",    label: "About",     labelKey: "nav.about",    icon: Info },
+            { href: "/academy",  label: "Academy",     labelKey: "nav.academy",  icon: BookOpenCheck },
+            { href: "/referral", label: "Share Louis", labelKey: "nav.share",    icon: Share2 },
+            { href: "/about",    label: "About",       labelKey: "nav.about",    icon: Info },
         ],
     },
 ];
 
-// Favorites: lightweight per-user pin list stored in localStorage. Lets
-// users build their own preferred sidebar — independent of the
-// canonical groups above. Persistence is browser-local (not server)
-// because it's a UI-only preference that doesn't need cross-device sync.
+// ── Favorites store ────────────────────────────────────────────────────────
 const FAVORITES_KEY = "louis.sidebar.favorites";
+const EXPANDED_KEY = "louis.sidebar.expanded";
+const GROUPS_KEY = "louis.sidebar.groups";
+const ACTIVE_MATTER_KEY = "louis.activeMatter";
 
 function readFavorites(): string[] {
     if (typeof window === "undefined") return [];
@@ -154,9 +178,7 @@ function readFavorites(): string[] {
         const raw = window.localStorage.getItem(FAVORITES_KEY);
         if (!raw) return [];
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed)
-            ? parsed.filter((v) => typeof v === "string")
-            : [];
+        return Array.isArray(parsed) ? parsed.filter((v) => typeof v === "string") : [];
     } catch {
         return [];
     }
@@ -164,18 +186,92 @@ function readFavorites(): string[] {
 
 function writeFavorites(value: string[]) {
     if (typeof window === "undefined") return;
-    try {
-        window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(value));
-    } catch {
-        /* quota — ignore */
-    }
+    try { window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(value)); } catch { /* quota */ }
 }
 
 function allNavItems(): NavItem[] {
-    return [
-        ...PINNED,
-        ...NAV_GROUPS.flatMap((g) => g.items),
-    ];
+    return [...PINNED, ...NAV_GROUPS.flatMap((g) => g.items)];
+}
+
+// ── Active matter (lightweight; URL-derived + localStorage fallback) ──────
+interface ActiveMatter { id: string; name: string; number?: string }
+
+function readActiveMatter(): ActiveMatter | null {
+    if (typeof window === "undefined") return null;
+    try {
+        const raw = window.localStorage.getItem(ACTIVE_MATTER_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed.id === "string" && typeof parsed.name === "string") {
+            return parsed as ActiveMatter;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+// ── Tooltip primitive (CSS-only, respects reduced motion) ─────────────────
+function RailTooltip({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div className="relative group/tip">
+            {children}
+            <span
+                role="tooltip"
+                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded-md bg-gray-900 text-white text-[11px] font-sans px-2 py-1 shadow-lg opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 motion-reduce:transition-none"
+            >
+                {label}
+            </span>
+        </div>
+    );
+}
+
+// ── Icon rail button ──────────────────────────────────────────────────────
+interface RailButtonProps {
+    label: string;
+    isActive?: boolean;
+    onClick?: () => void;
+    href?: string;
+    children: React.ReactNode;
+    ariaLabel?: string;
+    /** Subtle dot indicator (e.g. unread bell, active matter activity). */
+    showDot?: boolean;
+}
+
+function RailButton({ label, isActive, onClick, href, children, ariaLabel, showDot }: RailButtonProps) {
+    const router = useRouter();
+    const handle = () => {
+        if (onClick) onClick();
+        else if (href) router.push(href);
+    };
+    return (
+        <RailTooltip label={label}>
+            <button
+                type="button"
+                onClick={handle}
+                aria-label={ariaLabel ?? label}
+                title={label /* native fallback for keyboard / screenreaders that ignore CSS tooltip */}
+                className={`relative flex items-center justify-center w-10 h-10 rounded-lg transition-colors text-gray-600 hover:bg-amber-50/60 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none ${
+                    isActive ? "bg-amber-50/80 text-amber-800" : ""
+                }`}
+            >
+                {/* Left gold-leaf indicator on active */}
+                {isActive && (
+                    <span
+                        aria-hidden
+                        className="absolute -left-2 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-amber-700/80"
+                    />
+                )}
+                {children}
+                {showDot && (
+                    <span
+                        aria-hidden
+                        className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-700"
+                    />
+                )}
+            </button>
+        </RailTooltip>
+    );
 }
 
 interface AppSidebarProps {
@@ -190,48 +286,118 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
     const { chats, currentChatId, setCurrentChatId } = useChatHistoryContext();
     const router = useRouter();
     const pathname = usePathname();
-    const [shouldAnimate, setShouldAnimate] = useState(false);
+
+    // ── UI state ─────────────────────────────────────────────────────────
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [historyCollapsed, setHistoryCollapsed] = useState(false);
-    const [favorites, setFavorites] = useState<string[]>([]);
+    const [launcherOpen, setLauncherOpen] = useState(false);
+    const [notifOpen, setNotifOpen] = useState(false);
+    const [matterSectionCollapsed, setMatterSectionCollapsed] = useState(false);
+    const [projectNames, setProjectNames] = useState<Record<string, string>>({});
 
-    useEffect(() => {
-        setFavorites(readFavorites());
-    }, []);
-
-    function toggleFavorite(href: string) {
-        setFavorites((prev) => {
-            const next = prev.includes(href)
-                ? prev.filter((h) => h !== href)
-                : [...prev, href];
-            writeFavorites(next);
-            return next;
-        });
-    }
-
-    // Per-group collapsed state, persisted to localStorage
+    // localStorage-backed state with lazy initializers (SSR-safe — they run
+    // once on the client after hydration without an extra effect).
+    const [favorites, setFavorites] = useState<string[]>(() => readFavorites());
+    const [activeMatter, setActiveMatter] = useState<ActiveMatter | null>(() => readActiveMatter());
     const [groupsCollapsed, setGroupsCollapsed] = useState<Record<string, boolean>>(() => {
-        if (typeof window === "undefined") return {};
+        if (typeof window === "undefined") {
+            const init: Record<string, boolean> = {};
+            for (const g of NAV_GROUPS) init[g.id] = !!g.defaultCollapsed;
+            return init;
+        }
         try {
-            const stored = localStorage.getItem("louis.sidebar.groups");
+            const stored = localStorage.getItem(GROUPS_KEY);
             if (stored) return JSON.parse(stored);
-        } catch {}
+        } catch { /* ignore */ }
         const init: Record<string, boolean> = {};
         for (const g of NAV_GROUPS) init[g.id] = !!g.defaultCollapsed;
         return init;
     });
 
-    function toggleGroup(id: string) {
-        setGroupsCollapsed(prev => {
-            const next = { ...prev, [id]: !prev[id] };
-            try { localStorage.setItem("louis.sidebar.groups", JSON.stringify(next)); } catch {}
+    // Whether the *desktop* expanded panel is showing. The parent layout
+    // owns `isOpen` for the mobile drawer + desktop toggle, but we also
+    // track a local "expanded" flag persisted under `louis.sidebar.expanded`
+    // so the panel state survives reloads.
+    const [expandedPanel, setExpandedPanel] = useState<boolean>(() => {
+        if (typeof window === "undefined") return true;
+        try {
+            const stored = localStorage.getItem(EXPANDED_KEY);
+            if (stored !== null) return stored === "true";
+        } catch { /* ignore */ }
+        // Default: expanded on desktop, collapsed on mobile.
+        return window.innerWidth >= 768;
+    });
+
+    // Cross-tab sync for active matter (and pick up writes from other surfaces
+    // that may set `louis.activeMatter` when a matter detail page opens).
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === ACTIVE_MATTER_KEY) setActiveMatter(readActiveMatter());
+            if (e.key === FAVORITES_KEY) setFavorites(readFavorites());
+        };
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+    }, []);
+
+    // Detect active matter from URL: `/matters/:id`. We derive the
+    // matter from a combination of (a) the URL (canonical) and (b) the
+    // localStorage-backed `activeMatter` state (sticky across navigations).
+    // TODO: replace this with a proper MatterContext when the backend
+    // exposes a per-matter detail route.
+    const urlMatterId = useMemo(() => {
+        const m = pathname.match(/^\/matters\/([^/]+)(?:\/|$)/);
+        if (!m) return null;
+        const id = m[1];
+        if (id === "new" || id === "list") return null;
+        return id;
+    }, [pathname]);
+
+    // Persist URL-derived matter id to storage so the pin survives navigation
+    // away from /matters/:id. This effect only writes external state — it
+    // doesn't loop because the dep array is stable when the URL doesn't
+    // change.
+    useEffect(() => {
+        if (!urlMatterId) return;
+        if (activeMatter && activeMatter.id === urlMatterId) return;
+        const next: ActiveMatter = {
+            id: urlMatterId,
+            name: activeMatter?.id === urlMatterId
+                ? activeMatter.name
+                : `Matter ${urlMatterId.slice(0, 6)}`,
+        };
+        try { localStorage.setItem(ACTIVE_MATTER_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+        setActiveMatter(next);
+    // We intentionally exclude `activeMatter` from deps — it's only read
+    // for the merge and would otherwise re-fire the effect unnecessarily.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [urlMatterId]);
+
+    // ── Favorites toggle ─────────────────────────────────────────────────
+    const toggleFavorite = useCallback((href: string) => {
+        setFavorites((prev) => {
+            const next = prev.includes(href) ? prev.filter((h) => h !== href) : [...prev, href];
+            writeFavorites(next);
             return next;
         });
-    }
-    const [projectNames, setProjectNames] = useState<Record<string, string>>(
-        {},
-    );
+    }, []);
 
+    const toggleGroup = useCallback((id: string) => {
+        setGroupsCollapsed((prev) => {
+            const next = { ...prev, [id]: !prev[id] };
+            try { localStorage.setItem(GROUPS_KEY, JSON.stringify(next)); } catch {}
+            return next;
+        });
+    }, []);
+
+    const toggleExpandedPanel = useCallback(() => {
+        setExpandedPanel((prev) => {
+            const next = !prev;
+            try { localStorage.setItem(EXPANDED_KEY, String(next)); } catch {}
+            return next;
+        });
+    }, []);
+
+    // Projects → resolve chat history's project name labels.
     useEffect(() => {
         if (!user) return;
         listProjects()
@@ -243,42 +409,63 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
             .catch(() => {});
     }, [user]);
 
+    // Dropdown auto-close on outside click.
     useEffect(() => {
-        if (!isOpen) setShouldAnimate(true);
-    }, [isOpen]);
-
-    useEffect(() => {
-        const handleClickOutside = () => setIsDropdownOpen(false);
-        if (isDropdownOpen) {
-            document.addEventListener("click", handleClickOutside);
-            return () =>
-                document.removeEventListener("click", handleClickOutside);
-        }
+        if (!isDropdownOpen) return;
+        const handle = () => setIsDropdownOpen(false);
+        document.addEventListener("click", handle);
+        return () => document.removeEventListener("click", handle);
     }, [isDropdownOpen]);
 
+    useEffect(() => {
+        if (!launcherOpen) return;
+        const close = () => setLauncherOpen(false);
+        document.addEventListener("click", close);
+        return () => document.removeEventListener("click", close);
+    }, [launcherOpen]);
+
+    // Keep chat selection in sync with the URL (preserved from old file).
     useEffect(() => {
         if (pathname.startsWith("/assistant/chat/")) {
             const chatId = pathname.split("/").pop() ?? null;
             setCurrentChatId(chatId);
             return;
         }
-
-        const projectChatMatch = pathname.match(
-            /^\/projects\/[^/]+\/assistant\/chat\/([^/]+)/,
-        );
+        const projectChatMatch = pathname.match(/^\/projects\/[^/]+\/assistant\/chat\/([^/]+)/);
         if (projectChatMatch) {
             setCurrentChatId(projectChatMatch[1]);
             return;
         }
-
-        if (pathname === "/assistant") {
-            setCurrentChatId(null);
-        }
+        if (pathname === "/assistant") setCurrentChatId(null);
     }, [pathname, setCurrentChatId]);
 
+    // ── Derived helpers ──────────────────────────────────────────────────
+    const isActiveHref = useCallback(
+        (href: string) => pathname === href || pathname.startsWith(href + "/"),
+        [pathname],
+    );
+
+    const favItems: NavItem[] = useMemo(() => {
+        const all = allNavItems();
+        return favorites
+            .map((href) => all.find((i) => i.href === href))
+            .filter((i): i is NavItem => !!i)
+            .slice(0, 4);
+    }, [favorites]);
+
+    const openPalette = useCallback(() => {
+        window.dispatchEvent(
+            new KeyboardEvent("keydown", {
+                key: "k",
+                metaKey: true,
+                ctrlKey: true,
+                bubbles: true,
+            }),
+        );
+    }, []);
+
     const getUserInitials = (email: string) => {
-        if (profile?.displayName)
-            return profile.displayName.charAt(0).toUpperCase();
+        if (profile?.displayName) return profile.displayName.charAt(0).toUpperCase();
         return email.charAt(0).toUpperCase();
     };
 
@@ -292,430 +479,199 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
         return profile.tier || "Free";
     };
 
-    const [notifOpen, setNotifOpen] = useState(false);
-    const [launcherOpen, setLauncherOpen] = useState(false);
-
-    useEffect(() => {
-        if (!launcherOpen) return;
-        const close = () => setLauncherOpen(false);
-        document.addEventListener("click", close);
-        return () => document.removeEventListener("click", close);
-    }, [launcherOpen]);
+    // Matter sub-links (rendered inside the expanded panel matter section).
+    const matterSubLinks: NavItem[] = useMemo(() => {
+        if (!activeMatter) return [];
+        const base = `/matters/${activeMatter.id}`;
+        return [
+            { href: `${base}/files`,    label: "Files",    labelKey: "matter.files",    icon: FileText },
+            { href: `${base}/chats`,    label: "Chats",    labelKey: "matter.chats",    icon: MessageSquare },
+            { href: `${base}/drafts`,   label: "Drafts",   labelKey: "matter.drafts",   icon: BookMarked },
+            { href: `${base}/routines`, label: "Routines", labelKey: "matter.routines", icon: Repeat },
+            { href: `${base}/people`,   label: "People",   labelKey: "matter.people",   icon: Users },
+        ];
+    }, [activeMatter]);
 
     if (!user) return null;
 
+    // On mobile, when `isOpen` is false hide the whole shell. The
+    // MobileBottomNav's Menu button toggles `isOpen` to show the drawer.
+    // On desktop the icon rail is always visible; `isOpen` flips the
+    // expanded panel.
+    const showShellMobile = isOpen;            // visible at all on <md?
+    const showPanel = isOpen && expandedPanel; // expanded panel visible on md+?
+
     return (
         <>
-        <NotificationsDrawer open={notifOpen} onClose={() => setNotifOpen(false)} />
+            <NotificationsDrawer open={notifOpen} onClose={() => setNotifOpen(false)} />
 
-        <div
-            className={`${
-                isOpen
-                    ? "w-64 h-dvh bg-gray-50 border-r"
-                    : "w-14 md:h-dvh md:bg-gray-50 md:border-r h-auto bg-transparent"
-            } border-gray-200 flex flex-col transition-all duration-300 absolute md:relative z-99 overflow-visible`}
-        >
-            {/* Toggle + Logo */}
-            <div
-                className={`mb-3 items-center justify-between px-2.5 py-2 ${
-                    !isOpen ? "hidden md:flex" : "flex"
-                }`}
-            >
-                {isOpen && (
-                    <div className="px-2.5">
-                        <Link
-                            href="/home"
-                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                        >
-                            <LouisMark size={26} />
-                            <span
-                                className={`text-2xl font-light font-serif text-gray-900 ${
-                                    shouldAnimate ? "sidebar-fade-in" : ""
-                                }`}
-                            >
-                                Louis
-                            </span>
-                        </Link>
-                    </div>
-                )}
-                {isOpen && (
-                    <div className="relative">
-                        <button
-                            onClick={(e) => { e.stopPropagation(); setLauncherOpen(o => !o); }}
-                            className="relative h-9 w-9 p-2.5 items-center flex hover:bg-gray-100 rounded-md transition-colors"
-                            title="HAQQ products"
-                        >
-                            <Grid3x3 className="h-4 w-4" />
-                        </button>
-                        {launcherOpen && (
-                            <div className="absolute left-0 top-full mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2" onClick={e => e.stopPropagation()}>
-                                <div className="text-[10px] uppercase tracking-wide font-semibold text-gray-500 px-2 py-1">HAQQ products</div>
-                                <a href="https://louis.haqq.ai" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-blue-50 text-sm">
-                                    <div className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-blue-700 text-[10px] font-bold">L</div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-medium">Louis</div>
-                                        <div className="text-[10px] text-gray-500">Legal AI · you are here</div>
-                                    </div>
-                                </a>
-                                <a href="https://justinian.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
-                                    <div className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-purple-700 text-[10px] font-bold">J</div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-medium">Justinian</div>
-                                        <div className="text-[10px] text-gray-500">Legal education</div>
-                                    </div>
-                                </a>
-                                <a href="https://justice.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
-                                    <div className="w-6 h-6 rounded bg-emerald-100 flex items-center justify-center text-emerald-700 text-[10px] font-bold">J</div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-medium">Justice</div>
-                                        <div className="text-[10px] text-gray-500">Access to law</div>
-                                    </div>
-                                </a>
-                                <a href="https://openclaw.org" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
-                                    <div className="w-6 h-6 rounded bg-amber-100 flex items-center justify-center text-amber-700 text-[10px] font-bold">O</div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-medium">OpenClaw</div>
-                                        <div className="text-[10px] text-gray-500">Open-source case management</div>
-                                    </div>
-                                </a>
-                                <div className="border-t border-gray-100 my-1" />
-                                <Link href="/settings/api-keys" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
-                                    <Key className="w-3.5 h-3.5" /> API keys
-                                </Link>
-                                <Link href="/integrations" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
-                                    <Plug className="w-3.5 h-3.5" /> Integrations
-                                </Link>
-                                <Link href="/docs" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
-                                    <BookOpenCheck className="w-3.5 h-3.5" /> Docs
-                                </Link>
-                                <Link href="/about" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
-                                    <Info className="w-3.5 h-3.5" /> About Louis
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                )}
-                {isOpen && (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            // Dispatch a synthetic Cmd/Ctrl+K so the global
-                            // listener inside CommandPalette opens the modal
-                            // regardless of which surface we're on.
-                            window.dispatchEvent(
-                                new KeyboardEvent("keydown", {
-                                    key: "k",
-                                    metaKey: true,
-                                    ctrlKey: true,
-                                    bubbles: true,
-                                }),
-                            );
-                        }}
-                        className="hidden md:flex h-9 w-9 p-2.5 items-center justify-center hover:bg-gray-100 rounded-md transition-colors text-gray-500"
-                        title="Search (⌘K)"
-                        aria-label="Open command palette"
-                    >
-                        <kbd className="text-[10px] font-mono leading-none">⌘K</kbd>
-                    </button>
-                )}
-                {isOpen && (
-                    <button
-                        onClick={() => setNotifOpen(true)}
-                        className="relative h-9 w-9 p-2.5 items-center flex hover:bg-gray-100 rounded-md transition-colors"
-                        title="Notifications"
-                    >
-                        <Bell className="h-4 w-4" />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-                    </button>
-                )}
-                <button
+            {/* Backdrop for mobile drawer */}
+            {showShellMobile && (
+                <div
+                    className="md:hidden fixed inset-0 bg-black/30 z-40 motion-reduce:transition-none"
                     onClick={onToggle}
-                    className="h-9 w-9 p-2.5 items-center flex hover:bg-gray-100 rounded-md transition-colors"
-                    title={isOpen ? "Close sidebar" : "Open sidebar"}
-                >
-                    <PanelLeft className="h-4 w-4" />
-                </button>
-            </div>
-
-            {/* Nav: favorites (per-user pin list) first, then pinned-by-default items */}
-            <div className="overflow-y-auto flex-1 min-h-0 pb-2">
-                {favorites.length > 0 && (() => {
-                    const all = allNavItems();
-                    const favItems = favorites
-                        .map((href) => all.find((i) => i.href === href))
-                        .filter((i): i is NavItem => !!i);
-                    if (favItems.length === 0) return null;
-                    return (
-                        <div className="mb-1">
-                            {isOpen && (
-                                <div className="px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500">
-                                    <span className="inline-flex items-center gap-1">
-                                        <Star className="w-3 h-3" />
-                                        Favorites
-                                    </span>
-                                </div>
-                            )}
-                            {favItems.map(({ href, label, labelKey, icon: Icon }) => {
-                                const text = t(labelKey) || label;
-                                const isActive = pathname === href || pathname.startsWith(href + "/");
-                                return (
-                                    <div key={`fav-${href}`} className="py-0.5 px-2.5 group/item">
-                                        <div
-                                            className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors text-left ${
-                                                isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
-                                            } ${!isOpen ? "hidden md:flex" : "flex"}`}
-                                        >
-                                            <button
-                                                onClick={() => router.push(href)}
-                                                className="flex items-center gap-3 flex-1 min-w-0 text-left"
-                                                title={!isOpen ? text : ""}
-                                            >
-                                                <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
-                                                {isOpen && <span className="text-[13px] truncate">{text}</span>}
-                                            </button>
-                                            {isOpen && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleFavorite(href);
-                                                    }}
-                                                    className="opacity-100 text-amber-500 hover:text-amber-600"
-                                                    aria-label="Unpin from favorites"
-                                                    title="Unpin"
-                                                >
-                                                    <Star className="w-3.5 h-3.5 fill-current" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    );
-                })()}
-
-                {PINNED.map(({ href, label, labelKey, icon: Icon }) => {
-                    const text = t(labelKey) || label;
-                    const isActive = pathname === href || pathname.startsWith(href + "/");
-                    const isFav = favorites.includes(href);
-                    return (
-                        <div key={href} className="py-0.5 px-2.5 group/item">
-                            <div
-                                className={`w-full h-9 flex items-center gap-3 px-2.5 py-2 rounded-md transition-colors text-left ${
-                                    isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
-                                } ${!isOpen ? "hidden md:flex" : "flex"}`}
-                            >
-                                <button
-                                    onClick={() => router.push(href)}
-                                    className="flex items-center gap-3 flex-1 min-w-0 text-left"
-                                    title={!isOpen ? text : ""}
-                                >
-                                    <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-gray-900" : "text-black"}`} />
-                                    {isOpen && (
-                                        <span className={`text-sm font-medium ${shouldAnimate ? "sidebar-fade-in-2" : ""}`}>
-                                            {text}
-                                        </span>
-                                    )}
-                                </button>
-                                {isOpen && (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleFavorite(href);
-                                        }}
-                                        className={`${isFav ? "opacity-100 text-amber-500" : "opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-amber-500"} transition-opacity`}
-                                        aria-label={isFav ? "Unpin from favorites" : "Pin to favorites"}
-                                        title={isFav ? "Unpin from favorites" : "Pin to favorites"}
-                                    >
-                                        <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
-
-                {/* Groups */}
-                {NAV_GROUPS.map(group => {
-                    const collapsed = groupsCollapsed[group.id];
-                    return (
-                        <div key={group.id} className="mt-2">
-                            {isOpen && (
-                                <button
-                                    onClick={() => toggleGroup(group.id)}
-                                    className="w-full px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500 hover:text-gray-700 transition-colors"
-                                >
-                                    <span>{t(group.labelKey) || group.label}</span>
-                                    <ChevronRight className={`h-3 w-3 transition-transform ${!collapsed ? "rotate-90" : ""}`} />
-                                </button>
-                            )}
-                            {(!collapsed || !isOpen) && group.items.map(({ href, label, labelKey, icon: Icon }) => {
-                                const text = t(labelKey) || label;
-                                const isActive = pathname === href || pathname.startsWith(href + "/");
-                                const isFav = favorites.includes(href);
-                                return (
-                                    <div key={href} className="py-0.5 px-2.5 group/item">
-                                        <div
-                                            className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors text-left ${
-                                                isActive ? "bg-gray-100 text-gray-900" : "hover:bg-gray-100 text-gray-700"
-                                            } ${!isOpen ? "hidden md:flex" : "flex"}`}
-                                        >
-                                            <button
-                                                onClick={() => router.push(href)}
-                                                className="flex items-center gap-3 flex-1 min-w-0 text-left"
-                                                title={!isOpen ? text : ""}
-                                            >
-                                                <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-gray-900" : "text-gray-600"}`} />
-                                                {isOpen && <span className="text-[13px] truncate">{text}</span>}
-                                            </button>
-                                            {isOpen && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleFavorite(href);
-                                                    }}
-                                                    className={`${isFav ? "opacity-100 text-amber-500" : "opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-amber-500"} transition-opacity`}
-                                                    aria-label={isFav ? "Unpin from favorites" : "Pin to favorites"}
-                                                    title={isFav ? "Unpin from favorites" : "Pin to favorites"}
-                                                >
-                                                    <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Assistant History */}
-            {isOpen && pathname.startsWith("/assistant") && (
-                <div className="mt-4 flex-1 min-h-0 flex flex-col">
-                    <button
-                        onClick={() => setHistoryCollapsed((v) => !v)}
-                        className={`mb-2 px-5 flex items-center justify-between text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors ${
-                            shouldAnimate ? "sidebar-fade-in" : ""
-                        }`}
-                    >
-                        <span>Assistant History</span>
-                        <ChevronDown
-                            className={`h-3.5 w-3.5 transition-transform ${historyCollapsed ? "-rotate-90" : ""}`}
-                        />
-                    </button>
-                    <div
-                        className={`overflow-y-auto flex-1 ${historyCollapsed ? "hidden" : ""}`}
-                    >
-                        {!chats ? (
-                            <div className="space-y-1 px-2.5">
-                                {[40, 60, 50, 70, 45].map((w, i) => (
-                                    <div
-                                        key={i}
-                                        className="h-9 flex items-center px-3 rounded-md"
-                                    >
-                                        <div
-                                            className="h-3 bg-gray-200 rounded animate-pulse"
-                                            style={{ width: `${w}%` }}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        ) : chats.length === 0 ? (
-                            <div
-                                className={`text-xs text-gray-500 py-2 px-5 ${
-                                    shouldAnimate ? "sidebar-fade-in-2" : ""
-                                }`}
-                            >
-                                No chats yet
-                            </div>
-                        ) : (
-                            <div
-                                className={`space-y-1 px-2.5 ${
-                                    shouldAnimate ? "sidebar-fade-in-2" : ""
-                                }`}
-                            >
-                                {chats.map((chat) => (
-                                    <SidebarChatItem
-                                        key={chat.id}
-                                        chat={chat}
-                                        isActive={currentChatId === chat.id}
-                                        projectName={
-                                            chat.project_id
-                                                ? projectNames[chat.project_id]
-                                                : undefined
-                                        }
-                                        onSelect={() => {
-                                            setCurrentChatId(chat.id);
-                                            router.push(
-                                                chat.project_id
-                                                    ? `/projects/${chat.project_id}/assistant/chat/${chat.id}`
-                                                    : `/assistant/chat/${chat.id}`,
-                                            );
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
+                    aria-hidden
+                />
             )}
 
-            {/* User Profile */}
-            <div className="mt-auto">
-                {user && (
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className={`flex items-center transition-colors w-full px-3.5 py-4 border-t border-gray-200 ${
-                                !isOpen ? "hidden md:flex" : ""
-                            } ${
-                                pathname === "/account" || isDropdownOpen
-                                    ? "bg-gray-100"
-                                    : "hover:bg-gray-100"
-                            }`}
-                            title={!isOpen ? user.email : undefined}
+            <div
+                className={`flex h-dvh z-50 ${
+                    showShellMobile ? "fixed inset-y-0 left-0 md:relative" : "hidden md:flex"
+                }`}
+                style={{ fontFamily: "var(--font-eb-garamond), ui-serif, serif" }}
+            >
+                {/* ─── Icon rail (always visible on desktop) ──────────────── */}
+                <nav
+                    aria-label="Primary"
+                    className="flex flex-col items-center gap-1.5 w-16 shrink-0 border-r border-[#E7E2D6] bg-[#fbf8f2] py-3 overflow-visible"
+                >
+                    {/* Brand */}
+                    <RailTooltip label="Louis · Home">
+                        <Link
+                            href="/assistant"
+                            className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-amber-50/60 transition-colors motion-reduce:transition-none"
+                            aria-label="Louis home"
                         >
-                            <div className="h-7 w-7 flex-shrink-0 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-medium font-serif">
-                                {getUserInitials(user.email)}
-                            </div>
-                            {isOpen && (
-                                <div
-                                    className={`text-left flex-1 min-w-0 pl-3 flex items-center justify-between gap-2 ${
-                                        shouldAnimate ? "sidebar-fade-in-2" : ""
+                            <LouisMark size={22} />
+                        </Link>
+                    </RailTooltip>
+
+                    <div className="w-6 h-px bg-[#E7E2D6] my-1" aria-hidden />
+
+                    {/* Pinned (top 4 surfaces) */}
+                    {PINNED.map(({ href, label, labelKey, icon: Icon }) => {
+                        const text = t(labelKey) || label;
+                        return (
+                            <RailButton
+                                key={href}
+                                label={text}
+                                href={href}
+                                isActive={isActiveHref(href)}
+                            >
+                                <Icon className="h-[18px] w-[18px]" />
+                            </RailButton>
+                        );
+                    })}
+
+                    {/* Active matter pin */}
+                    {activeMatter && (
+                        <>
+                            <div className="w-6 h-px bg-[#E7E2D6] my-1" aria-hidden />
+                            <RailTooltip label={`Matter · ${activeMatter.name}`}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        // Open the panel + scroll matter section open
+                                        if (!expandedPanel) toggleExpandedPanel();
+                                        setMatterSectionCollapsed(false);
+                                        router.push(`/matters/${activeMatter.id}`);
+                                    }}
+                                    aria-label={`Active matter: ${activeMatter.name}`}
+                                    className={`relative flex items-center justify-center w-10 h-10 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none ${
+                                        isActiveHref(`/matters/${activeMatter.id}`)
+                                            ? "bg-amber-50/80"
+                                            : "hover:bg-amber-50/60"
                                     }`}
                                 >
-                                    <div className="flex flex-col gap-0.5 min-w-0">
-                                        <div className="text-sm font-medium text-gray-900 leading-none">
-                                            {getDisplayName()}
-                                        </div>
-                                        <div className="text-[12px] text-gray-500 leading-none">
-                                            {getUserTier()}
-                                        </div>
-                                    </div>
-                                    <ChevronsUpDown className="h-4 w-4 flex-shrink-0 text-gray-400" />
-                                </div>
-                            )}
-                        </button>
+                                    {isActiveHref(`/matters/${activeMatter.id}`) && (
+                                        <span
+                                            aria-hidden
+                                            className="absolute -left-2 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-amber-700/80"
+                                        />
+                                    )}
+                                    <span className="flex items-center justify-center w-7 h-7 rounded-md border border-amber-700/30 bg-white text-amber-800 text-[12px] font-serif font-medium">
+                                        {activeMatter.name.charAt(0).toUpperCase()}
+                                    </span>
+                                    {/* activity dot */}
+                                    <span
+                                        aria-hidden
+                                        className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-700"
+                                    />
+                                </button>
+                            </RailTooltip>
+                        </>
+                    )}
 
+                    {/* Favorites */}
+                    {favItems.length > 0 && (
+                        <>
+                            <div className="w-6 h-px bg-[#E7E2D6] my-1" aria-hidden />
+                            {favItems.map(({ href, label, labelKey, icon: Icon }) => {
+                                const text = t(labelKey) || label;
+                                return (
+                                    <RailButton
+                                        key={`fav-${href}`}
+                                        label={`★ ${text}`}
+                                        href={href}
+                                        isActive={isActiveHref(href)}
+                                    >
+                                        <Icon className="h-[18px] w-[18px]" />
+                                    </RailButton>
+                                );
+                            })}
+                        </>
+                    )}
+
+                    {/* Search (palette) */}
+                    <div className="w-6 h-px bg-[#E7E2D6] my-1" aria-hidden />
+                    <RailButton label="Search (⌘K)" onClick={openPalette}>
+                        <Search className="h-[18px] w-[18px]" />
+                    </RailButton>
+
+                    {/* Notifications */}
+                    <RailButton
+                        label="Notifications"
+                        onClick={() => setNotifOpen(true)}
+                        showDot
+                    >
+                        <Bell className="h-[18px] w-[18px]" />
+                    </RailButton>
+
+                    {/* Spacer pushes utility cluster to bottom */}
+                    <div className="flex-1" aria-hidden />
+
+                    {/* Bottom utility cluster */}
+                    <RailButton label="Academy" href="/academy" isActive={isActiveHref("/academy")}>
+                        <GraduationCap className="h-[18px] w-[18px]" />
+                    </RailButton>
+                    <RailButton label="Share Louis" href="/referral" isActive={isActiveHref("/referral")}>
+                        <Share2 className="h-[18px] w-[18px]" />
+                    </RailButton>
+                    <RailButton label="Settings" href="/settings" isActive={isActiveHref("/settings")}>
+                        <SettingsIcon className="h-[18px] w-[18px]" />
+                    </RailButton>
+
+                    {/* Avatar dropdown */}
+                    <div className="relative">
+                        <RailTooltip label={getDisplayName() || user.email}>
+                            <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setIsDropdownOpen((v) => !v); }}
+                                aria-label="Account menu"
+                                className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-800 text-white text-[12px] font-serif font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 motion-reduce:transition-none"
+                            >
+                                {getUserInitials(user.email)}
+                            </button>
+                        </RailTooltip>
                         {isDropdownOpen && (
-                            <div className="absolute bottom-full left-0 m-1 bg-white rounded-lg shadow-lg border border-gray-200 p-1 z-50 w-62 whitespace-nowrap">
+                            <div
+                                className="absolute bottom-0 left-full ml-2 w-60 bg-white rounded-lg shadow-lg border border-[#E7E2D6] p-1 z-50 whitespace-nowrap font-sans"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="px-3 py-2 border-b border-gray-100 mb-1">
+                                    <div className="text-sm font-medium text-gray-900 truncate">{getDisplayName()}</div>
+                                    <div className="text-[11px] text-gray-500">{getUserTier()}</div>
+                                </div>
                                 <button
-                                    onClick={() => {
-                                        router.push("/account");
-                                        setIsDropdownOpen(false);
-                                    }}
-                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
+                                    onClick={() => { router.push("/account"); setIsDropdownOpen(false); }}
+                                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
                                 >
                                     <User className="h-4 w-4" />
                                     {t("nav.account") || "Account Settings"}
                                 </button>
                                 <button
-                                    onClick={() => {
-                                        router.push("/settings");
-                                        setIsDropdownOpen(false);
-                                    }}
-                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
+                                    onClick={() => { router.push("/settings"); setIsDropdownOpen(false); }}
+                                    className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-md"
                                 >
                                     <SettingsIcon className="h-4 w-4" />
                                     {t("nav.settings") || "Settings"}
@@ -724,32 +680,14 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                                 <button
                                     onClick={async () => {
                                         setIsDropdownOpen(false);
-                                        try {
-                                            await signOut();
-                                        } catch (e) {
-                                            console.error(
-                                                "[sidebar] signOut failed",
-                                                e,
-                                            );
-                                        }
-                                        // Drop the per-device fast-path so the
-                                        // next account on this browser doesn't
-                                        // inherit the onboarding-skip flag.
-                                        if (
-                                            typeof window !== "undefined" &&
-                                            user?.id
-                                        ) {
-                                            try {
-                                                window.localStorage.removeItem(
-                                                    `louis.onboarded:${user.id}`,
-                                                );
-                                            } catch {
-                                                /* ignore */
-                                            }
+                                        try { await signOut(); }
+                                        catch (e) { console.error("[sidebar] signOut failed", e); }
+                                        if (typeof window !== "undefined" && user?.id) {
+                                            try { window.localStorage.removeItem(`louis.onboarded:${user.id}`); } catch {}
                                         }
                                         router.push("/login");
                                     }}
-                                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-md"
+                                    className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-md"
                                 >
                                     <LogOut className="h-4 w-4" />
                                     {t("action.sign_out") || "Sign out"}
@@ -757,9 +695,336 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
                             </div>
                         )}
                     </div>
+
+                    {/* Expand/collapse chevron — desktop only */}
+                    <button
+                        type="button"
+                        onClick={toggleExpandedPanel}
+                        className="hidden md:flex items-center justify-center w-10 h-8 rounded-lg hover:bg-amber-50/60 text-gray-500 transition-colors motion-reduce:transition-none"
+                        title={expandedPanel ? "Collapse panel" : "Expand panel"}
+                        aria-label={expandedPanel ? "Collapse panel" : "Expand panel"}
+                    >
+                        <PanelLeft className={`h-4 w-4 transition-transform motion-reduce:transition-none ${expandedPanel ? "" : "rotate-180"}`} />
+                    </button>
+                </nav>
+
+                {/* ─── Expanded panel (slides out) ────────────────────────── */}
+                <aside
+                    aria-label="Sidebar details"
+                    className={`flex flex-col h-dvh bg-[#fbf8f2] border-r border-[#E7E2D6] overflow-hidden transition-[width] duration-300 ease-out motion-reduce:transition-none ${
+                        showPanel ? "w-60" : "w-0 border-r-0"
+                    }`}
+                >
+                    {showPanel && (
+                        <div className="flex flex-col h-full min-w-[15rem] w-60">
+                            {/* Header — brand wordmark + product launcher */}
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E7E2D6]">
+                                <Link
+                                    href="/assistant"
+                                    className="flex items-center gap-2 hover:opacity-80 transition-opacity motion-reduce:transition-none"
+                                >
+                                    <span className="text-2xl font-light font-serif text-gray-900">Louis</span>
+                                </Link>
+                                <div className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { e.stopPropagation(); setLauncherOpen((o) => !o); }}
+                                        className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-amber-50/60 transition-colors motion-reduce:transition-none text-gray-600"
+                                        title="HAQQ products"
+                                        aria-label="HAQQ products"
+                                    >
+                                        <Grid3x3 className="h-4 w-4" />
+                                    </button>
+                                    {launcherOpen && (
+                                        <div
+                                            className="absolute right-0 top-full mt-1 w-64 bg-white border border-[#E7E2D6] rounded-lg shadow-lg z-50 p-2 font-sans"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div className="text-[10px] uppercase tracking-wide font-semibold text-gray-500 px-2 py-1">HAQQ products</div>
+                                            <a href="https://louis.haqq.ai" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-blue-50 text-sm">
+                                                <div className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-blue-700 text-[10px] font-bold">L</div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium">Louis</div>
+                                                    <div className="text-[10px] text-gray-500">Legal AI · you are here</div>
+                                                </div>
+                                            </a>
+                                            <a href="https://justinian.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                                <div className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-purple-700 text-[10px] font-bold">J</div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium">Justinian</div>
+                                                    <div className="text-[10px] text-gray-500">Legal education</div>
+                                                </div>
+                                            </a>
+                                            <a href="https://justice.haqq.ai" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                                <div className="w-6 h-6 rounded bg-emerald-100 flex items-center justify-center text-emerald-700 text-[10px] font-bold">J</div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium">Justice</div>
+                                                    <div className="text-[10px] text-gray-500">Access to law</div>
+                                                </div>
+                                            </a>
+                                            <a href="https://openclaw.org" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-50 text-sm">
+                                                <div className="w-6 h-6 rounded bg-amber-100 flex items-center justify-center text-amber-700 text-[10px] font-bold">O</div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium">OpenClaw</div>
+                                                    <div className="text-[10px] text-gray-500">Open-source case management</div>
+                                                </div>
+                                            </a>
+                                            <div className="border-t border-gray-100 my-1" />
+                                            <Link href="/settings/api-keys" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                                <Key className="w-3.5 h-3.5" /> API keys
+                                            </Link>
+                                            <Link href="/integrations" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                                <Plug className="w-3.5 h-3.5" /> Integrations
+                                            </Link>
+                                            <Link href="/about" className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 text-xs text-gray-700">
+                                                <Info className="w-3.5 h-3.5" /> About Louis
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Scrollable body */}
+                            <div className="overflow-y-auto flex-1 min-h-0 py-2 font-sans">
+                                {/* Active matter section */}
+                                {activeMatter && (
+                                    <div className="px-3 mb-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setMatterSectionCollapsed((v) => !v)}
+                                            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-amber-50/50 transition-colors motion-reduce:transition-none text-left"
+                                            aria-expanded={!matterSectionCollapsed}
+                                        >
+                                            <span className="flex items-center justify-center w-6 h-6 rounded border border-amber-700/30 bg-white text-amber-800 text-[11px] font-serif font-medium shrink-0">
+                                                {activeMatter.name.charAt(0).toUpperCase()}
+                                            </span>
+                                            <span className="flex-1 min-w-0">
+                                                <span className="block text-[10px] uppercase tracking-wide text-amber-800/80 font-semibold leading-tight">
+                                                    Active matter
+                                                </span>
+                                                <span className="block text-[13px] font-serif text-gray-900 truncate leading-tight">
+                                                    {activeMatter.name}
+                                                </span>
+                                            </span>
+                                            <ChevronRight
+                                                className={`h-3.5 w-3.5 text-gray-400 transition-transform motion-reduce:transition-none ${
+                                                    matterSectionCollapsed ? "" : "rotate-90"
+                                                }`}
+                                            />
+                                        </button>
+                                        {!matterSectionCollapsed && (
+                                            <div className="mt-1 ml-2 pl-3 border-l border-[#E7E2D6] space-y-0.5">
+                                                {matterSubLinks.map(({ href, label, icon: Icon }) => {
+                                                    const active = isActiveHref(href);
+                                                    return (
+                                                        <button
+                                                            key={href}
+                                                            onClick={() => router.push(href)}
+                                                            className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] text-left transition-colors motion-reduce:transition-none ${
+                                                                active
+                                                                    ? "bg-amber-50/70 text-amber-900"
+                                                                    : "text-gray-700 hover:bg-amber-50/40"
+                                                            }`}
+                                                        >
+                                                            <Icon className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="truncate">{label}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Favorites */}
+                                {favItems.length > 0 && (
+                                    <div className="mb-1">
+                                        <div className="px-5 py-1 flex items-center gap-1 text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                            <Star className="w-3 h-3" />
+                                            <span>{t("nav.favorites") || "Favorites"}</span>
+                                        </div>
+                                        {favItems.map(({ href, label, labelKey, icon: Icon }) => {
+                                            const text = t(labelKey) || label;
+                                            const active = isActiveHref(href);
+                                            return (
+                                                <PanelRow
+                                                    key={`fav-${href}`}
+                                                    icon={<Icon className="h-3.5 w-3.5 shrink-0" />}
+                                                    label={text}
+                                                    active={active}
+                                                    onClick={() => router.push(href)}
+                                                    onFavToggle={() => toggleFavorite(href)}
+                                                    isFav
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {/* Pinned */}
+                                <div className="mb-1">
+                                    <div className="px-5 py-1 text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                        {t("nav.pinned") || "Pinned"}
+                                    </div>
+                                    {PINNED.map(({ href, label, labelKey, icon: Icon }) => {
+                                        const text = t(labelKey) || label;
+                                        const active = isActiveHref(href);
+                                        return (
+                                            <PanelRow
+                                                key={href}
+                                                icon={<Icon className="h-3.5 w-3.5 shrink-0" />}
+                                                label={text}
+                                                active={active}
+                                                onClick={() => router.push(href)}
+                                                onFavToggle={() => toggleFavorite(href)}
+                                                isFav={favorites.includes(href)}
+                                            />
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Grouped nav */}
+                                {NAV_GROUPS.map((group) => {
+                                    const collapsed = groupsCollapsed[group.id];
+                                    return (
+                                        <div key={group.id} className="mt-2">
+                                            <button
+                                                onClick={() => toggleGroup(group.id)}
+                                                className="w-full px-5 py-1 flex items-center justify-between text-[10px] uppercase tracking-wide font-semibold text-gray-500 hover:text-gray-700 transition-colors motion-reduce:transition-none"
+                                            >
+                                                <span>{t(group.labelKey) || group.label}</span>
+                                                <ChevronRight
+                                                    className={`h-3 w-3 transition-transform motion-reduce:transition-none ${
+                                                        !collapsed ? "rotate-90" : ""
+                                                    }`}
+                                                />
+                                            </button>
+                                            {!collapsed &&
+                                                group.items.map(({ href, label, labelKey, icon: Icon }) => {
+                                                    const text = t(labelKey) || label;
+                                                    const active = isActiveHref(href);
+                                                    return (
+                                                        <PanelRow
+                                                            key={href}
+                                                            icon={<Icon className="h-3.5 w-3.5 shrink-0" />}
+                                                            label={text}
+                                                            active={active}
+                                                            onClick={() => router.push(href)}
+                                                            onFavToggle={() => toggleFavorite(href)}
+                                                            isFav={favorites.includes(href)}
+                                                        />
+                                                    );
+                                                })}
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Assistant chat history (when on /assistant) */}
+                                {pathname.startsWith("/assistant") && (
+                                    <div className="mt-4 px-2">
+                                        <div className="px-3 py-1 text-[10px] uppercase tracking-wide font-semibold text-gray-500">
+                                            {t("nav.assistant_history") || "Assistant History"}
+                                        </div>
+                                        <div className="mt-1">
+                                            {!chats ? (
+                                                <div className="space-y-1 px-1">
+                                                    {[40, 60, 50, 70, 45].map((w, i) => (
+                                                        <div key={i} className="h-8 flex items-center px-3 rounded-md">
+                                                            <div className="h-3 bg-gray-200 rounded animate-pulse" style={{ width: `${w}%` }} />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : chats.length === 0 ? (
+                                                <div className="text-xs text-gray-500 py-2 px-3">No chats yet</div>
+                                            ) : (
+                                                <div className="space-y-1 px-1">
+                                                    {chats.map((chat) => (
+                                                        <SidebarChatItem
+                                                            key={chat.id}
+                                                            chat={chat}
+                                                            isActive={currentChatId === chat.id}
+                                                            projectName={chat.project_id ? projectNames[chat.project_id] : undefined}
+                                                            onSelect={() => {
+                                                                setCurrentChatId(chat.id);
+                                                                router.push(
+                                                                    chat.project_id
+                                                                        ? `/projects/${chat.project_id}/assistant/chat/${chat.id}`
+                                                                        : `/assistant/chat/${chat.id}`,
+                                                                );
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Profile bar at panel footer */}
+                            <div className="border-t border-[#E7E2D6] px-3 py-3 flex items-center gap-2 font-sans">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setIsDropdownOpen((v) => !v); }}
+                                    className="flex items-center gap-2 flex-1 min-w-0 hover:bg-amber-50/40 rounded-md px-2 py-1.5 transition-colors motion-reduce:transition-none"
+                                >
+                                    <div className="h-7 w-7 flex-shrink-0 rounded-full bg-gray-800 flex items-center justify-center text-white text-sm font-medium font-serif">
+                                        {getUserInitials(user.email)}
+                                    </div>
+                                    <div className="text-left flex-1 min-w-0">
+                                        <div className="text-sm font-medium text-gray-900 truncate leading-tight">{getDisplayName()}</div>
+                                        <div className="text-[11px] text-gray-500 leading-tight">{getUserTier()}</div>
+                                    </div>
+                                    <ChevronsUpDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </aside>
+            </div>
+        </>
+    );
+}
+
+// ── PanelRow — a row in the expanded panel with fav-toggle on hover ──────
+interface PanelRowProps {
+    icon: React.ReactNode;
+    label: string;
+    active?: boolean;
+    onClick: () => void;
+    onFavToggle?: () => void;
+    isFav?: boolean;
+}
+
+function PanelRow({ icon, label, active, onClick, onFavToggle, isFav }: PanelRowProps) {
+    return (
+        <div className="px-2.5 py-0.5 group/item">
+            <div
+                className={`w-full h-8 flex items-center gap-3 px-2.5 py-1.5 rounded-md transition-colors motion-reduce:transition-none ${
+                    active ? "bg-amber-50/70 text-amber-900" : "hover:bg-amber-50/40 text-gray-700"
+                }`}
+            >
+                <button
+                    onClick={onClick}
+                    className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                >
+                    {icon}
+                    <span className="text-[13px] truncate font-sans">{label}</span>
+                </button>
+                {onFavToggle && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onFavToggle(); }}
+                        className={`transition-opacity motion-reduce:transition-none ${
+                            isFav
+                                ? "opacity-100 text-amber-600"
+                                : "opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-amber-600"
+                        }`}
+                        aria-label={isFav ? "Unpin from favorites" : "Pin to favorites"}
+                        title={isFav ? "Unpin from favorites" : "Pin to favorites"}
+                    >
+                        <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
+                    </button>
                 )}
             </div>
         </div>
-        </>
     );
 }
