@@ -1,240 +1,94 @@
 "use client";
 
 /**
- * Drafting Board — visual workspace for agentic legal workflows.
+ * Drafting Board — auto-layout node graph for agentic legal workflows.
  *
- * Layout:
- *   ┌──────────────────────────────────────────────────────────────────┐
- *   │ Top bar (board name + template + run-agent)                      │
- *   ├──────────────────┬───────────────────────────────────┬──────────┤
- *   │ Left rail        │ Canvas                            │ Right    │
- *   │  · Add palette   │  Nodes + links                    │ panel    │
- *   │  · Templates     │                                    │  · node │
- *   │  · Filters       │                                    │    detail│
- *   │                  │                                    │  · timeline
- *   │                  │                                    │  · gates │
- *   └──────────────────┴───────────────────────────────────┴──────────┘
+ * Layout (top-to-bottom lanes):
+ *   ┌───────────────────────────────────────────────────────────────┐
+ *   │ Top bar (template name · Run agent · template switcher)        │
+ *   ├──────────────────────────────────────────────┬─────────────────┤
+ *   │ Canvas                                        │ Right inspector │
+ *   │  · auto-laid graph (dagre-style, in-house)    │  · node detail  │
+ *   │  · SVG edges (dashed / gold / emerald)        │  · skills       │
+ *   │  · timeline strip at the bottom               │  · approve gate │
+ *   └──────────────────────────────────────────────┴─────────────────┘
  *
- * Each node has a status: idle | running | done | blocked | gate-pending.
- * Status drives color + chip; clicking a node opens the right-panel
- * detail with status-appropriate actions (Approve / Open / Re-run /
- * Delete). The "Run agent" button progresses nodes through statuses
- * over time, hits the live /api/skills/route-test for real skill IDs,
- * and emits real-time entries into the timeline.
+ * State machine: idle → running → done (happy path); idle → blocked;
+ * gates flip to needs_approval and pause the runner; approval unblocks,
+ * rejection cascades blocked downstream.
  *
- * Templates (M&A, Employment, Due Diligence, Contract Review) load
- * preset node layouts so the user starts in the middle of a real-shaped
- * workflow instead of a blank canvas.
+ * Persistence: localStorage.louis.drafting-board.<templateKey>.
+ *
+ * The actual node/edge/runner/inspector pieces live under
+ * frontend/src/app/components/drafting/ so this page stays thin.
  */
 
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import {
-    Network,
-    Bot,
-    User,
-    Shield,
-    FileText,
-    MessageSquare,
-    ChevronRight,
-    ExternalLink,
-    Plus,
-    Trash2,
-    PlayCircle,
-    CheckCircle2,
-    AlertTriangle,
-    Loader2,
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import { useSearchParams } from "next/navigation";
+import {
+    Play,
+    RotateCcw,
+    Sparkles,
     LayoutTemplate,
-    Search as SearchIcon,
+    AlertTriangle,
+    ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+import type { Board, BoardNode } from "@/app/components/drafting/types";
+import {
+    computeLayout,
+    edgePath,
+    NODE_WIDTH,
+    NODE_HEIGHT,
+} from "@/app/components/drafting/auto-layout";
+import {
+    Edge,
+    EdgeMarker,
+    NodeCard,
+    type EdgeState,
+} from "@/app/components/drafting/nodes";
+import { Inspector } from "@/app/components/drafting/inspector";
+import {
+    approveGate,
+    completeNode,
+    isStalled,
+    pickNext,
+    rejectGate,
+    startNode,
+} from "@/app/components/drafting/runner";
+import { TEMPLATES, seedBoardByKey } from "@/app/components/drafting/seed";
+import {
+    loadBoard,
+    saveBoard,
+    clearBoard,
+} from "@/app/components/drafting/storage";
 
-async function authHeaders(): Promise<Record<string, string>> {
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
-    return session?.access_token
-        ? { Authorization: `Bearer ${session.access_token}` }
-        : {};
+const DEFAULT_TEMPLATE = "ma";
+
+interface TimelineEntry {
+    at: number;
+    text: string;
+    kind: "info" | "run" | "done" | "block";
 }
 
 // ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-type NodeKind =
-    | "client"
-    | "termsheet"
-    | "precedent"
-    | "redline"
-    | "memo"
-    | "contract"
-    | "risk"
-    | "research"
-    | "gate";
-type ActorKind = "agent" | "human" | "gate";
-type NodeStatus =
-    | "idle"
-    | "running"
-    | "done"
-    | "blocked"
-    | "needs_approval";
-
-interface BoardNode {
-    id: string;
-    kind: NodeKind;
-    title: string;
-    subtitle: string;
-    x: number;
-    y: number;
-    actor: ActorKind;
-    status: NodeStatus;
-    /** Skill IDs from the router for the last agent run on this node. */
-    skillsUsed?: string[];
-    /** Linked doc id, when this node is anchored to a /doc-workspace doc. */
-    docId?: string;
-}
-
-type Link = [string, string];
-
-// ---------------------------------------------------------------------------
-// Templates
-// ---------------------------------------------------------------------------
-
-interface Template {
-    id: string;
-    label: string;
-    description: string;
-    nodes: BoardNode[];
-    links: Link[];
-}
-
-const T_MA: Template = {
-    id: "ma",
-    label: "M&A — Acme × Globex",
-    description: "Term sheet → diligence → redlines → SPA, with partner gate.",
-    nodes: [
-        { id: "ma-1", kind: "client",    title: "Client brief",        subtitle: "Acme × Globex M&A discovery call notes", x: 60,  y: 60,  actor: "human", status: "done" },
-        { id: "ma-2", kind: "termsheet", title: "Term sheet draft v0", subtitle: "Agent · Anthropic Opus",                  x: 340, y: 60,  actor: "agent", status: "done" },
-        { id: "ma-3", kind: "precedent", title: "Precedent search",    subtitle: "Agent · pulled 4 similar deals",          x: 60,  y: 240, actor: "agent", status: "done" },
-        { id: "ma-4", kind: "redline",   title: "Counter-redline",     subtitle: "Agent · 12 changes proposed",             x: 340, y: 240, actor: "agent", status: "running" },
-        { id: "ma-5", kind: "memo",      title: "Risk memo",           subtitle: "Awaiting partner approval",               x: 620, y: 150, actor: "gate",  status: "needs_approval" },
-        { id: "ma-6", kind: "contract",  title: "Final SPA",           subtitle: "Pending gate · associate review",          x: 620, y: 340, actor: "gate",  status: "blocked" },
-    ],
-    links: [
-        ["ma-1", "ma-2"], ["ma-1", "ma-3"], ["ma-2", "ma-4"],
-        ["ma-3", "ma-4"], ["ma-4", "ma-5"], ["ma-4", "ma-6"],
-    ],
-};
-
-const T_EMPLOYMENT: Template = {
-    id: "employment",
-    label: "Employment — offer + onboarding",
-    description: "Offer letter, IP assignment, NDA, GDPR notice. UAE labor law.",
-    nodes: [
-        { id: "emp-1", kind: "client",    title: "New hire details",   subtitle: "VP Engineering · Dubai · senior",        x: 60,  y: 60,  actor: "human", status: "done" },
-        { id: "emp-2", kind: "termsheet", title: "Offer letter",       subtitle: "Agent · UAE labor law",                  x: 340, y: 60,  actor: "agent", status: "running" },
-        { id: "emp-3", kind: "contract",  title: "IP assignment",      subtitle: "Agent · with non-compete carve-out",     x: 340, y: 220, actor: "agent", status: "idle" },
-        { id: "emp-4", kind: "contract",  title: "NDA (mutual)",       subtitle: "Agent · standard firm template",         x: 340, y: 360, actor: "agent", status: "idle" },
-        { id: "emp-5", kind: "memo",      title: "GDPR data notice",   subtitle: "Agent · privacy schedule",               x: 620, y: 60,  actor: "agent", status: "idle" },
-        { id: "emp-6", kind: "gate",      title: "Partner sign-off",   subtitle: "Final hire packet",                       x: 620, y: 280, actor: "gate",  status: "blocked" },
-    ],
-    links: [
-        ["emp-1", "emp-2"], ["emp-1", "emp-3"], ["emp-1", "emp-4"],
-        ["emp-2", "emp-5"], ["emp-3", "emp-6"], ["emp-4", "emp-6"],
-        ["emp-5", "emp-6"],
-    ],
-};
-
-const T_DUEDIL: Template = {
-    id: "duedil",
-    label: "Due diligence — vendor onboarding",
-    description: "Sanctions screen, KYC, contract review, risk roll-up.",
-    nodes: [
-        { id: "dd-1", kind: "client",    title: "Vendor intake",      subtitle: "Counterparty · KYC packet uploaded",     x: 60,  y: 60,  actor: "human", status: "done" },
-        { id: "dd-2", kind: "research",  title: "OFAC / sanctions",   subtitle: "Agent · 0 hits across 5 lists",          x: 340, y: 60,  actor: "agent", status: "done" },
-        { id: "dd-3", kind: "research",  title: "Beneficial ownership", subtitle: "Agent · 4 UBOs surfaced",              x: 340, y: 200, actor: "agent", status: "done" },
-        { id: "dd-4", kind: "redline",   title: "MSA review",         subtitle: "Agent · 8 risk findings",                 x: 340, y: 340, actor: "agent", status: "running" },
-        { id: "dd-5", kind: "memo",      title: "Risk roll-up",       subtitle: "Awaiting GC review",                      x: 620, y: 200, actor: "gate",  status: "needs_approval" },
-    ],
-    links: [
-        ["dd-1", "dd-2"], ["dd-1", "dd-3"], ["dd-1", "dd-4"],
-        ["dd-2", "dd-5"], ["dd-3", "dd-5"], ["dd-4", "dd-5"],
-    ],
-};
-
-const T_CONTRACT_REVIEW: Template = {
-    id: "contract-review",
-    label: "Contract review — single MSA",
-    description: "Risk scan → clause-by-clause review → redline → memo.",
-    nodes: [
-        { id: "cr-1", kind: "client",  title: "Counter-MSA uploaded", subtitle: "Vendor template · 38 pages",        x: 60,  y: 60,  actor: "human", status: "done" },
-        { id: "cr-2", kind: "risk",    title: "Risk scan",            subtitle: "Agent · 30 heuristics",             x: 340, y: 60,  actor: "agent", status: "done" },
-        { id: "cr-3", kind: "redline", title: "Clause redlines",      subtitle: "Agent · 14 proposed edits",         x: 340, y: 220, actor: "agent", status: "done" },
-        { id: "cr-4", kind: "memo",    title: "Client-facing memo",   subtitle: "Agent · BLUF + redline summary",    x: 620, y: 140, actor: "agent", status: "running" },
-    ],
-    links: [["cr-1", "cr-2"], ["cr-2", "cr-3"], ["cr-3", "cr-4"]],
-};
-
-const TEMPLATES: Template[] = [T_MA, T_EMPLOYMENT, T_DUEDIL, T_CONTRACT_REVIEW];
-
-// ---------------------------------------------------------------------------
-// Visuals
-// ---------------------------------------------------------------------------
-
-const NODE_ICONS: Record<NodeKind, React.ComponentType<{ className?: string }>> = {
-    contract: FileText,
-    termsheet: FileText,
-    redline: FileText,
-    client: MessageSquare,
-    memo: FileText,
-    precedent: SearchIcon,
-    risk: AlertTriangle,
-    research: SearchIcon,
-    gate: Shield,
-};
-
-const ACTOR_ICONS: Record<ActorKind, React.ComponentType<{ className?: string }>> = {
-    agent: Bot,
-    human: User,
-    gate: Shield,
-};
-
-// Color is driven by *status* (not actor) so the eye reads "what's
-// happening here" at a glance.
-const STATUS_STYLE: Record<NodeStatus, { card: string; chip: string; label: string; icon: React.ComponentType<{ className?: string }> }> = {
-    idle:           { card: "bg-white border-gray-300 text-gray-800",           chip: "bg-gray-100 text-gray-700",     label: "Idle",            icon: PlayCircle },
-    running:        { card: "bg-blue-50 border-blue-300 text-blue-900",         chip: "bg-blue-100 text-blue-700",     label: "Running",         icon: Loader2 },
-    done:           { card: "bg-emerald-50 border-emerald-300 text-emerald-900", chip: "bg-emerald-100 text-emerald-700", label: "Done",            icon: CheckCircle2 },
-    blocked:        { card: "bg-red-50 border-red-300 text-red-900",            chip: "bg-red-100 text-red-700",       label: "Blocked",         icon: AlertTriangle },
-    needs_approval: { card: "bg-amber-50 border-amber-400 text-amber-900",      chip: "bg-amber-100 text-amber-800",   label: "Needs approval",  icon: Shield },
-};
-
-const ADD_PALETTE: { kind: NodeKind; label: string; actor: ActorKind }[] = [
-    { kind: "client",    label: "Human input", actor: "human" },
-    { kind: "termsheet", label: "Term sheet",  actor: "agent" },
-    { kind: "redline",   label: "Redline",     actor: "agent" },
-    { kind: "precedent", label: "Precedent",   actor: "agent" },
-    { kind: "research",  label: "Research",    actor: "agent" },
-    { kind: "risk",      label: "Risk scan",   actor: "agent" },
-    { kind: "memo",      label: "Memo",        actor: "agent" },
-    { kind: "contract",  label: "Contract",    actor: "agent" },
-    { kind: "gate",      label: "Approval gate", actor: "gate" },
-];
-
-// ---------------------------------------------------------------------------
-// Page
+// Page shell — Suspense so useSearchParams is happy under Next.
 // ---------------------------------------------------------------------------
 
 export default function DraftingBoardPage() {
     return (
         <Suspense
             fallback={
-                <div className="p-12 text-sm text-gray-500">loading board…</div>
+                <div className="p-12 text-sm text-slate-500">
+                    Opening the drafting board…
+                </div>
             }
         >
             <DraftingBoardInner />
@@ -242,921 +96,578 @@ export default function DraftingBoardPage() {
     );
 }
 
-interface IncomingSuggestion {
-    id: string;
-    title: string;
-    severity: "high" | "medium" | "low";
-    section: string;
-}
-
-interface TimelineEntry {
-    t: string;
-    actor: ActorKind;
-    text: string;
-}
+// ---------------------------------------------------------------------------
+// Inner page
+// ---------------------------------------------------------------------------
 
 function DraftingBoardInner() {
     const params = useSearchParams();
-    const router = useRouter();
-    const docId = params.get("docId");
-    const sugIds = params.get("suggestions");
+    const urlTemplate = params.get("template");
 
-    const [templateId, setTemplateId] = useState<string>("ma");
-    const [boardName, setBoardName] = useState<string>(T_MA.label);
-    const [nodes, setNodes] = useState<BoardNode[]>(T_MA.nodes);
-    const [links, setLinks] = useState<Link[]>(T_MA.links);
-    const [statusFilter, setStatusFilter] = useState<"all" | NodeStatus>(
-        "all",
-    );
-    // Swimlane view groups nodes horizontally by actor (Human · Agent ·
-    // Gate). Toggling on snaps every node into its lane; toggling off
-    // returns to free positioning (the per-node x/y you've dragged stays).
-    const [layoutMode, setLayoutMode] = useState<"free" | "lanes">("free");
-    const [selected, setSelected] = useState<string | null>(null);
-    const [incomingSuggestions, setIncomingSuggestions] = useState<
-        IncomingSuggestion[]
-    >([]);
-    const [timeline, setTimeline] = useState<TimelineEntry[]>([
-        { t: "—", actor: "human", text: "Board loaded from template: M&A." },
-    ]);
-    const [dragId, setDragId] = useState<string | null>(null);
-    const [agentRunning, setAgentRunning] = useState(false);
-    const [agentProgress, setAgentProgress] = useState(0);
-    const dragOriginRef =
-        typeof window !== "undefined"
-            ? ((window as unknown as {
-                  __louisDrag?: { x: number; y: number; ox: number; oy: number };
-              }).__louisDrag =
-                  (
-                      window as unknown as {
-                          __louisDrag?: {
-                              x: number;
-                              y: number;
-                              ox: number;
-                              oy: number;
-                          };
-                      }
-                  ).__louisDrag ?? { x: 0, y: 0, ox: 0, oy: 0 })
-            : { x: 0, y: 0, ox: 0, oy: 0 };
+    const [board, setBoard] = useState<Board | null>(null);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [running, setRunning] = useState(false);
+    const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
 
-    // ----- layout helpers ---------------------------------------------------
-    // Topological-ish levels: BFS from root nodes (no inbound link). x is
-    // computed from depth; y is determined by lane mode.
-    function computeAutoLayout(): BoardNode[] {
-        const inbound = new Map<string, number>();
-        for (const n of nodes) inbound.set(n.id, 0);
-        for (const [, to] of links) inbound.set(to, (inbound.get(to) ?? 0) + 1);
+    // Refs to avoid stale closures inside the run-loop timeouts.
+    const boardRef = useRef<Board | null>(null);
+    const runningRef = useRef(false);
+    boardRef.current = board;
+    runningRef.current = running;
 
-        const level = new Map<string, number>();
-        const queue: string[] = [];
-        for (const n of nodes) {
-            if ((inbound.get(n.id) ?? 0) === 0) {
-                level.set(n.id, 0);
-                queue.push(n.id);
-            }
+    // ----- bootstrap: load from URL ?template= or localStorage -------------
+    useEffect(() => {
+        const key = urlTemplate ?? DEFAULT_TEMPLATE;
+        const stored = loadBoard(key);
+        if (stored) {
+            setBoard(stored);
+            pushTimeline(`Restored "${stored.name}" from the last session.`, "info");
+            return;
         }
-        while (queue.length) {
-            const id = queue.shift()!;
-            const lvl = level.get(id) ?? 0;
-            for (const [from, to] of links) {
-                if (from !== id) continue;
-                const cur = level.get(to);
-                if (cur === undefined || cur < lvl + 1) {
-                    level.set(to, lvl + 1);
-                    queue.push(to);
-                }
-            }
+        const seeded = seedBoardByKey(key);
+        if (seeded) {
+            setBoard(seeded);
+            pushTimeline(`Loaded the "${seeded.name}" template.`, "info");
         }
-        // Fallback: nodes not reached get level = max + 1
-        const maxLvl = Math.max(0, ...Array.from(level.values()));
-        for (const n of nodes) if (!level.has(n.id)) level.set(n.id, maxLvl + 1);
+        // If urlTemplate doesn't match anything, board stays null → empty state.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [urlTemplate]);
 
-        // Lane y per actor.
-        const laneY: Record<ActorKind, number> = {
-            human: 80,
-            agent: 280,
-            gate: 480,
-        };
+    // ----- autosave on every board mutation --------------------------------
+    useEffect(() => {
+        if (!board) return;
+        saveBoard(board);
+    }, [board]);
 
-        // Count siblings in each (level, actor) to stagger y a bit.
-        const seenInLane: Record<string, number> = {};
-        return nodes.map((n) => {
-            const lvl = level.get(n.id) ?? 0;
-            const key = `${lvl}-${n.actor}`;
-            const idx = seenInLane[key] ?? 0;
-            seenInLane[key] = idx + 1;
-            return {
-                ...n,
-                x: 80 + lvl * 280,
-                y: laneY[n.actor] + idx * 40,
-            };
-        });
+    function pushTimeline(text: string, kind: TimelineEntry["kind"] = "info") {
+        setTimeline((t) => [...t, { at: Date.now(), text, kind }]);
     }
 
-    function autoArrange() {
-        setNodes(computeAutoLayout());
-    }
-
-    function toggleLanes() {
-        if (layoutMode === "free") {
-            setLayoutMode("lanes");
-            // Snap into lanes (also auto-arranges so the lanes are clean).
-            setNodes(computeAutoLayout());
-        } else {
-            setLayoutMode("free");
-        }
-    }
-
-    function loadTemplate(id: string) {
-        const t = TEMPLATES.find((x) => x.id === id);
-        if (!t) return;
-        setTemplateId(t.id);
-        setBoardName(t.label);
-        setNodes(t.nodes);
-        setLinks(t.links);
-        setSelected(null);
+    // ----- template management ---------------------------------------------
+    function chooseTemplate(key: string) {
+        const seeded = seedBoardByKey(key);
+        if (!seeded) return;
+        setBoard(seeded);
+        setSelectedId(null);
         setTimeline([
             {
-                t: new Date().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                }),
-                actor: "human",
-                text: `Board loaded from template: ${t.label}.`,
+                at: Date.now(),
+                text: `Loaded the "${seeded.name}" template.`,
+                kind: "info",
             },
         ]);
     }
 
-    function addNode(kind: NodeKind, actor: ActorKind) {
-        const id = `n-${Date.now().toString(36)}`;
-        // Drop near top-left of the open area
-        const maxY = nodes.reduce((m, n) => Math.max(m, n.y), 0);
-        const y = Math.min(maxY + 80, 540);
-        const labelMap: Record<NodeKind, string> = {
-            client: "Human input",
-            termsheet: "Term sheet",
-            redline: "Redline",
-            precedent: "Precedent search",
-            research: "Research",
-            risk: "Risk scan",
-            memo: "Memo",
-            contract: "Contract",
-            gate: "Approval gate",
-        };
-        const next: BoardNode = {
-            id,
-            kind,
-            actor,
-            title: labelMap[kind],
-            subtitle: "Click to configure",
-            x: 80 + (nodes.length % 3) * 280,
-            y,
-            status: "idle",
-        };
-        setNodes((prev) => [...prev, next]);
-        setSelected(id);
-    }
-
-    function deleteNode(id: string) {
-        setNodes((prev) => prev.filter((n) => n.id !== id));
-        setLinks((prev) => prev.filter(([a, b]) => a !== id && b !== id));
-        if (selected === id) setSelected(null);
-    }
-
-    function setNodeStatus(id: string, status: NodeStatus) {
-        setNodes((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, status } : n)),
-        );
-    }
-
-    function onNodeMouseDown(e: React.MouseEvent, id: string) {
-        const t = e.target as HTMLElement;
-        if (t.closest("button, a, input, textarea")) return;
-        const node = nodes.find((n) => n.id === id);
-        if (!node) return;
-        e.preventDefault();
-        setDragId(id);
-        dragOriginRef.x = e.clientX;
-        dragOriginRef.y = e.clientY;
-        dragOriginRef.ox = node.x;
-        dragOriginRef.oy = node.y;
-
-        const onMove = (ev: MouseEvent) => {
-            const dx = ev.clientX - dragOriginRef.x;
-            const dy = ev.clientY - dragOriginRef.y;
-            setNodes((prev) =>
-                prev.map((n) =>
-                    n.id === id
-                        ? {
-                              ...n,
-                              x: Math.max(0, dragOriginRef.ox + dx),
-                              y: Math.max(0, dragOriginRef.oy + dy),
-                          }
-                        : n,
-                ),
-            );
-        };
-        const onUp = () => {
-            window.removeEventListener("mousemove", onMove);
-            window.removeEventListener("mouseup", onUp);
-            setDragId(null);
-        };
-        window.addEventListener("mousemove", onMove);
-        window.addEventListener("mouseup", onUp);
-    }
-
-    // If we arrived from /doc-workspace with ?suggestions=ids, hydrate them.
-    useEffect(() => {
-        if (!docId || !sugIds) {
-            setIncomingSuggestions([]);
-            return;
+    function resetBoard() {
+        if (!board) return;
+        clearBoard(board.templateKey);
+        const fresh = seedBoardByKey(board.templateKey);
+        if (fresh) {
+            setBoard(fresh);
+            setSelectedId(null);
+            setTimeline([
+                {
+                    at: Date.now(),
+                    text: `Reset "${fresh.name}". Every step is idle again.`,
+                    kind: "info",
+                },
+            ]);
         }
-        (async () => {
-            try {
-                const headers = await authHeaders();
-                const r = await fetch(
-                    `${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/suggestions`,
-                    { headers },
-                );
-                if (!r.ok) return;
-                const json = await r.json();
-                const allowed = new Set(sugIds.split(",").filter(Boolean));
-                const filtered: IncomingSuggestion[] = (json.suggestions ?? [])
-                    .filter(
-                        (s: { id: string; state: string }) =>
-                            allowed.has(s.id) && s.state === "open",
-                    );
-                setIncomingSuggestions(filtered);
-            } catch (e) {
-                console.error(e);
-            }
-        })();
-    }, [docId, sugIds]);
+    }
 
-    async function runAgent() {
-        if (agentRunning) return;
-        setAgentRunning(true);
-        setAgentProgress(0);
+    // ----- runner ----------------------------------------------------------
+    const tick = useCallback(() => {
+        if (!runningRef.current || !boardRef.current) return;
+        const current = boardRef.current;
 
-        // Real skill router probe — surfaces actual fired skill IDs for the
-        // top-of-board scenario.
-        let routedSkills: string[] = [];
-        try {
-            const probe = await fetch(`${API_BASE}/api/skills/route-test`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: `${boardName} — next step. MENA jurisdiction.`,
-                }),
-            });
-            if (probe.ok) {
-                const j = await probe.json();
-                routedSkills = (j.skillIds ?? []).slice(0, 5);
-            }
-        } catch {
-            /* fall through to demo */
-        }
+        const pick = pickNext(current);
 
-        // Find the next idle / running node and walk it through statuses.
-        const pending = nodes.find(
-            (n) =>
-                n.status === "idle" ||
-                n.status === "running" ||
-                n.status === "needs_approval",
-        );
-        if (!pending) {
-            setAgentRunning(false);
-            pushTimeline(
-                "agent",
-                "Nothing to run — every node is done or blocked.",
-            );
+        // Gate flipped to needs_approval — pause and surface a banner.
+        if (pick.paused && pick.candidate) {
+            setBoard(pick.nextBoard);
+            setRunning(false);
+            setSelectedId(pick.candidate.id);
+            if (pick.note) pushTimeline(pick.note, "info");
             return;
         }
 
-        pushTimeline("agent", `Agent run started on "${pending.title}".`);
-        if (routedSkills.length) {
-            pushTimeline(
-                "agent",
-                `Skill router fired: ${routedSkills.join(", ")}.`,
-            );
-        }
-        setNodes((prev) =>
-            prev.map((n) =>
-                n.id === pending.id
-                    ? { ...n, status: "running", skillsUsed: routedSkills }
-                    : n,
-            ),
-        );
-
-        // Simulate progress
-        const totalSteps = 5;
-        for (let i = 0; i < totalSteps; i++) {
-            await new Promise((r) => setTimeout(r, 700));
-            setAgentProgress(Math.round(((i + 1) / totalSteps) * 100));
-        }
-
-        // Decide outcome: gate → needs_approval, else → done.
-        if (pending.actor === "gate") {
-            setNodeStatus(pending.id, "needs_approval");
-            pushTimeline(
-                "gate",
-                `"${pending.title}" awaits human approval.`,
-            );
-        } else {
-            setNodeStatus(pending.id, "done");
-            pushTimeline("agent", `"${pending.title}" complete.`);
-            // Unblock downstream nodes that were waiting on this one.
-            const downstream = links
-                .filter(([from]) => from === pending.id)
-                .map(([, to]) => to);
-            if (downstream.length) {
-                setNodes((prev) =>
-                    prev.map((n) =>
-                        downstream.includes(n.id) && n.status === "blocked"
-                            ? { ...n, status: "idle" }
-                            : n,
-                    ),
-                );
+        // Nothing actionable left.
+        if (!pick.candidate) {
+            setRunning(false);
+            if (isStalled(current)) {
+                pushTimeline("The graph has nothing left to run.", "info");
             }
+            return;
         }
 
-        setAgentProgress(100);
-        setTimeout(() => setAgentProgress(0), 400);
-        setAgentRunning(false);
+        // Start the node, then schedule its completion.
+        const { nextBoard, dwellMs, log } = startNode(
+            pick.nextBoard,
+            pick.candidate.id,
+        );
+        setBoard(nextBoard);
+        pushTimeline(log, "run");
+
+        window.setTimeout(() => {
+            if (!runningRef.current || !boardRef.current) return;
+            const finished = completeNode(boardRef.current, pick.candidate!.id);
+            setBoard(finished.nextBoard);
+            if (finished.log) pushTimeline(finished.log, "done");
+            // Loop.
+            window.setTimeout(tick, 240);
+        }, dwellMs);
+    }, []);
+
+    function startRunner() {
+        if (!board) return;
+        if (running) return;
+        setRunning(true);
+        // Defer one tick so React has flushed the running=true commit
+        // before tick() reads runningRef.
+        window.setTimeout(tick, 50);
     }
 
-    function approveGate(id: string) {
-        setNodeStatus(id, "done");
-        pushTimeline("human", `"${nodes.find((n) => n.id === id)?.title}" approved.`);
-        // Unblock downstream
-        const downstream = links
-            .filter(([from]) => from === id)
-            .map(([, to]) => to);
-        if (downstream.length) {
-            setNodes((prev) =>
-                prev.map((n) =>
-                    downstream.includes(n.id) && n.status === "blocked"
-                        ? { ...n, status: "idle" }
-                        : n,
-                ),
-            );
-        }
+    function pauseRunner() {
+        setRunning(false);
     }
 
-    function pushTimeline(actor: ActorKind, text: string) {
-        const t = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
+    // ----- node mutations --------------------------------------------------
+    function patchNode(id: string, patch: Partial<BoardNode>) {
+        setBoard((b) => {
+            if (!b) return b;
+            return {
+                ...b,
+                nodes: b.nodes.map((n) => (n.id === id ? { ...n, ...patch } : n)),
+            };
         });
-        setTimeline((prev) => [{ t, actor, text }, ...prev]);
     }
 
-    const selectedNode = selected
-        ? nodes.find((n) => n.id === selected) ?? null
-        : null;
-    const visibleNodes =
-        statusFilter === "all"
-            ? nodes
-            : nodes.filter((n) => n.status === statusFilter);
-    const visibleNodeIds = new Set(visibleNodes.map((n) => n.id));
-    const pendingApprovals = nodes.filter(
+    function handleApprove(id: string) {
+        if (!board) return;
+        const res = approveGate(board, id);
+        setBoard(res.nextBoard);
+        if (res.log) pushTimeline(res.log, "done");
+        // Auto-resume the runner so downstream nodes start.
+        setRunning(true);
+        window.setTimeout(tick, 60);
+    }
+
+    function handleReject(id: string, reason: string) {
+        if (!board) return;
+        const res = rejectGate(board, id, reason);
+        setBoard(res.nextBoard);
+        if (res.log) pushTimeline(res.log, "block");
+        setRunning(false);
+    }
+
+    // ----- selection -------------------------------------------------------
+    const selectedNode = useMemo(() => {
+        if (!board || !selectedId) return null;
+        return board.nodes.find((n) => n.id === selectedId) ?? null;
+    }, [board, selectedId]);
+
+    // ----- empty state -----------------------------------------------------
+    if (!board) {
+        return <EmptyState onPick={chooseTemplate} />;
+    }
+
+    const needsApprovalNode = board.nodes.find(
         (n) => n.status === "needs_approval",
     );
 
-    const STATUS_COUNTS = {
-        idle: nodes.filter((n) => n.status === "idle").length,
-        running: nodes.filter((n) => n.status === "running").length,
-        done: nodes.filter((n) => n.status === "done").length,
-        blocked: nodes.filter((n) => n.status === "blocked").length,
-        needs_approval: nodes.filter((n) => n.status === "needs_approval")
-            .length,
-    };
-
     return (
-        <div className="flex flex-col h-full overflow-hidden">
-            {/* Top bar */}
-            <div className="flex items-center gap-3 px-5 py-3 border-b border-gray-200 bg-white">
-                <Network className="w-5 h-5 text-amber-700" />
-                <input
-                    value={boardName}
-                    onChange={(e) => setBoardName(e.target.value)}
-                    className="font-medium text-sm bg-transparent outline-none border-b border-transparent focus:border-gray-300 min-w-[200px]"
+        <div
+            className="flex h-full min-h-screen w-full overflow-hidden"
+            style={{ background: "var(--louis-cream, #FBF8F2)" }}
+        >
+            <div className="flex h-full min-h-screen flex-1 flex-col overflow-hidden">
+                <TopBar
+                    board={board}
+                    running={running}
+                    onRun={startRunner}
+                    onPause={pauseRunner}
+                    onReset={resetBoard}
+                    onPick={chooseTemplate}
                 />
-                {docId && (
-                    <Badge variant="secondary" className="text-[10px] font-mono">
-                        doc: {docId}
-                    </Badge>
+                {needsApprovalNode && (
+                    <ApprovalBanner
+                        node={needsApprovalNode}
+                        onOpen={() => setSelectedId(needsApprovalNode.id)}
+                    />
                 )}
-                <div className="ml-auto flex items-center gap-2">
-                    {/* View mode toggle */}
-                    <div className="inline-flex items-center bg-gray-100 rounded-md p-0.5 text-xs">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (layoutMode !== "free") toggleLanes();
-                            }}
-                            className={`px-2.5 py-1 rounded ${
-                                layoutMode === "free"
-                                    ? "bg-white shadow-sm font-medium"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
-                            title="Free layout — drag nodes anywhere"
-                        >
-                            Free
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (layoutMode !== "lanes") toggleLanes();
-                            }}
-                            className={`px-2.5 py-1 rounded ${
-                                layoutMode === "lanes"
-                                    ? "bg-white shadow-sm font-medium"
-                                    : "text-gray-600 hover:text-gray-900"
-                            }`}
-                            title="Lanes — group by actor (Human · Agent · Gate)"
-                        >
-                            Lanes
-                        </button>
-                    </div>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={autoArrange}
-                        className="h-8 text-xs"
-                        title="Re-arrange nodes by following the link graph"
-                    >
-                        Auto-arrange
-                    </Button>
-                    {pendingApprovals.length > 0 && (
-                        <Badge
-                            variant="secondary"
-                            className="bg-amber-100 text-amber-900 border border-amber-300"
-                        >
-                            {pendingApprovals.length} approval pending
-                        </Badge>
-                    )}
-                    <Button
-                        size="sm"
-                        variant="default"
-                        onClick={runAgent}
-                        disabled={agentRunning}
-                        className="h-8"
-                    >
-                        {agentRunning ? (
-                            <>
-                                <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
-                                Running… {agentProgress}%
-                            </>
-                        ) : (
-                            <>
-                                <PlayCircle className="w-3.5 h-3.5 mr-1" />
-                                Run agent
-                            </>
-                        )}
-                    </Button>
-                </div>
+                <Canvas
+                    board={board}
+                    selectedId={selectedId}
+                    onSelect={setSelectedId}
+                />
+                <Timeline timeline={timeline} />
             </div>
 
-            <div className="flex flex-1 overflow-hidden">
-                {/* Left rail */}
-                <div className="w-[200px] flex-shrink-0 border-r border-gray-200 bg-gray-50 overflow-y-auto">
-                    <div className="px-3 py-3 border-b border-gray-200">
-                        <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-gray-500 mb-2">
-                            <LayoutTemplate className="w-3 h-3" />
-                            Templates
-                        </div>
-                        {TEMPLATES.map((t) => (
-                            <button
-                                key={t.id}
-                                onClick={() => loadTemplate(t.id)}
-                                title={t.description}
-                                className={`w-full text-left px-2 py-1.5 rounded text-xs mb-1 transition-colors ${
-                                    templateId === t.id
-                                        ? "bg-gray-900 text-white"
-                                        : "hover:bg-gray-100 text-gray-700"
-                                }`}
-                            >
-                                {t.label}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="px-3 py-3 border-b border-gray-200">
-                        <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-gray-500 mb-2">
-                            <Plus className="w-3 h-3" />
-                            Add node
-                        </div>
-                        {ADD_PALETTE.map((p) => {
-                            const Icon = NODE_ICONS[p.kind];
-                            return (
-                                <button
-                                    key={p.kind}
-                                    onClick={() => addNode(p.kind, p.actor)}
-                                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs hover:bg-gray-100 text-gray-700 mb-0.5"
-                                >
-                                    <Icon className="w-3 h-3 text-gray-500" />
-                                    {p.label}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    <div className="px-3 py-3">
-                        <div className="text-[10px] font-medium uppercase tracking-wide text-gray-500 mb-2">
-                            Filter by status
-                        </div>
-                        {(
-                            [
-                                "all",
-                                "idle",
-                                "running",
-                                "needs_approval",
-                                "done",
-                                "blocked",
-                            ] as const
-                        ).map((s) => {
-                            const count =
-                                s === "all"
-                                    ? nodes.length
-                                    : STATUS_COUNTS[s as NodeStatus];
-                            return (
-                                <button
-                                    key={s}
-                                    onClick={() => setStatusFilter(s)}
-                                    className={`w-full flex items-center justify-between gap-2 px-2 py-1 text-xs rounded mb-0.5 ${
-                                        statusFilter === s
-                                            ? "bg-gray-900 text-white"
-                                            : "hover:bg-gray-100 text-gray-700"
-                                    }`}
-                                >
-                                    <span>
-                                        {s === "all"
-                                            ? "All"
-                                            : STATUS_STYLE[s as NodeStatus]
-                                                  .label}
-                                    </span>
-                                    <span className="text-[10px] opacity-70">
-                                        {count}
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
+            {selectedNode && (
+                <Inspector
+                    node={selectedNode}
+                    onClose={() => setSelectedId(null)}
+                    onPatch={patchNode}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                />
+            )}
+        </div>
+    );
+}
 
-                {/* Canvas */}
-                <div className="flex-1 relative overflow-auto bg-gray-50">
-                    <div className="absolute inset-0 [background-image:radial-gradient(#0001_1px,transparent_1px)] [background-size:24px_24px]" />
-                    <div className="relative" style={{ width: 1200, height: 700 }}>
-                        {/* Lane backdrops (only in Lanes mode) */}
-                        {layoutMode === "lanes" && (
-                            <div className="absolute inset-0 pointer-events-none">
-                                {[
-                                    { y: 50,  h: 160, label: "Human",  color: "rgba(59,130,246,0.04)", border: "rgba(59,130,246,0.18)" },
-                                    { y: 250, h: 160, label: "Agent",  color: "rgba(139,92,246,0.04)", border: "rgba(139,92,246,0.18)" },
-                                    { y: 450, h: 160, label: "Gate",   color: "rgba(245,158,11,0.05)", border: "rgba(245,158,11,0.22)" },
-                                ].map((lane) => (
-                                    <div
-                                        key={lane.label}
-                                        className="absolute left-0 w-full"
-                                        style={{
-                                            top: lane.y,
-                                            height: lane.h,
-                                            background: lane.color,
-                                            borderTop: `1px dashed ${lane.border}`,
-                                            borderBottom: `1px dashed ${lane.border}`,
-                                        }}
-                                    >
-                                        <div
-                                            className="absolute left-3 top-2 text-[10px] uppercase tracking-[0.25em] font-medium"
-                                            style={{ color: lane.border.replace("0.18", "1").replace("0.22", "1") }}
-                                        >
-                                            {lane.label}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                        {/* Links */}
-                        <svg
-                            className="absolute inset-0 pointer-events-none"
-                            width={1200}
-                            height={700}
-                        >
-                            <defs>
-                                <marker
-                                    id="arrow"
-                                    viewBox="0 0 10 10"
-                                    refX="9"
-                                    refY="5"
-                                    markerWidth="6"
-                                    markerHeight="6"
-                                    orient="auto-start-reverse"
-                                >
-                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
-                                </marker>
-                            </defs>
-                            {links.map(([from, to], i) => {
-                                const a = nodes.find((n) => n.id === from);
-                                const b = nodes.find((n) => n.id === to);
-                                if (!a || !b) return null;
-                                const visible =
-                                    statusFilter === "all" ||
-                                    (visibleNodeIds.has(a.id) &&
-                                        visibleNodeIds.has(b.id));
-                                return (
-                                    <line
-                                        key={i}
-                                        x1={a.x + 240}
-                                        y1={a.y + 40}
-                                        x2={b.x}
-                                        y2={b.y + 40}
-                                        stroke="#94a3b8"
-                                        strokeWidth={1.4}
-                                        strokeDasharray={
-                                            b.status === "blocked" ? "3 3" : ""
-                                        }
-                                        opacity={visible ? 1 : 0.2}
-                                        markerEnd="url(#arrow)"
-                                    />
-                                );
-                            })}
-                        </svg>
-                        {/* Nodes */}
-                        {nodes.map((n) => {
-                            const Icon = NODE_ICONS[n.kind];
-                            const ActorIcon = ACTOR_ICONS[n.actor];
-                            const style = STATUS_STYLE[n.status];
-                            const StatusIcon = style.icon;
-                            const isDragging = dragId === n.id;
-                            const dimmed =
-                                statusFilter !== "all" &&
-                                !visibleNodeIds.has(n.id);
-                            return (
-                                <div
-                                    key={n.id}
-                                    role="button"
-                                    tabIndex={0}
-                                    onMouseDown={(e) => onNodeMouseDown(e, n.id)}
-                                    onClick={() => setSelected(n.id)}
-                                    className={`absolute w-60 rounded-lg border-2 p-3 text-left shadow-sm transition-all ${style.card} ${
-                                        selected === n.id
-                                            ? "ring-2 ring-offset-2 ring-gray-900"
-                                            : ""
-                                    } ${
-                                        isDragging
-                                            ? "cursor-grabbing opacity-90 shadow-lg"
-                                            : "cursor-grab hover:shadow-md"
-                                    } ${dimmed ? "opacity-25" : ""}`}
-                                    style={{
-                                        left: n.x,
-                                        top: n.y,
-                                        zIndex: isDragging ? 100 : 1,
-                                        userSelect: "none",
-                                    }}
-                                >
-                                    <div className="flex items-center gap-2 mb-1.5">
-                                        <Icon className="w-4 h-4" />
-                                        <span className="font-medium text-sm truncate flex-1">
-                                            {n.title}
-                                        </span>
-                                        <ActorIcon className="w-3.5 h-3.5 opacity-70" />
-                                    </div>
-                                    <div className="text-xs opacity-70 truncate mb-2">
-                                        {n.subtitle}
-                                    </div>
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                        <div
-                                            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${style.chip}`}
-                                        >
-                                            <StatusIcon
-                                                className={`w-3 h-3 ${n.status === "running" ? "animate-spin" : ""}`}
-                                            />
-                                            {style.label}
-                                        </div>
-                                        {n.docId && (
-                                            <a
-                                                href={`/doc-workspace?docId=${encodeURIComponent(n.docId)}`}
-                                                onClick={(e) => e.stopPropagation()}
-                                                title="Open linked document"
-                                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
-                                            >
-                                                <FileText className="w-3 h-3" />
-                                                doc
-                                            </a>
-                                        )}
-                                        {n.skillsUsed && n.skillsUsed.length > 0 && (
-                                            <span
-                                                title={n.skillsUsed.join(", ")}
-                                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-50 text-gray-700 border border-gray-200"
-                                            >
-                                                {n.skillsUsed.length} skill
-                                                {n.skillsUsed.length === 1 ? "" : "s"}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
+// ---------------------------------------------------------------------------
+// Top bar
+// ---------------------------------------------------------------------------
 
-                {/* Right rail */}
-                <div className="w-[380px] flex-shrink-0 border-l border-gray-200 flex flex-col bg-white">
-                    {selectedNode ? (
-                        <NodeDetailPanel
-                            node={selectedNode}
-                            onClose={() => setSelected(null)}
-                            onDelete={() => deleteNode(selectedNode.id)}
-                            onApprove={() => approveGate(selectedNode.id)}
-                            onReset={() =>
-                                setNodeStatus(selectedNode.id, "idle")
-                            }
-                            onOpen={() => {
-                                if (selectedNode.docId) {
-                                    router.push(
-                                        `/doc-workspace?docId=${encodeURIComponent(selectedNode.docId)}`,
-                                    );
-                                }
-                            }}
-                            hasDoc={!!selectedNode.docId}
-                        />
-                    ) : (
-                        <div className="px-5 py-4 border-b border-gray-200 text-xs text-gray-500">
-                            Click a node to see its detail, skills used, and
-                            actions.
-                        </div>
-                    )}
-
-                    <div className="flex-1 overflow-y-auto">
-                        {incomingSuggestions.length > 0 && (
-                            <>
-                                <div className="px-5 py-3 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                    Incoming from Doc · {incomingSuggestions.length}
-                                </div>
-                                {incomingSuggestions.map((s) => {
-                                    const sevColor =
-                                        s.severity === "high"
-                                            ? "bg-red-500"
-                                            : s.severity === "medium"
-                                              ? "bg-yellow-500"
-                                              : "bg-blue-400";
-                                    return (
-                                        <div
-                                            key={s.id}
-                                            className="px-5 py-3 border-b border-gray-100 flex items-start gap-3 hover:bg-gray-50"
-                                        >
-                                            <span
-                                                className={`w-2 h-2 rounded-full mt-1.5 ${sevColor}`}
-                                            />
-                                            <div className="flex-1 min-w-0">
-                                                <div className="text-sm font-medium text-gray-900 truncate">
-                                                    {s.title}
-                                                </div>
-                                                <div className="text-xs text-gray-500 truncate">
-                                                    {s.section}
-                                                </div>
-                                            </div>
-                                            <ChevronRight className="w-4 h-4 text-gray-400" />
-                                        </div>
-                                    );
-                                })}
-                            </>
-                        )}
-                        <div className="px-5 py-3 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Timeline · {timeline.length}
-                        </div>
-                        {timeline.map((e, i) => {
-                            const ActorIcon = ACTOR_ICONS[e.actor];
-                            return (
-                                <div
-                                    key={i}
-                                    className="px-5 py-3 border-b border-gray-100 flex items-start gap-3"
-                                >
-                                    <ActorIcon className="w-4 h-4 mt-0.5 text-gray-500" />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-xs text-gray-500">
-                                            {e.t}
-                                        </div>
-                                        <div className="text-sm text-gray-800">
-                                            {e.text}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <div className="px-5 py-3 border-t border-gray-200 bg-gray-50 flex items-center gap-2">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-7 text-xs"
-                            onClick={() => router.push("/legal-flows")}
-                        >
-                            <ExternalLink className="w-3 h-3 mr-1" />
-                            Run a structured Legal Flow
-                        </Button>
-                    </div>
-                </div>
+function TopBar({
+    board,
+    running,
+    onRun,
+    onPause,
+    onReset,
+    onPick,
+}: {
+    board: Board;
+    running: boolean;
+    onRun: () => void;
+    onPause: () => void;
+    onReset: () => void;
+    onPick: (key: string) => void;
+}) {
+    return (
+        <div className="flex items-center justify-between gap-4 border-b border-[#E7E2D6] bg-[#FBF8F2]/90 px-6 py-3 backdrop-blur">
+            <div className="flex items-center gap-3">
+                <span
+                    className="font-serif text-xl text-slate-900"
+                    style={{ fontFamily: "var(--font-eb-garamond)" }}
+                >
+                    {board.name}
+                </span>
+                <span className="text-[11px] text-slate-500">
+                    Drafting board · {board.nodes.length} steps
+                </span>
+            </div>
+            <div className="flex items-center gap-2">
+                <TemplateSwitcher current={board.templateKey} onPick={onPick} />
+                <button
+                    type="button"
+                    onClick={onReset}
+                    className="inline-flex items-center gap-1 rounded-md border border-[#E7E2D6] bg-white px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
+                >
+                    <RotateCcw className="h-3.5 w-3.5" /> Reset
+                </button>
+                {running ? (
+                    <button
+                        type="button"
+                        onClick={onPause}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800"
+                    >
+                        <span className="louis-pulse h-2 w-2 rounded-full bg-[#C9A961]" />
+                        Pause
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={onRun}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-[#1F2937] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#0F172A]"
+                    >
+                        <Play className="h-3.5 w-3.5" />
+                        Run agent
+                    </button>
+                )}
             </div>
         </div>
     );
 }
 
-function NodeDetailPanel({
+function TemplateSwitcher({
+    current,
+    onPick,
+}: {
+    current: string;
+    onPick: (key: string) => void;
+}) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div className="relative">
+            <button
+                type="button"
+                onClick={() => setOpen((o) => !o)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-[#E7E2D6] bg-white px-2.5 py-1.5 text-xs text-slate-700 hover:bg-[#F5F0E5]"
+            >
+                <LayoutTemplate className="h-3.5 w-3.5" />
+                Use a template
+            </button>
+            {open && (
+                <div className="absolute right-0 z-30 mt-1 w-72 overflow-hidden rounded-xl border border-[#E7E2D6] bg-white shadow-lg">
+                    {TEMPLATES.map((t) => (
+                        <button
+                            key={t.key}
+                            type="button"
+                            onClick={() => {
+                                onPick(t.key);
+                                setOpen(false);
+                            }}
+                            className={[
+                                "flex w-full items-start gap-2 px-3 py-2 text-left text-xs hover:bg-[#F5F0E5]",
+                                current === t.key ? "bg-[#F5F0E5]" : "",
+                            ].join(" ")}
+                        >
+                            <Sparkles className="mt-0.5 h-3.5 w-3.5 text-[#C9A961]" />
+                            <div className="flex-1">
+                                <div className="font-medium text-slate-900">
+                                    {t.label}
+                                </div>
+                                <div className="mt-0.5 text-[11px] text-slate-500">
+                                    {t.blurb}
+                                </div>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Approval banner
+// ---------------------------------------------------------------------------
+
+function ApprovalBanner({
     node,
-    onClose,
-    onDelete,
-    onApprove,
-    onReset,
     onOpen,
-    hasDoc,
 }: {
     node: BoardNode;
-    onClose: () => void;
-    onDelete: () => void;
-    onApprove: () => void;
-    onReset: () => void;
     onOpen: () => void;
-    hasDoc: boolean;
 }) {
-    const style = STATUS_STYLE[node.status];
-    const StatusIcon = style.icon;
     return (
-        <div className="border-b border-gray-200">
-            <div className="px-5 py-4">
-                <div className="flex items-start gap-2 mb-2">
-                    <div className="flex-1 min-w-0">
-                        <div className="text-[10px] uppercase tracking-wide text-gray-500 mb-0.5">
-                            {node.kind} · {node.actor}
-                        </div>
-                        <h2 className="font-semibold text-gray-900 truncate">
-                            {node.title}
-                        </h2>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-400 hover:text-gray-700 text-sm"
-                        aria-label="Close detail"
-                    >
-                        ×
-                    </button>
-                </div>
-                <p className="text-sm text-gray-600 mb-3">{node.subtitle}</p>
-                <div
-                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium mb-3 ${style.chip}`}
+        <div className="flex items-center justify-between gap-3 border-b border-amber-200/70 bg-amber-50/80 px-6 py-2.5 text-xs text-amber-900">
+            <div className="flex items-center gap-2">
+                <span className="louis-shimmer inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-100">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                </span>
+                <span>
+                    <span className="font-medium">{node.title}</span> needs your
+                    approval{node.approver ? ` — ${node.approver}` : ""}.
+                </span>
+            </div>
+            <button
+                type="button"
+                onClick={onOpen}
+                className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 font-medium text-slate-800 shadow-sm hover:bg-amber-100"
+            >
+                Open
+                <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Canvas — auto-laid graph
+// ---------------------------------------------------------------------------
+
+function Canvas({
+    board,
+    selectedId,
+    onSelect,
+}: {
+    board: Board;
+    selectedId: string | null;
+    onSelect: (id: string) => void;
+}) {
+    const { positions, width, height } = useMemo(
+        () => computeLayout(board),
+        [board],
+    );
+
+    return (
+        <div
+            className="relative flex-1 overflow-auto"
+            style={{ background: "var(--louis-cream, #FBF8F2)" }}
+        >
+            {/* Subtle cream grain */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{
+                    backgroundImage:
+                        "radial-gradient(circle at 10% 0%, rgba(201,169,97,0.06), transparent 40%), radial-gradient(circle at 90% 100%, rgba(31,41,55,0.04), transparent 40%)",
+                }}
+            />
+            <div
+                className="relative mx-auto"
+                style={{ width, minHeight: height }}
+            >
+                <svg
+                    width={width}
+                    height={height}
+                    className="pointer-events-none absolute inset-0"
                 >
-                    <StatusIcon
-                        className={`w-3 h-3 ${node.status === "running" ? "animate-spin" : ""}`}
-                    />
-                    {style.label}
-                </div>
+                    <EdgeMarker />
+                    {board.edges.map((e) => {
+                        const a = positions[e.from];
+                        const b = positions[e.to];
+                        if (!a || !b) return null;
+                        const state = edgeState(board, e);
+                        return (
+                            <Edge
+                                key={`${e.from}->${e.to}`}
+                                d={edgePath(a, b)}
+                                state={state}
+                            />
+                        );
+                    })}
+                </svg>
 
-                {node.skillsUsed && node.skillsUsed.length > 0 && (
-                    <div className="mb-3">
-                        <div className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">
-                            Skills fired
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                            {node.skillsUsed.map((s) => (
-                                <span
-                                    key={s}
-                                    className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700"
-                                >
-                                    {s}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {board.nodes.map((n) => {
+                    const p = positions[n.id];
+                    if (!p) return null;
+                    return (
+                        <NodeCard
+                            key={n.id}
+                            node={n}
+                            x={p.x}
+                            y={p.y}
+                            width={NODE_WIDTH}
+                            height={NODE_HEIGHT}
+                            selected={selectedId === n.id}
+                            onSelect={onSelect}
+                        />
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
 
-                <div className="flex flex-wrap gap-2">
-                    {node.status === "needs_approval" && (
-                        <Button size="sm" onClick={onApprove}>
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                            Approve
-                        </Button>
-                    )}
-                    {hasDoc && (
-                        <Button size="sm" variant="outline" onClick={onOpen}>
-                            <ExternalLink className="w-3.5 h-3.5 mr-1" />
-                            Open doc
-                        </Button>
-                    )}
-                    {node.status === "done" && (
-                        <Button size="sm" variant="ghost" onClick={onReset}>
-                            Reset
-                        </Button>
-                    )}
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={onDelete}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+function edgeState(board: Board, e: { from: string; to: string }): EdgeState {
+    const from = board.nodes.find((n) => n.id === e.from);
+    const to = board.nodes.find((n) => n.id === e.to);
+    if (!from || !to) return "unrun";
+    if (to.status === "blocked" || from.status === "rejected") return "blocked";
+    if (from.status === "done" && to.status === "done") return "done";
+    if (from.status === "done" && to.status === "running") return "running";
+    if (from.status === "running") return "running";
+    if (from.status === "done") return "done";
+    return "unrun";
+}
+
+// ---------------------------------------------------------------------------
+// Timeline (bottom strip)
+// ---------------------------------------------------------------------------
+
+function Timeline({ timeline }: { timeline: TimelineEntry[] }) {
+    const ref = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.scrollLeft = ref.current.scrollWidth;
+        }
+    }, [timeline]);
+
+    if (timeline.length === 0) return null;
+
+    return (
+        <div className="shrink-0 border-t border-[#E7E2D6] bg-[#FBF8F2]/95 px-6 py-2">
+            <div className="mb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+                Run log
+            </div>
+            <div
+                ref={ref}
+                className="flex gap-3 overflow-x-auto pb-1"
+            >
+                {timeline.map((t, i) => (
+                    <div
+                        key={`${t.at}-${i}`}
+                        className={[
+                            "shrink-0 rounded-md border px-2 py-1 text-[11px]",
+                            t.kind === "run"
+                                ? "border-amber-200 bg-amber-50 text-amber-900"
+                                : t.kind === "done"
+                                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                  : t.kind === "block"
+                                    ? "border-red-200 bg-red-50 text-red-800"
+                                    : "border-[#E7E2D6] bg-white text-slate-600",
+                        ].join(" ")}
                     >
-                        <Trash2 className="w-3.5 h-3.5 mr-1" />
-                        Delete
-                    </Button>
+                        <span className="mr-2 text-[10px] text-slate-400">
+                            {fmt(t.at)}
+                        </span>
+                        {t.text}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function fmt(ms: number): string {
+    try {
+        return new Date(ms).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        });
+    } catch {
+        return "";
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Empty state — pick a template
+// ---------------------------------------------------------------------------
+
+function EmptyState({ onPick }: { onPick: (key: string) => void }) {
+    return (
+        <div
+            className="flex min-h-screen w-full items-center justify-center px-6 py-12"
+            style={{ background: "var(--louis-cream, #FBF8F2)" }}
+        >
+            <div className="w-full max-w-2xl">
+                <div className="text-center">
+                    <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F5F0E5]">
+                        <Sparkles className="h-5 w-5 text-[#C9A961]" />
+                    </div>
+                    <h1
+                        className="mt-4 font-serif text-3xl text-slate-900"
+                        style={{ fontFamily: "var(--font-eb-garamond)" }}
+                    >
+                        Start from a template
+                    </h1>
+                    <p className="mt-2 text-sm text-slate-600">
+                        Pick a workflow shape that's close to your matter. Louis
+                        will wire the skills and pause at the human gates so you
+                        always have the last word.
+                    </p>
+                </div>
+                <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {TEMPLATES.map((t) => (
+                        <button
+                            key={t.key}
+                            type="button"
+                            onClick={() => onPick(t.key)}
+                            className="group flex flex-col items-start gap-2 rounded-2xl border border-[#E7E2D6] bg-white p-4 text-left shadow-[0_10px_24px_-18px_rgba(31,41,55,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(31,41,55,0.45)]"
+                        >
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F0E5] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#8a743f]">
+                                <LayoutTemplate className="h-3 w-3" /> template
+                            </span>
+                            <div
+                                className="font-serif text-xl text-slate-900"
+                                style={{
+                                    fontFamily: "var(--font-eb-garamond)",
+                                }}
+                            >
+                                {t.label}
+                            </div>
+                            <p className="text-xs text-slate-600">{t.blurb}</p>
+                            <div className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-[#8a743f]">
+                                Open this template
+                                <ChevronRight className="h-3 w-3" />
+                            </div>
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>
