@@ -4,16 +4,18 @@
  * Versioned, token-authenticated surface for firm developers building on top
  * of Louis. Tokens are minted from a signed-in Supabase session at
  * POST /api/v1/tokens, returned once in plain form (`pk_louis_…`) and stored
- * **hashed** in an in-memory Map (see TODO below for the Supabase migration).
+ * **hashed** in the `public_api_tokens` Supabase table (see migration
+ * 2026-05-13-public-api-tokens.sql). A small in-process LRU cache fronts the
+ * DB lookup so the auth hot path doesn't round-trip on every request.
  *
  * Auth model:
  *   - `Authorization: Bearer <supabase-jwt>` — used only on POST /tokens to
  *     mint a key. The minted key is owned by the calling Supabase user.
  *   - `Authorization: Bearer pk_louis_<random>` — used on every other route.
- *     The key is hashed and looked up in the in-memory token store; the
- *     attached `userId` becomes the principal for the request (so the
- *     existing per-user data plane — chat history, documents, skills,
- *     workflows — applies automatically).
+ *     The key is hashed and looked up in `public_api_tokens`; the attached
+ *     `userId` becomes the principal for the request (so the existing
+ *     per-user data plane — chat history, documents, skills, workflows —
+ *     applies automatically).
  *
  * Response envelope:
  *
@@ -43,26 +45,16 @@ export const publicApiRouter = Router();
 // ---------------------------------------------------------------------------
 // Token store
 // ---------------------------------------------------------------------------
-// In-memory token store. Each row keys on the SHA-256 hash of the secret
-// (`pk_louis_<random>`), never the secret itself.
+// Tokens live in `public.public_api_tokens` (see migration
+// 2026-05-13-public-api-tokens.sql). Each row keys on the SHA-256 hash of
+// the secret (`pk_louis_<random>`), never the secret itself — Louis cannot
+// recover a lost token, you revoke and mint a new one.
 //
-// TODO(persist): replace this Map with a Supabase `public_api_tokens` table:
-//   id uuid pk, user_id uuid, token_hash text unique, prefix text, label text,
-//   created_at timestamptz, last_used_at timestamptz, revoked_at timestamptz.
-// Until then, tokens reset on every backend restart — which is fine for the
-// dev-platform preview but should be flagged in /docs/PUBLIC_API.md.
-
-interface TokenRow {
-    id: string;
-    userId: string;
-    userEmail: string | null;
-    label: string;
-    prefix: string;
-    createdAt: string;
-    lastUsedAt: string | null;
-}
-
-const tokenStore = new Map<string, TokenRow>();
+// To keep the auth middleware off the DB on every request, we maintain a
+// small in-process LRU cache keyed on `token_hash` → `{ userId, tokenId }`.
+// Entries TTL out after 5 minutes and the cache is bounded to 1k entries.
+// Revocation invalidates the cache entry immediately so a revoked token
+// cannot survive past one request after revocation in the same process.
 
 function hashToken(secret: string): string {
     return createHash("sha256").update(secret).digest("hex");
@@ -75,6 +67,52 @@ function mintToken(): { secret: string; prefix: string } {
     const secret = `pk_louis_${random}`;
     const prefix = secret.slice(0, 12); // displayed in lists, never the full secret
     return { secret, prefix };
+}
+
+interface TokenCacheEntry {
+    userId: string;
+    tokenId: string;
+    expiresAt: number; // ms epoch
+}
+
+const TOKEN_CACHE_TTL_MS = 5 * 60 * 1000;
+const TOKEN_CACHE_MAX = 1000;
+
+// JS Maps preserve insertion order — re-inserting on hit gives us cheap LRU
+// semantics without pulling in a dependency.
+const tokenCache = new Map<string, TokenCacheEntry>();
+
+function cacheGet(hash: string): TokenCacheEntry | null {
+    const entry = tokenCache.get(hash);
+    if (!entry) return null;
+    if (entry.expiresAt < Date.now()) {
+        tokenCache.delete(hash);
+        return null;
+    }
+    // Bump to most-recent: delete + re-insert.
+    tokenCache.delete(hash);
+    tokenCache.set(hash, entry);
+    return entry;
+}
+
+function cacheSet(hash: string, userId: string, tokenId: string): void {
+    if (tokenCache.has(hash)) tokenCache.delete(hash);
+    tokenCache.set(hash, {
+        userId,
+        tokenId,
+        expiresAt: Date.now() + TOKEN_CACHE_TTL_MS,
+    });
+    if (tokenCache.size > TOKEN_CACHE_MAX) {
+        // Drop oldest (first inserted).
+        const oldest = tokenCache.keys().next().value;
+        if (oldest) tokenCache.delete(oldest);
+    }
+}
+
+function cacheInvalidate(predicate: (entry: TokenCacheEntry) => boolean): void {
+    for (const [hash, entry] of tokenCache.entries()) {
+        if (predicate(entry)) tokenCache.delete(hash);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -130,14 +168,19 @@ publicApiRouter.use((req: Request, res: Response, next: NextFunction) => {
 
 /**
  * Authenticates the request using a `pk_louis_…` API token. Populates
- * `res.locals.userId` and `res.locals.userEmail` so downstream handlers can
+ * `res.locals.userId` and `res.locals.apiTokenId` so downstream handlers can
  * call into the same Supabase-scoped helpers as the rest of the app.
+ *
+ * Hot path: a 5-minute in-process LRU cache fronts the DB lookup so the
+ * common case (caller hammering the API with the same token) doesn't round-
+ * trip to Supabase. Misses fall through to a SELECT against
+ * `public_api_tokens` filtered on `revoked_at IS NULL` and `expires_at`.
  */
-export function requireApiToken(
+export async function requireApiToken(
     req: Request,
     res: Response,
     next: NextFunction,
-): void {
+): Promise<void> {
     const auth = req.headers.authorization ?? "";
     if (!auth.startsWith("Bearer ")) {
         fail(res, 401, "missing_token", "Authorization: Bearer <token> required");
@@ -153,16 +196,65 @@ export function requireApiToken(
         );
         return;
     }
-    const row = tokenStore.get(hashToken(secret));
-    if (!row) {
-        fail(res, 401, "invalid_token", "Unknown or revoked token");
+
+    const hash = hashToken(secret);
+    const nowIso = new Date().toISOString();
+
+    const cached = cacheGet(hash);
+    if (cached) {
+        res.locals.userId = cached.userId;
+        res.locals.apiTokenId = cached.tokenId;
+        // Fire-and-forget last_used_at touch; don't await, don't crash on err.
+        touchLastUsed(cached.tokenId, nowIso);
+        next();
         return;
     }
-    row.lastUsedAt = new Date().toISOString();
-    res.locals.userId = row.userId;
-    res.locals.userEmail = row.userEmail ?? "";
-    res.locals.apiTokenId = row.id;
-    next();
+
+    try {
+        const db = createServerSupabase();
+        const { data, error } = await db
+            .from("public_api_tokens")
+            .select("id, user_id, expires_at")
+            .eq("token_hash", hash)
+            .is("revoked_at", null)
+            .maybeSingle();
+        if (error || !data) {
+            fail(res, 401, "invalid_token", "Unknown or revoked token");
+            return;
+        }
+        const row = data as {
+            id: string;
+            user_id: string;
+            expires_at: string | null;
+        };
+        if (row.expires_at && new Date(row.expires_at).getTime() < Date.now()) {
+            fail(res, 401, "invalid_token", "Token has expired");
+            return;
+        }
+        cacheSet(hash, row.user_id, row.id);
+        res.locals.userId = row.user_id;
+        res.locals.apiTokenId = row.id;
+        touchLastUsed(row.id, nowIso);
+        next();
+    } catch (err) {
+        const msg = err instanceof Error ? err.message : "auth lookup failed";
+        fail(res, 500, "auth_error", msg);
+    }
+}
+
+function touchLastUsed(tokenId: string, nowIso: string): void {
+    // Best-effort. We don't block the request on this and we swallow errors
+    // — a missed last_used_at write is not worth surfacing to the caller.
+    try {
+        const db = createServerSupabase();
+        void db
+            .from("public_api_tokens")
+            .update({ last_used_at: nowIso })
+            .eq("id", tokenId)
+            .then(() => undefined, () => undefined);
+    } catch {
+        /* ignore */
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -170,70 +262,122 @@ export function requireApiToken(
 // ---------------------------------------------------------------------------
 
 // POST /api/v1/tokens — mint a new key. Requires a Supabase JWT (the user
-// has to actually own a Louis account to mint API keys).
-publicApiRouter.post("/tokens", requireAuth, (req: Request, res: Response) => {
-    const userId = res.locals.userId as string;
-    const userEmail = (res.locals.userEmail as string | undefined) ?? null;
-    const labelRaw = (req.body?.label ?? "").toString().trim();
-    const label = labelRaw.slice(0, 80) || "untitled key";
+// has to actually own a Louis account to mint API keys). The plaintext
+// `token` field is returned exactly once; afterwards we only ever have the
+// SHA-256 hash on file.
+publicApiRouter.post(
+    "/tokens",
+    requireAuth,
+    async (req: Request, res: Response) => {
+        const userId = res.locals.userId as string;
+        const labelRaw = (req.body?.label ?? "").toString().trim();
+        const label = labelRaw.slice(0, 80) || "untitled key";
+        const expiresAtRaw = req.body?.expires_at;
+        const expiresAt =
+            typeof expiresAtRaw === "string" && expiresAtRaw.length > 0
+                ? new Date(expiresAtRaw).toISOString()
+                : null;
 
-    const { secret, prefix } = mintToken();
-    const row: TokenRow = {
-        id: randomUUID(),
-        userId,
-        userEmail,
-        label,
-        prefix,
-        createdAt: new Date().toISOString(),
-        lastUsedAt: null,
-    };
-    tokenStore.set(hashToken(secret), row);
+        const { secret, prefix } = mintToken();
+        const tokenHash = hashToken(secret);
 
-    // Critical: this is the ONLY response that contains `token`. Subsequent
-    // GETs only return the prefix.
-    ok(
-        res,
-        {
-            id: row.id,
-            label: row.label,
-            prefix: row.prefix,
-            token: secret,
-            created_at: row.createdAt,
-        },
-        { warning: "Store this token now — it will never be shown again." },
-    );
-});
+        const db = createServerSupabase();
+        const { data, error } = await db
+            .from("public_api_tokens")
+            .insert({
+                user_id: userId,
+                token_hash: tokenHash,
+                label,
+                prefix,
+                expires_at: expiresAt,
+            })
+            .select("id, label, prefix, created_at, expires_at")
+            .single();
+        if (error || !data) {
+            const msg = error?.message ?? "failed to persist token";
+            return fail(res, 500, "token_create_failed", msg);
+        }
+        const row = data as {
+            id: string;
+            label: string | null;
+            prefix: string | null;
+            created_at: string;
+            expires_at: string | null;
+        };
+
+        // Critical: this is the ONLY response that contains `token`. Subsequent
+        // GETs only return the prefix.
+        ok(
+            res,
+            {
+                id: row.id,
+                label: row.label,
+                prefix: row.prefix,
+                token: secret,
+                created_at: row.created_at,
+                expires_at: row.expires_at,
+            },
+            { warning: "Store this token now — it will never be shown again." },
+        );
+    },
+);
 
 // GET /api/v1/tokens — list this user's tokens (no secrets revealed).
-publicApiRouter.get("/tokens", requireAuth, (_req: Request, res: Response) => {
-    const userId = res.locals.userId as string;
-    const tokens = Array.from(tokenStore.values())
-        .filter((t) => t.userId === userId)
-        .map((t) => ({
+publicApiRouter.get(
+    "/tokens",
+    requireAuth,
+    async (_req: Request, res: Response) => {
+        const userId = res.locals.userId as string;
+        const db = createServerSupabase();
+        const { data, error } = await db
+            .from("public_api_tokens")
+            .select(
+                "id, label, prefix, created_at, last_used_at, expires_at, revoked_at",
+            )
+            .eq("user_id", userId)
+            .is("revoked_at", null)
+            .order("created_at", { ascending: false });
+        if (error) {
+            return fail(res, 500, "token_list_failed", error.message);
+        }
+        const tokens = (data ?? []).map((t) => ({
             id: t.id,
             label: t.label,
             prefix: t.prefix,
-            created_at: t.createdAt,
-            last_used_at: t.lastUsedAt,
+            created_at: t.created_at,
+            last_used_at: t.last_used_at,
+            expires_at: t.expires_at,
         }));
-    ok(res, { tokens }, { count: tokens.length });
-});
+        ok(res, { tokens }, { count: tokens.length });
+    },
+);
 
-// DELETE /api/v1/tokens/:id — revoke a token.
+// DELETE /api/v1/tokens/:id — revoke a token. We tombstone via revoked_at
+// rather than deleting so we keep the audit trail; the partial index on
+// (token_hash) WHERE revoked_at IS NULL keeps the auth hot path tight.
 publicApiRouter.delete(
     "/tokens/:id",
     requireAuth,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const userId = res.locals.userId as string;
         const { id } = req.params;
-        for (const [hash, row] of tokenStore.entries()) {
-            if (row.id === id && row.userId === userId) {
-                tokenStore.delete(hash);
-                ok(res, { revoked: true, id });
-                return;
-            }
+        const db = createServerSupabase();
+        const { data, error } = await db
+            .from("public_api_tokens")
+            .update({ revoked_at: new Date().toISOString() })
+            .eq("id", id)
+            .eq("user_id", userId)
+            .is("revoked_at", null)
+            .select("id")
+            .maybeSingle();
+        if (error) {
+            return fail(res, 500, "token_revoke_failed", error.message);
         }
-        fail(res, 404, "not_found", "Token not found");
+        if (!data) {
+            return fail(res, 404, "not_found", "Token not found");
+        }
+        cacheInvalidate((entry) => entry.tokenId === id);
+        ok(res, { revoked: true, id });
     },
 );
 
@@ -469,8 +613,10 @@ publicApiRouter.post(
             }
 
             const docId = randomUUID();
-            // In-memory only for the public API — see TODO on tokenStore for
-            // the persistence plan.
+            // In-memory only for the public API — see the note below on
+            // parsedDocCache. (Tokens themselves are persisted; parsed-doc
+            // bodies stay ephemeral because firms that want persistence
+            // should be using the full /single-documents pipeline.)
             parsedDocCache.set(docId, {
                 userId,
                 filename,

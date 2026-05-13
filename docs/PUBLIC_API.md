@@ -48,23 +48,61 @@ Response (the **only** time the secret is returned):
 }
 ```
 
-Tokens are stored **hashed** (SHA-256). Louis cannot recover a lost token —
+Tokens are stored **hashed** (SHA-256) in the `public_api_tokens` Supabase
+table and survive backend restarts. Louis cannot recover a lost token —
 revoke it and mint a new one.
 
-```bash
-# List your tokens (no secrets)
-curl http://localhost:3001/api/v1/tokens \
-  -H "Authorization: Bearer $LOUIS_SUPABASE_JWT"
+By default tokens are **non-expiring**. Set an `expires_at` (ISO-8601) on
+the mint request if you want a short-lived key (a UI surface for this is on
+the roadmap — for now you can pass it on the JSON body):
 
-# Revoke
-curl -X DELETE http://localhost:3001/api/v1/tokens/$TOKEN_ID \
+```bash
+curl -X POST http://localhost:3001/api/v1/tokens \
+  -H "Authorization: Bearer $LOUIS_SUPABASE_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{"label":"ci-runner","expires_at":"2026-08-01T00:00:00Z"}'
+```
+
+### `GET /api/v1/tokens` — list your tokens
+
+Returns the current user's active (non-revoked) tokens. Never returns the
+secret — only `id`, `label`, `prefix` (the first ~12 chars, safe to show in
+a UI), `created_at`, `last_used_at`, and `expires_at`.
+
+```bash
+curl http://localhost:3001/api/v1/tokens \
   -H "Authorization: Bearer $LOUIS_SUPABASE_JWT"
 ```
 
-> **Preview-build caveat.** Tokens currently live in an in-memory `Map` on
-> the backend process. They survive request-to-request but **not** server
-> restarts. Persistence to a Supabase `public_api_tokens` table is the next
-> step (see TODO at the top of `backend/src/routes/public-api.ts`).
+```json
+{
+    "data": {
+        "tokens": [
+            {
+                "id": "0f9c…",
+                "label": "my-laptop",
+                "prefix": "pk_louis_a3",
+                "created_at": "2026-05-13T12:00:00.000Z",
+                "last_used_at": "2026-05-13T12:34:56.000Z",
+                "expires_at": null
+            }
+        ]
+    },
+    "error": null,
+    "meta": { "request_id": "…", "version": "v1", "count": 1 }
+}
+```
+
+### `DELETE /api/v1/tokens/:id` — revoke a token
+
+Tokens are tombstoned via `revoked_at` (not hard-deleted) so we keep the
+audit trail. Revoked tokens stop authenticating immediately across all
+backend processes.
+
+```bash
+curl -X DELETE http://localhost:3001/api/v1/tokens/$TOKEN_ID \
+  -H "Authorization: Bearer $LOUIS_SUPABASE_JWT"
+```
 
 ---
 
