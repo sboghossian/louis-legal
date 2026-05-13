@@ -40,7 +40,7 @@ export default function AboutPage() {
                         <Github className="w-3 h-3" /> open source
                     </a>
                     <span>·</span>
-                    <span>982 skills</span>
+                    <span>983 skills</span>
                     <span>·</span>
                     <span>30+ jurisdictions</span>
                 </div>
@@ -55,7 +55,7 @@ export default function AboutPage() {
                     tracked-change redlining, a clause + citation library, a
                     contract risk scanner, a tabular reviewer for
                     due-diligence batches, calculators for end-of-service
-                    benefits across MENA, and a 982-skill library that biases
+                    benefits across MENA, and a 983-skill library that biases
                     every turn toward how actual lawyers draft, review, and
                     reason.
                 </p>

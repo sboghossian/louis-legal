@@ -118,7 +118,7 @@ const TOOLS: ToolDef[] = [
   },
   {
     name: "list_skills",
-    description: "List Louis's 982-skill library with filters (category, status, priority).",
+    description: "List Louis's 983-skill library with filters (category, status, priority).",
     input_schema: {
       type: "object",
       properties: {

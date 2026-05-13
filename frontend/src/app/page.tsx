@@ -52,7 +52,7 @@ const REPO_URL = "https://github.com/sboghossian/louis-legal";
 const LANDING_TITLE =
     "Louis — the developer platform for legal infrastructure";
 const LANDING_DESCRIPTION =
-    "Open-source, sovereign, free. Build legal AI inside your own perimeter — your API key, your data, your stack. 982 skills, 30+ jurisdictions, MIT licensed. The substrate behind your firm's next ten years of legal software.";
+    "Open-source, sovereign, free. Build legal AI inside your own perimeter — your API key, your data, your stack. 983 skills, 30+ jurisdictions, MIT licensed. The substrate behind your firm's next ten years of legal software.";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://legal.dashable.dev"),
@@ -127,7 +127,7 @@ function Hero() {
                         The developer platform for legal infrastructure.
                     </h1>
                     <p className="mt-6 text-base md:text-lg text-gray-600 leading-relaxed max-w-xl font-serif">
-                        Louis is the open substrate firms and in-house teams build legal AI on top of. Your API key. Your data. Your stack. 982 skills, 30+ jurisdictions, MIT licensed — and the only cost is the tokens you spend with your model provider.
+                        Louis is the open substrate firms and in-house teams build legal AI on top of. Your API key. Your data. Your stack. 983 skills, 30+ jurisdictions, MIT licensed — and the only cost is the tokens you spend with your model provider.
                     </p>
                     <div className="mt-8 flex flex-wrap items-center gap-3">
                         <Link

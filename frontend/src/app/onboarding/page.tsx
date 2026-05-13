@@ -216,7 +216,7 @@ export default function OnboardingPage() {
                         <div className="text-center">
                             <h1 className="text-3xl font-semibold mb-2">Welcome to Louis.</h1>
                             <p className="text-muted-foreground mb-6">
-                                The MENA-first legal AI infrastructure — comfort-first UX, 982 vetted skills, jurisdiction-aware drafting,
+                                The MENA-first legal AI infrastructure — comfort-first UX, 983 vetted skills, jurisdiction-aware drafting,
                                 and a transparent skill router. Built on the open-source Mike fork, extended for HAQQ.
                             </p>
                             <p className="text-sm text-muted-foreground mb-8">
