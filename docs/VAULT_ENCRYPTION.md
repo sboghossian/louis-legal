@@ -89,22 +89,36 @@ than the only line of defence.
 - Rotating the passphrase re-wraps every DEK; document blobs never have
   to be touched.
 
-### Recovery phrase: 12 words from a 2048-word list
+### Recovery phrase: 12 words from the BIP-39 English wordlist
 
-- 12 * 11 = 132 bits → 128 bits of entropy + 4-bit checksum.
-- Layout mirrors BIP-39 (the user is allowed to think of it like a
-  crypto-wallet seed phrase, because that mental model is correct).
-- **Decision worth confirming:** wordlist choice.
-  - Option A: import the actual BIP-39 English wordlist
-    (well-vetted, no checksum surprises, but visually implies
-    cryptocurrency, which may confuse legal users).
-  - Option B: Louis-curated 2048-word list of common English nouns +
-    verbs, no crypto-jargon, distinct enough that any two words
-    differ in their first 4 letters. **Currently shipped as a
-    placeholder** (`wordNNNN`) — this MUST be replaced before any
-    user sees the setup flow.
-  - Option C: Use the BIP-39 list internally for entropy, but display
-    only English words ≤ 6 chars with no crypto vibe.
+- 12 * 11 = 132 bits → 128 bits of entropy + 4-bit SHA-256 checksum
+  (the first nibble of `SHA-256(entropy)`). Layout matches BIP-39
+  exactly, which means a Louis recovery phrase is checksum-verifiable
+  by any BIP-39-aware tool.
+- **Wordlist: canonical BIP-39 English** (`frontend/src/app/lib/crypto/wordlist.ts`).
+  Source of truth:
+  `https://github.com/bitcoin/bips/blob/master/bip-0039/english.txt`
+  (public domain; SHA-256
+  `2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda`).
+- **Why BIP-39 over a Louis-curated list:**
+  - Audited and stable since 2013; the most-attacked wordlist in
+    cryptography, with no known weaknesses.
+  - Recovery tooling exists in every major language (`bip39`,
+    `python-mnemonic`, …), so power-users can verify backups outside
+    Louis if they want belt-and-braces assurance.
+  - Known-safe entropy distribution; no homophones; every word is
+    uniquely determined by its first 4 characters (so a typo in the
+    middle of a word still parses).
+  - Building our own list would mean re-doing the audit work for no
+    user-visible benefit — and getting it wrong (e.g. accidental
+    homophones, or two words sharing a 4-char prefix) silently
+    reduces recovery-phrase entropy.
+- **Crypto-wallet association is a UX concern, not a security one.**
+  We frame the phrase in the UI as a **"vault recovery phrase"**
+  (never "seed phrase," never "mnemonic"), with copy that explains
+  it works exactly like a paper backup of a safety-deposit-box key.
+  Legal users do not need to know — and the UI does not surface —
+  that the underlying list is BIP-39.
 
 ### Storage
 
@@ -161,15 +175,9 @@ is limited to the vault frontend.
    `frontend/src/app/lib/crypto/__tests__/crypto.test.ts` for the
    intended test surface.
 
-6. **Wordlist: replace the placeholder.** `wordlist.ts` currently
-   contains `word0000`…`word2047`. Before launch this MUST be replaced
-   with a real 2048-entry list (see "Decision worth confirming"
-   above).
-
 ## Open questions for Stephane
 
 - PBKDF2 iteration count: stay at 600k, or upgrade to Argon2id via WASM?
-- Wordlist: BIP-39, or Louis-curated, or BIP-39-with-display-mapping?
 - `sessionStorage` vs in-memory-only for the KEK lifetime? Current
   implementation is in-memory-only (more secure, more friction).
 - Should the recovery-phrase setup screen include a confirm step where
