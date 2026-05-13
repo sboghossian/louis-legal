@@ -122,6 +122,30 @@ function formatDate(iso: string) {
     });
 }
 
+/**
+ * Compact relative-time formatter used in the mobile card lists ("5m",
+ * "3h", "2d", "Mar 4"). Falls back to absolute month/day for anything
+ * older than a week so we don't render "12w" walls of grey.
+ */
+function formatRelativeTime(iso: string | null | undefined) {
+    if (!iso) return "—";
+    const dt = new Date(iso);
+    if (Number.isNaN(dt.valueOf())) return "—";
+    const diffMs = Date.now() - dt.valueOf();
+    const sec = Math.floor(diffMs / 1000);
+    if (sec < 60) return "just now";
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h ago`;
+    const day = Math.floor(hr / 24);
+    if (day < 7) return `${day}d ago`;
+    return dt.toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+    });
+}
+
 function DocIcon({ fileType }: { fileType: string | null }) {
     if (fileType === "pdf")
         return <FileText className="h-4 w-4 text-red-600 shrink-0" />;
@@ -327,6 +351,16 @@ export function ProjectPage({ projectId, initialTab = "documents" }: Props) {
     const [creatingChat, setCreatingChat] = useState(false);
     const [creatingReview, setCreatingReview] = useState(false);
     const [newTRModalOpen, setNewTRModalOpen] = useState(false);
+
+    // Mobile-only: which section's card list is currently visible. Independent
+    // from the URL-driven `tab` so users can flip sections on a phone without
+    // reloading the page. Initialised from the same value so deep-links land
+    // on the expected section.
+    const initialMobileTab: Tab =
+        tabParam === "assistant" || tabParam === "reviews"
+            ? tabParam
+            : initialTab;
+    const [mobileTab, setMobileTab] = useState<Tab>(initialMobileTab);
 
     // Per-tab selection
     const [selectedDocIds, setSelectedDocIds] = useState<string[]>([]);
@@ -1365,6 +1399,10 @@ export function ProjectPage({ projectId, initialTab = "documents" }: Props) {
                 </div>
             </div>
 
+            {/* Desktop: tree + table layout (md and up). The mobile equivalent
+                is the card list below — wrapped separately so phones never see
+                the sticky-left tables that don't fit at all in narrow viewports. */}
+            <div className="hidden md:flex md:flex-col md:flex-1 md:min-h-0">
             <ToolbarTabs
                 tabs={[
                     { id: "documents", label: "Documents" },
@@ -1830,6 +1868,216 @@ export function ProjectPage({ projectId, initialTab = "documents" }: Props) {
                     </>
                 )}
             </div>
+            </div>
+            </div>
+            {/* end desktop md:flex wrapper */}
+
+            {/* Mobile: card-list view (< md). Folder tree intentionally flattened —
+                items render as cards regardless of which folder they live in,
+                with a small "Folder: X" label so users can still tell where
+                something is filed. Section tabs at the top swap between the
+                three lists so we don't stack three scrollable columns on a
+                phone. */}
+            <div className="md:hidden flex flex-col flex-1 min-h-0">
+                {/* Section tabs with counts */}
+                <div className="flex items-center gap-1 px-4 pt-2 pb-2 border-b border-border overflow-x-auto">
+                    {([
+                        { id: "documents" as Tab, label: "Documents", count: docs.length },
+                        { id: "assistant" as Tab, label: "Chats", count: chats.length },
+                        { id: "reviews" as Tab, label: "Tabular Reviews", count: projectReviews.length },
+                    ]).map((t) => {
+                        const active = mobileTab === t.id;
+                        return (
+                            <button
+                                key={t.id}
+                                onClick={() => setMobileTab(t.id)}
+                                className={`shrink-0 rounded-full px-3 py-1 text-xs whitespace-nowrap transition-colors ${
+                                    active
+                                        ? "bg-foreground text-white"
+                                        : "bg-muted text-muted-foreground hover:text-foreground"
+                                }`}
+                            >
+                                {t.label} ({t.count})
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-2">
+                    {/* Documents */}
+                    {mobileTab === "documents" && (
+                        docs.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <Upload className="h-7 w-7 text-muted-foreground mb-3" />
+                                <p className="text-sm text-muted-foreground">No documents yet.</p>
+                                <button
+                                    onClick={() => setAddDocsOpen(true)}
+                                    className="mt-3 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white shadow-md"
+                                >
+                                    Upload your first document
+                                </button>
+                            </div>
+                        ) : (
+                            docs.map((doc) => {
+                                const isProcessing = doc.status === "pending" || doc.status === "processing";
+                                const isError = doc.status === "error";
+                                const folder = doc.folder_id
+                                    ? folders.find((f) => f.id === doc.folder_id)
+                                    : null;
+                                const versionLabel =
+                                    typeof doc.latest_version_number === "number" &&
+                                    doc.latest_version_number >= 1
+                                        ? `v${doc.latest_version_number}`
+                                        : "";
+                                return (
+                                    <button
+                                        key={doc.id}
+                                        type="button"
+                                        onClick={() =>
+                                            router.push(
+                                                `/doc-workspace?docId=${encodeURIComponent(doc.id)}`,
+                                            )
+                                        }
+                                        className="w-full text-left rounded-xl border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:bg-muted"
+                                    >
+                                        <div className="flex items-start gap-3">
+                                            <div className="shrink-0 mt-0.5 text-amber-500">
+                                                {isProcessing ? (
+                                                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                                                ) : isError ? (
+                                                    <AlertCircle className="h-5 w-5 text-red-500" />
+                                                ) : (
+                                                    <FileText className="h-5 w-5" />
+                                                )}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="text-sm font-semibold text-foreground truncate">
+                                                    {doc.filename}
+                                                </div>
+                                                <div className="mt-0.5 text-xs text-muted-foreground truncate">
+                                                    {[
+                                                        doc.file_type ? doc.file_type.toUpperCase() : null,
+                                                        doc.created_at ? formatRelativeTime(doc.created_at) : null,
+                                                        versionLabel || null,
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(" · ")}
+                                                </div>
+                                                {folder && (
+                                                    <div className="mt-1 text-[11px] text-muted-foreground/80 truncate">
+                                                        <Folder className="inline h-3 w-3 mr-1 text-amber-500" />
+                                                        Folder: {folder.name}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </button>
+                                );
+                            })
+                        )
+                    )}
+
+                    {/* Chats */}
+                    {mobileTab === "assistant" && (
+                        chats.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <MessageSquare className="h-7 w-7 text-muted-foreground mb-3" />
+                                <p className="text-sm text-muted-foreground">No chats yet.</p>
+                                <button
+                                    onClick={() => !creatingChat && handleNewChat()}
+                                    className="mt-3 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white shadow-md"
+                                >
+                                    Start your first chat
+                                </button>
+                            </div>
+                        ) : (
+                            chats.map((chat) => (
+                                <button
+                                    key={chat.id}
+                                    type="button"
+                                    onClick={() =>
+                                        router.push(
+                                            `/projects/${projectId}/assistant/chat/${chat.id}`,
+                                        )
+                                    }
+                                    className="w-full text-left rounded-xl border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:bg-muted"
+                                >
+                                    <div className="flex items-start gap-3">
+                                        <div className="shrink-0 mt-0.5 text-amber-500">
+                                            <MessageSquare className="h-5 w-5" />
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="text-sm font-semibold text-foreground truncate">
+                                                {chat.title ?? "Untitled Chat"}
+                                            </div>
+                                            <div className="mt-0.5 text-xs text-muted-foreground truncate">
+                                                {formatRelativeTime(chat.created_at)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))
+                        )
+                    )}
+
+                    {/* Tabular Reviews */}
+                    {mobileTab === "reviews" && (
+                        projectReviews.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <Table2 className="h-7 w-7 text-muted-foreground mb-3" />
+                                <p className="text-sm text-muted-foreground">No tabular reviews yet.</p>
+                                <button
+                                    onClick={() => docs.length > 0 && !creatingReview && handleNewReview()}
+                                    disabled={creatingReview || docs.length === 0}
+                                    className="mt-3 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white shadow-md disabled:opacity-40"
+                                >
+                                    Create your first review
+                                </button>
+                                {docs.length === 0 && (
+                                    <p className="mt-2 text-[11px] text-muted-foreground">
+                                        Upload a document first.
+                                    </p>
+                                )}
+                            </div>
+                        ) : (
+                            projectReviews.map((review) => {
+                                const cols = review.columns_config?.length ?? 0;
+                                const rows = review.document_count ?? 0;
+                                return (
+                                    <button
+                                        key={review.id}
+                                        type="button"
+                                        onClick={() =>
+                                            router.push(
+                                                `/projects/${projectId}/tabular-reviews/${review.id}`,
+                                            )
+                                        }
+                                        className="w-full text-left rounded-xl border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:bg-muted"
+                                    >
+                                        <div className="flex items-start gap-3">
+                                            <div className="shrink-0 mt-0.5 text-amber-500">
+                                                <Table2 className="h-5 w-5" />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="text-sm font-semibold text-foreground truncate">
+                                                        {review.title ?? "Untitled Review"}
+                                                    </div>
+                                                    <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                                                        {rows}×{cols}
+                                                    </span>
+                                                </div>
+                                                <div className="mt-0.5 text-xs text-muted-foreground truncate">
+                                                    Updated {formatRelativeTime(review.updated_at ?? review.created_at)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </button>
+                                );
+                            })
+                        )
+                    )}
+                </div>
             </div>
 
             <AddDocumentsModal
