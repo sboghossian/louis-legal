@@ -336,6 +336,17 @@ export function useAssistantChat({
 
             const model = message.model;
 
+            // Read the per-user auto-route preference. Default ON so first-time
+            // users get classifier-picked models without any setup. The composer
+            // pick (when explicit) still wins on the server side — see
+            // backend/src/routes/chat.ts precedence: composer > classifier > env.
+            const autoRouteModel = (() => {
+                if (typeof window === "undefined") return true;
+                const raw = window.localStorage.getItem("louis.autoRouteModel");
+                if (raw === null) return true;
+                return raw === "1" || raw === "true";
+            })();
+
             const displayedDoc = opts?.displayedDoc ?? null;
 
             // Pull the user's attachments from the just-submitted message.
@@ -356,6 +367,7 @@ export function useAssistantChat({
                       messages: apiMessages,
                       chat_id: chatId,
                       model,
+                      autoRouteModel,
                       displayed_doc: displayedDoc
                           ? {
                                 filename: displayedDoc.filename,
@@ -370,6 +382,7 @@ export function useAssistantChat({
                       messages: apiMessages,
                       chat_id: chatId,
                       model,
+                      autoRouteModel,
                       signal: controller.signal,
                   }));
 

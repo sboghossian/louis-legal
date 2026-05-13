@@ -208,6 +208,17 @@ function DocWorkspaceInner() {
     const [versions, setVersions] = useState<ServerVersion[]>([]);
     const [comments, setComments] = useState<ServerComment[]>([]);
     const [contentBlocks, setContentBlocks] = useState<ServerBlock[]>([]);
+    // Rich-text editor uses HTML as the authoritative wire format; blocks
+    // remain available for the read/compare views. The version counter
+    // drives optimistic concurrency against `PUT /content`.
+    const [htmlContent, setHtmlContent] = useState<string | null>(null);
+    const [htmlContentVersion, setHtmlContentVersion] = useState<number>(1);
+    const [editorSaveBanner, setEditorSaveBanner] = useState<
+        | { kind: "saved"; at: string }
+        | { kind: "offline" }
+        | { kind: "conflict"; currentVersion: number }
+        | null
+    >(null);
     const [compareBlocks, setCompareBlocks] = useState<ServerBlock[]>([]);
     const [compareVersionId, setCompareVersionId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -243,7 +254,12 @@ function DocWorkspaceInner() {
                 if (sr.ok) setSuggestions((await sr.json()).suggestions ?? []);
                 if (vr.ok) setVersions((await vr.json()).versions ?? []);
                 if (cr.ok) setComments((await cr.json()).comments ?? []);
-                if (br.ok) setContentBlocks((await br.json()).blocks ?? []);
+                if (br.ok) {
+                    const body = await br.json();
+                    setContentBlocks(body.blocks ?? []);
+                    if (typeof body.htmlContent === "string") setHtmlContent(body.htmlContent);
+                    if (typeof body.htmlContentVersion === "number") setHtmlContentVersion(body.htmlContentVersion);
+                }
             } catch (e) {
                 if (!cancelled) setLoadError((e as Error).message);
             } finally {
@@ -429,18 +445,58 @@ function DocWorkspaceInner() {
                 <div className="flex-1 overflow-hidden bg-gray-50 relative">
                     {view === "edit" ? (
                         <Suspense fallback={<div className="p-12 text-sm text-gray-500">loading editor…</div>}>
+                            {editorSaveBanner && (
+                                <div className={`absolute top-2 right-2 z-10 px-3 py-1.5 text-xs rounded-md shadow-sm border ${
+                                    editorSaveBanner.kind === "offline" ? "bg-amber-50 border-amber-200 text-amber-900" :
+                                    editorSaveBanner.kind === "conflict" ? "bg-red-50 border-red-200 text-red-900" :
+                                    "bg-emerald-50 border-emerald-200 text-emerald-900"
+                                }`}>
+                                    {editorSaveBanner.kind === "offline" && "Offline — changes saved locally"}
+                                    {editorSaveBanner.kind === "conflict" && `Another tab saved newer content (v${editorSaveBanner.currentVersion}). Reload to continue.`}
+                                    {editorSaveBanner.kind === "saved" && `Saved · ${new Date(editorSaveBanner.at).toLocaleTimeString()}`}
+                                </div>
+                            )}
                             <RichTextEditor
                                 docId={docId}
                                 title={title}
                                 authorName="You"
                                 initialBlocks={blocksForRender as ServerBlock[]}
+                                initialHtml={htmlContent ?? undefined}
+                                initialHtmlVersion={htmlContentVersion}
                                 railOpen={true}
+                                onRemoteSave={async (html, version) => {
+                                    try {
+                                        const headers = await authHeaders();
+                                        const r = await fetch(
+                                            `${API_BASE}/api/doc-workspace/${encodeURIComponent(docId)}/content`,
+                                            {
+                                                method: "PUT",
+                                                headers: { ...headers, "Content-Type": "application/json" },
+                                                body: JSON.stringify({ html, version }),
+                                            },
+                                        );
+                                        if (r.status === 409) {
+                                            const body = await r.json().catch(() => ({}));
+                                            const currentVersion = Number(body?.currentVersion ?? version);
+                                            setEditorSaveBanner({ kind: "conflict", currentVersion });
+                                            return { ok: false as const, conflict: true as const, currentVersion };
+                                        }
+                                        if (!r.ok) {
+                                            return { ok: false as const, network: true as const, message: `HTTP ${r.status}` };
+                                        }
+                                        const body = await r.json();
+                                        setHtmlContentVersion(body.version);
+                                        setEditorSaveBanner({ kind: "saved", at: body.savedAt });
+                                        setTimeout(() => setEditorSaveBanner((b) => b?.kind === "saved" ? null : b), 2500);
+                                        return { ok: true as const, version: body.version, savedAt: body.savedAt };
+                                    } catch (e) {
+                                        setEditorSaveBanner({ kind: "offline" });
+                                        return { ok: false as const, network: true as const, message: (e as Error).message };
+                                    }
+                                }}
                                 onPersist={(blocks, html) => {
-                                    // Hold the editor's authoritative blocks in component state so
-                                    // switching to review/read/compare uses fresh content. (No backend
-                                    // PUT endpoint exists yet — see docs/EDITOR.md TODO.)
                                     setContentBlocks(blocks);
-                                    void html;
+                                    if (typeof html === "string") setHtmlContent(html);
                                 }}
                             />
                         </Suspense>

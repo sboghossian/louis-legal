@@ -623,6 +623,9 @@ export async function streamProjectChat(payload: {
     messages: StreamChatMessage[];
     chat_id?: string;
     model?: string;
+    /** Mirrors the streamChat option — let the classifier pick a model when no
+     *  composer pick is set. Persisted in `localStorage.louis.autoRouteModel`. */
+    autoRouteModel?: boolean;
     displayed_doc?: { filename: string; document_id: string };
     attached_documents?: { filename: string; document_id: string }[];
     signal?: AbortSignal;
