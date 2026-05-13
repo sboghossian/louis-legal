@@ -202,8 +202,8 @@ export function ProjectsOverview() {
                 actions={toolbarActions}
             />
 
-            {/* Table */}
-            <div className="w-full overflow-x-auto">
+            {/* Table (md+) */}
+            <div className="hidden md:block w-full overflow-x-auto">
                 <div className="min-w-max">
                 {/* Column headers */}
                 <div className="flex items-center h-8 pr-8 border-b border-border text-xs text-muted-foreground font-medium select-none">
@@ -427,6 +427,85 @@ export function ProjectsOverview() {
                     </div>
                 )}
             </div>
+            </div>
+
+            {/* Card list (mobile, < md) */}
+            <div className="md:hidden px-4 py-2 space-y-2">
+                {loading ? (
+                    [1, 2, 3].map((i) => (
+                        <div
+                            key={i}
+                            className="rounded-lg border border-border bg-card p-3"
+                        >
+                            <div className="h-4 w-40 rounded bg-muted animate-pulse" />
+                            <div className="mt-2 h-3 w-24 rounded bg-muted animate-pulse" />
+                            <div className="mt-2 h-3 w-32 rounded bg-muted animate-pulse" />
+                        </div>
+                    ))
+                ) : filtered.length === 0 ? (
+                    <div className="flex flex-col items-start py-16 w-full max-w-xs mx-auto">
+                        {activeTab === "all" || activeTab === "mine" ? (
+                            <>
+                                <FolderOpen className="h-8 w-8 text-muted-foreground mb-4" />
+                                <p className="text-2xl font-medium font-serif text-foreground">
+                                    Projects
+                                </p>
+                                <p className="mt-1 text-xs text-muted-foreground max-w-xs">
+                                    Upload documents into projects and to
+                                    commence chats and tabular reviews with
+                                    them.
+                                </p>
+                                <button
+                                    onClick={() => setModalOpen(true)}
+                                    className="mt-4 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white hover:bg-foreground transition-colors shadow-md"
+                                >
+                                    + Create New
+                                </button>
+                            </>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">
+                                No {activeTab} projects
+                            </p>
+                        )}
+                    </div>
+                ) : (
+                    filtered.map((project) => {
+                        const isOwner =
+                            project.is_owner ?? project.user_id === user?.id;
+                        return (
+                            <button
+                                key={project.id}
+                                type="button"
+                                onClick={() =>
+                                    router.push(`/projects/${project.id}`)
+                                }
+                                className="block w-full text-left rounded-lg border border-border bg-card p-3 hover:bg-muted transition-colors"
+                            >
+                                <div className="flex items-start justify-between gap-2">
+                                    <span className="font-serif text-base font-medium text-foreground truncate">
+                                        {project.name}
+                                    </span>
+                                    <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                        {isOwner ? "Mine" : "Shared"}
+                                    </span>
+                                </div>
+                                {project.cm_number && (
+                                    <div className="mt-1 text-xs text-muted-foreground">
+                                        CM {project.cm_number}
+                                    </div>
+                                )}
+                                <div className="mt-2 text-xs text-muted-foreground">
+                                    {formatDate(project.created_at)}
+                                </div>
+                                <div className="mt-1 text-xs text-muted-foreground">
+                                    {project.document_count ?? 0} files ·{" "}
+                                    {project.chat_count ?? 0} chats ·{" "}
+                                    {project.review_count ?? 0} reviews
+                                </div>
+                            </button>
+                        );
+                    })
+                )}
             </div>
 
             <NewProjectModal
