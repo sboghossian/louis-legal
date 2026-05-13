@@ -422,6 +422,24 @@ export function useAssistantChat({
                             continue;
                         }
 
+                        if (data.type === "routing") {
+                            // Surface which model + playbook the router
+                            // picked. Renders as a small footer chip under
+                            // the assistant message via AssistantMessage.
+                            pushEvent({
+                                type: "routing",
+                                model: data.model ?? null,
+                                modelSource: data.modelSource ?? "env-default",
+                                playbookSlug: data.playbookSlug ?? null,
+                                routingConfidence:
+                                    typeof data.routingConfidence === "number"
+                                        ? data.routingConfidence
+                                        : null,
+                                autoRouteModel: !!data.autoRouteModel,
+                            });
+                            continue;
+                        }
+
                         if (data.type === "content_done") {
                             setIsLoadingCitations(true);
                             continue;

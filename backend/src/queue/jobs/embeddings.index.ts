@@ -56,16 +56,37 @@ export async function handleEmbeddingsIndex(
     if (i + chunkSize >= text.length) break;
   }
 
-  // TODO (Cohere multilingual):
-  //   const cohere = new CohereClient({ token: routineOwnerCohereKey });
-  //   const resp = await cohere.embed({ texts: chunks, model: "embed-multilingual-v3.0" });
-  //   await vectorIndex.upsert(documentId, chunks, resp.embeddings);
+  // Call Cohere multilingual embeddings if a key is reachable. We
+  // dynamic-import to keep the worker boot fast and to let the SDK be
+  // optional (no install → graceful no-op).
+  let embedded = 0;
+  let stub = true;
+  try {
+    const { embedTexts } = await import("../../providers/cohere");
+    const vectors = await embedTexts(chunks, {
+      model: "embed-multilingual-v3.0",
+    });
+    embedded = vectors.length;
+    stub = false;
+    // Vector persistence still pending — pgvector table + upsert lands
+    // with the embeddings BullMQ worker integration. For now the
+    // embeddings stream is computed; downstream retrieval will start
+    // returning real results once `vectorIndex.upsert` exists.
+    // TODO(embeddings.persistence)
+    await job.log?.(
+      `embedded ${embedded} chunks via cohere multilingual; persistence pending`,
+    );
+  } catch (e) {
+    await job.log?.(
+      `embeddings skipped — ${(e as Error).message ?? "no cohere key"}`,
+    );
+  }
 
   return {
     documentId,
     chunks: chunks.length,
-    embedded: 0,
+    embedded,
     indexed: 0,
-    stub: true,
+    stub,
   };
 }

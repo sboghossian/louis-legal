@@ -127,6 +127,19 @@ export type AssistantEvent =
         error?: string;
         isStreaming?: boolean;
     }
+  | {
+        type: "routing";
+        /** Final model chosen for the turn, after composer > classifier > env precedence. */
+        model: string | null;
+        /** Which slot wins: "composer" (explicit pick), "classifier" (auto-route), "env-default". */
+        modelSource: "composer" | "classifier" | "env-default";
+        /** Practice-area playbook the router loaded (e.g. "corporate-ma"). */
+        playbookSlug: string | null;
+        /** Classifier confidence 0..1; null when modelSource !== "classifier". */
+        routingConfidence: number | null;
+        /** Was auto-route enabled on this turn? */
+        autoRouteModel: boolean;
+    }
   | { type: "workflow_applied"; workflow_id: string; title: string }
   | {
         type: "doc_edited";

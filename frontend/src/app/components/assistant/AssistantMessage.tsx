@@ -27,6 +27,32 @@ import { PreResponseWrapper } from "../shared/PreResponseWrapper";
 import { SpeakMessage } from "./SpeakMessage";
 import { supabase } from "@/lib/supabase";
 
+function shortModelLabel(model: string): string {
+    // Trim noisy date suffixes so the badge reads cleanly.
+    // claude-opus-4-7 → Opus 4.7
+    // claude-sonnet-4-6 → Sonnet 4.6
+    // claude-haiku-4-5-20251001 → Haiku 4.5
+    // gemini-2.5-pro → Gemini 2.5 Pro
+    // gpt-4o-2024-08 → GPT-4o
+    if (/^claude-(opus|sonnet|haiku)-(\d+)-(\d+)/i.test(model)) {
+        const [, tier, major, minor] = model.match(
+            /^claude-(opus|sonnet|haiku)-(\d+)-(\d+)/i,
+        )!;
+        return `${tier.charAt(0).toUpperCase()}${tier.slice(1).toLowerCase()} ${major}.${minor}`;
+    }
+    if (/^gemini-/.test(model)) {
+        return model
+            .replace(/^gemini-/, "Gemini ")
+            .replace(/-pro$/i, " Pro")
+            .replace(/-flash$/i, " Flash");
+    }
+    if (/^gpt-/.test(model)) {
+        return model.replace(/^gpt-/i, "GPT-").split(/-\d{4}/)[0];
+    }
+    if (/^o\d/.test(model)) return model.toLowerCase();
+    return model;
+}
+
 function toolCallLabel(name: string): string {
     if (name === "generate_docx") return "Creating document...";
     if (name === "edit_document") return "Editing document...";
@@ -1697,6 +1723,40 @@ export function AssistantMessage({
                             })}
                         </div>
                     )}
+
+                {/* Routing chip — shows which model + playbook the router
+                    chose for this turn. Quiet, gold-leaf, only renders if
+                    a routing event arrived. */}
+                {(() => {
+                    const routing = events?.find(
+                        (e): e is Extract<AssistantEvent, { type: "routing" }> =>
+                            e.type === "routing",
+                    );
+                    if (!routing) return null;
+                    const modelLabel = routing.model
+                        ? shortModelLabel(routing.model)
+                        : "default";
+                    return (
+                        <div className="pt-1 pb-1 font-sans">
+                            <span
+                                className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-amber-800 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5"
+                                title={`Model source: ${routing.modelSource}${
+                                    routing.routingConfidence != null
+                                        ? ` · confidence ${(routing.routingConfidence * 100).toFixed(0)}%`
+                                        : ""
+                                }`}
+                            >
+                                <span>{modelLabel}</span>
+                                {routing.playbookSlug && (
+                                    <>
+                                        <span className="opacity-50">·</span>
+                                        <span>{routing.playbookSlug}</span>
+                                    </>
+                                )}
+                            </span>
+                        </div>
+                    );
+                })()}
 
                 {/* Message actions: copy + thumbs up/down */}
                 <div className="flex items-center gap-1 pt-2 pb-4 md:pb-8 font-sans justify-start">

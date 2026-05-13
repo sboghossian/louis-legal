@@ -46,16 +46,17 @@ export async function handleDocumentsParse(
   const { documentId, storagePath, fileType, filename } = job.data;
   await job.log?.(`parsing document=${documentId} type=${fileType}`);
 
-  // TODO: fetch the object from storage. The existing handler in
-  // routes/documents.ts does this via `getObject(storagePath)` from
-  // lib/storage. We avoid importing express-side code here; the storage
-  // helper is framework-agnostic and safe to reuse:
-  //
-  //   const { getObject } = await import("../../lib/storage");
-  //   const buf = await getObject(storagePath);
-  //
-  // Left as a TODO so this job can be unit-tested without S3 creds.
-  const buf: ArrayBuffer = new ArrayBuffer(0);
+  // Dynamic import keeps the worker bundle from pulling AWS SDK at import
+  // time. `downloadFile(key)` returns `ArrayBuffer | null`; null means
+  // either storage isn't configured (dev mode) or the object is missing.
+  const { downloadFile } = await import("../../lib/storage");
+  const downloaded = await downloadFile(storagePath);
+  if (!downloaded) {
+    throw new Error(
+      `documents.parse: storage download returned null for ${storagePath}`,
+    );
+  }
+  const buf: ArrayBuffer = downloaded;
 
   let text = "";
   let numPages: number | null = null;
