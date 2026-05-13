@@ -1,11 +1,10 @@
 import { Router, Request, Response } from "express";
+import { requireAuth } from "../middleware/auth";
 import { addKey, deleteKey, listKeys, setDefault, providerHasKey, Provider } from "../apiKeys/_store";
 
 export const apiKeysRouter = Router();
 
-function userIdFrom(req: Request, res: Response): string {
-  return (req.headers["x-user-id"] as string) || (res.locals?.userId as string) || "demo";
-}
+apiKeysRouter.use(requireAuth);
 
 const PROVIDERS: { code: Provider; name: string; description: string; signupUrl: string }[] = [
   { code: "anthropic", name: "Anthropic (Claude)", description: "Claude Opus / Sonnet / Haiku — best for reasoning, drafting", signupUrl: "https://console.anthropic.com/" },
@@ -24,8 +23,8 @@ const PROVIDERS: { code: Provider; name: string; description: string; signupUrl:
   { code: "huggingface", name: "Hugging Face", description: "Open-source model hub + Inference API", signupUrl: "https://huggingface.co/" },
 ];
 
-apiKeysRouter.get("/providers", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+apiKeysRouter.get("/providers", (_req: Request, res: Response) => {
+  const userId = res.locals.userId as string;
   const enriched = PROVIDERS.map(p => ({
     ...p,
     hasKey: providerHasKey(userId, p.code),
@@ -34,13 +33,13 @@ apiKeysRouter.get("/providers", (req: Request, res: Response) => {
 });
 
 apiKeysRouter.get("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const { provider } = req.query as { provider?: Provider };
   res.json({ keys: listKeys(userId, provider) });
 });
 
 apiKeysRouter.post("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const { provider, key, label, isDefault } = req.body ?? {};
   if (!provider || !key) {
     res.status(400).json({ error: "provider and key required" });
@@ -55,14 +54,14 @@ apiKeysRouter.post("/", (req: Request, res: Response) => {
 });
 
 apiKeysRouter.post("/:id/default", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const updated = setDefault(req.params.id, userId);
   if (!updated) { res.status(404).json({ error: "Not found" }); return; }
   res.json(updated);
 });
 
 apiKeysRouter.delete("/:id", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const ok = deleteKey(req.params.id, userId);
   if (!ok) { res.status(404).json({ error: "Not found" }); return; }
   res.status(204).end();

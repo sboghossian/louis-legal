@@ -1,7 +1,10 @@
 import { Router } from "express";
+import { requireAuth } from "../middleware/auth";
 import { CLAUSES, searchClauses, getClause, listCategories, listJurisdictions } from "../clauses/_data";
 
 export const clausesRouter = Router();
+
+clausesRouter.use(requireAuth);
 
 clausesRouter.get("/", (req, res) => {
   const { category, jurisdiction, language, position, q } = req.query as Record<string, string | undefined>;

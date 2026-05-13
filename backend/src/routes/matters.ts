@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+import { requireAuth } from "../middleware/auth";
 import {
   createMatter, getMatter, listMatters, updateMatter, deleteMatter,
   addEvent, listEvents, runConflictCheck, matterStats,
@@ -7,12 +8,10 @@ import {
 
 export const mattersRouter = Router();
 
-function userIdFrom(req: Request, res: Response): string {
-  return (req.headers["x-user-id"] as string) || (res.locals?.userId as string) || "demo";
-}
+mattersRouter.use(requireAuth);
 
 mattersRouter.get("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const { status, matterType, q } = req.query as Record<string, string | undefined>;
   const matters = listMatters(userId, {
     status: status as MatterStatus | undefined,
@@ -23,12 +22,12 @@ mattersRouter.get("/", (req: Request, res: Response) => {
 });
 
 mattersRouter.get("/stats", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   res.json(matterStats(userId));
 });
 
 mattersRouter.post("/", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const body = req.body ?? {};
   if (!body.matterNumber || !body.clientName || !body.matterType) {
     res.status(400).json({ error: "matterNumber, clientName, matterType are required" });
@@ -52,7 +51,7 @@ mattersRouter.post("/", (req: Request, res: Response) => {
 });
 
 mattersRouter.post("/conflict-check", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const { parties } = req.body ?? {};
   if (!Array.isArray(parties) || parties.length === 0) {
     res.status(400).json({ error: "parties array required (each with name + role)" });
@@ -63,7 +62,7 @@ mattersRouter.post("/conflict-check", (req: Request, res: Response) => {
 });
 
 mattersRouter.get("/:id", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const m = getMatter(req.params.id, userId);
   if (!m) {
     res.status(404).json({ error: "Matter not found" });
@@ -74,7 +73,7 @@ mattersRouter.get("/:id", (req: Request, res: Response) => {
 });
 
 mattersRouter.patch("/:id", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const updated = updateMatter(req.params.id, userId, req.body ?? {});
   if (!updated) {
     res.status(404).json({ error: "Matter not found" });
@@ -84,7 +83,7 @@ mattersRouter.patch("/:id", (req: Request, res: Response) => {
 });
 
 mattersRouter.delete("/:id", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const ok = deleteMatter(req.params.id, userId);
   if (!ok) {
     res.status(404).json({ error: "Matter not found" });
@@ -94,7 +93,7 @@ mattersRouter.delete("/:id", (req: Request, res: Response) => {
 });
 
 mattersRouter.post("/:id/events", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const m = getMatter(req.params.id, userId);
   if (!m) {
     res.status(404).json({ error: "Matter not found" });
@@ -110,7 +109,7 @@ mattersRouter.post("/:id/events", (req: Request, res: Response) => {
 });
 
 mattersRouter.get("/:id/events", (req: Request, res: Response) => {
-  const userId = userIdFrom(req, res);
+  const userId = res.locals.userId as string;
   const m = getMatter(req.params.id, userId);
   if (!m) {
     res.status(404).json({ error: "Matter not found" });

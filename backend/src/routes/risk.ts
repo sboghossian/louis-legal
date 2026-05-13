@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
+import { requireAuth } from "../middleware/auth";
 import { scanContract, listRules } from "../risk/_engine";
 
 export const riskRouter = Router();
+
+riskRouter.use(requireAuth);
 
 riskRouter.post("/scan", (req: Request, res: Response) => {
   const { text, jurisdiction } = req.body ?? {};

@@ -1,7 +1,10 @@
 import { Router } from "express";
+import { requireAuth } from "../middleware/auth";
 import { computeEOS, EosInput } from "../calculators/eos";
 
 export const calculatorsRouter = Router();
+
+calculatorsRouter.use(requireAuth);
 
 calculatorsRouter.post("/eos", (req, res) => {
   const body = req.body as Partial<EosInput>;
