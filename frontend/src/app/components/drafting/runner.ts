@@ -1,19 +1,28 @@
 /**
  * Graph-walking runner for the Drafting Board.
  *
- * Pure functions — no React. The page wraps these with `setBoard(...)` to
- * apply transitions and animate the canvas.
+ * Pure(ish) functions — no React, but `runNode` performs a real fetch
+ * against `${API_BASE}/chat`. The page wraps these with `setBoard(...)`
+ * to apply transitions and animate the canvas.
  *
  * Algorithm: Kahn's topological order, with three rules:
  *   1. A node is "ready" when all its inbound edges come from `done` nodes.
  *   2. `gate` nodes never auto-advance; when they become ready they switch
  *      to `needs_approval` and the runner pauses until the user clicks
  *      Approve / Reject in the inspector.
- *   3. `agent` and `output` nodes simulate work: idle → running for
- *      1.5–3 s → done. The skill IDs already on the node are echoed so
- *      the user sees which playbooks "fired".
+ *   3. `agent` and `output` nodes fire a real chat completion via SSE.
+ *      Status flow: idle → running (fetch in flight) → done (text shown).
+ *
+ * Concurrency: NOT supported. The page holds a single in-flight promise
+ * and serializes the walk via `pickNext` + `await runNode`.
+ *
+ * Backend contract assumed today:
+ *   - POST `${API_BASE}/chat` with SSE response.
+ *   - Events: `chat_id`, `routing`, `content_delta`, `content_done`.
+ *   - 401 → user is signed out or has no model key configured.
  */
 
+import { streamChat } from "@/app/lib/louisApi";
 import type { Board, BoardNode, NodeStatus, StatusTransition } from "./types";
 
 export interface AdvanceResult {
@@ -23,6 +32,9 @@ export interface AdvanceResult {
     /** Whether the runner thinks the graph is now done or paused. */
     done: boolean;
 }
+
+/** Soft cap so streaming a long-winded response can't run away on us. */
+const MAX_OUTPUT_CHARS = 4000;
 
 function now(): number {
     return Date.now();
@@ -102,42 +114,274 @@ export function pickNext(board: Board): {
 }
 
 /**
- * Start running a candidate node. Returns the board with the node flipped
- * to running and a recommended dwell time (ms) for the page to wait
- * before calling `completeNode`.
+ * Flip a node to `running` (used by the page right before it `await`s
+ * `runNode`, so the UI commits the spinner before the network call).
  */
-export function startNode(
-    board: Board,
-    nodeId: string,
-): { nextBoard: Board; dwellMs: number; log: string } {
-    const node = board.nodes.find((n) => n.id === nodeId)!;
-    const next = transition(node, "running");
-    const dwellMs = 1500 + Math.floor(Math.random() * 1500); // 1.5–3s
-    const skillTrail =
-        node.skills.length > 0
-            ? ` (firing ${node.skills.join(", ")})`
-            : "";
+export function markRunning(board: Board, nodeId: string): Board {
     return {
-        nextBoard: {
-            ...board,
-            nodes: board.nodes.map((n) => (n.id === nodeId ? next : n)),
-        },
-        dwellMs,
-        log: `Running ${node.title}${skillTrail}.`,
+        ...board,
+        nodes: board.nodes.map((n) =>
+            n.id === nodeId ? transition(n, "running") : n,
+        ),
     };
 }
 
-export function completeNode(board: Board, nodeId: string): AdvanceResult {
-    const node = board.nodes.find((n) => n.id === nodeId)!;
-    const done = transition(node, "done");
-    const nextBoard: Board = {
+/**
+ * Build the focused user prompt for a node. Kept separate so the seam
+ * is easy to test and tweak.
+ */
+function promptForNode(node: BoardNode, board: Board): string {
+    const templateLabel = board.name;
+    const skillsHint =
+        node.skills.length > 0
+            ? ` Lean on these skills if available: ${node.skills.join(", ")}.`
+            : "";
+    const inputsHint =
+        node.inputs.length > 0
+            ? ` Inputs available to you: ${node.inputs.join("; ")}.`
+            : "";
+    const outputsHint =
+        node.outputs.length > 0
+            ? ` Deliverables expected: ${node.outputs.join("; ")}.`
+            : "";
+    return (
+        `You are operating on the '${node.title}' step of the '${templateLabel}' workflow. ` +
+        `Produce the deliverable. Be concise (max 200 words). Plain prose, no markdown headers.` +
+        skillsHint +
+        inputsHint +
+        outputsHint
+    );
+}
+
+export interface RunNodeOptions {
+    /** Abort signal — pass the page's controller so Pause cancels the fetch. */
+    signal?: AbortSignal;
+    /** Called with the partial streamed text on every `content_delta`. */
+    onPartial?: (partialText: string) => void;
+}
+
+export interface RunNodeOutcome {
+    /** Final board state with the node flipped to `done` (or `blocked` on error). */
+    nextBoard: Board;
+    /** True when the node finished cleanly. */
+    success: boolean;
+    /** Plain-prose log line. */
+    log: string;
+    /** HTTP status code on failure (used to detect 401). */
+    httpStatus?: number;
+    /** Final assistant text (empty string on failure). */
+    output: string;
+    /** Routing metadata captured from the SSE `routing` event. */
+    model?: string;
+    playbookSlug?: string;
+}
+
+/**
+ * Run a single node end-to-end: open the SSE stream, accumulate the
+ * assistant's content, write `lastOutput` + routing metadata, return the
+ * updated board.
+ *
+ * Caller responsibility: flip the node to `running` first (so the spinner
+ * shows before the network round-trip). Use `markRunning(board, id)` for
+ * that.
+ */
+export async function runNode(
+    board: Board,
+    nodeId: string,
+    options: RunNodeOptions = {},
+): Promise<RunNodeOutcome> {
+    const node = board.nodes.find((n) => n.id === nodeId);
+    if (!node) {
+        return {
+            nextBoard: board,
+            success: false,
+            log: `Node ${nodeId} not found.`,
+            output: "",
+        };
+    }
+
+    // Gates never call the model — that's a human decision.
+    if (node.kind === "gate") {
+        return {
+            nextBoard: board,
+            success: false,
+            log: `${node.title} is a human gate — no model call.`,
+            output: "",
+        };
+    }
+
+    const prompt = promptForNode(node, board);
+
+    let collected = "";
+    let model: string | undefined;
+    let playbookSlug: string | undefined;
+    let httpStatus: number | undefined;
+
+    try {
+        const response = await streamChat({
+            messages: [{ role: "user", content: prompt }],
+            // One-shot — no persisted chat thread per node.
+            chat_id: undefined,
+            autoRouteModel: true,
+            signal: options.signal,
+        });
+
+        httpStatus = response.status;
+
+        if (!response.ok) {
+            const errText = await response.text().catch(() => "");
+            const errored: Board = {
+                ...board,
+                nodes: board.nodes.map((n) =>
+                    n.id === nodeId
+                        ? {
+                              ...transition(
+                                  n,
+                                  "blocked",
+                                  response.status === 401
+                                      ? "No model key configured."
+                                      : `HTTP ${response.status}`,
+                              ),
+                              lastError:
+                                  errText ||
+                                  `HTTP ${response.status}`,
+                          }
+                        : n,
+                ),
+            };
+            return {
+                nextBoard: errored,
+                success: false,
+                log: `${node.title} failed — HTTP ${response.status}.`,
+                output: "",
+                httpStatus,
+            };
+        }
+
+        const reader = response.body?.getReader();
+        if (!reader) {
+            throw new Error("Stream had no readable body.");
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        outer: while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || !trimmed.startsWith("data:")) continue;
+
+                const dataStr = trimmed.slice(5).trim();
+                if (dataStr === "[DONE]") continue;
+
+                let data: {
+                    type?: string;
+                    text?: string;
+                    model?: string;
+                    playbookSlug?: string;
+                };
+                try {
+                    data = JSON.parse(dataStr);
+                } catch {
+                    continue;
+                }
+
+                if (data.type === "routing") {
+                    if (typeof data.model === "string") model = data.model;
+                    if (typeof data.playbookSlug === "string")
+                        playbookSlug = data.playbookSlug;
+                    continue;
+                }
+
+                if (data.type === "content_delta" && typeof data.text === "string") {
+                    collected += data.text;
+                    if (collected.length > MAX_OUTPUT_CHARS) {
+                        collected = collected.slice(0, MAX_OUTPUT_CHARS);
+                        options.onPartial?.(collected);
+                        // Don't yank the connection — let the server finish,
+                        // but stop appending once we've hit the cap.
+                        continue;
+                    }
+                    options.onPartial?.(collected);
+                    continue;
+                }
+
+                if (data.type === "content_done") {
+                    // Stop reading; we've got the full text.
+                    try {
+                        reader.cancel();
+                    } catch {
+                        /* ignore */
+                    }
+                    break outer;
+                }
+            }
+        }
+    } catch (err) {
+        // AbortError (user paused) — flip back to idle so it can be re-run.
+        const isAbort =
+            err instanceof DOMException && err.name === "AbortError";
+        const reason =
+            err instanceof Error ? err.message : "Unknown error";
+
+        const errored: Board = {
+            ...board,
+            nodes: board.nodes.map((n) =>
+                n.id === nodeId
+                    ? isAbort
+                        ? transition(n, "idle", "Run cancelled.")
+                        : {
+                              ...transition(n, "blocked", reason),
+                              lastError: reason,
+                          }
+                    : n,
+            ),
+        };
+        return {
+            nextBoard: errored,
+            success: false,
+            log: isAbort
+                ? `${node.title} cancelled.`
+                : `${node.title} failed — ${reason}.`,
+            output: "",
+            httpStatus,
+        };
+    }
+
+    const finalText = collected.trim();
+    const completed: Board = {
         ...board,
-        nodes: board.nodes.map((n) => (n.id === nodeId ? done : n)),
+        nodes: board.nodes.map((n) =>
+            n.id === nodeId
+                ? {
+                      ...transition(n, "done"),
+                      lastOutput: finalText,
+                      lastSkillIds: n.skills,
+                      lastModel: model,
+                      lastPlaybookSlug: playbookSlug,
+                      lastRunAt: new Date().toISOString(),
+                      lastError: undefined,
+                  }
+                : n,
+        ),
     };
+
+    const trail = model ? ` (${model})` : "";
     return {
-        nextBoard,
-        log: `${node.title} is done.`,
-        done: false,
+        nextBoard: completed,
+        success: true,
+        log: `${node.title} done${trail}.`,
+        output: finalText,
+        model,
+        playbookSlug,
+        httpStatus,
     };
 }
 

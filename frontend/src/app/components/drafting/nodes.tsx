@@ -229,9 +229,20 @@ export function NodeCard({
                     >
                         {node.title}
                     </div>
-                    <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
-                        {node.subtitle}
-                    </div>
+                    {node.kind === "output" &&
+                    node.lastOutput &&
+                    node.lastOutput.length > 0 ? (
+                        // Deliverable preview — visible at-a-glance on the canvas.
+                        <div className="mt-1 line-clamp-2 font-serif text-[11px] italic text-foreground/80">
+                            {node.lastOutput.length > 100
+                                ? `${node.lastOutput.slice(0, 100).trim()}…`
+                                : node.lastOutput}
+                        </div>
+                    ) : (
+                        <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
+                            {node.subtitle}
+                        </div>
+                    )}
                 </div>
 
                 {/* Pulsing dot rail at the bottom while running. */}

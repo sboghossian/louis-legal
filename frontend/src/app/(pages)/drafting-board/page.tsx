@@ -59,13 +59,14 @@ import {
 import { Inspector } from "@/app/components/drafting/inspector";
 import {
     approveGate,
-    completeNode,
     isStalled,
+    markRunning,
     pickNext,
     rejectGate,
-    startNode,
+    runNode,
 } from "@/app/components/drafting/runner";
 import { TEMPLATES, seedBoardByKey } from "@/app/components/drafting/seed";
+import { useToast } from "@/contexts/ToastContext";
 import {
     loadBoard,
     saveBoard,
@@ -109,10 +110,13 @@ function DraftingBoardInner() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [running, setRunning] = useState(false);
     const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
+    const { toast } = useToast();
 
-    // Refs to avoid stale closures inside the run-loop timeouts.
+    // Refs to avoid stale closures inside the run-loop.
     const boardRef = useRef<Board | null>(null);
     const runningRef = useRef(false);
+    // Cancels the in-flight fetch when the user clicks Pause.
+    const abortRef = useRef<AbortController | null>(null);
     boardRef.current = board;
     runningRef.current = running;
 
@@ -204,7 +208,10 @@ function DraftingBoardInner() {
     }
 
     // ----- runner ----------------------------------------------------------
-    const tick = useCallback(() => {
+    // The runner is fully async — each agent/output node fires a real
+    // SSE chat completion via `runNode`. Concurrency is NOT supported:
+    // one in-flight fetch at a time, serialized by `pickNext`.
+    const tick = useCallback(async () => {
         if (!runningRef.current || !boardRef.current) return;
         const current = boardRef.current;
 
@@ -228,22 +235,62 @@ function DraftingBoardInner() {
             return;
         }
 
-        // Start the node, then schedule its completion.
-        const { nextBoard, dwellMs, log } = startNode(
-            pick.nextBoard,
-            pick.candidate.id,
-        );
-        setBoard(nextBoard);
-        pushTimeline(log, "run");
+        const candidateId = pick.candidate.id;
+        const candidateTitle = pick.candidate.title;
 
-        window.setTimeout(() => {
-            if (!runningRef.current || !boardRef.current) return;
-            const finished = completeNode(boardRef.current, pick.candidate!.id);
-            setBoard(finished.nextBoard);
-            if (finished.log) pushTimeline(finished.log, "done");
-            // Loop.
-            window.setTimeout(tick, 240);
-        }, dwellMs);
+        // 1) Flip to running synchronously so the spinner shows before
+        //    the network round-trip. Use the picked board (it may already
+        //    have a needs_approval flip applied to a gate above).
+        const runningBoard = markRunning(pick.nextBoard, candidateId);
+        setBoard(runningBoard);
+        pushTimeline(`Running ${candidateTitle}…`, "run");
+
+        // 2) Open a fresh abort controller for this leg.
+        const controller = new AbortController();
+        abortRef.current = controller;
+
+        // 3) Fire the actual chat completion.
+        const outcome = await runNode(runningBoard, candidateId, {
+            signal: controller.signal,
+        });
+        abortRef.current = null;
+
+        // If the user paused mid-flight, runNode rewinds the node to
+        // idle. Surface the cancel + bail.
+        if (!runningRef.current) {
+            setBoard(outcome.nextBoard);
+            pushTimeline(outcome.log, "info");
+            return;
+        }
+
+        setBoard(outcome.nextBoard);
+
+        if (!outcome.success) {
+            setRunning(false);
+            pushTimeline(outcome.log, "block");
+            if (outcome.httpStatus === 401) {
+                toast({
+                    title: "No model key configured",
+                    description:
+                        "Add an Anthropic, OpenAI, or Gemini key in Settings → API Keys to run live skills.",
+                    variant: "error",
+                });
+            } else {
+                toast({
+                    title: `${candidateTitle} failed`,
+                    description: outcome.log,
+                    variant: "error",
+                });
+            }
+            return;
+        }
+
+        pushTimeline(outcome.log, "done");
+        // Loop — give React a microtask to commit before the next pick.
+        void Promise.resolve().then(() => {
+            void tick();
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function startRunner() {
@@ -252,11 +299,19 @@ function DraftingBoardInner() {
         setRunning(true);
         // Defer one tick so React has flushed the running=true commit
         // before tick() reads runningRef.
-        window.setTimeout(tick, 50);
+        window.setTimeout(() => {
+            void tick();
+        }, 50);
     }
 
     function pauseRunner() {
         setRunning(false);
+        // Cancel the in-flight SSE fetch if any — runNode will catch
+        // the AbortError and flip the node back to idle.
+        if (abortRef.current) {
+            abortRef.current.abort();
+            abortRef.current = null;
+        }
     }
 
     // ----- node mutations --------------------------------------------------
@@ -277,7 +332,9 @@ function DraftingBoardInner() {
         if (res.log) pushTimeline(res.log, "done");
         // Auto-resume the runner so downstream nodes start.
         setRunning(true);
-        window.setTimeout(tick, 60);
+        window.setTimeout(() => {
+            void tick();
+        }, 60);
     }
 
     function handleReject(id: string, reason: string) {

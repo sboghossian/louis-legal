@@ -50,6 +50,18 @@ export interface BoardNode {
     history: StatusTransition[];
     /** Optional reason — populated when a node enters blocked/rejected. */
     reason?: string;
+    /** Plain-text output captured the last time the node ran a real skill. */
+    lastOutput?: string;
+    /** Skill slugs that fired during the last run (best-effort, may be empty). */
+    lastSkillIds?: string[];
+    /** Model the router picked for the last run (from SSE `routing` event). */
+    lastModel?: string;
+    /** Playbook slug the router loaded for the last run. */
+    lastPlaybookSlug?: string;
+    /** ISO timestamp of the last successful run. */
+    lastRunAt?: string;
+    /** Last error message if the most recent run failed. */
+    lastError?: string;
 }
 
 /** Edge: directional from → to. */

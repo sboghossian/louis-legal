@@ -93,6 +93,9 @@ export function Inspector({
             <Header node={node} onClose={onClose} />
             <div className="flex-1 overflow-y-auto px-5 pb-8">
                 <Identity node={node} onPatch={onPatch} />
+                {node.lastOutput !== undefined && node.lastOutput.length > 0 && (
+                    <LatestOutput node={node} />
+                )}
                 {node.kind === "agent" && (
                     <SkillsEditor node={node} onPatch={onPatch} />
                 )}
@@ -109,6 +112,59 @@ export function Inspector({
             </div>
         </aside>
     );
+}
+
+function LatestOutput({ node }: { node: BoardNode }) {
+    const meta: string[] = [];
+    if (node.lastModel) meta.push(node.lastModel);
+    if (node.lastPlaybookSlug) meta.push(node.lastPlaybookSlug);
+    const ago = node.lastRunAt ? timeAgo(node.lastRunAt) : null;
+    if (ago) meta.push(ago);
+    return (
+        <section className="mt-5">
+            <div className="mb-1.5 flex items-center gap-2 px-1">
+                <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                    Latest output
+                </span>
+                <span
+                    aria-hidden
+                    className="h-px flex-1"
+                    style={{
+                        background:
+                            "linear-gradient(to right, #C9A961 0%, rgba(201,169,97,0) 100%)",
+                    }}
+                />
+            </div>
+            <div className="rounded-xl border border-[#E7E2D6] bg-card p-3">
+                <pre className="font-serif whitespace-pre-wrap text-sm text-foreground">
+                    {node.lastOutput}
+                </pre>
+                {meta.length > 0 && (
+                    <div className="mt-2 text-xs text-muted-foreground">
+                        Ran with {meta.join(" · ")}
+                    </div>
+                )}
+            </div>
+        </section>
+    );
+}
+
+function timeAgo(iso: string): string {
+    try {
+        const then = Date.parse(iso);
+        if (Number.isNaN(then)) return "";
+        const diff = Date.now() - then;
+        const s = Math.max(1, Math.round(diff / 1000));
+        if (s < 60) return `${s}s ago`;
+        const m = Math.round(s / 60);
+        if (m < 60) return `${m}m ago`;
+        const h = Math.round(m / 60);
+        if (h < 24) return `${h}h ago`;
+        const d = Math.round(h / 24);
+        return `${d}d ago`;
+    } catch {
+        return "";
+    }
 }
 
 function Header({
