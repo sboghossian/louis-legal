@@ -16,11 +16,21 @@ const ebGaramond = EB_Garamond({
     weight: ["400", "500", "600", "700"],
 });
 
+// Root-level fallback metadata. Pages without their own `metadata` export
+// (e.g. /academy, /about, /transparency) inherit this — so every public
+// surface gets a clean OG + Twitter card by default.
+const ROOT_TITLE = "Louis — open-source legal AI";
+const ROOT_DESCRIPTION =
+    "The developer platform for legal infrastructure. Open-source, sovereign, free — your API key, your data, your stack.";
+
 export const metadata: Metadata = {
-    metadataBase: new URL("http://localhost:3000"),
-    title: "Louis - AI Legal Platform",
-    description:
-        "AI-powered legal document analysis and contract review platform.",
+    metadataBase: new URL("https://legal.dashable.dev"),
+    title: {
+        default: ROOT_TITLE,
+        template: "%s · Louis",
+    },
+    description: ROOT_DESCRIPTION,
+    applicationName: "Louis",
     icons: {
         icon: [
             { url: "/icon.svg", type: "image/svg+xml" },
@@ -30,26 +40,24 @@ export const metadata: Metadata = {
     },
     openGraph: {
         type: "website",
-        url: "http://localhost:3000",
+        url: "/",
         siteName: "Louis",
-        title: "Louis - AI Legal Platform",
-        description:
-            "AI-powered legal document analysis and contract review platform.",
+        title: ROOT_TITLE,
+        description: ROOT_DESCRIPTION,
         images: [
             {
-                url: "/link-image.jpg",
+                url: "/og-image.svg",
                 width: 1200,
-                height: 651,
-                alt: "Louis",
+                height: 630,
+                alt: "Louis — open-source legal AI",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Louis - AI Legal Platform",
-        description:
-            "AI-powered legal document analysis and contract review platform.",
-        images: ["/link-image.jpg"],
+        title: ROOT_TITLE,
+        description: ROOT_DESCRIPTION,
+        images: ["/og-image.svg"],
     },
 };
 

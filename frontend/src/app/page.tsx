@@ -12,6 +12,7 @@
  * see what each surface looks like before signing up — Mike-style.
  */
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
     Github,
@@ -50,10 +51,39 @@ import {
 
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
 
-export const metadata = {
-    title: "Louis — the developer platform for legal infrastructure",
-    description:
-        "Open-source, sovereign, free. Build legal AI inside your own perimeter — your API key, your data, your stack. 982 skills, 30+ jurisdictions, MIT licensed. The substrate behind your firm's next ten years of legal software.",
+const LANDING_TITLE =
+    "Louis — the developer platform for legal infrastructure";
+const LANDING_DESCRIPTION =
+    "Open-source, sovereign, free. Build legal AI inside your own perimeter — your API key, your data, your stack. 982 skills, 30+ jurisdictions, MIT licensed. The substrate behind your firm's next ten years of legal software.";
+
+export const metadata: Metadata = {
+    metadataBase: new URL("https://legal.dashable.dev"),
+    title: LANDING_TITLE,
+    description: LANDING_DESCRIPTION,
+    alternates: {
+        canonical: "/",
+    },
+    openGraph: {
+        type: "website",
+        url: "/",
+        siteName: "Louis",
+        title: LANDING_TITLE,
+        description: LANDING_DESCRIPTION,
+        images: [
+            {
+                url: "/og-image.svg",
+                width: 1200,
+                height: 630,
+                alt: "Louis — open-source legal AI",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: LANDING_TITLE,
+        description: LANDING_DESCRIPTION,
+        images: ["/og-image.svg"],
+    },
 };
 
 export default function LandingPage() {
