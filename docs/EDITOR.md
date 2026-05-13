@@ -289,10 +289,6 @@ Tabbed:
 
 ### Out of scope (v1) — TODOs
 
-- `.docx` export currently emits an HTML payload with a `.docx` filename and
-  a console warning. The `docx` npm package is already a dep; a real builder
-  walking the ProseMirror doc and emitting `Paragraph`/`TextRun` is the next
-  step. **TODO(editor.docx)** in `utils/export.ts`.
 - Suggest-mode deletions: typing → tracked. Backspacing → still hard
   deletes. Real "intercept Backspace, convert to deletion mark" needs
   keymap-level work that respects IME / composition events.
