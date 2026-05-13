@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "louis.configMapName" . }}
+    labels:
+        {{- include "louis.labels" . | nindent 8 }}
+data:
+    {{- range $key, $value := .Values.config }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    # Mirror the public Supabase URL into the well-known frontend var.
+    NEXT_PUBLIC_SUPABASE_URL: {{ .Values.supabase.url | quote }}

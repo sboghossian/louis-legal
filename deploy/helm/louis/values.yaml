@@ -1,0 +1,210 @@
+# =============================================================================
+# Louis — Helm values
+# -----------------------------------------------------------------------------
+# Postgres + object storage are EXTERNAL. Provision them yourself (Supabase,
+# RDS, Neon, Cloudflare R2, AWS S3, Minio Operator, …) and fill in the
+# connection strings under `externalDatabase` and `externalStorage`.
+# =============================================================================
+
+# Optional cluster-wide overrides.
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+    # Override these to point at your registry once you push the images.
+    # The Dockerfiles in this repo are amd64-friendly multi-stage builds.
+    repository: ghcr.io/sboghossian/louis
+    pullPolicy: IfNotPresent
+    # `frontend` and `backend` get the same tag by default.
+    tag: "0.1.0"
+
+imagePullSecrets: []
+# - name: ghcr-pull-secret
+
+# -----------------------------------------------------------------------------
+# Backend (Express API)
+# -----------------------------------------------------------------------------
+backend:
+    image:
+        repository: "" # falls back to .Values.image.repository + "-backend"
+        tag: "" #          falls back to .Values.image.tag
+    replicaCount: 2
+    service:
+        type: ClusterIP
+        port: 3001
+    resources:
+        requests:
+            cpu: 250m
+            memory: 512Mi
+        limits:
+            cpu: "2"
+            memory: 2Gi
+    # HPA scales when avg CPU exceeds 70%.
+    autoscaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 10
+        targetCPUUtilizationPercentage: 70
+    # Health probe path served by src/index.ts.
+    healthPath: /health
+    # /tmp is writable; everything else is read-only thanks to the
+    # podSecurityContext below. libreoffice-convert needs a scratch dir.
+    extraVolumeMounts:
+        - name: tmp
+          mountPath: /tmp
+    extraVolumes:
+        - name: tmp
+          emptyDir: {}
+    # Free-form env overrides; merged into the rendered Deployment.
+    env: {}
+
+# -----------------------------------------------------------------------------
+# Frontend (Next.js standalone)
+# -----------------------------------------------------------------------------
+frontend:
+    image:
+        repository: ""
+        tag: ""
+    replicaCount: 2
+    service:
+        type: ClusterIP
+        port: 3000
+    resources:
+        requests:
+            cpu: 100m
+            memory: 256Mi
+        limits:
+            cpu: "1"
+            memory: 1Gi
+    autoscaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 10
+        targetCPUUtilizationPercentage: 70
+    healthPath: /
+    extraVolumeMounts:
+        - name: cache
+          mountPath: /app/.next/cache
+        - name: tmp
+          mountPath: /tmp
+    extraVolumes:
+        - name: cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+    env: {}
+
+# -----------------------------------------------------------------------------
+# Pod-level hardening — applied to BOTH deployments.
+# -----------------------------------------------------------------------------
+podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    seccompProfile:
+        type: RuntimeDefault
+
+containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1001
+    capabilities:
+        drop: ["ALL"]
+
+# -----------------------------------------------------------------------------
+# Ingress — TLS via cert-manager by default. Adjust for your controller.
+# -----------------------------------------------------------------------------
+ingress:
+    enabled: true
+    className: nginx
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    hosts:
+        - host: louis.example.com
+          paths:
+              - path: /
+                pathType: Prefix
+                service: frontend
+        - host: louis-api.example.com
+          paths:
+              - path: /
+                pathType: Prefix
+                service: backend
+    tls:
+        - secretName: louis-tls
+          hosts:
+              - louis.example.com
+              - louis-api.example.com
+
+# -----------------------------------------------------------------------------
+# Public, non-secret config — rendered into a ConfigMap.
+# -----------------------------------------------------------------------------
+config:
+    NODE_ENV: production
+    FRONTEND_URL: https://louis.example.com
+    NEXT_PUBLIC_API_BASE_URL: https://louis-api.example.com
+    NEXT_PUBLIC_SUPABASE_URL: https://your-project.supabase.co
+    TRUST_PROXY_HOPS: "2"
+
+# -----------------------------------------------------------------------------
+# External Postgres — DO NOT bundle.
+# Recommended: Supabase Postgres direct connection (port 5432), AWS RDS,
+# or Neon. The migrate script needs a transaction-capable connection
+# (not PgBouncer in transaction mode).
+# -----------------------------------------------------------------------------
+externalDatabase:
+    # Set the full connection string. Used as both DATABASE_URL and
+    # SUPABASE_DB_URL by the backend.
+    url: "postgresql://louis:CHANGEME@postgres.example.com:5432/louis?sslmode=require"
+
+# -----------------------------------------------------------------------------
+# External object storage — S3, R2, or Minio. Louis uses the AWS SDK.
+# -----------------------------------------------------------------------------
+externalStorage:
+    endpoint: "https://your-account.r2.cloudflarestorage.com"
+    bucket: "louis"
+    accessKeyId: "CHANGEME"
+    secretAccessKey: "CHANGEME"
+
+# -----------------------------------------------------------------------------
+# Supabase-compatible auth (frontend reads the public anon key).
+# -----------------------------------------------------------------------------
+supabase:
+    url: "https://your-project.supabase.co"
+    anonKey: "CHANGEME-anon-key"
+    serviceRoleKey: "CHANGEME-service-role-key"
+
+# -----------------------------------------------------------------------------
+# LLM provider keys — bring your own. At least one is required for chat.
+# Leave blank to disable that provider.
+# -----------------------------------------------------------------------------
+llm:
+    anthropicApiKey: ""
+    geminiApiKey: ""
+    openaiApiKey: ""
+
+# -----------------------------------------------------------------------------
+# Required signing secrets. Generate with `openssl rand -hex 32`.
+# -----------------------------------------------------------------------------
+secrets:
+    downloadSigningSecret: ""
+    userApiKeysEncryptionSecret: ""
+    resendApiKey: ""
+
+# -----------------------------------------------------------------------------
+# Optional: reference an existing Kubernetes Secret instead of letting the
+# chart create one from the values above. Useful with sealed-secrets /
+# external-secrets-operator.
+# -----------------------------------------------------------------------------
+existingSecret: ""
+
+serviceAccount:
+    create: true
+    name: ""
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

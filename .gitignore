@@ -16,3 +16,7 @@ next-env.d.ts
 .DS_Store
 .vercel
 coverage
+
+# Helm dependency lockfiles / repackaged charts
+deploy/helm/louis/charts/
+deploy/helm/louis/*.tgz

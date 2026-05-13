@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ include "louis.fullname" . }}-frontend
+    labels:
+        {{- include "louis.labels" . | nindent 8 }}
+        app.kubernetes.io/component: frontend
+spec:
+    {{- if not .Values.frontend.autoscaling.enabled }}
+    replicas: {{ .Values.frontend.replicaCount }}
+    {{- end }}
+    selector:
+        matchLabels:
+            {{- include "louis.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: frontend
+    template:
+        metadata:
+            labels:
+                {{- include "louis.selectorLabels" . | nindent 16 }}
+                app.kubernetes.io/component: frontend
+            annotations:
+                checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+                checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        spec:
+            serviceAccountName: {{ include "louis.serviceAccountName" . }}
+            securityContext:
+                {{- toYaml .Values.podSecurityContext | nindent 16 }}
+            {{- with .Values.imagePullSecrets }}
+            imagePullSecrets:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            containers:
+                - name: frontend
+                  image: {{ include "louis.componentImage" (list . .Values.frontend "frontend") }}
+                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  securityContext:
+                      {{- toYaml .Values.containerSecurityContext | nindent 22 }}
+                  ports:
+                      - name: http
+                        containerPort: 3000
+                        protocol: TCP
+                  envFrom:
+                      - configMapRef:
+                            name: {{ include "louis.configMapName" . }}
+                      - secretRef:
+                            name: {{ include "louis.secretName" . }}
+                  env:
+                      - name: PORT
+                        value: "3000"
+                      - name: HOSTNAME
+                        value: "0.0.0.0"
+                      {{- range $k, $v := .Values.frontend.env }}
+                      - name: {{ $k }}
+                        value: {{ $v | quote }}
+                      {{- end }}
+                  livenessProbe:
+                      httpGet:
+                          path: {{ .Values.frontend.healthPath }}
+                          port: http
+                      initialDelaySeconds: 20
+                      periodSeconds: 30
+                      timeoutSeconds: 5
+                      failureThreshold: 3
+                  readinessProbe:
+                      httpGet:
+                          path: {{ .Values.frontend.healthPath }}
+                          port: http
+                      initialDelaySeconds: 5
+                      periodSeconds: 10
+                      timeoutSeconds: 3
+                      failureThreshold: 3
+                  resources:
+                      {{- toYaml .Values.frontend.resources | nindent 22 }}
+                  {{- with .Values.frontend.extraVolumeMounts }}
+                  volumeMounts:
+                      {{- toYaml . | nindent 22 }}
+                  {{- end }}
+            {{- with .Values.frontend.extraVolumes }}
+            volumes:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            {{- with .Values.nodeSelector }}
+            nodeSelector:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            {{- with .Values.affinity }}
+            affinity:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            {{- with .Values.tolerations }}
+            tolerations:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}

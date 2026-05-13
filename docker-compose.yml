@@ -1,0 +1,213 @@
+# =============================================================================
+# Louis — self-host stack
+# -----------------------------------------------------------------------------
+#   cp .env.example .env  &&  edit .env
+#   docker compose up -d
+#   docker compose --profile setup run --rm migrate    # first boot only
+# -----------------------------------------------------------------------------
+# Services:
+#   frontend  Next.js 16 (standalone) on :3000
+#   backend   Express API on :3001
+#   postgres  Postgres 15 (data → ./data/postgres)
+#   minio     S3-compatible object store on :9000 (console :9001)
+# Profiles:
+#   default   frontend + backend + postgres + minio + minio-init
+#   setup     one-shot `npm run migrate` against postgres
+# =============================================================================
+
+name: louis
+
+networks:
+    louis:
+        driver: bridge
+
+volumes:
+    postgres-data:
+    minio-data:
+
+services:
+    # ---------------------------------------------------------------------
+    # Postgres — bundled for single-VM installs. Swap for managed Postgres
+    # in production by removing this service and pointing DATABASE_URL +
+    # SUPABASE_DB_URL at the external host.
+    # ---------------------------------------------------------------------
+    postgres:
+        image: postgres:15-alpine
+        container_name: louis-postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:-louis}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+            POSTGRES_DB: ${POSTGRES_DB:-louis}
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        ports:
+            - "127.0.0.1:5432:5432"
+        networks: [louis]
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U $${POSTGRES_USER:-louis} -d $${POSTGRES_DB:-louis}",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+
+    # ---------------------------------------------------------------------
+    # Minio — S3-compatible storage. Louis already speaks the AWS SDK, so
+    # we just point R2_ENDPOINT_URL at Minio.
+    # ---------------------------------------------------------------------
+    minio:
+        image: minio/minio:latest
+        container_name: louis-minio
+        restart: unless-stopped
+        command: server /data --console-address ":9001"
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-louis}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+        volumes:
+            - minio-data:/data
+        ports:
+            - "127.0.0.1:9000:9000"
+            - "127.0.0.1:9001:9001"
+        networks: [louis]
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "sh",
+                    "-c",
+                    "wget -qO- http://127.0.0.1:9000/minio/health/live || exit 1",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+
+    # One-shot: create the bucket on first boot, then exit 0.
+    minio-init:
+        image: minio/mc:latest
+        container_name: louis-minio-init
+        depends_on:
+            minio:
+                condition: service_healthy
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-louis}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+            MINIO_BUCKET: ${MINIO_BUCKET:-louis}
+        entrypoint:
+            - /bin/sh
+            - -c
+            - |
+                set -e
+                mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"
+                mc mb --ignore-existing local/"$$MINIO_BUCKET"
+                echo "[minio-init] bucket ready: $$MINIO_BUCKET"
+        networks: [louis]
+        restart: "no"
+
+    # ---------------------------------------------------------------------
+    # Backend (Express API)
+    # ---------------------------------------------------------------------
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        image: louis/backend:local
+        container_name: louis-backend
+        restart: unless-stopped
+        depends_on:
+            postgres:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+        environment:
+            NODE_ENV: ${NODE_ENV:-production}
+            PORT: 3001
+            FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+            DATABASE_URL: ${DATABASE_URL}
+            SUPABASE_DB_URL: ${SUPABASE_DB_URL}
+            SUPABASE_URL: ${SUPABASE_URL}
+            SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY}
+            R2_ENDPOINT_URL: ${R2_ENDPOINT_URL:-http://minio:9000}
+            R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-${MINIO_ROOT_USER:-louis}}
+            R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-${MINIO_ROOT_PASSWORD}}
+            R2_BUCKET_NAME: ${R2_BUCKET_NAME:-${MINIO_BUCKET:-louis}}
+            DOWNLOAD_SIGNING_SECRET: ${DOWNLOAD_SIGNING_SECRET:?DOWNLOAD_SIGNING_SECRET is required}
+            USER_API_KEYS_ENCRYPTION_SECRET: ${USER_API_KEYS_ENCRYPTION_SECRET:?USER_API_KEYS_ENCRYPTION_SECRET is required}
+            ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+            GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+            OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+            RESEND_API_KEY: ${RESEND_API_KEY:-}
+            TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+        ports:
+            - "127.0.0.1:3001:3001"
+        networks: [louis]
+        healthcheck:
+            test:
+                ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 20s
+
+    # ---------------------------------------------------------------------
+    # Frontend (Next.js standalone)
+    # ---------------------------------------------------------------------
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+            args:
+                NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001}
+                NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+                NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY}
+        image: louis/frontend:local
+        container_name: louis-frontend
+        restart: unless-stopped
+        depends_on:
+            backend:
+                condition: service_healthy
+        environment:
+            NODE_ENV: ${NODE_ENV:-production}
+            PORT: 3000
+            HOSTNAME: 0.0.0.0
+            NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001}
+            NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+            NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY}
+            SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY}
+        ports:
+            - "127.0.0.1:3000:3000"
+        networks: [louis]
+
+    # ---------------------------------------------------------------------
+    # `migrate` — one-shot DB bootstrap. Lives behind the `setup` profile
+    # so a plain `docker compose up` doesn't try to migrate every boot.
+    #   docker compose --profile setup run --rm migrate
+    # ---------------------------------------------------------------------
+    migrate:
+        profiles: ["setup"]
+        image: louis/backend:local
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        depends_on:
+            postgres:
+                condition: service_healthy
+        environment:
+            NODE_ENV: production
+            DATABASE_URL: ${DATABASE_URL}
+            SUPABASE_DB_URL: ${SUPABASE_DB_URL}
+        networks: [louis]
+        # `tsx` lives in devDependencies which the runtime image prunes,
+        # so we invoke the compiled migrate.ts via npx --yes against the
+        # build context. The compose docs in docs/SELF_HOST.md cover the
+        # alternative "exec into backend" workflow.
+        entrypoint: ["/bin/sh", "-c"]
+        command:
+            - |
+                set -e
+                cd /app
+                npm install --no-save tsx >/dev/null 2>&1
+                npx tsx scripts/migrate.ts
+        restart: "no"

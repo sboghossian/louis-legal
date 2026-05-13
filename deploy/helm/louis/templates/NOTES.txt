@@ -1,0 +1,26 @@
+Louis has been installed as release "{{ .Release.Name }}" in namespace "{{ .Release.Namespace }}".
+
+Next steps:
+
+1. Run the database migrations once (uses the backend image you just shipped):
+
+     kubectl -n {{ .Release.Namespace }} run louis-migrate --rm -i --restart=Never \
+       --image={{ include "louis.componentImage" (list . .Values.backend "backend") }} \
+       --env DATABASE_URL="$(kubectl -n {{ .Release.Namespace }} get secret {{ include "louis.secretName" . }} -o jsonpath='{.data.DATABASE_URL}' | base64 -d)" \
+       --command -- /bin/sh -c "npm install --no-save tsx >/dev/null && npx tsx scripts/migrate.ts"
+
+2. Watch the rollout:
+
+     kubectl -n {{ .Release.Namespace }} rollout status deploy/{{ include "louis.fullname" . }}-backend
+     kubectl -n {{ .Release.Namespace }} rollout status deploy/{{ include "louis.fullname" . }}-frontend
+
+3. Reach the app:
+{{- if .Values.ingress.enabled }}
+{{- range .Values.ingress.hosts }}
+     https://{{ .host }}
+{{- end }}
+{{- else }}
+     kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "louis.fullname" . }}-frontend 3000:{{ .Values.frontend.service.port }}
+{{- end }}
+
+See docs/SELF_HOST.md in the repo for backups, upgrades, and full env reference.
