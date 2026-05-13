@@ -11,6 +11,7 @@ import { isSpeechSynthesisSupported } from "@/app/lib/voice/types";
 import {
     isVoiceModeOpen,
     subscribeVoiceMode,
+    setTtsSpeaking,
 } from "@/app/lib/voice/voiceModeBus";
 
 interface Props {
@@ -73,6 +74,7 @@ export function SpeakMessage({ messageId, text, autoPlay = false }: Props) {
             if (activeMessageId === messageId) {
                 handleRef.current?.stop();
                 setActive(null);
+                setTtsSpeaking(false);
             }
         };
     }, [messageId]);
@@ -80,21 +82,27 @@ export function SpeakMessage({ messageId, text, autoPlay = false }: Props) {
     const start = () => {
         if (!supported || !text.trim()) return;
         const handle = speak(text, {
-            onStart: () => setState("speaking"),
+            onStart: () => {
+                setState("speaking");
+                setTtsSpeaking(true);
+            },
             onDone: () => {
                 setState("idle");
                 handleRef.current = null;
                 if (activeMessageId === messageId) setActive(null);
+                setTtsSpeaking(false);
             },
             onError: () => {
                 setState("idle");
                 handleRef.current = null;
+                setTtsSpeaking(false);
             },
         });
         handleRef.current = handle;
         if (handle) {
             setActive(messageId);
             setState("speaking");
+            setTtsSpeaking(true);
         }
     };
 
@@ -126,6 +134,7 @@ export function SpeakMessage({ messageId, text, autoPlay = false }: Props) {
         handleRef.current = null;
         setState("idle");
         if (activeMessageId === messageId) setActive(null);
+        setTtsSpeaking(false);
     };
 
     if (state === "idle") {
