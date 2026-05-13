@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { getAuthHeader as authHeaders } from "@/app/lib/louisApi";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -66,6 +67,7 @@ function formatTime(iso?: string): string {
 
 export default function TeamPage() {
     const confirm = useConfirm();
+    const { t } = useLocale();
     const [team, setTeam] = useState<Team | null>(null);
     const [members, setMembers] = useState<TeamMember[]>([]);
     const [roles, setRoles] = useState<Record<Role, RoleDescription> | null>(null);
@@ -100,9 +102,9 @@ export default function TeamPage() {
 
     async function remove(member: TeamMember) {
         const ok = await confirm({
-            title: `Remove ${member.name || member.email}?`,
-            message: "They will lose access to this team immediately.",
-            confirmLabel: "Remove",
+            title: t("team.remove.title", { name: member.name || member.email }),
+            message: t("team.remove.message"),
+            confirmLabel: t("team.remove.confirm"),
             destructive: true,
         });
         if (!ok) return;
@@ -130,29 +132,29 @@ export default function TeamPage() {
         <div className="max-w-5xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
                 <Users className="w-5 h-5 text-foreground/80" />
-                <h1 className="text-2xl font-serif">Team</h1>
+                <h1 className="text-2xl font-serif">{t("team.title")}</h1>
                 {team && <Badge variant="secondary">{team.name}</Badge>}
-                <Badge variant="secondary" className="bg-muted text-foreground/80">{members.length} member{members.length === 1 ? "" : "s"}</Badge>
+                <Badge variant="secondary" className="bg-muted text-foreground/80">{members.length === 1 ? t("team.member_count.one", { count: members.length }) : t("team.member_count", { count: members.length })}</Badge>
                 <Button size="sm" className="ml-auto h-7 text-xs" onClick={() => setShowInvite(true)}>
-                    <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite
+                    <UserPlus className="w-3.5 h-3.5 mr-1" /> {t("team.invite")}
                 </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-6">
-                Collaborate on matters, share skills, and route routine outputs. Role-based permissions ship on the Business plan.
+                {t("team.intro")}
             </p>
 
-            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">{t("common.loading")}</div>}
 
             {/* Members */}
             <div className="mb-8">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Members</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">{t("team.members")}</h2>
                 {!loading && members.length === 0 ? (
                     <div className="border border-dashed border-border rounded-lg p-12 text-center">
                         <Users className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                        <div className="text-sm font-medium text-foreground mb-1">No teammates yet</div>
-                        <div className="text-xs text-muted-foreground mb-4">Invite collaborators to share matters, skills, and routines.</div>
+                        <div className="text-sm font-medium text-foreground mb-1">{t("team.empty.title")}</div>
+                        <div className="text-xs text-muted-foreground mb-4">{t("team.empty.intro")}</div>
                         <Button size="sm" onClick={() => setShowInvite(true)}>
-                            <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite your first teammate
+                            <UserPlus className="w-3.5 h-3.5 mr-1" /> {t("team.empty.cta")}
                         </Button>
                     </div>
                 ) : (
@@ -169,16 +171,16 @@ export default function TeamPage() {
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <span className="font-medium text-sm">{m.name || m.email}</span>
                                         <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${ROLE_COLORS[m.role]}`}>
-                                            <RoleIcon className="w-3 h-3" /> {m.role}
+                                            <RoleIcon className="w-3 h-3" /> {t(`team.role.${m.role}`)}
                                         </span>
                                         <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_COLORS[m.status]}`}>
-                                            {m.status}
+                                            {t(`team.status.${m.status}`)}
                                         </span>
                                     </div>
                                     <div className="text-xs text-muted-foreground">
                                         {m.email}
-                                        {m.lastActiveAt && ` · last seen ${formatTime(m.lastActiveAt)}`}
-                                        {m.status === "invited" && ` · invited ${formatTime(m.invitedAt)}`}
+                                        {m.lastActiveAt && ` · ${t("team.last_seen", { time: formatTime(m.lastActiveAt) })}`}
+                                        {m.status === "invited" && ` · ${t("team.invited_at", { time: formatTime(m.invitedAt) })}`}
                                     </div>
                                 </div>
                                 {m.role !== "owner" && (
@@ -188,16 +190,16 @@ export default function TeamPage() {
                                             onChange={e => changeRole(m.id, e.target.value as Role)}
                                             className="text-xs border border-border rounded px-2 py-1"
                                         >
-                                            {ROLES_ORDER.filter(r => r !== "owner").map(r => <option key={r} value={r}>{r}</option>)}
+                                            {ROLES_ORDER.filter(r => r !== "owner").map(r => <option key={r} value={r}>{t(`team.role.${r}`)}</option>)}
                                         </select>
                                         {m.status === "active" && (
-                                            <button onClick={() => changeStatus(m.id, "suspended")} className="text-xs text-muted-foreground hover:text-amber-700" title="Suspend">
-                                                Suspend
+                                            <button onClick={() => changeStatus(m.id, "suspended")} className="text-xs text-muted-foreground hover:text-amber-700" title={t("team.suspend")}>
+                                                {t("team.suspend")}
                                             </button>
                                         )}
                                         {m.status === "suspended" && (
                                             <button onClick={() => changeStatus(m.id, "active")} className="text-xs text-blue-600 hover:underline">
-                                                Reactivate
+                                                {t("team.reactivate")}
                                             </button>
                                         )}
                                         <button onClick={() => remove(m)} className="text-muted-foreground hover:text-red-600">
@@ -215,7 +217,7 @@ export default function TeamPage() {
             {/* Roles legend */}
             {roles && (
                 <div className="mb-8">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Roles</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">{t("team.roles")}</h2>
                     <div className="grid grid-cols-2 gap-3">
                         {ROLES_ORDER.map(r => {
                             const desc = roles[r];
@@ -246,6 +248,7 @@ export default function TeamPage() {
 }
 
 function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => void }) {
+    const { t } = useLocale();
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [role, setRole] = useState<Role>("member");
@@ -271,31 +274,31 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
             <div className="bg-card rounded-lg w-full max-w-md">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
-                    <h2 className="font-semibold">Invite team member</h2>
+                    <h2 className="font-semibold">{t("team.invite.title")}</h2>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
                 </div>
                 <div className="px-6 py-4 space-y-3">
                     <div>
-                        <Label className="text-xs">Email</Label>
+                        <Label className="text-xs">{t("team.invite.email")}</Label>
                         <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="colleague@firm.com" className="mt-1" />
                     </div>
                     <div>
-                        <Label className="text-xs">Name (optional)</Label>
+                        <Label className="text-xs">{t("team.invite.name")}</Label>
                         <Input value={name} onChange={e => setName(e.target.value)} className="mt-1" />
                     </div>
                     <div>
-                        <Label className="text-xs">Role</Label>
+                        <Label className="text-xs">{t("team.invite.role")}</Label>
                         <select value={role} onChange={e => setRole(e.target.value as Role)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
-                            <option value="admin">Admin — manages members + settings</option>
-                            <option value="member">Member — full read + write</option>
-                            <option value="viewer">Viewer — read only</option>
+                            <option value="admin">{t("team.invite.role.admin")}</option>
+                            <option value="member">{t("team.invite.role.member")}</option>
+                            <option value="viewer">{t("team.invite.role.viewer")}</option>
                         </select>
                     </div>
                 </div>
                 <div className="px-6 py-4 border-t flex justify-end gap-2">
-                    <Button variant="outline" onClick={onClose}>Cancel</Button>
+                    <Button variant="outline" onClick={onClose}>{t("action.cancel")}</Button>
                     <Button onClick={submit} disabled={submitting || !email.trim()}>
-                        {submitting ? "Sending…" : "Send invite"}
+                        {submitting ? t("team.invite.sending") : t("team.invite.send")}
                     </Button>
                 </div>
             </div>

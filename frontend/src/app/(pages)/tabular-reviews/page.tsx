@@ -17,16 +17,17 @@ import { ToolbarTabs } from "@/app/components/shared/ToolbarTabs";
 import { AddNewTRModal } from "@/app/components/tabular/AddNewTRModal";
 import { OwnerOnlyModal } from "@/app/components/shared/OwnerOnlyModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type Tab = "all" | "in-project" | "standalone";
 
 const CHECK_W = "w-8 shrink-0";
 const NAME_COL_W = "w-[300px] shrink-0";
 
-const TABS: { id: Tab; label: string }[] = [
-    { id: "all", label: "All Reviews" },
-    { id: "in-project", label: "In Project" },
-    { id: "standalone", label: "Standalone" },
+const TAB_KEYS: { id: Tab; key: string }[] = [
+    { id: "all", key: "tabular_reviews.tab.all" },
+    { id: "in-project", key: "tabular_reviews.tab.in_project" },
+    { id: "standalone", key: "tabular_reviews.tab.standalone" },
 ];
 
 function formatDate(iso: string) {
@@ -56,6 +57,8 @@ export default function TabularReviewsPage() {
     const actionsRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { user } = useAuth();
+    const { t } = useLocale();
+    const TABS = TAB_KEYS.map(tk => ({ id: tk.id, label: t(tk.key) }));
 
     useEffect(() => {
         Promise.all([
@@ -246,7 +249,7 @@ export default function TabularReviewsPage() {
                         onClick={() => setActionsOpen((v) => !v)}
                         className="flex items-center gap-1 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors"
                     >
-                        Actions
+                        {t("projects.actions")}
                         <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                     {actionsOpen && (
@@ -255,7 +258,7 @@ export default function TabularReviewsPage() {
                                 onClick={handleDeleteSelected}
                                 className="w-full px-3 py-1.5 text-left text-xs text-red-600 hover:bg-red-50 transition-colors"
                             >
-                                Delete
+                                {t("action.delete")}
                             </button>
                         </div>
                     )}
@@ -270,10 +273,10 @@ export default function TabularReviewsPage() {
             {/* Page header */}
             <div className="flex items-center justify-between px-8 py-4">
                 <h1 className="text-2xl font-medium font-serif text-foreground">
-                    Tabular Reviews
+                    {t("tabular_reviews.title")}
                 </h1>
                 <div className="flex items-center gap-2">
-                    <HeaderSearchBtn value={search} onChange={setSearch} placeholder="Search reviews…" />
+                    <HeaderSearchBtn value={search} onChange={setSearch} placeholder={t("tabular_reviews.search_placeholder")} />
                     <button
                         onClick={() => setNewTROpen(true)}
                         disabled={creating}
@@ -313,12 +316,12 @@ export default function TabularReviewsPage() {
                         )}
                     </div>
                     <div className={`sticky left-8 z-[60] ${NAME_COL_W} bg-card pl-2 text-left`}>
-                        Name
+                        {t("tabular_reviews.col.name")}
                     </div>
-                    <div className="ml-auto w-24 shrink-0">Columns</div>
-                    <div className="w-24 shrink-0">Documents</div>
-                    <div className="w-40 shrink-0">Project</div>
-                    <div className="w-32 shrink-0">Created</div>
+                    <div className="ml-auto w-24 shrink-0">{t("tabular_reviews.col.columns")}</div>
+                    <div className="w-24 shrink-0">{t("tabular_reviews.col.documents")}</div>
+                    <div className="w-40 shrink-0">{t("tabular_reviews.col.project")}</div>
+                    <div className="w-32 shrink-0">{t("tabular_reviews.col.created")}</div>
                     <div className="w-8 shrink-0" />
                 </div>
 
@@ -355,23 +358,22 @@ export default function TabularReviewsPage() {
                             <>
                                 <Table2 className="h-8 w-8 text-muted-foreground mb-4" />
                                 <p className="text-2xl font-medium font-serif text-foreground">
-                                    Tabular Reviews
+                                    {t("tabular_reviews.empty.title")}
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground max-w-xs text-left">
-                                    Extract data from documents into tables
-                                    using AI.
+                                    {t("tabular_reviews.empty.intro")}
                                 </p>
                                 <button
                                     onClick={() => setNewTROpen(true)}
                                     disabled={creating}
                                     className="mt-4 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white hover:bg-foreground transition-colors shadow-md disabled:opacity-40"
                                 >
-                                    + Create New
+                                    {t("action.create_new")}
                                 </button>
                             </>
                         ) : (
                             <p className="text-sm text-muted-foreground">
-                                No reviews found
+                                {t("tabular_reviews.empty.no_filtered")}
                             </p>
                         )}
                     </div>

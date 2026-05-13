@@ -5,6 +5,7 @@ import { BookOpen, Search, Copy, AlertTriangle, ArrowLeftRight } from "lucide-re
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type ClauseListItem = {
     id: string;
@@ -44,6 +45,7 @@ const LANG_STYLE: Record<ClauseListItem["language"], string> = {
 };
 
 export default function ClausesPage() {
+    const { t } = useLocale();
     const [items, setItems] = useState<ClauseListItem[]>([]);
     const [meta, setMeta] = useState<ClauseMeta | null>(null);
     const [loading, setLoading] = useState(true);
@@ -111,7 +113,7 @@ export default function ClausesPage() {
                 <div className="px-5 py-4 border-b border-border">
                     <div className="flex items-center gap-2 mb-3">
                         <BookOpen className="w-5 h-5 text-foreground/80" />
-                        <h1 className="text-lg font-semibold">Clause Library</h1>
+                        <h1 className="text-lg font-semibold">{t("clauses.title")}</h1>
                         <Badge variant="secondary">{items.length}</Badge>
                     </div>
                     <div className="relative">
@@ -119,13 +121,13 @@ export default function ClausesPage() {
                         <Input
                             value={q}
                             onChange={e => setQ(e.target.value)}
-                            placeholder="Search clauses…"
+                            placeholder={t("clauses.search_placeholder")}
                             className="pl-9"
                         />
                     </div>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-3 mb-1">Category</div>
+                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-3 mb-1">{t("clauses.filter.category")}</div>
                     <div className="flex flex-wrap gap-1.5">
-                        <FilterChip active={activeCategory === null} onClick={() => setActiveCategory(null)}>all</FilterChip>
+                        <FilterChip active={activeCategory === null} onClick={() => setActiveCategory(null)}>{t("clauses.filter.all")}</FilterChip>
                         {meta?.categories.sort((a, b) => b.count - a.count).map(c => (
                             <FilterChip
                                 key={c.category}
@@ -136,7 +138,7 @@ export default function ClausesPage() {
                             </FilterChip>
                         ))}
                     </div>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-3 mb-1">Jurisdiction</div>
+                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-3 mb-1">{t("clauses.filter.jurisdiction")}</div>
                     <div className="flex flex-wrap gap-1.5">
                         {meta?.jurisdictions.sort((a, b) => b.count - a.count).slice(0, 12).map(j => (
                             <FilterChip
@@ -148,7 +150,7 @@ export default function ClausesPage() {
                             </FilterChip>
                         ))}
                     </div>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-3 mb-1">Language · Position</div>
+                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground mt-3 mb-1">{t("clauses.filter.lang_pos")}</div>
                     <div className="flex gap-1.5">
                         {(["en", "ar", "fr"] as const).map(l => (
                             <FilterChip
@@ -172,8 +174,8 @@ export default function ClausesPage() {
                     </div>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                    {loading && <div className="p-6 text-sm text-muted-foreground">loading…</div>}
-                    {error && <div className="p-6 text-sm text-red-600">error: {error}</div>}
+                    {loading && <div className="p-6 text-sm text-muted-foreground">{t("common.loading")}</div>}
+                    {error && <div className="p-6 text-sm text-red-600">{t("common.error_prefix")}: {error}</div>}
                     {filtered.map(c => (
                         <button
                             key={c.id}
@@ -194,7 +196,7 @@ export default function ClausesPage() {
                         </button>
                     ))}
                     {!loading && filtered.length === 0 && (
-                        <div className="p-6 text-sm text-muted-foreground">no clauses match</div>
+                        <div className="p-6 text-sm text-muted-foreground">{t("clauses.empty.list")}</div>
                     )}
                 </div>
             </div>
@@ -203,9 +205,9 @@ export default function ClausesPage() {
             <div className="flex-1 overflow-y-auto">
                 {!selected ? (
                     <div className="p-12 text-sm text-muted-foreground">
-                        <p>Select a clause to view the full text, drafting notes, and jurisdiction-specific risk flags.</p>
+                        <p>{t("clauses.empty.detail")}</p>
                         <div className="mt-4 text-xs">
-                            <div>Total: {items.length}</div>
+                            <div>{t("clauses.total", { count: items.length })}</div>
                             <div>Backend: <code className="bg-muted px-1 rounded">{API_BASE}/api/clauses</code></div>
                         </div>
                     </div>

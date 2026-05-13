@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import { getAuthHeader as authHeaders } from "@/app/lib/louisApi";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -69,6 +70,7 @@ const TYPE_COLOR: Record<string, string> = {
 export default function EFirmPage() {
     const router = useRouter();
     const { profile } = useUserProfile();
+    const { t } = useLocale();
     const [matters, setMatters] = useState<ApiMatter[]>([]);
     const [stats, setStats] = useState<MatterStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -110,43 +112,43 @@ export default function EFirmPage() {
         <div className="max-w-6xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-6">
                 <Briefcase className="w-5 h-5" />
-                <h1 className="text-lg font-semibold">e-Firm</h1>
+                <h1 className="text-lg font-semibold">{t("efirm.title")}</h1>
                 {profile?.organisation && (
                     <Badge variant="secondary">{profile.organisation}</Badge>
                 )}
                 <Button size="sm" variant="outline" className="ml-auto h-7 text-xs" onClick={() => router.push("/matters")}>
-                    Open Matters
+                    {t("efirm.open_matters")}
                 </Button>
                 <Button size="sm" className="h-7 text-xs" onClick={() => router.push("/matters")}>
-                    <Plus className="w-3.5 h-3.5 mr-1" /> New matter
+                    <Plus className="w-3.5 h-3.5 mr-1" /> {t("efirm.new_matter")}
                 </Button>
             </div>
 
             {/* Stat row */}
             <div className="grid grid-cols-4 gap-3 mb-6">
-                <Stat icon={Briefcase} label="Active matters" value={`${activeMatters}`} />
-                <Stat icon={DollarSign} label="Budget pipeline" value={totalValue > 0 ? `${(totalValue / 1000).toFixed(0)}k` : "—"} />
-                <Stat icon={Clock} label="On hold" value={`${onHold}`} />
-                <Stat icon={AlertCircle} label="Total matters" value={`${stats?.total ?? matters.length}`} />
+                <Stat icon={Briefcase} label={t("efirm.stat.active")} value={`${activeMatters}`} />
+                <Stat icon={DollarSign} label={t("efirm.stat.pipeline")} value={totalValue > 0 ? `${(totalValue / 1000).toFixed(0)}k` : "—"} />
+                <Stat icon={Clock} label={t("efirm.stat.on_hold")} value={`${onHold}`} />
+                <Stat icon={AlertCircle} label={t("efirm.stat.total")} value={`${stats?.total ?? matters.length}`} />
             </div>
 
             {/* Tabs */}
             <div className="flex gap-1 mb-6 border-b border-border">
-                <TabBtn active={tab === "matters"} onClick={() => setTab("matters")}>Matters</TabBtn>
-                <TabBtn active={tab === "billing"} onClick={() => setTab("billing")}>Billing</TabBtn>
-                <TabBtn active={tab === "team"} onClick={() => setTab("team")}>Team</TabBtn>
+                <TabBtn active={tab === "matters"} onClick={() => setTab("matters")}>{t("efirm.tab.matters")}</TabBtn>
+                <TabBtn active={tab === "billing"} onClick={() => setTab("billing")}>{t("efirm.tab.billing")}</TabBtn>
+                <TabBtn active={tab === "team"} onClick={() => setTab("team")}>{t("efirm.tab.team")}</TabBtn>
             </div>
 
             {tab === "matters" && (
                 <>
                     <div className="relative mb-4">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search matters…" className="pl-9" />
+                        <Input value={q} onChange={e => setQ(e.target.value)} placeholder={t("matters.search_placeholder")} className="pl-9" />
                     </div>
-                    {loading && <div className="text-sm text-muted-foreground py-6 text-center">loading…</div>}
+                    {loading && <div className="text-sm text-muted-foreground py-6 text-center">{t("common.loading")}</div>}
                     {!loading && filtered.length === 0 && (
                         <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
-                            No matters yet. <button onClick={() => router.push("/matters")} className="text-blue-600 underline">Open Matters</button> to create one.
+                            {t("efirm.empty.matters.before")}<button onClick={() => router.push("/matters")} className="text-blue-600 underline">{t("efirm.empty.matters.link")}</button>{t("efirm.empty.matters.after")}
                         </div>
                     )}
                     <div className="border border-border rounded-lg divide-y divide-border">
@@ -170,7 +172,7 @@ export default function EFirmPage() {
                                     </div>
                                 </div>
                                 <div className="text-right text-xs flex-shrink-0">
-                                    <div className="text-foreground/80">{m.parties.length} parties</div>
+                                    <div className="text-foreground/80">{t("efirm.parties", { count: m.parties.length })}</div>
                                     {m.budgetAmount && (
                                         <div className="text-[10px] mt-0.5 text-muted-foreground">
                                             {m.budgetAmount.toLocaleString()} {m.budgetCurrency}
@@ -186,9 +188,9 @@ export default function EFirmPage() {
 
             {tab === "billing" && (
                 <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm">
-                    <div className="text-foreground/80 font-medium mb-1">Billing dashboard requires Stripe + accounting integration.</div>
-                    <div className="text-muted-foreground mb-4">Once connected, this view shows invoiced / WIP / overdue with drill-down by matter, partner, and client.</div>
-                    <a href="/integrations" className="text-blue-700 underline text-sm">Connect a billing integration</a>
+                    <div className="text-foreground/80 font-medium mb-1">{t("efirm.billing.title")}</div>
+                    <div className="text-muted-foreground mb-4">{t("efirm.billing.intro")}</div>
+                    <a href="/integrations" className="text-blue-700 underline text-sm">{t("efirm.billing.cta")}</a>
                     <div className="text-[10px] text-muted-foreground mt-4">
                         Related skills:
                         <code className="ml-1">efirm-finance.invoice-generator-from-time-entries</code>,
@@ -200,9 +202,9 @@ export default function EFirmPage() {
 
             {tab === "team" && (
                 <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm">
-                    <div className="text-foreground/80 font-medium mb-1">Team & utilization tracking requires team setup.</div>
-                    <div className="text-muted-foreground mb-4">Invite teammates to share matters and surface live utilization rates (hours / target × role).</div>
-                    <a href="/settings" className="text-blue-700 underline text-sm">Set up team in Settings → Team</a>
+                    <div className="text-foreground/80 font-medium mb-1">{t("efirm.team.title")}</div>
+                    <div className="text-muted-foreground mb-4">{t("efirm.team.intro")}</div>
+                    <a href="/settings" className="text-blue-700 underline text-sm">{t("efirm.team.cta")}</a>
                 </div>
             )}
         </div>

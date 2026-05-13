@@ -6,6 +6,7 @@ import { Inbox, FileText, Repeat, Calendar, Sparkles, UserPlus, CreditCard, Chec
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getAuthHeader as authHeaders } from "@/app/lib/louisApi";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -56,6 +57,7 @@ function formatTime(iso: string): string {
 
 export default function InboxPage() {
     const router = useRouter();
+    const { t } = useLocale();
     const [entries, setEntries] = useState<InboxEntry[]>([]);
     const [unread, setUnread] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -99,31 +101,31 @@ export default function InboxPage() {
     });
 
     const FILTERS: { id: typeof filter; label: string }[] = [
-        { id: "all", label: "All" },
-        { id: "unread", label: `Unread (${unread})` },
-        { id: "matter-event", label: "Matters" },
-        { id: "routine-output", label: "Routines" },
-        { id: "deadline", label: "Deadlines" },
-        { id: "system", label: "System" },
+        { id: "all", label: t("inbox.filter.all") },
+        { id: "unread", label: t("inbox.filter.unread", { count: unread }) },
+        { id: "matter-event", label: t("inbox.filter.matters") },
+        { id: "routine-output", label: t("inbox.filter.routines") },
+        { id: "deadline", label: t("inbox.filter.deadlines") },
+        { id: "system", label: t("inbox.filter.system") },
     ];
 
     return (
         <div className="max-w-4xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
                 <Inbox className="w-5 h-5 text-foreground/80" />
-                <h1 className="text-2xl font-serif">Inbox</h1>
+                <h1 className="text-2xl font-serif">{t("inbox.title")}</h1>
                 <Badge variant="secondary">{entries.length}</Badge>
                 {unread > 0 && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">{unread} unread</Badge>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">{t("inbox.unread_count", { count: unread })}</Badge>
                 )}
                 {unread > 0 && (
                     <Button size="sm" variant="ghost" className="ml-auto h-7 text-xs" onClick={markAllRead}>
-                        <CheckCheck className="w-3.5 h-3.5 mr-1" /> Mark all read
+                        <CheckCheck className="w-3.5 h-3.5 mr-1" /> {t("inbox.mark_all_read")}
                     </Button>
                 )}
             </div>
             <p className="text-sm text-muted-foreground mb-6">
-                Everything that happened: matter updates, routine outputs, deadlines, team activity, system messages.
+                {t("inbox.intro")}
             </p>
 
             <div className="flex flex-wrap gap-1.5 mb-6">
@@ -138,12 +140,12 @@ export default function InboxPage() {
                 ))}
             </div>
 
-            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">{t("common.loading")}</div>}
 
             <div className="space-y-2">
                 {filtered.length === 0 && !loading && (
                     <div className="border border-dashed border-border rounded-lg p-12 text-center text-sm text-muted-foreground">
-                        {filter === "unread" ? "All caught up." : "Nothing here yet."}
+                        {filter === "unread" ? t("inbox.empty.caught_up") : t("inbox.empty.none")}
                     </div>
                 )}
                 {filtered.map(e => {

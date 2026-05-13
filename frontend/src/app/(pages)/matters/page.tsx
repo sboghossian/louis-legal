@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -76,6 +77,7 @@ const TYPES: MatterType[] = ["litigation", "transactional", "advisory", "regulat
 const STATUSES: MatterStatus[] = ["open", "on-hold", "closed", "withdrawn"];
 
 export default function MattersPage() {
+    const { t } = useLocale();
     const [matters, setMatters] = useState<Matter[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -139,7 +141,7 @@ export default function MattersPage() {
                 <div className="px-5 py-4 border-b border-border">
                     <div className="flex items-center gap-2 mb-3">
                         <Briefcase className="w-5 h-5 text-foreground/80" />
-                        <h1 className="text-lg font-semibold">Matters</h1>
+                        <h1 className="text-lg font-semibold">{t("matters.title")}</h1>
                         {stats && <Badge variant="secondary">{stats.total}</Badge>}
                         <Button
                             size="sm"
@@ -148,35 +150,35 @@ export default function MattersPage() {
                             onClick={() => setShowConflictCheck(true)}
                         >
                             <ShieldAlert className="w-3.5 h-3.5 mr-1" />
-                            Conflict check
+                            {t("matters.conflict_check")}
                         </Button>
                         <Button size="sm" className="h-7 text-xs" onClick={() => setShowNew(true)}>
                             <Plus className="w-3.5 h-3.5 mr-1" />
-                            New
+                            {t("matters.new")}
                         </Button>
                     </div>
                     <div className="relative">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search matters…" className="pl-9" />
+                        <Input value={q} onChange={e => setQ(e.target.value)} placeholder={t("matters.search_placeholder")} className="pl-9" />
                     </div>
                     <div className="flex flex-wrap gap-1.5 mt-3">
-                        <FilterChip active={activeStatus === null} onClick={() => setActiveStatus(null)}>all</FilterChip>
+                        <FilterChip active={activeStatus === null} onClick={() => setActiveStatus(null)}>{t("matters.filter.all")}</FilterChip>
                         {STATUSES.map(s => (
                             <FilterChip key={s} active={activeStatus === s} onClick={() => setActiveStatus(activeStatus === s ? null : s)}>
-                                {s} {stats?.byStatus?.[s] ? `· ${stats.byStatus[s]}` : ""}
+                                {t(`matters.status.${s.replace(/-/g, "_")}`)} {stats?.byStatus?.[s] ? `· ${stats.byStatus[s]}` : ""}
                             </FilterChip>
                         ))}
                     </div>
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                        {TYPES.map(t => (
-                            <FilterChip key={t} active={activeType === t} onClick={() => setActiveType(activeType === t ? null : t)}>
-                                {t}
+                        {TYPES.map(ty => (
+                            <FilterChip key={ty} active={activeType === ty} onClick={() => setActiveType(activeType === ty ? null : ty)}>
+                                {t(`matters.type.${ty}`)}
                             </FilterChip>
                         ))}
                     </div>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                    {loading && <div className="p-6 text-sm text-muted-foreground">loading…</div>}
+                    {loading && <div className="p-6 text-sm text-muted-foreground">{t("common.loading")}</div>}
                     {filtered.map(m => (
                         <button
                             key={m.id}
@@ -185,22 +187,22 @@ export default function MattersPage() {
                         >
                             <div className="flex items-center gap-1.5 mb-1">
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLE[m.status]}`}>
-                                    {m.status}
+                                    {t(`matters.status.${m.status.replace(/-/g, "_")}`)}
                                 </span>
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${TYPE_STYLE[m.matterType]}`}>
-                                    {m.matterType}
+                                    {t(`matters.type.${m.matterType}`)}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground ml-auto">#{m.matterNumber}</span>
                             </div>
                             <div className="text-sm font-medium text-foreground truncate">{m.clientName}</div>
                             {m.description && <div className="text-xs text-muted-foreground line-clamp-2">{m.description}</div>}
                             <div className="text-[10px] text-muted-foreground mt-1">
-                                {m.parties.length} parties · {m.jurisdictions.join(", ") || "—"}
+                                {t("matters.parties_count", { count: m.parties.length })} · {m.jurisdictions.join(", ") || "—"}
                             </div>
                         </button>
                     ))}
                     {!loading && filtered.length === 0 && (
-                        <div className="p-6 text-sm text-muted-foreground">no matters match</div>
+                        <div className="p-6 text-sm text-muted-foreground">{t("matters.empty.list")}</div>
                     )}
                 </div>
             </div>
@@ -209,7 +211,7 @@ export default function MattersPage() {
             <div className="flex-1 overflow-y-auto">
                 {!selected ? (
                     <div className="p-12 text-sm text-muted-foreground">
-                        Select a matter to view details, parties, events, and conflict history.
+                        {t("matters.empty.intro")}
                     </div>
                 ) : (
                     <MatterDetail
@@ -234,27 +236,28 @@ export default function MattersPage() {
 }
 
 function MatterDetail({ matter, events, onAfterChange }: { matter: Matter; events: MatterEvent[]; onAfterChange: () => void }) {
+    const { t } = useLocale();
     return (
         <div className="p-8 max-w-3xl">
             <div className="flex items-baseline gap-2 mb-1">
                 <div className="text-xs text-muted-foreground font-mono">#{matter.matterNumber}</div>
-                <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLE[matter.status]}`}>{matter.status}</span>
+                <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLE[matter.status]}`}>{t(`matters.status.${matter.status.replace(/-/g, "_")}`)}</span>
             </div>
             <h1 className="text-2xl font-semibold mb-2">{matter.clientName}</h1>
             {matter.description && <p className="text-sm text-foreground/80 mb-4">{matter.description}</p>}
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-6 text-xs">
-                <Field label="Matter type">{matter.matterType}</Field>
-                {matter.practiceArea && <Field label="Practice area">{matter.practiceArea}</Field>}
-                <Field label="Jurisdictions">{matter.jurisdictions.join(", ") || "—"}</Field>
-                {matter.responsibleAttorney && <Field label="Responsible">{matter.responsibleAttorney}</Field>}
+                <Field label={t("matters.detail.matter_type")}>{t(`matters.type.${matter.matterType}`)}</Field>
+                {matter.practiceArea && <Field label={t("matters.detail.practice_area")}>{matter.practiceArea}</Field>}
+                <Field label={t("matters.detail.jurisdictions")}>{matter.jurisdictions.join(", ") || "—"}</Field>
+                {matter.responsibleAttorney && <Field label={t("matters.detail.responsible")}>{matter.responsibleAttorney}</Field>}
                 {matter.budgetAmount && (
-                    <Field label="Budget">{matter.budgetAmount.toLocaleString()} {matter.budgetCurrency}</Field>
+                    <Field label={t("matters.detail.budget")}>{matter.budgetAmount.toLocaleString()} {matter.budgetCurrency}</Field>
                 )}
-                <Field label="Opened">{new Date(matter.openedAt).toLocaleDateString()}</Field>
+                <Field label={t("matters.detail.opened")}>{new Date(matter.openedAt).toLocaleDateString()}</Field>
             </div>
 
-            <Section icon={<Users className="w-4 h-4" />} title="Parties">
+            <Section icon={<Users className="w-4 h-4" />} title={t("matters.detail.parties")}>
                 <div className="space-y-1.5">
                     {matter.parties.map((p, i) => (
                         <div key={i} className="flex items-center gap-2 text-sm bg-muted px-3 py-2 rounded border border-border">
@@ -267,7 +270,7 @@ function MatterDetail({ matter, events, onAfterChange }: { matter: Matter; event
                 </div>
             </Section>
 
-            <Section icon={<Calendar className="w-4 h-4" />} title={`Activity (${events.length})`}>
+            <Section icon={<Calendar className="w-4 h-4" />} title={t("matters.events_count", { count: events.length })}>
                 <div className="space-y-1.5">
                     {events.map(e => (
                         <div key={e.id} className="text-sm bg-muted px-3 py-2 rounded border border-border">
@@ -278,7 +281,7 @@ function MatterDetail({ matter, events, onAfterChange }: { matter: Matter; event
                             <div>{e.description}</div>
                         </div>
                     ))}
-                    {events.length === 0 && <div className="text-xs text-muted-foreground">no events yet</div>}
+                    {events.length === 0 && <div className="text-xs text-muted-foreground">{t("matters.events.empty")}</div>}
                 </div>
             </Section>
         </div>

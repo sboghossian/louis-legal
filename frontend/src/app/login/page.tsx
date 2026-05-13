@@ -10,9 +10,11 @@ import { Eye, EyeOff, Mail, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { t } = useLocale();
     const { isAuthenticated, authLoading } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -110,10 +112,10 @@ export default function LoginPage() {
                             Password
                         </label>
                         <Link
-                            href="/login"
+                            href="/forgot-password"
                             className="text-[11px] text-gray-500 hover:text-gray-700"
                         >
-                            Trouble signing in?
+                            {t("auth.login.forgot")}
                         </Link>
                     </div>
                     <div className="relative">

@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/contexts/ToastContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -302,12 +303,12 @@ const VAULT: CustomizeItem[] = [
       description: "Auto-delete or archive Vault docs per firm retention policy." },
 ];
 
-const CATEGORIES_META: { id: CategoryId; label: string; icon: LucideIcon }[] = [
-    { id: "sources",       label: "Sources",       icon: Database },
-    { id: "tools",         label: "Tools",         icon: Plug },
-    { id: "jurisdictions", label: "Jurisdictions", icon: Globe },
-    { id: "skills",        label: "Skills",        icon: Sparkles },
-    { id: "vault",         label: "Vault",         icon: Lock },
+const CATEGORIES_META: { id: CategoryId; labelKey: string; icon: LucideIcon }[] = [
+    { id: "sources",       labelKey: "customize.tab.sources",       icon: Database },
+    { id: "tools",         labelKey: "customize.tab.tools",         icon: Plug },
+    { id: "jurisdictions", labelKey: "customize.tab.jurisdictions", icon: Globe },
+    { id: "skills",        labelKey: "customize.tab.skills",        icon: Sparkles },
+    { id: "vault",         labelKey: "customize.tab.vault",         icon: Lock },
 ];
 
 // ---------------------------------------------------------------------------
@@ -316,6 +317,7 @@ const CATEGORIES_META: { id: CategoryId; label: string; icon: LucideIcon }[] = [
 
 export default function CustomizePage() {
     const { toast } = useToast();
+    const { t } = useLocale();
     const [settings, setSettings] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(true);
     const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -428,7 +430,7 @@ export default function CustomizePage() {
                 setSettings((prev) => ({ ...prev, [key]: !next }));
                 console.error(e);
                 toast({
-                    title: "Couldn't save toggle",
+                    title: t("customize.toast.save_failed"),
                     description: e instanceof Error ? e.message : String(e),
                     variant: "error",
                 });
@@ -441,13 +443,13 @@ export default function CustomizePage() {
 
     const categories: Category[] = useMemo(
         () => [
-            { id: "sources",       label: "Sources",       icon: Database, items: SOURCES },
-            { id: "tools",         label: "Tools",         icon: Plug,     items: TOOLS },
-            { id: "jurisdictions", label: "Jurisdictions", icon: Globe,    items: JURISDICTIONS },
-            { id: "skills",        label: "Skills",        icon: Sparkles, items: skills },
-            { id: "vault",         label: "Vault",         icon: Lock,     items: VAULT },
+            { id: "sources",       label: t("customize.tab.sources"),       icon: Database, items: SOURCES },
+            { id: "tools",         label: t("customize.tab.tools"),         icon: Plug,     items: TOOLS },
+            { id: "jurisdictions", label: t("customize.tab.jurisdictions"), icon: Globe,    items: JURISDICTIONS },
+            { id: "skills",        label: t("customize.tab.skills"),        icon: Sparkles, items: skills },
+            { id: "vault",         label: t("customize.tab.vault"),         icon: Lock,     items: VAULT },
         ],
-        [skills],
+        [skills, t],
     );
 
     const needle = q.trim().toLowerCase();
@@ -481,11 +483,10 @@ export default function CustomizePage() {
         <div className="max-w-6xl mx-auto px-6 md:px-10 py-8">
             <div className="flex items-center gap-2 mb-2">
                 <SlidersHorizontal className="w-6 h-6" />
-                <h1 className="text-2xl font-serif font-semibold">Customize</h1>
+                <h1 className="text-2xl font-serif font-semibold">{t("customize.title")}</h1>
             </div>
             <p className="text-sm text-muted-foreground mb-6 max-w-2xl">
-                Enable, upload, or create the components that shape your AI&apos;s
-                behavior.
+                {t("customize.intro")}
             </p>
 
             <div className="relative mb-4">
@@ -493,7 +494,7 @@ export default function CustomizePage() {
                 <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Search across sources, tools, skills, jurisdictions…"
+                    placeholder={t("customize.search_placeholder")}
                     className="w-full pl-9 pr-3 py-2.5 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400"
                 />
             </div>
@@ -501,7 +502,7 @@ export default function CustomizePage() {
             {/* Tabs */}
             <div className="flex flex-wrap gap-1 mb-6 border-b border-border">
                 <TabButton
-                    label="All"
+                    label={t("customize.tab.all")}
                     count={totalCount}
                     active={activeTab === "all"}
                     onClick={() => setActiveTab("all")}
@@ -509,7 +510,7 @@ export default function CustomizePage() {
                 {CATEGORIES_META.map((c) => (
                     <TabButton
                         key={c.id}
-                        label={c.label}
+                        label={t(c.labelKey)}
                         count={counts[c.id] ?? 0}
                         active={activeTab === c.id}
                         onClick={() => setActiveTab(c.id)}
@@ -519,9 +520,9 @@ export default function CustomizePage() {
 
             {unauthed && (
                 <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900">
-                    You&apos;re not signed in — toggles will not persist.{" "}
+                    {t("customize.unauthed")}{" "}
                     <a href="/login" className="underline">
-                        Sign in
+                        {t("action.sign_in")}
                     </a>
                     .
                 </div>
@@ -529,13 +530,13 @@ export default function CustomizePage() {
 
             {loading && (
                 <div className="text-sm text-muted-foreground py-12 text-center">
-                    Loading…
+                    {t("common.loading")}
                 </div>
             )}
 
             {!loading && filteredByCat.length === 0 && (
                 <div className="text-sm text-muted-foreground py-12 text-center">
-                    Nothing matches "{q}". Try clearing the search.
+                    {t("customize.empty", { q })}
                 </div>
             )}
 
@@ -562,7 +563,7 @@ export default function CustomizePage() {
                                         title={`Request a new ${cat.label.toLowerCase().replace(/s$/, "")}`}
                                     >
                                         <Plus className="w-3.5 h-3.5" />
-                                        Add
+                                        {t("customize.add")}
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -583,13 +584,13 @@ export default function CustomizePage() {
             {/* Footer hub: quick links to surfaces that aren't toggles */}
             <div className="mt-12 pt-8 border-t border-border">
                 <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-                    Related surfaces
+                    {t("customize.related")}
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <FooterLink href="/skills" icon={Sparkles} label="Skills authoring" />
-                    <FooterLink href="/workflows" icon={Library} label="Workflows" />
-                    <FooterLink href="/routines" icon={Repeat} label="Routines" />
-                    <FooterLink href="/integrations" icon={Plug} label="Integration hub" />
+                    <FooterLink href="/skills" icon={Sparkles} label={t("customize.related.skills")} />
+                    <FooterLink href="/workflows" icon={Library} label={t("customize.related.workflows")} />
+                    <FooterLink href="/routines" icon={Repeat} label={t("customize.related.routines")} />
+                    <FooterLink href="/integrations" icon={Plug} label={t("customize.related.integrations")} />
                 </div>
             </div>
         </div>

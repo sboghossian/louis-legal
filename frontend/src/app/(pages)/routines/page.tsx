@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -36,13 +37,13 @@ interface RoutineRun {
     status: "running" | "succeeded" | "failed";
 }
 
-const KIND_LABEL: Record<Routine["kind"], string> = {
-    digest: "Digest",
-    alert: "Alert",
-    newsletter: "Newsletter",
-    report: "Report",
-    "deadline-sweep": "Deadline Sweep",
-    custom: "Custom",
+const KIND_LABEL_KEYS: Record<Routine["kind"], string> = {
+    digest: "routines.kind.digest",
+    alert: "routines.kind.alert",
+    newsletter: "routines.kind.newsletter",
+    report: "routines.kind.report",
+    "deadline-sweep": "routines.kind.deadline_sweep",
+    custom: "routines.kind.custom",
 };
 
 const OUTPUT_ICONS: Record<Routine["outputChannel"], typeof Mail> = {
@@ -51,12 +52,12 @@ const OUTPUT_ICONS: Record<Routine["outputChannel"], typeof Mail> = {
     "in-app": MessageSquare,
 };
 
-const SCHEDULE_PRESETS: { label: string; cron: string }[] = [
-    { label: "Daily · 8:00 AM", cron: "0 8 * * *" },
-    { label: "Weekdays · 8:00 AM", cron: "0 8 * * 1-5" },
-    { label: "Weekly · Mon 9 AM", cron: "0 9 * * 1" },
-    { label: "Weekly · Fri 4 PM", cron: "0 16 * * 5" },
-    { label: "Monthly · 1st 9 AM", cron: "0 9 1 * *" },
+const SCHEDULE_PRESET_KEYS: { key: string; cron: string }[] = [
+    { key: "routines.preset.daily_8am", cron: "0 8 * * *" },
+    { key: "routines.preset.weekdays_8am", cron: "0 8 * * 1-5" },
+    { key: "routines.preset.weekly_mon", cron: "0 9 * * 1" },
+    { key: "routines.preset.weekly_fri", cron: "0 16 * * 5" },
+    { key: "routines.preset.monthly", cron: "0 9 1 * *" },
 ];
 
 function formatTime(iso?: string): string {
@@ -72,6 +73,7 @@ function formatTime(iso?: string): string {
 
 export default function RoutinesPage() {
     const confirm = useConfirm();
+    const { t } = useLocale();
     const [routines, setRoutines] = useState<Routine[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -117,8 +119,8 @@ export default function RoutinesPage() {
 
     async function remove(r: Routine) {
         const ok = await confirm({
-            title: "Delete this routine?",
-            message: `"${r.title}" will stop running and its history will be removed.`,
+            title: t("routines.delete.title"),
+            message: t("routines.delete.message", { title: r.title }),
             destructive: true,
         });
         if (!ok) return;
@@ -140,20 +142,20 @@ export default function RoutinesPage() {
         <div className="max-w-5xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-2">
                 <Repeat className="w-5 h-5" />
-                <h1 className="text-lg font-semibold">Routines</h1>
-                <Badge variant="secondary">{routines.filter(r => r.enabled).length} active</Badge>
+                <h1 className="text-lg font-semibold">{t("routines.title")}</h1>
+                <Badge variant="secondary">{t("routines.active", { count: routines.filter(r => r.enabled).length })}</Badge>
                 <Button size="sm" variant="ghost" className="ml-auto h-7 text-xs" onClick={refresh}>
-                    <RefreshCw className="w-3.5 h-3.5 mr-1" /> Refresh
+                    <RefreshCw className="w-3.5 h-3.5 mr-1" /> {t("action.refresh")}
                 </Button>
                 <Button size="sm" className="h-7 text-xs" onClick={() => setShowNew(true)}>
-                    <Plus className="w-3.5 h-3.5 mr-1" /> New routine
+                    <Plus className="w-3.5 h-3.5 mr-1" /> {t("routines.new")}
                 </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-6">
-                Recurring AI tasks: digests, alerts, newsletters, scheduled reports. Schedules use cron expressions; Louis dispatches to the chosen channel.
+                {t("routines.intro")}
             </p>
 
-            {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground">{t("common.loading")}</div>}
             {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 text-sm">{error}</div>}
 
             <div className="grid grid-cols-2 gap-4">
@@ -166,14 +168,14 @@ export default function RoutinesPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-1.5">
                                         <span className="font-medium text-sm truncate">{r.title}</span>
-                                        <span className="text-[10px] uppercase tracking-wide text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{KIND_LABEL[r.kind]}</span>
+                                        <span className="text-[10px] uppercase tracking-wide text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{t(KIND_LABEL_KEYS[r.kind])}</span>
                                     </div>
                                     <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{r.description}</div>
                                 </div>
                                 <button
                                     onClick={() => toggle(r)}
                                     className={`p-1.5 rounded text-xs ${r.enabled ? "text-green-700 hover:bg-green-50" : "text-muted-foreground hover:bg-muted"}`}
-                                    title={r.enabled ? "Pause" : "Activate"}
+                                    title={r.enabled ? t("routines.pause") : t("routines.activate")}
                                 >
                                     {r.enabled ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                                 </button>
@@ -189,11 +191,11 @@ export default function RoutinesPage() {
                                 </div>
                             </div>
                             <div className="flex justify-between text-[10px] text-muted-foreground mt-2">
-                                <span>last: {formatTime(r.lastRunAt)}</span>
+                                <span>{t("routines.last", { time: formatTime(r.lastRunAt) })}</span>
                                 <div className="flex items-center gap-2">
-                                    <button onClick={() => runNow(r)} className="text-blue-600 hover:underline">Run now</button>
-                                    <button onClick={() => openRuns(r)} className="text-muted-foreground hover:underline">Runs</button>
-                                    <button onClick={() => remove(r)} className="text-red-600 hover:underline">Delete</button>
+                                    <button onClick={() => runNow(r)} className="text-blue-600 hover:underline">{t("routines.run_now")}</button>
+                                    <button onClick={() => openRuns(r)} className="text-muted-foreground hover:underline">{t("routines.runs")}</button>
+                                    <button onClick={() => remove(r)} className="text-red-600 hover:underline">{t("action.delete")}</button>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +203,7 @@ export default function RoutinesPage() {
                 })}
                 {!loading && routines.length === 0 && (
                     <div className="col-span-2 text-center text-sm text-muted-foreground py-12">
-                        No routines yet. Click "New routine" to create one.
+                        {t("routines.empty")}
                     </div>
                 )}
             </div>
@@ -225,6 +227,7 @@ export default function RoutinesPage() {
 }
 
 function NewRoutineModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
+    const { t } = useLocale();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [prompt, setPrompt] = useState("");
@@ -253,70 +256,70 @@ function NewRoutineModal({ onClose, onCreated }: { onClose: () => void; onCreate
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
             <div className="bg-card rounded-lg w-full max-w-xl max-h-[90vh] flex flex-col">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
-                    <h2 className="font-semibold">New routine</h2>
+                    <h2 className="font-semibold">{t("routines.modal.title")}</h2>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
                 </div>
                 <div className="overflow-y-auto px-6 py-4 space-y-3">
                     <div>
-                        <Label className="text-xs">Title</Label>
-                        <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g., Weekly Matters Digest" className="mt-1" />
+                        <Label className="text-xs">{t("routines.modal.title_field")}</Label>
+                        <Input value={title} onChange={e => setTitle(e.target.value)} placeholder={t("routines.modal.title_placeholder")} className="mt-1" />
                     </div>
                     <div>
-                        <Label className="text-xs">Description (optional)</Label>
+                        <Label className="text-xs">{t("routines.modal.description")}</Label>
                         <Input value={description} onChange={e => setDescription(e.target.value)} className="mt-1" />
                     </div>
                     <div>
-                        <Label className="text-xs">Prompt</Label>
+                        <Label className="text-xs">{t("routines.modal.prompt")}</Label>
                         <textarea
                             value={prompt}
                             onChange={e => setPrompt(e.target.value)}
-                            placeholder="Compile a weekly digest of all active matters and upcoming deadlines."
+                            placeholder={t("routines.modal.prompt_placeholder")}
                             rows={3}
                             className="mt-1 w-full border border-border rounded px-3 py-2 text-sm"
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <Label className="text-xs">Kind</Label>
+                            <Label className="text-xs">{t("routines.modal.kind")}</Label>
                             <select value={kind} onChange={e => setKind(e.target.value as Routine["kind"])} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
-                                {Object.entries(KIND_LABEL).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+                                {Object.entries(KIND_LABEL_KEYS).map(([k, labelKey]) => <option key={k} value={k}>{t(labelKey)}</option>)}
                             </select>
                         </div>
                         <div>
-                            <Label className="text-xs">Output</Label>
+                            <Label className="text-xs">{t("routines.modal.output")}</Label>
                             <select value={outputChannel} onChange={e => setOutputChannel(e.target.value as Routine["outputChannel"])} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
-                                <option value="in-app">In-app</option>
-                                <option value="email">Email</option>
-                                <option value="slack">Slack</option>
+                                <option value="in-app">{t("routines.modal.output.inapp")}</option>
+                                <option value="email">{t("routines.modal.output.email")}</option>
+                                <option value="slack">{t("routines.modal.output.slack")}</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <Label className="text-xs">Schedule (cron)</Label>
+                        <Label className="text-xs">{t("routines.modal.schedule")}</Label>
                         <div className="flex gap-2 mt-1">
                             <Input value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="0 9 * * 1" className="font-mono" />
                         </div>
                         <div className="flex flex-wrap gap-1 mt-2">
-                            {SCHEDULE_PRESETS.map(p => (
+                            {SCHEDULE_PRESET_KEYS.map(p => (
                                 <button
                                     key={p.cron}
                                     onClick={() => setSchedule(p.cron)}
                                     className="text-[10px] px-2 py-0.5 bg-muted hover:bg-muted rounded"
                                 >
-                                    {p.label}
+                                    {t(p.key)}
                                 </button>
                             ))}
                         </div>
                     </div>
                     <label className="flex items-center gap-2 text-sm pt-2">
                         <input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
-                        <span>Enabled (run on schedule)</span>
+                        <span>{t("routines.modal.enabled_label")}</span>
                     </label>
                 </div>
                 <div className="px-6 py-4 border-t flex justify-end gap-2">
-                    <Button variant="outline" onClick={onClose}>Cancel</Button>
+                    <Button variant="outline" onClick={onClose}>{t("action.cancel")}</Button>
                     <Button onClick={submit} disabled={submitting || !title.trim() || !prompt.trim()}>
-                        {submitting ? "Creating…" : "Create routine"}
+                        {submitting ? t("routines.modal.creating") : t("routines.modal.create")}
                     </Button>
                 </div>
             </div>
@@ -325,18 +328,19 @@ function NewRoutineModal({ onClose, onCreated }: { onClose: () => void; onCreate
 }
 
 function RunsModal({ routine, runs, onClose }: { routine: Routine; runs: RoutineRun[]; onClose: () => void }) {
+    const { t } = useLocale();
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
             <div className="bg-card rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
                 <div className="px-6 py-4 border-b flex items-center justify-between">
                     <div>
-                        <h2 className="font-semibold">Run history</h2>
+                        <h2 className="font-semibold">{t("routines.runs.title")}</h2>
                         <div className="text-xs text-muted-foreground mt-0.5">{routine.title}</div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={onClose}><X className="w-4 h-4" /></Button>
                 </div>
                 <div className="overflow-y-auto px-6 py-4 space-y-2">
-                    {runs.length === 0 && <div className="text-sm text-muted-foreground italic">No runs yet. Click "Run now" to trigger one.</div>}
+                    {runs.length === 0 && <div className="text-sm text-muted-foreground italic">{t("routines.runs.empty")}</div>}
                     {runs.map(run => (
                         <div key={run.id} className="border rounded p-3 text-sm">
                             <div className="flex items-center gap-2 mb-1">
@@ -344,8 +348,8 @@ function RunsModal({ routine, runs, onClose }: { routine: Routine; runs: Routine
                                     run.status === "succeeded" ? "bg-green-100 text-green-700"
                                         : run.status === "failed" ? "bg-red-100 text-red-700"
                                             : "bg-amber-100 text-amber-700"
-                                }`}>{run.status}</span>
-                                <span className="text-xs text-muted-foreground">started {new Date(run.startedAt).toLocaleString()}</span>
+                                }`}>{t(`routines.runs.status.${run.status}`)}</span>
+                                <span className="text-xs text-muted-foreground">{t("routines.runs.started", { time: new Date(run.startedAt).toLocaleString() })}</span>
                             </div>
                             {run.output && <div className="text-xs whitespace-pre-wrap bg-muted p-2 rounded font-mono">{run.output}</div>}
                             {run.error && <div className="text-xs whitespace-pre-wrap bg-red-50 text-red-700 p-2 rounded">{run.error}</div>}

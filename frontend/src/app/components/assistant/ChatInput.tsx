@@ -31,6 +31,7 @@ import { VoiceModeOverlay } from "./VoiceModeOverlay";
 import { useSelectedModel } from "@/app/hooks/useSelectedModel";
 import { useRotatingPrompt } from "@/app/hooks/useRotatingPrompt";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import {
     getModelProvider,
     isModelAvailable,
@@ -104,6 +105,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
         writeAutoRoutePref(next);
     }, []);
     const { profile } = useUserProfile();
+    const { t } = useLocale();
     const apiKeys = profile?.apiKeys;
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [docSelectorOpen, setDocSelectorOpen] = useState(false);
@@ -224,7 +226,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
             stop: () => void;
         } | null;
         if (!rec) {
-            setVoiceError("Voice input is not supported in this browser");
+            setVoiceError(t("chat.voice.unsupported"));
             return;
         }
         if (isRecording) {
@@ -411,7 +413,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                             placeholder={
                                 value.length === 0
                                     ? rotatingPlaceholder
-                                    : "Ask a question about your documents..."
+                                    : t("chat.placeholder.default")
                             }
                             value={value}
                             onChange={handleChange}
@@ -436,12 +438,12 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                 <button
                                     type="button"
                                     onClick={onProjectsClick}
-                                    aria-label="Open projects"
+                                    aria-label={t("chat.aria.projects")}
                                     className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-muted-foreground hover:bg-muted hover:text-foreground/80 transition-colors"
                                 >
                                     <FolderOpen className="h-3.5 w-3.5" />
                                     <span className="hidden sm:inline">
-                                        Projects
+                                        {t("chat.btn.projects")}
                                     </span>
                                 </button>
                             )}
@@ -449,7 +451,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                 <button
                                     type="button"
                                     onClick={() => setWorkflowModalOpen(true)}
-                                    aria-label="Open workflows"
+                                    aria-label={t("chat.aria.workflows")}
                                     className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors ${selectedWorkflow ? "text-blue-600 hover:bg-blue-50" : "text-muted-foreground hover:bg-muted hover:text-foreground/80"}`}
                                 >
                                     {selectedWorkflow ? (
@@ -458,7 +460,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                         <Library className="h-3.5 w-3.5" />
                                     )}
                                     <span className="hidden sm:inline">
-                                        Workflows
+                                        {t("chat.btn.workflows")}
                                     </span>
                                 </button>
                             )}
@@ -466,13 +468,13 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                 <button
                                     type="button"
                                     onClick={() => setVoiceModeOpen(true)}
-                                    aria-label="Open voice mode"
-                                    title="Voice mode — continuous dictation with spoken replies"
+                                    aria-label={t("chat.aria.voice_mode")}
+                                    title={t("chat.voice.title.tooltip")}
                                     className="flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm text-muted-foreground hover:bg-muted hover:text-foreground/80 transition-colors"
                                 >
                                     <AudioLines className="h-3.5 w-3.5" />
                                     <span className="hidden sm:inline">
-                                        Voice mode
+                                        {t("chat.btn.voice_mode")}
                                     </span>
                                 </button>
                             )}
@@ -482,15 +484,15 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                     onClick={toggleVoice}
                                     aria-label={
                                         isRecording
-                                            ? "Stop voice input"
-                                            : "Start voice input"
+                                            ? t("chat.aria.voice_stop")
+                                            : t("chat.aria.voice_start")
                                     }
                                     title={
                                         voiceError
-                                            ? `Voice: ${voiceError}`
+                                            ? `${t("chat.btn.voice")}: ${voiceError}`
                                             : isRecording
-                                              ? "Listening — click to stop"
-                                              : "Dictate (Web Speech API)"
+                                              ? t("chat.voice.tip.listening")
+                                              : t("chat.voice.tip.dictate")
                                     }
                                     className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors ${
                                         isRecording
@@ -504,7 +506,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                         <Mic className="h-3.5 w-3.5" />
                                     )}
                                     <span className="hidden sm:inline">
-                                        {isRecording ? "Listening…" : "Voice"}
+                                        {isRecording ? t("chat.btn.listening") : t("chat.btn.voice")}
                                     </span>
                                 </button>
                             )}
@@ -521,13 +523,13 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                 aria-pressed={autoRoute}
                                 aria-label={
                                     autoRoute
-                                        ? "Auto-route on — classifier picks model"
-                                        : "Auto-route off — using selected model"
+                                        ? t("chat.auto.aria.on")
+                                        : t("chat.auto.aria.off")
                                 }
                                 title={
                                     autoRoute
-                                        ? "Auto-route on. Click to pin a specific model."
-                                        : "Auto-route off. Click to let the classifier pick."
+                                        ? t("chat.auto.tooltip.on")
+                                        : t("chat.auto.tooltip.off")
                                 }
                                 className={`flex items-center gap-1.5 rounded-lg px-2 h-8 text-sm transition-colors cursor-pointer ${
                                     autoRoute
@@ -536,7 +538,7 @@ export const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(
                                 }`}
                             >
                                 <Sparkles className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">Auto</span>
+                                <span className="hidden sm:inline">{t("chat.auto.label")}</span>
                             </button>
                             {!autoRoute && (
                                 <ModelToggle

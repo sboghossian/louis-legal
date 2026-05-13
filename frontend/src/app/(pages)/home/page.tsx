@@ -11,15 +11,17 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function HomeRedirect() {
     const router = useRouter();
+    const { t } = useLocale();
     useEffect(() => {
         router.replace("/assistant");
     }, [router]);
     return (
         <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Opening Louis…
+            {t("action.opening")}
         </div>
     );
 }

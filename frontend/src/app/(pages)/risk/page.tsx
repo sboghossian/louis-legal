@@ -4,14 +4,15 @@ import { useMemo, useState } from "react";
 import { ShieldAlert, AlertOctagon, AlertTriangle, AlertCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
-const SEVERITY_STYLE: Record<string, { bg: string; text: string; icon: typeof AlertOctagon; label: string }> = {
-    P0: { bg: "bg-red-100", text: "text-red-700", icon: AlertOctagon, label: "Dealbreaker" },
-    P1: { bg: "bg-amber-100", text: "text-amber-700", icon: AlertTriangle, label: "High" },
-    P2: { bg: "bg-yellow-50", text: "text-yellow-800", icon: AlertCircle, label: "Medium" },
-    P3: { bg: "bg-muted", text: "text-muted-foreground", icon: Info, label: "Low" },
+const SEVERITY_STYLE: Record<string, { bg: string; text: string; icon: typeof AlertOctagon; labelKey: string }> = {
+    P0: { bg: "bg-red-100", text: "text-red-700", icon: AlertOctagon, labelKey: "risk.severity.p0" },
+    P1: { bg: "bg-amber-100", text: "text-amber-700", icon: AlertTriangle, labelKey: "risk.severity.p1" },
+    P2: { bg: "bg-yellow-50", text: "text-yellow-800", icon: AlertCircle, labelKey: "risk.severity.p2" },
+    P3: { bg: "bg-muted", text: "text-muted-foreground", icon: Info, labelKey: "risk.severity.p3" },
 };
 
 interface Finding {
@@ -59,6 +60,7 @@ IN WITNESS WHEREOF, the parties have executed this Agreement.
 `;
 
 export default function RiskScanPage() {
+    const { t } = useLocale();
     const [text, setText] = useState(SAMPLE);
     const [jurisdiction, setJurisdiction] = useState<string>("");
     const [result, setResult] = useState<ScanResult | null>(null);
@@ -108,20 +110,20 @@ export default function RiskScanPage() {
         <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="flex items-center gap-3 mb-2">
                 <ShieldAlert className="w-6 h-6 text-foreground/80" />
-                <h1 className="text-2xl font-semibold">Contract Risk Scanner</h1>
+                <h1 className="text-2xl font-semibold">{t("risk.title")}</h1>
             </div>
             <p className="text-sm text-muted-foreground mb-8">
-                Rule-based red-flag detection. Paste a contract and Louis scans for missing protections, unilateral terms, and known gotchas across {`${30}+`} dimensions.
+                {t("risk.intro")}
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div className="bg-card border border-border rounded-lg p-5">
                     <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Contract text</h2>
+                        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("risk.contract_text")}</h2>
                         <div className="flex items-center gap-2">
-                            <Label htmlFor="jur" className="text-xs">Jurisdiction</Label>
+                            <Label htmlFor="jur" className="text-xs">{t("risk.jurisdiction")}</Label>
                             <select id="jur" value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} className="border border-border rounded text-xs px-2 py-1">
-                                <option value="">(auto)</option>
+                                <option value="">{t("risk.auto")}</option>
                                 <option value="UAE">UAE</option>
                                 <option value="KSA">KSA</option>
                                 <option value="LB">Lebanon</option>
@@ -139,10 +141,10 @@ export default function RiskScanPage() {
                     />
                     <div className="flex items-center gap-2 mt-3">
                         <Button onClick={scan} disabled={loading || !text.trim()}>
-                            {loading ? "Scanning…" : "Scan for risks"}
+                            {loading ? t("risk.scanning") : t("risk.scan_btn")}
                         </Button>
-                        <Button variant="outline" onClick={() => setText("")}>Clear</Button>
-                        <Button variant="ghost" onClick={() => setText(SAMPLE)} className="ml-auto text-xs">Load sample</Button>
+                        <Button variant="outline" onClick={() => setText("")}>{t("risk.clear")}</Button>
+                        <Button variant="ghost" onClick={() => setText(SAMPLE)} className="ml-auto text-xs">{t("risk.load_sample")}</Button>
                     </div>
                 </div>
 
@@ -150,7 +152,7 @@ export default function RiskScanPage() {
                 <div className="space-y-4">
                     {!result && !error && (
                         <div className="bg-card border border-border rounded-lg p-5">
-                            <div className="text-sm text-muted-foreground italic">Scan a contract to see its risk score and findings.</div>
+                            <div className="text-sm text-muted-foreground italic">{t("risk.empty")}</div>
                         </div>
                     )}
                     {error && (
@@ -159,7 +161,7 @@ export default function RiskScanPage() {
                     {result && (
                         <>
                             <div className={`bg-gradient-to-br ${scoreColor} border rounded-lg p-5`}>
-                                <div className="text-xs uppercase tracking-wide opacity-70">Risk score</div>
+                                <div className="text-xs uppercase tracking-wide opacity-70">{t("risk.score")}</div>
                                 <div className="text-4xl font-semibold mt-1">{result.riskScore} <span className="text-base opacity-50">/100</span></div>
                                 <div className="text-sm mt-2 opacity-90">{result.summary}</div>
                             </div>
@@ -171,7 +173,7 @@ export default function RiskScanPage() {
                                         <div key={sev} className={`rounded p-3 ${s.bg}`}>
                                             <div className="flex items-center gap-1.5 mb-1">
                                                 <Icon className={`w-4 h-4 ${s.text}`} />
-                                                <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{s.label}</span>
+                                                <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{t(s.labelKey)}</span>
                                             </div>
                                             <div className={`text-xl font-semibold ${s.text}`}>{result.countBySeverity[sev]}</div>
                                         </div>
@@ -180,7 +182,7 @@ export default function RiskScanPage() {
                             </div>
                             {Object.keys(result.countByCategory).length > 0 && (
                                 <div className="bg-card border border-border rounded-lg p-5">
-                                    <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">By category</div>
+                                    <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">{t("risk.by_category")}</div>
                                     <div className="flex flex-wrap gap-1.5">
                                         {Object.entries(result.countByCategory).sort((a,b) => b[1]-a[1]).map(([cat, n]) => (
                                             <span key={cat} className="bg-muted text-foreground/80 text-xs px-2 py-0.5 rounded-full">
@@ -197,7 +199,7 @@ export default function RiskScanPage() {
 
             {result && result.findings.length > 0 && (
                 <div className="space-y-6">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Findings ({result.findings.length})</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("risk.findings", { count: result.findings.length })}</h2>
                     {Object.entries(grouped).map(([cat, fs]) => (
                         <div key={cat}>
                             <h3 className="text-xs uppercase tracking-wide font-semibold text-muted-foreground mb-2">{cat}</h3>
@@ -211,7 +213,7 @@ export default function RiskScanPage() {
                                                 <Icon className={`w-4 h-4 mt-0.5 ${s.text}`} />
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                                                        <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{f.severity} · {s.label}</span>
+                                                        <span className={`text-[10px] uppercase font-semibold ${s.text}`}>{f.severity} · {t(s.labelKey)}</span>
                                                         <span className="text-xs text-muted-foreground font-mono">{f.ruleId}</span>
                                                     </div>
                                                     <div className="font-medium text-foreground">{f.title}</div>
@@ -222,11 +224,11 @@ export default function RiskScanPage() {
                                                         </div>
                                                     )}
                                                     <div className="mt-2 text-sm text-emerald-800 bg-emerald-50/40 border border-emerald-100 rounded p-2">
-                                                        <span className="font-semibold">Fix: </span>{f.remediation}
+                                                        <span className="font-semibold">{t("risk.fix")}</span>{f.remediation}
                                                     </div>
                                                     {f.alternateClauseId && (
                                                         <div className="mt-1 text-xs text-blue-700">
-                                                            See clause: <a href={`/clauses?q=${f.alternateClauseId}`} className="underline font-mono">{f.alternateClauseId}</a>
+                                                            {t("risk.see_clause")} <a href={`/clauses?q=${f.alternateClauseId}`} className="underline font-mono">{f.alternateClauseId}</a>
                                                         </div>
                                                     )}
                                                 </div>
@@ -241,7 +243,7 @@ export default function RiskScanPage() {
             )}
 
             <div className="mt-8 text-xs text-muted-foreground italic text-center">
-                Rule-based scanning catches known patterns. Semantic risks (commercial fairness, ambiguity, hidden gotchas) require human or LLM review on top.
+                {t("risk.footer")}
             </div>
         </div>
     );

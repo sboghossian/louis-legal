@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { AppearanceTab } from "./AppearanceTab";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import {
     DEFAULT_VOICE_PREFS,
     isSpeechRecognitionSupported,
@@ -27,20 +28,23 @@ import { loadVoices, pickDefaultVoice, speak } from "@/app/lib/voice/tts";
 
 type Tab = "profile" | "appearance" | "models" | "billing" | "team" | "data" | "integrations" | "notifications" | "security";
 
-const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: "profile",       label: "Profile",          icon: User },
-    { id: "appearance",    label: "Appearance",       icon: Palette },
-    { id: "models",        label: "Models & API Keys", icon: Plug },
-    { id: "billing",       label: "Billing & Plan",   icon: CreditCard },
-    { id: "team",          label: "Team",             icon: TeamIcon },
-    { id: "data",          label: "Data",             icon: Database },
-    { id: "integrations",  label: "Integrations",     icon: Plug },
-    { id: "notifications", label: "Notifications",    icon: Bell },
-    { id: "security",      label: "Security",         icon: Shield },
+const TAB_DEFS: { id: Tab; key: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: "profile",       key: "settings.tab.profile",       icon: User },
+    { id: "appearance",    key: "settings.tab.appearance",    icon: Palette },
+    { id: "models",        key: "settings.tab.models",        icon: Plug },
+    { id: "billing",       key: "settings.tab.billing",       icon: CreditCard },
+    { id: "team",          key: "settings.tab.team",          icon: TeamIcon },
+    { id: "data",          key: "settings.tab.data",          icon: Database },
+    { id: "integrations",  key: "settings.tab.integrations",  icon: Plug },
+    { id: "notifications", key: "settings.tab.notifications", icon: Bell },
+    { id: "security",      key: "settings.tab.security",      icon: Shield },
 ];
 
 export default function SettingsPage() {
     const [tab, setTab] = useState<Tab>("profile");
+    const { t } = useLocale();
+    const activeTabKey = TAB_DEFS.find(td => td.id === tab)?.key ?? "";
+    const activeTabLabel = activeTabKey ? t(activeTabKey) : "";
 
     return (
         <div className="flex h-full overflow-hidden">
@@ -48,17 +52,17 @@ export default function SettingsPage() {
             <div className="w-[240px] flex-shrink-0 border-r border-border p-4">
                 <div className="flex items-center gap-2 mb-4">
                     <SettingsIcon className="w-4 h-4" />
-                    <h1 className="font-semibold text-sm">Settings</h1>
+                    <h1 className="font-semibold text-sm">{t("settings.title")}</h1>
                 </div>
                 <nav className="space-y-1">
-                    {TABS.map(t => (
+                    {TAB_DEFS.map(td => (
                         <button
-                            key={t.id}
-                            onClick={() => setTab(t.id)}
-                            className={`w-full text-left px-3 py-1.5 rounded text-sm flex items-center gap-2 ${tab === t.id ? "bg-muted font-medium" : "text-foreground/80 hover:bg-muted"}`}
+                            key={td.id}
+                            onClick={() => setTab(td.id)}
+                            className={`w-full text-left px-3 py-1.5 rounded text-sm flex items-center gap-2 ${tab === td.id ? "bg-muted font-medium" : "text-foreground/80 hover:bg-muted"}`}
                         >
-                            <t.icon className="w-3.5 h-3.5" />
-                            {t.label}
+                            <td.icon className="w-3.5 h-3.5" />
+                            {t(td.key)}
                         </button>
                     ))}
                 </nav>
@@ -66,8 +70,8 @@ export default function SettingsPage() {
 
             {/* Right pane */}
             <div className="flex-1 overflow-y-auto px-8 py-6">
-                <h2 className="text-lg font-semibold mb-1">{TABS.find(t => t.id === tab)?.label}</h2>
-                <p className="text-xs text-muted-foreground mb-6">Configure {tab}.</p>
+                <h2 className="text-lg font-semibold mb-1">{activeTabLabel}</h2>
+                <p className="text-xs text-muted-foreground mb-6">{t("settings.subtitle", { tab: activeTabLabel.toLowerCase() })}</p>
 
                 {tab === "profile" && <ProfileTab />}
                 {tab === "appearance" && <AppearanceTab />}
@@ -86,22 +90,24 @@ export default function SettingsPage() {
 function ProfileTab() {
     const { user } = useAuth();
     const { profile } = useUserProfile();
+    const { t } = useLocale();
     const displayName =
         profile?.displayName?.trim() || user?.email?.split("@")[0] || "—";
     const email = user?.email || "—";
     const organisation = profile?.organisation?.trim() || "—";
     return (
         <div className="space-y-4">
-            <Card title="Display name" value={displayName} cta="Change" href="/account" />
-            <Card title="Email" value={email} sub={user?.email ? "Verified" : undefined} />
-            <Card title="Organisation" value={organisation} cta="Change" href="/account" />
-            <Card title="Language preference" value="Set in Appearance" />
-            <Note>Profile + identity management is in <a href="/account" className="underline">/account</a>.</Note>
+            <Card title={t("settings.profile.display_name")} value={displayName} cta={t("action.change")} href="/account" />
+            <Card title={t("settings.profile.email")} value={email} sub={user?.email ? t("settings.profile.email_verified") : undefined} />
+            <Card title={t("settings.profile.organisation")} value={organisation} cta={t("action.change")} href="/account" />
+            <Card title={t("settings.profile.language_pref")} value={t("settings.profile.language_pref.value")} />
+            <Note>{t("settings.profile.note")}</Note>
         </div>
     );
 }
 
 function ModelsTab() {
+    const { t } = useLocale();
     const [autoRouteModel, setAutoRouteModel] = useState<boolean>(() => {
         if (typeof window === "undefined") return true;
         const stored = window.localStorage.getItem("louis.autoRouteModel");
@@ -119,13 +125,13 @@ function ModelsTab() {
     return (
         <div className="space-y-4">
             <p className="text-sm text-foreground/80">
-                API keys + provider management has its own dedicated page with live state, masked keys, and per-provider defaults.
+                {t("settings.models.intro")}
             </p>
             <a href="/settings/api-keys" className="block border border-border rounded-lg p-4 hover:border-foreground transition">
                 <div className="flex items-center justify-between">
                     <div>
-                        <div className="font-medium text-sm">Open API Keys</div>
-                        <div className="text-xs text-muted-foreground">Add Claude · OpenAI · Gemini · Voyage · 9 more providers</div>
+                        <div className="font-medium text-sm">{t("settings.models.open_keys")}</div>
+                        <div className="text-xs text-muted-foreground">{t("settings.models.open_keys.sub")}</div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </div>
@@ -138,15 +144,14 @@ function ModelsTab() {
                     className="accent-foreground mt-0.5"
                 />
                 <div className="flex-1">
-                    <div className="font-medium text-sm">Auto-route model & playbook</div>
+                    <div className="font-medium text-sm">{t("settings.models.auto.title")}</div>
                     <div className="text-xs text-muted-foreground">
-                        Let Louis pick the cheapest capable model and the matching practice-area playbook for each message. Your composer pick always wins when set.
+                        {t("settings.models.auto.sub")}
                     </div>
                 </div>
             </label>
             <Note>
-                The skill router defaults to Gemini Flash for intent classification (cheap + fast).
-                Override via env <code>SKILLS_CLASSIFIER_MODEL</code>.
+                {t("settings.models.note")}
             </Note>
             <VoiceSection />
         </div>
@@ -160,6 +165,7 @@ function ModelsTab() {
  * same defaults. Hidden when neither STT nor TTS is supported.
  */
 function VoiceSection() {
+    const { t } = useLocale();
     const [open, setOpen] = useState(false);
     const [prefs, setPrefs] = useState<VoicePrefs>(DEFAULT_VOICE_PREFS);
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -220,10 +226,9 @@ function VoiceSection() {
                 <div className="flex items-center gap-3">
                     <AudioLines className="w-4 h-4 text-amber-700" />
                     <div>
-                        <div className="font-medium text-sm">Voice</div>
+                        <div className="font-medium text-sm">{t("settings.voice.title")}</div>
                         <div className="text-xs text-muted-foreground">
-                            Continuous dictation, spoken replies, speak-to-cite
-                            commands
+                            {t("settings.voice.subtitle")}
                         </div>
                     </div>
                 </div>
@@ -242,11 +247,10 @@ function VoiceSection() {
                         />
                         <div className="flex-1">
                             <div className="text-sm font-medium">
-                                Enable voice features
+                                {t("settings.voice.enable")}
                             </div>
                             <div className="text-[11px] text-muted-foreground">
-                                Master switch. Hides the voice-mode button and
-                                speaker icons when off.
+                                {t("settings.voice.enable.sub")}
                             </div>
                         </div>
                     </label>
@@ -254,7 +258,7 @@ function VoiceSection() {
                     {ttsOk && (
                         <div className="space-y-1.5">
                             <div className="text-xs font-medium text-foreground/80">
-                                Preferred voice
+                                {t("settings.voice.preferred")}
                             </div>
                             <select
                                 value={prefs.voiceURI ?? ""}
@@ -264,7 +268,7 @@ function VoiceSection() {
                                 className="w-full text-sm border border-border rounded px-2 py-1.5 bg-card"
                             >
                                 {visibleVoices.length === 0 && (
-                                    <option value="">System default</option>
+                                    <option value="">{t("settings.voice.system_default")}</option>
                                 )}
                                 {visibleVoices.map((v) => (
                                     <option key={v.voiceURI} value={v.voiceURI}>
@@ -274,8 +278,7 @@ function VoiceSection() {
                                 ))}
                             </select>
                             <div className="text-[10px] text-muted-foreground">
-                                Showing voices for {localeFamily}. System voices
-                                vary by OS + browser.
+                                {t("settings.voice.locale_note", { locale: localeFamily })}
                             </div>
                         </div>
                     )}
@@ -283,7 +286,7 @@ function VoiceSection() {
                     {ttsOk && (
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-xs font-medium text-foreground/80">
-                                <span>Speech rate</span>
+                                <span>{t("settings.voice.rate")}</span>
                                 <span className="text-muted-foreground font-normal tabular-nums">
                                     {prefs.rate.toFixed(2)}×
                                 </span>
@@ -305,7 +308,7 @@ function VoiceSection() {
                     {sttOk && (
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-xs font-medium text-foreground/80">
-                                <span>Auto-submit silence threshold</span>
+                                <span>{t("settings.voice.silence")}</span>
                                 <span className="text-muted-foreground font-normal tabular-nums">
                                     {(prefs.silenceMs / 1000).toFixed(1)}s
                                 </span>
@@ -322,8 +325,7 @@ function VoiceSection() {
                                 className="w-full accent-amber-700"
                             />
                             <div className="text-[10px] text-muted-foreground">
-                                How long Louis waits after you stop speaking
-                                before sending the transcript.
+                                {t("settings.voice.silence.sub")}
                             </div>
                         </div>
                     )}
@@ -334,15 +336,13 @@ function VoiceSection() {
                             onClick={testVoice}
                             className="flex items-center gap-2 h-8 px-3 rounded-md bg-card border border-border hover:border-amber-400 hover:bg-amber-50 text-sm transition-colors"
                         >
-                            <Play className="h-3 w-3" /> Test voice
+                            <Play className="h-3 w-3" /> {t("settings.voice.test")}
                         </button>
                     )}
 
                     {!sttOk && (
                         <Note>
-                            Speech recognition isn&apos;t supported in this
-                            browser. Use Chrome, Edge, or Arc for voice-mode
-                            dictation. Text-to-speech still works.
+                            {t("settings.voice.unsupported")}
                         </Note>
                     )}
                 </div>
@@ -352,30 +352,27 @@ function VoiceSection() {
 }
 
 function BillingTab() {
-    // Louis is 100% free. The "Billing" tab survives only as a destination
-    // for users following a deep link or stored search result — the actual
-    // page lives at /billing (also redirect-display). Keep both copies in
-    // sync if either changes.
+    const { t } = useLocale();
     return (
         <div className="space-y-4">
-            <Card title="Current plan" value="Free forever" sub="BYO API key — Louis never bills you. You pay your AI provider directly for the tokens you spend." />
+            <Card title={t("settings.billing.plan.title")} value={t("settings.billing.plan.value")} sub={t("settings.billing.plan.sub")} />
             <div className="rounded-lg border border-border bg-muted/30 p-5">
-                <div className="font-serif text-base text-foreground mb-1">No plan. No seat fee. No credits.</div>
+                <div className="font-serif text-base text-foreground mb-1">{t("settings.billing.free.title")}</div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                    There is nothing to upgrade to. Bring your own Anthropic / Gemini / OpenAI key in <a href="/settings/api-keys" className="text-amber-800 underline hover:text-amber-900">API Keys</a> and use the full workbench. Your tokens go directly to your provider; we don&apos;t take a margin.
+                    {t("settings.billing.free.intro.before")}<a href="/settings/api-keys" className="text-amber-800 underline hover:text-amber-900">{t("settings.billing.free.intro.link")}</a>{t("settings.billing.free.intro.after")}
                 </p>
                 <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
                     <div className="rounded border border-border bg-card p-3">
-                        <div className="text-foreground font-medium mb-0.5">Free</div>
-                        <div className="text-muted-foreground">Every surface, every skill, unlimited turns. Forever.</div>
+                        <div className="text-foreground font-medium mb-0.5">{t("settings.billing.col.free.title")}</div>
+                        <div className="text-muted-foreground">{t("settings.billing.col.free.sub")}</div>
                     </div>
                     <div className="rounded border border-border bg-card p-3">
-                        <div className="text-foreground font-medium mb-0.5">Your bill</div>
-                        <div className="text-muted-foreground">The cost shown in your AI provider dashboard. Nothing more.</div>
+                        <div className="text-foreground font-medium mb-0.5">{t("settings.billing.col.bill.title")}</div>
+                        <div className="text-muted-foreground">{t("settings.billing.col.bill.sub")}</div>
                     </div>
                     <div className="rounded border border-border bg-card p-3">
-                        <div className="text-foreground font-medium mb-0.5">Open source</div>
-                        <div className="text-muted-foreground">MIT licensed. Self-host if you want the data to stay home.</div>
+                        <div className="text-foreground font-medium mb-0.5">{t("settings.billing.col.os.title")}</div>
+                        <div className="text-muted-foreground">{t("settings.billing.col.os.sub")}</div>
                     </div>
                 </div>
             </div>
@@ -384,27 +381,29 @@ function BillingTab() {
 }
 
 function TeamTab() {
+    const { t } = useLocale();
     return (
         <div className="space-y-4">
             <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
-                <div className="font-medium text-foreground/80 mb-1">No team yet</div>
-                <div className="mb-4">Invite collaborators to share matters, skills, and routines.</div>
-                <Button size="sm" variant="outline">Invite team member</Button>
+                <div className="font-medium text-foreground/80 mb-1">{t("settings.team.empty.title")}</div>
+                <div className="mb-4">{t("settings.team.empty.intro")}</div>
+                <Button size="sm" variant="outline">{t("settings.team.empty.cta")}</Button>
             </div>
-            <Note>Team + role-based permissions ship on the Business plan. Single-user is free.</Note>
+            <Note>{t("settings.team.note")}</Note>
         </div>
     );
 }
 
 function DataTab() {
+    const { t } = useLocale();
     return (
         <div className="space-y-4">
-            <Card title="Document storage" value="Cloudflare R2 — bucket: louis" sub="See docs/STORAGE_SETUP.md" />
-            <Card title="Database region" value="Supabase · eu-west-1" />
-            <Card title="Data retention" value="Indefinite (per matter)" cta="Configure" />
+            <Card title={t("settings.data.storage")} value={t("settings.data.storage.value")} sub={t("settings.data.storage.sub")} />
+            <Card title={t("settings.data.region")} value={t("settings.data.region.value")} />
+            <Card title={t("settings.data.retention")} value={t("settings.data.retention.value")} cta={t("action.configure")} />
             <LegalDataHunterCard />
-            <Card title="Export my data" value="Download a JSON archive of your chats, projects, settings" cta="Export" />
-            <Card title="Delete account" value="Permanently delete account + all data" cta="Delete" href="/account" />
+            <Card title={t("settings.data.export.title")} value={t("settings.data.export.sub")} cta={t("action.export")} />
+            <Card title={t("settings.data.delete.title")} value={t("settings.data.delete.sub")} cta={t("action.delete")} href="/account" />
         </div>
     );
 }
@@ -418,6 +417,7 @@ function DataTab() {
  * commercial sources; users provide what they license.
  */
 function LegalDataHunterCard() {
+    const { t } = useLocale();
     const SOURCES: { id: string; label: string; jurisdiction: string }[] = [
         { id: "westlaw", label: "Westlaw", jurisdiction: "US · UK · Global" },
         { id: "lexis", label: "LexisNexis", jurisdiction: "Global" },
@@ -451,9 +451,9 @@ function LegalDataHunterCard() {
         <div className="border border-border rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <div className="font-medium text-sm text-foreground">Legal-data-hunter API keys</div>
+                    <div className="font-medium text-sm text-foreground">{t("settings.data.legal.title")}</div>
                     <div className="text-xs text-muted-foreground">
-                        Wire your own subscription to each research source. Keys stay in your browser; the backend forwards them only when a skill needs to fetch.
+                        {t("settings.data.legal.sub")}
                     </div>
                 </div>
             </div>
@@ -472,7 +472,7 @@ function LegalDataHunterCard() {
                                 type={reveal[s.id] ? "text" : "password"}
                                 value={keys[s.id] ?? ""}
                                 onChange={(e) => save(s.id, e.target.value)}
-                                placeholder={keys[s.id] ? "" : "API key"}
+                                placeholder={keys[s.id] ? "" : t("settings.data.legal.placeholder")}
                                 className="text-xs border border-border rounded px-2 py-1 w-44 focus:outline-none focus:ring-1 focus:ring-amber-300"
                             />
                             <button
@@ -482,7 +482,7 @@ function LegalDataHunterCard() {
                                 }
                                 className="text-[10px] text-muted-foreground hover:text-foreground px-1.5"
                             >
-                                {reveal[s.id] ? "Hide" : "Show"}
+                                {reveal[s.id] ? t("settings.data.legal.hide") : t("settings.data.legal.show")}
                             </button>
                         </div>
                     </div>
@@ -493,16 +493,17 @@ function LegalDataHunterCard() {
 }
 
 function IntegrationsTab() {
+    const { t } = useLocale();
     return (
         <div className="space-y-4">
             <p className="text-sm text-foreground/80">
-                Connections to OpenClaw, MS Word, GitHub, MCP servers, legal-research databases, and 25+ other tools have their own dedicated page.
+                {t("settings.integrations.intro")}
             </p>
             <a href="/integrations" className="block border border-border rounded-lg p-4 hover:border-foreground transition">
                 <div className="flex items-center justify-between">
                     <div>
-                        <div className="font-medium text-sm">Open Integrations Hub</div>
-                        <div className="text-xs text-muted-foreground">32 integrations · OAuth · API key · MCP URL</div>
+                        <div className="font-medium text-sm">{t("settings.integrations.cta")}</div>
+                        <div className="text-xs text-muted-foreground">{t("settings.integrations.cta.sub")}</div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </div>
@@ -512,13 +513,14 @@ function IntegrationsTab() {
 }
 
 function NotificationsTab() {
+    const { t } = useLocale();
     const NOTIF_DEFAULTS = [
-        { id: "deadlines",      label: "Approaching deadlines",        enabled: true,  channel: "email + slack" },
-        { id: "matter-comments", label: "Comments on your matters",    enabled: true,  channel: "email" },
-        { id: "skills-router",  label: "Skills router decisions",      enabled: false, channel: "in-app" },
-        { id: "weekly-digest",  label: "Weekly digest",                enabled: true,  channel: "email" },
-        { id: "credit-threshold", label: "Credit threshold",            enabled: true,  channel: "email" },
-        { id: "team-activity",  label: "Team activity",                enabled: false, channel: "in-app" },
+        { id: "deadlines",       label: t("settings.notif.deadlines"),      enabled: true,  channel: "email + slack" },
+        { id: "matter-comments", label: t("settings.notif.matters"),         enabled: true,  channel: "email" },
+        { id: "skills-router",   label: t("settings.notif.skills_router"),   enabled: false, channel: "in-app" },
+        { id: "weekly-digest",   label: t("settings.notif.weekly"),          enabled: true,  channel: "email" },
+        { id: "credit-threshold",label: t("settings.notif.credit"),          enabled: true,  channel: "email" },
+        { id: "team-activity",   label: t("settings.notif.team"),            enabled: false, channel: "in-app" },
     ];
     const [state, setState] = useState<Record<string, boolean>>({});
     useEffect(() => {
@@ -552,23 +554,24 @@ function NotificationsTab() {
                     />
                     <div className="flex-1">
                         <div className="text-sm">{n.label}</div>
-                        <div className="text-[10px] text-muted-foreground">via {n.channel}</div>
+                        <div className="text-[10px] text-muted-foreground">{t("settings.notif.via", { channel: n.channel })}</div>
                     </div>
                 </label>
             ))}
-            <p className="text-[11px] text-muted-foreground mt-3">Preferences persist in your browser. Server-side delivery routing wires up when notification channels (email + Slack) are configured in Integrations.</p>
+            <p className="text-[11px] text-muted-foreground mt-3">{t("settings.notifications.persist")}</p>
         </div>
     );
 }
 
 function SecurityTab() {
+    const { t } = useLocale();
     return (
         <div className="space-y-4">
-            <Card title="Two-factor authentication" value="Not enabled" cta="Enable" />
-            <Card title="Active sessions" value="2 devices" cta="View" />
-            <Card title="Audit log" value="View all actions on your account" cta="View" />
-            <Card title="SSO / SAML" value="Available on Business plan" cta="Learn more" />
-            <Card title="Data residency" value="EU (eu-west-1)" sub="Required for GDPR/PDPL" />
+            <Card title={t("settings.security.2fa")} value={t("settings.security.2fa.value")} cta={t("settings.security.2fa.cta")} />
+            <Card title={t("settings.security.sessions")} value={t("settings.security.sessions.value")} cta={t("action.view")} />
+            <Card title={t("settings.security.audit")} value={t("settings.security.audit.value")} cta={t("action.view")} />
+            <Card title={t("settings.security.sso")} value={t("settings.security.sso.value")} cta={t("settings.security.sso.cta")} />
+            <Card title={t("settings.security.residency")} value={t("settings.security.residency.value")} sub={t("settings.security.residency.sub")} />
         </div>
     );
 }

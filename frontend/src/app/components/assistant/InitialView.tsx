@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { LouisIcon } from "@/components/chat/louis-icon";
 import { ChatInput } from "./ChatInput";
 import { SelectAssistantProjectModal } from "./SelectAssistantProjectModal";
@@ -57,6 +58,7 @@ function relativeTime(iso?: string): string {
 export function InitialView({ onSubmit }: InitialViewProps) {
     const { user } = useAuth();
     const { profile } = useUserProfile();
+    const { t } = useLocale();
     const router = useRouter();
     const [loaded, setLoaded] = useState(false);
     const [projectModalOpen, setProjectModalOpen] = useState(false);
@@ -137,7 +139,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                                     "transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 800ms ease-in-out 300ms",
                             }}
                         >
-                            Hi, {username}
+                            {t("assistant.hi_named", { name: username })}
                         </h1>
                     </div>
 
@@ -152,16 +154,16 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                     {/* Quick prompts */}
                     <div className="mt-6">
                         <p className="text-[10px] uppercase tracking-wide text-muted-foreground text-center mb-3">
-                            Try one of these
+                            {t("assistant.try_one_of_these")}
                         </p>
                         <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
                             {[
-                                "Draft a mutual NDA for UAE under DIFC law",
-                                "Review this MSA from the client side",
-                                "Compare non-compete enforceability LB vs KSA vs UAE",
-                                "Calculate end-of-service for a 6-year UAE employee",
-                                "Draft a Saudi labor contract for a marketing manager",
-                                "Summarize this lease in 5 bullets",
+                                t("assistant.suggest.nda"),
+                                t("assistant.suggest.review_msa"),
+                                t("assistant.suggest.compare"),
+                                t("assistant.suggest.eos"),
+                                t("assistant.suggest.saudi_labor"),
+                                t("assistant.suggest.lease"),
                             ].map((p) => (
                                 <button
                                     key={p}
@@ -183,8 +185,8 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                 {/* Continue (recent chats) */}
                 {recentChats.length > 0 && (
                     <WidgetRow
-                        title="Continue"
-                        actionLabel="All chats →"
+                        title={t("assistant.row.continue")}
+                        actionLabel={t("assistant.row.all_chats")}
                         onAction={() => router.push("/all-chats")}
                     >
                         {recentChats.map((c) => (
@@ -197,7 +199,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                             >
                                 <MessageSquare className="w-4 h-4 text-muted-foreground mb-2" />
                                 <div className="font-medium text-sm text-foreground line-clamp-2">
-                                    {c.title || "Untitled chat"}
+                                    {c.title || t("common.untitled_chat")}
                                 </div>
                                 <div className="text-[10px] text-muted-foreground mt-1">
                                     {relativeTime(c.created_at)}
@@ -210,8 +212,8 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                 {/* Projects */}
                 {projects.length > 0 && (
                     <WidgetRow
-                        title="Projects"
-                        actionLabel="All projects →"
+                        title={t("assistant.row.projects")}
+                        actionLabel={t("assistant.row.all_projects")}
                         onAction={() => router.push("/projects")}
                     >
                         {projects.map((p) => (
@@ -237,31 +239,30 @@ export function InitialView({ onSubmit }: InitialViewProps) {
                 )}
 
                 {/* Library shortcuts */}
-                <WidgetRow title="Library">
+                <WidgetRow title={t("assistant.row.library")}>
                     <ShortcutCard
                         icon={BookMarked}
-                        title="Prompt Library"
-                        sub="152 expert prompts to pick from"
+                        title={t("assistant.shortcut.prompts.title")}
+                        sub={t("assistant.shortcut.prompts.sub")}
                         href="/prompt-library"
                     />
                     <ShortcutCard
                         icon={Rss}
-                        title="Newsfeed"
-                        sub="Reddit on legal industry"
+                        title={t("assistant.shortcut.feed.title")}
+                        sub={t("assistant.shortcut.feed.sub")}
                         href="/feed"
                     />
                     <ShortcutCard
                         icon={FolderOpen}
-                        title="Drafting Board"
-                        sub="Agentic legal workflows"
+                        title={t("assistant.shortcut.drafting.title")}
+                        sub={t("assistant.shortcut.drafting.sub")}
                         href="/drafting-board"
                     />
                 </WidgetRow>
 
                 <div className="text-center">
                     <p className="text-xs text-muted-foreground mt-4">
-                        Louis provides legal information, not legal advice. AI
-                        can make mistakes.
+                        {t("assistant.disclaimer")}
                     </p>
                 </div>
             </div>

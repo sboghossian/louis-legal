@@ -18,6 +18,7 @@ import {
     Copy,
     Check,
 } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
 const SITE_URL = "https://legal.dashable.dev";
@@ -25,6 +26,7 @@ const PITCH =
     "Louis — the open-source legal AI workbench. MIT licensed, bring your own API key, self-hostable. The free alternative to Harvey / Legora / CoCounsel.";
 
 export default function ShareLouisPage() {
+    const { t } = useLocale();
     const [copied, setCopied] = useState<string | null>(null);
 
     function copy(text: string, key: string) {
@@ -44,51 +46,50 @@ export default function ShareLouisPage() {
         <div className="max-w-3xl mx-auto px-6 md:px-10 py-10">
             <div className="flex items-center gap-2 mb-2">
                 <Share2 className="w-5 h-5 text-amber-700" />
-                <h1 className="text-2xl font-serif font-semibold">Share Louis</h1>
+                <h1 className="text-2xl font-serif font-semibold">{t("share.title")}</h1>
             </div>
             <p className="text-sm text-muted-foreground mb-8 max-w-xl">
-                Louis is free and open source. The most useful thing you can do
-                is tell another lawyer or legal-tech engineer about it.
+                {t("share.intro")}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <ShareCard
                     icon={Twitter}
-                    title="Post on X / Twitter"
+                    title={t("share.card.twitter")}
                     href={`https://twitter.com/intent/tweet?text=${tweet}`}
                 />
                 <ShareCard
                     icon={Linkedin}
-                    title="Share on LinkedIn"
+                    title={t("share.card.linkedin")}
                     href={linkedinShare}
                 />
                 <ShareCard
                     icon={Mail}
-                    title="Email a colleague"
-                    href={`mailto:?subject=${encodeURIComponent("Have you tried Louis?")}&body=${mailBody}`}
+                    title={t("share.card.email")}
+                    href={`mailto:?subject=${encodeURIComponent(t("share.email.subject"))}&body=${mailBody}`}
                 />
                 <ShareCard
                     icon={MessageSquare}
-                    title="Tell your group chat"
+                    title={t("share.card.chat")}
                     onClick={() => copy(`${PITCH} ${SITE_URL}`, "pitch")}
-                    badge={copied === "pitch" ? "Copied!" : "Copy pitch"}
+                    badge={copied === "pitch" ? t("share.copied") : t("share.copy_pitch")}
                 />
                 <ShareCard
                     icon={Github}
-                    title="Star on GitHub"
+                    title={t("share.card.github")}
                     href={REPO_URL}
                 />
                 <ShareCard
                     icon={Copy}
-                    title="Copy the link"
+                    title={t("share.card.copy_url")}
                     onClick={() => copy(SITE_URL, "url")}
-                    badge={copied === "url" ? "Copied!" : SITE_URL}
+                    badge={copied === "url" ? t("share.copied") : SITE_URL}
                 />
             </div>
 
             <div className="mt-10 rounded-xl border border-[#e7e2d6] bg-[#fbf8f2] p-5">
                 <div className="text-xs uppercase tracking-wider text-amber-700 mb-2">
-                    Suggested copy
+                    {t("share.suggested")}
                 </div>
                 <p className="text-sm text-foreground/80 font-serif leading-relaxed mb-3">
                     {PITCH}
@@ -100,12 +101,12 @@ export default function ShareLouisPage() {
                     {copied === "blurb" ? (
                         <>
                             <Check className="w-3 h-3 text-emerald-600" />
-                            Copied
+                            {t("share.copied_check")}
                         </>
                     ) : (
                         <>
                             <Copy className="w-3 h-3" />
-                            Copy this paragraph
+                            {t("share.copy_paragraph")}
                         </>
                     )}
                 </button>

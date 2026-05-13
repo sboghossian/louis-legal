@@ -7,6 +7,7 @@ import { HeaderSearchBtn } from "@/app/components/shared/HeaderSearchBtn";
 import { listProjects, updateProject, deleteProject } from "@/app/lib/louisApi";
 import { OwnerOnlyModal } from "@/app/components/shared/OwnerOnlyModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { LouisProject } from "@/app/components/shared/types";
 import { NewProjectModal } from "./NewProjectModal";
 import { ToolbarTabs } from "@/app/components/shared/ToolbarTabs";
@@ -41,6 +42,7 @@ export function ProjectsOverview() {
     const actionsRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { user } = useAuth();
+    const { t } = useLocale();
 
     useEffect(() => {
         listProjects()
@@ -100,9 +102,9 @@ export function ProjectsOverview() {
     }
 
     const tabs: { id: Tab; label: string }[] = [
-        { id: "all", label: "All" },
-        { id: "mine", label: "Mine" },
-        { id: "shared-with-me", label: "Shared with me" },
+        { id: "all", label: t("projects.tab.all") },
+        { id: "mine", label: t("projects.tab.mine") },
+        { id: "shared-with-me", label: t("projects.tab.shared") },
     ];
 
     async function handleRenameSubmit(projectId: string) {
@@ -142,7 +144,7 @@ export function ProjectsOverview() {
         setProjects((prev) => prev.filter((p) => !owned.includes(p.id)));
         if (blocked > 0) {
             setOwnerOnlyAction(
-                `delete ${blocked} of the selected projects — only the project owner can delete a project`,
+                t("projects.owner_only.delete", { count: blocked }),
             );
         }
     }
@@ -155,7 +157,7 @@ export function ProjectsOverview() {
                         onClick={() => setActionsOpen((v) => !v)}
                         className="flex items-center gap-1 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors"
                     >
-                        Actions
+                        {t("projects.actions")}
                         <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                     {actionsOpen && (
@@ -164,7 +166,7 @@ export function ProjectsOverview() {
                                 onClick={handleDeleteSelected}
                                 className="w-full px-3 py-1.5 text-left text-xs text-red-600 hover:bg-red-50 transition-colors"
                             >
-                                Delete
+                                {t("action.delete")}
                             </button>
                         </div>
                     )}
@@ -178,13 +180,13 @@ export function ProjectsOverview() {
             {/* Page header */}
             <div className="flex items-center justify-between px-8 py-4">
                 <h1 className="text-2xl font-medium font-serif text-foreground">
-                    Projects
+                    {t("projects.title")}
                 </h1>
                 <div className="flex items-center gap-2">
                     <HeaderSearchBtn
                         value={search}
                         onChange={setSearch}
-                        placeholder="Search projects…"
+                        placeholder={t("projects.search_placeholder")}
                     />
                     <button
                         onClick={() => setModalOpen(true)}
@@ -221,15 +223,15 @@ export function ProjectsOverview() {
                         )}
                     </div>
                     <div className={`sticky left-8 z-[60] ${NAME_COL_W} bg-card pl-2 text-left`}>
-                        Name
+                        {t("projects.col.name")}
                     </div>
-                    <div className="ml-auto w-32 shrink-0 text-left">CM</div>
-                    <div className="w-24 shrink-0 text-left">Files</div>
-                    <div className="w-24 shrink-0 text-left">Chats</div>
+                    <div className="ml-auto w-32 shrink-0 text-left">{t("projects.col.cm")}</div>
+                    <div className="w-24 shrink-0 text-left">{t("projects.col.files")}</div>
+                    <div className="w-24 shrink-0 text-left">{t("projects.col.chats")}</div>
                     <div className="w-36 shrink-0 text-left">
-                        Tabular Reviews
+                        {t("projects.col.reviews")}
                     </div>
-                    <div className="w-32 shrink-0 text-left">Created</div>
+                    <div className="w-32 shrink-0 text-left">{t("projects.col.created")}</div>
                     <div className="w-8 shrink-0" />
                 </div>
 
@@ -269,23 +271,21 @@ export function ProjectsOverview() {
                             <>
                                 <FolderOpen className="h-8 w-8 text-muted-foreground mb-4" />
                                 <p className="text-2xl font-medium font-serif text-foreground">
-                                    Projects
+                                    {t("projects.empty.title")}
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground max-w-xs">
-                                    Upload documents into projects and to
-                                    commence chats and tabular reviews with
-                                    them.
+                                    {t("projects.empty.intro")}
                                 </p>
                                 <button
                                     onClick={() => setModalOpen(true)}
                                     className="mt-4 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white hover:bg-foreground transition-colors shadow-md"
                                 >
-                                    + Create New
+                                    {t("action.create_new")}
                                 </button>
                             </>
                         ) : (
                             <p className="text-sm text-muted-foreground">
-                                No {activeTab} projects
+                                {t("projects.empty.no_filtered", { tab: activeTab })}
                             </p>
                         )}
                     </div>
@@ -368,7 +368,7 @@ export function ProjectsOverview() {
                                             onBlur={() =>
                                                 handleCmSubmit(project.id)
                                             }
-                                            placeholder="CM #"
+                                            placeholder={t("projects.cm_placeholder")}
                                             className="w-full text-sm text-foreground bg-transparent outline-none"
                                         />
                                     ) : (
@@ -448,23 +448,21 @@ export function ProjectsOverview() {
                             <>
                                 <FolderOpen className="h-8 w-8 text-muted-foreground mb-4" />
                                 <p className="text-2xl font-medium font-serif text-foreground">
-                                    Projects
+                                    {t("projects.empty.title")}
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground max-w-xs">
-                                    Upload documents into projects and to
-                                    commence chats and tabular reviews with
-                                    them.
+                                    {t("projects.empty.intro")}
                                 </p>
                                 <button
                                     onClick={() => setModalOpen(true)}
                                     className="mt-4 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white hover:bg-foreground transition-colors shadow-md"
                                 >
-                                    + Create New
+                                    {t("action.create_new")}
                                 </button>
                             </>
                         ) : (
                             <p className="text-sm text-muted-foreground">
-                                No {activeTab} projects
+                                {t("projects.empty.no_filtered", { tab: activeTab })}
                             </p>
                         )}
                     </div>
@@ -486,7 +484,7 @@ export function ProjectsOverview() {
                                         {project.name}
                                     </span>
                                     <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                                        {isOwner ? "Mine" : "Shared"}
+                                        {isOwner ? t("projects.badge.mine") : t("projects.badge.shared")}
                                     </span>
                                 </div>
                                 {project.cm_number && (
@@ -498,9 +496,11 @@ export function ProjectsOverview() {
                                     {formatDate(project.created_at)}
                                 </div>
                                 <div className="mt-1 text-xs text-muted-foreground">
-                                    {project.document_count ?? 0} files ·{" "}
-                                    {project.chat_count ?? 0} chats ·{" "}
-                                    {project.review_count ?? 0} reviews
+                                    {t("projects.mobile.counts", {
+                                        files: project.document_count ?? 0,
+                                        chats: project.chat_count ?? 0,
+                                        reviews: project.review_count ?? 0,
+                                    })}
                                 </div>
                             </button>
                         );

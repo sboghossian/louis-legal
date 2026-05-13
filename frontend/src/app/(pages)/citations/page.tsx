@@ -5,6 +5,7 @@ import { Quote, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -24,6 +25,7 @@ interface RenderedCitation {
 }
 
 export default function CitationsPage() {
+    const { t } = useLocale();
     const [sourceType, setSourceType] = useState<SourceType>("case");
     const [styles, setStyles] = useState<StyleInfo[]>([]);
 
@@ -98,45 +100,45 @@ export default function CitationsPage() {
         <div className="max-w-5xl mx-auto px-6 py-8">
             <div className="flex items-center gap-3 mb-2">
                 <Quote className="w-6 h-6 text-foreground/80" />
-                <h1 className="text-2xl font-semibold">Citation Engine</h1>
+                <h1 className="text-2xl font-semibold">{t("citations.title")}</h1>
             </div>
             <p className="text-sm text-muted-foreground mb-8">
-                Format the same source in every legal citation style. Switching between Bluebook, OSCOLA, DIFC, ADGM, KSA, UAE, Lebanon, French (Dalloz), and EU ECLI conventions.
+                {t("citations.intro")}
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Inputs */}
                 <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Source</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("citations.source")}</h2>
 
                     <div>
-                        <Label className="text-xs">Source type</Label>
+                        <Label className="text-xs">{t("citations.source_type")}</Label>
                         <select value={sourceType} onChange={e => setSourceType(e.target.value as SourceType)} className="mt-1 w-full border border-border rounded px-3 py-2 text-sm">
-                            <option value="case">Case / Judgment</option>
-                            <option value="statute">Statute / Decree</option>
-                            <option value="regulation">Regulation</option>
-                            <option value="treaty">Treaty</option>
-                            <option value="secondary">Secondary (book / article)</option>
+                            <option value="case">{t("citations.source_type.case")}</option>
+                            <option value="statute">{t("citations.source_type.statute")}</option>
+                            <option value="regulation">{t("citations.source_type.regulation")}</option>
+                            <option value="treaty">{t("citations.source_type.treaty")}</option>
+                            <option value="secondary">{t("citations.source_type.secondary")}</option>
                         </select>
                     </div>
 
                     {sourceType === "case" && (
                         <>
-                            <Field label="Case name (e.g., Smith v Jones)">
+                            <Field label={t("citations.case_name")}>
                                 <Input value={caseName} onChange={e => setCaseName(e.target.value)} />
                             </Field>
                             <div className="grid grid-cols-2 gap-3">
-                                <Field label="Year">
+                                <Field label={t("citations.year")}>
                                     <Input type="number" value={caseYear} onChange={e => setCaseYear(parseInt(e.target.value) || 0)} />
                                 </Field>
-                                <Field label="Court">
+                                <Field label={t("citations.court")}>
                                     <Input value={court} onChange={e => setCourt(e.target.value)} placeholder="DIFC CFI / EWHC / Cass. com." />
                                 </Field>
                             </div>
-                            <Field label="Citation / docket">
+                            <Field label={t("citations.citation_field")}>
                                 <Input value={citation} onChange={e => setCitation(e.target.value)} placeholder="CFI-001-2024 / [2024] 1 WLR 123 / ECLI:..." />
                             </Field>
-                            <Field label="Paragraph (pinpoint)">
+                            <Field label={t("citations.paragraph")}>
                                 <Input type="number" value={paragraph} onChange={e => setParagraph(parseInt(e.target.value) || "")} />
                             </Field>
                         </>
@@ -144,18 +146,18 @@ export default function CitationsPage() {
 
                     {sourceType === "statute" && (
                         <>
-                            <Field label="Statute name">
+                            <Field label={t("citations.statute_name")}>
                                 <Input value={statuteName} onChange={e => setStatuteName(e.target.value)} />
                             </Field>
                             <div className="grid grid-cols-2 gap-3">
-                                <Field label="Number">
+                                <Field label={t("citations.number")}>
                                     <Input value={statuteNumber} onChange={e => setStatuteNumber(e.target.value)} placeholder="33/2021 / M/19 / 36/2012" />
                                 </Field>
-                                <Field label="Year enacted">
+                                <Field label={t("citations.year_enacted")}>
                                     <Input type="number" value={yearEnacted} onChange={e => setYearEnacted(parseInt(e.target.value) || "")} />
                                 </Field>
                             </div>
-                            <Field label="Article / Section">
+                            <Field label={t("citations.article")}>
                                 <Input value={article} onChange={e => setArticle(e.target.value)} />
                             </Field>
                         </>
@@ -163,17 +165,17 @@ export default function CitationsPage() {
 
                     {sourceType === "secondary" && (
                         <>
-                            <Field label="Author">
+                            <Field label={t("citations.author")}>
                                 <Input value={author} onChange={e => setAuthor(e.target.value)} />
                             </Field>
-                            <Field label="Title">
+                            <Field label={t("citations.work_title")}>
                                 <Input value={title} onChange={e => setTitle(e.target.value)} />
                             </Field>
                             <div className="grid grid-cols-2 gap-3">
-                                <Field label="Publisher">
+                                <Field label={t("citations.publisher")}>
                                     <Input value={publisher} onChange={e => setPublisher(e.target.value)} />
                                 </Field>
-                                <Field label="Year">
+                                <Field label={t("citations.year")}>
                                     <Input type="number" value={year} onChange={e => setYear(parseInt(e.target.value) || "")} />
                                 </Field>
                             </div>
@@ -181,16 +183,16 @@ export default function CitationsPage() {
                     )}
 
                     <Button onClick={formatAll} className="w-full" disabled={loading}>
-                        {loading ? "Formatting…" : "Format in all styles"}
+                        {loading ? t("citations.formatting") : t("citations.format_all")}
                     </Button>
                 </div>
 
                 {/* Results */}
                 <div className="bg-card border border-border rounded-lg p-6">
-                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">Renditions</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">{t("citations.renditions")}</h2>
                     {results.length === 0 && (
                         <div className="text-sm text-muted-foreground italic py-12 text-center">
-                            Enter source details and click Format to see citations in every supported style.
+                            {t("citations.empty")}
                         </div>
                     )}
                     {results.length > 0 && (
@@ -211,7 +213,7 @@ export default function CitationsPage() {
                                         </div>
                                         <div className="text-sm font-serif" dangerouslySetInnerHTML={{ __html: italicize(r.rendered) }} />
                                         {r.short && (
-                                            <div className="text-xs text-muted-foreground mt-1">short: <em>{r.short.replace(/\*/g, "")}</em></div>
+                                            <div className="text-xs text-muted-foreground mt-1">{t("citations.short")} <em>{r.short.replace(/\*/g, "")}</em></div>
                                         )}
                                         {r.warnings && r.warnings.length > 0 && (
                                             <div className="text-xs text-amber-700 mt-1">⚠ {r.warnings.join("; ")}</div>

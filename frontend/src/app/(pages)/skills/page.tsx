@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type RegistryEntry = {
     id: string;
@@ -76,6 +77,7 @@ interface SyncConfig {
 export default function SkillsPage() {
     const router = useRouter();
     const confirm = useConfirm();
+    const { t } = useLocale();
     const [view, setView] = useState<"library" | "observability">("library");
     const [syncConfig, setSyncConfig] = useState<SyncConfig | null>(null);
     const [showSyncSetup, setShowSyncSetup] = useState(false);
@@ -257,24 +259,24 @@ export default function SkillsPage() {
                 <div className="px-5 py-4 border-b border-border">
                     <div className="flex items-center gap-2 mb-3">
                         <Sparkles className="w-5 h-5 text-foreground/80" />
-                        <h1 className="text-lg font-semibold">Skills</h1>
+                        <h1 className="text-lg font-semibold">{t("skills.title")}</h1>
                         <Badge variant="secondary">{entries.length}</Badge>
                         <Button size="sm" variant="ghost" className="ml-auto h-7 text-xs" onClick={() => setView("observability")}>
                             <Activity className="w-3.5 h-3.5 mr-1" />
-                            Router
+                            {t("skills.router_btn")}
                         </Button>
                         <Button
                             size="sm"
                             variant={syncConfig ? "outline" : "ghost"}
                             className="h-7 text-xs"
                             onClick={() => setShowSyncSetup(true)}
-                            title={syncConfig ? `Synced from ${syncConfig.repo}` : "Connect a GitHub repo"}
+                            title={syncConfig ? t("skills.sync.tooltip.synced", { repo: syncConfig.repo }) : t("skills.sync.tooltip.connect")}
                         >
                             <Github className="w-3.5 h-3.5" />
                         </Button>
                         <Button size="sm" className="h-7 text-xs" onClick={() => router.push("/skills/new")}>
                             <Plus className="w-3.5 h-3.5 mr-1" />
-                            New
+                            {t("action.new")}
                         </Button>
                     </div>
                     {syncConfig && (
@@ -282,10 +284,10 @@ export default function SkillsPage() {
                             <Github className="w-3 h-3" />
                             <span className="font-mono truncate flex-1">{syncConfig.repo}@{syncConfig.branch}</span>
                             <button onClick={pullFromGithub} disabled={!!syncWorking} className="inline-flex items-center gap-0.5 text-blue-600 hover:underline">
-                                <Download className="w-2.5 h-2.5" /> {syncWorking === "pull" ? "pulling…" : "pull"}
+                                <Download className="w-2.5 h-2.5" /> {syncWorking === "pull" ? t("skills.sync.pulling") : t("skills.sync.pull")}
                             </button>
                             <button onClick={pushToGithub} disabled={!!syncWorking} className="inline-flex items-center gap-0.5 text-blue-600 hover:underline">
-                                <Upload className="w-2.5 h-2.5" /> {syncWorking === "push" ? "pushing…" : "push"}
+                                <Upload className="w-2.5 h-2.5" /> {syncWorking === "push" ? t("skills.sync.pushing") : t("skills.sync.push")}
                             </button>
                         </div>
                     )}
@@ -294,7 +296,7 @@ export default function SkillsPage() {
                         <Input
                             value={q}
                             onChange={e => setQ(e.target.value)}
-                            placeholder="Search skills…"
+                            placeholder={t("skills.search_placeholder")}
                             className="pl-9"
                         />
                     </div>
@@ -323,8 +325,8 @@ export default function SkillsPage() {
                     </div>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                    {loading && <div className="p-6 text-sm text-muted-foreground">loading…</div>}
-                    {error && <div className="p-6 text-sm text-red-600">error: {error}</div>}
+                    {loading && <div className="p-6 text-sm text-muted-foreground">{t("common.loading")}</div>}
+                    {error && <div className="p-6 text-sm text-red-600">{t("common.error_prefix")}: {error}</div>}
                     {filtered.map(e => (
                         <button
                             key={e.id}
@@ -345,7 +347,7 @@ export default function SkillsPage() {
                         </button>
                     ))}
                     {!loading && filtered.length === 0 && (
-                        <div className="p-6 text-sm text-muted-foreground">no skills match</div>
+                        <div className="p-6 text-sm text-muted-foreground">{t("skills.empty")}</div>
                     )}
                 </div>
             </div>
@@ -354,9 +356,9 @@ export default function SkillsPage() {
             <div className="flex-1 overflow-y-auto">
                 {!selected ? (
                     <div className="p-12 text-sm text-muted-foreground">
-                        Select a skill to view its system prompt and frontmatter.
+                        {t("skills.detail.empty")}
                         <div className="mt-4 text-xs">
-                            <div>Total: {entries.length}</div>
+                            <div>{t("skills.detail.total", { count: entries.length })}</div>
                             <div>Backend: <code className="bg-muted px-1 rounded">{API_BASE}/api/skills</code></div>
                         </div>
                     </div>

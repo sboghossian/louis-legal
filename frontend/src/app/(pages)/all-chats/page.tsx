@@ -10,6 +10,7 @@ import { listChats, deleteChat } from "@/app/lib/louisApi";
 import type { LouisChat } from "@/app/components/shared/types";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
 import { useToast } from "@/contexts/ToastContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface ChatRow {
     id: string;
@@ -56,6 +57,7 @@ export default function AllChatsPage() {
     const router = useRouter();
     const confirm = useConfirm();
     const { toast } = useToast();
+    const { t } = useLocale();
     const [chats, setChats] = useState<LouisChat[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -80,11 +82,11 @@ export default function AllChatsPage() {
 
     const rows: ChatRow[] = useMemo(() => chats.map(c => ({
         id: c.id,
-        title: c.title || "Untitled chat",
+        title: c.title || t("common.untitled_chat"),
         when: relativeTime(c.created_at),
         category: inferCategory(c.title || ""),
         createdAt: c.created_at,
-    })), [chats]);
+    })), [chats, t]);
 
     const filtered = useMemo(() => {
         const needle = q.trim().toLowerCase();
@@ -97,8 +99,8 @@ export default function AllChatsPage() {
 
     async function remove(id: string, title: string) {
         const ok = await confirm({
-            title: "Delete this chat?",
-            message: `"${title}" will be permanently removed.`,
+            title: t("all_chats.delete.title"),
+            message: t("all_chats.delete.message", { title }),
             destructive: true,
         });
         if (!ok) return;
@@ -107,7 +109,7 @@ export default function AllChatsPage() {
             refresh();
         } catch (e) {
             toast({
-                title: "Delete failed",
+                title: t("all_chats.delete.failed"),
                 description: (e as Error).message,
                 variant: "error",
             });
@@ -118,7 +120,7 @@ export default function AllChatsPage() {
         <div className="max-w-6xl mx-auto px-8 py-8">
             <div className="flex items-center gap-2 mb-6">
                 <MessageSquare className="w-5 h-5" />
-                <h1 className="text-lg font-semibold">All chats</h1>
+                <h1 className="text-lg font-semibold">{t("all_chats.title")}</h1>
                 <Badge variant="secondary">{filtered.length}</Badge>
                 <div className="ml-auto flex items-center gap-2">
                     <div className="flex items-center bg-muted rounded p-0.5">
@@ -131,10 +133,10 @@ export default function AllChatsPage() {
             <div className="flex gap-3 mb-6">
                 <div className="relative flex-1">
                     <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search chats…" className="pl-9" />
+                    <Input value={q} onChange={e => setQ(e.target.value)} placeholder={t("all_chats.search_placeholder")} className="pl-9" />
                 </div>
                 <Button variant="outline" size="sm" className="h-9" onClick={refresh}>
-                    <Filter className="w-3.5 h-3.5 mr-1" /> Refresh
+                    <Filter className="w-3.5 h-3.5 mr-1" /> {t("action.refresh")}
                 </Button>
             </div>
 
@@ -145,12 +147,12 @@ export default function AllChatsPage() {
                         onClick={() => setCategory(c)}
                         className={`px-2.5 py-1 text-xs rounded-full border ${category === c ? "bg-foreground text-white border-foreground" : "bg-card text-foreground/80 border-border hover:bg-muted"}`}
                     >
-                        {c}
+                        {t(`category.${c}`)}
                     </button>
                 ))}
             </div>
 
-            {loading && <div className="text-sm text-muted-foreground py-6 text-center">loading…</div>}
+            {loading && <div className="text-sm text-muted-foreground py-6 text-center">{t("common.loading")}</div>}
             {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 text-sm">{error}</div>}
 
             {!loading && view === "cards" && (
@@ -159,7 +161,7 @@ export default function AllChatsPage() {
                         <div key={c.id} className="group relative border border-border rounded-lg p-4 hover:border-border hover:shadow-sm transition-all">
                             <button onClick={() => router.push(`/assistant/chat/${c.id}`)} className="block w-full text-left">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other}`}>{c.category}</span>
+                                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other}`}>{t(`category.${c.category}`)}</span>
                                     <span className="text-[10px] text-muted-foreground">{c.when}</span>
                                 </div>
                                 <div className="font-medium text-sm mb-1.5 line-clamp-2">{c.title}</div>
@@ -167,7 +169,7 @@ export default function AllChatsPage() {
                             <button
                                 onClick={() => remove(c.id, c.title)}
                                 className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-600 transition-opacity"
-                                title="Delete chat"
+                                title={t("all_chats.delete.tooltip")}
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -181,7 +183,7 @@ export default function AllChatsPage() {
                     {filtered.map(c => (
                         <div key={c.id} className="group w-full flex items-center gap-3 px-4 py-3 hover:bg-muted">
                             <button onClick={() => router.push(`/assistant/chat/${c.id}`)} className="flex-1 flex items-center gap-3 text-left">
-                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other} w-20 text-center flex-shrink-0`}>{c.category}</span>
+                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${CAT_COLOR[c.category] || CAT_COLOR.other} w-20 text-center flex-shrink-0`}>{t(`category.${c.category}`)}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="font-medium text-sm truncate">{c.title}</div>
                                 </div>
@@ -190,7 +192,7 @@ export default function AllChatsPage() {
                             <button
                                 onClick={() => remove(c.id, c.title)}
                                 className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-600 transition-opacity"
-                                title="Delete chat"
+                                title={t("all_chats.delete.tooltip")}
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -204,11 +206,11 @@ export default function AllChatsPage() {
                     {chats.length === 0 ? (
                         <>
                             <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-50" />
-                            <div className="font-medium text-foreground mb-1">No chats yet</div>
-                            <div className="mb-3">Start your first conversation with Louis.</div>
-                            <Button size="sm" onClick={() => router.push("/assistant")}>Open assistant</Button>
+                            <div className="font-medium text-foreground mb-1">{t("all_chats.empty.title")}</div>
+                            <div className="mb-3">{t("all_chats.empty.intro")}</div>
+                            <Button size="sm" onClick={() => router.push("/assistant")}>{t("all_chats.empty.cta")}</Button>
                         </>
-                    ) : "No chats match the filters."}
+                    ) : t("all_chats.empty.no_filter")}
                 </div>
             )}
         </div>

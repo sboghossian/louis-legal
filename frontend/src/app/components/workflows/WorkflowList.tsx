@@ -27,22 +27,25 @@ import { ToolbarTabs } from "../shared/ToolbarTabs";
 import { RowActions } from "../shared/RowActions";
 import { LouisIcon } from "@/components/chat/louis-icon";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type Tab = "all" | "builtin" | "custom" | "hidden";
 
 const CHECK_W = "w-8 shrink-0";
 const NAME_COL_W = "w-[300px] shrink-0";
 
-const TABS: { id: Tab; label: string }[] = [
-    { id: "all", label: "All Workflows" },
-    { id: "builtin", label: "Built-in" },
-    { id: "custom", label: "Custom" },
-    { id: "hidden", label: "Hidden" },
+const TAB_KEYS: { id: Tab; key: string }[] = [
+    { id: "all", key: "workflows.tab.all" },
+    { id: "builtin", key: "workflows.tab.builtin" },
+    { id: "custom", key: "workflows.tab.custom" },
+    { id: "hidden", key: "workflows.tab.hidden" },
 ];
 
 export function WorkflowList() {
     const router = useRouter();
     const { user } = useAuth();
+    const { t } = useLocale();
+    const TABS = TAB_KEYS.map(tk => ({ id: tk.id, label: t(tk.key) }));
     const [custom, setCustom] = useState<LouisWorkflow[]>([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<LouisWorkflow | null>(null);
@@ -201,9 +204,9 @@ export function WorkflowList() {
 
     const getTypeMeta = (type: LouisWorkflow["type"]) =>
         type === "tabular"
-            ? { label: "Tabular", Icon: Table2, className: "text-violet-700" }
+            ? { label: t("workflows.type.tabular"), Icon: Table2, className: "text-violet-700" }
             : {
-                  label: "Assistant",
+                  label: t("workflows.type.assistant"),
                   Icon: MessageSquare,
                   className: "text-blue-700",
               };
@@ -220,9 +223,9 @@ export function WorkflowList() {
             >
                 {typeFilter
                     ? typeFilter === "tabular"
-                        ? "Tabular"
-                        : "Assistant"
-                    : "Filter by type"}
+                        ? t("workflows.type.tabular")
+                        : t("workflows.type.assistant")
+                    : t("workflows.filter.type")}
                 <ChevronDown className="h-3 w-3" />
             </button>
             {typeFilterOpen && (
@@ -234,7 +237,7 @@ export function WorkflowList() {
                         }}
                         className="flex items-center justify-between w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                     >
-                        All Types
+                        {t("workflows.filter.all_types")}
                         {!typeFilter && (
                             <Check className="h-3.5 w-3.5 text-muted-foreground" />
                         )}
@@ -278,7 +281,7 @@ export function WorkflowList() {
                         : "text-muted-foreground hover:text-foreground/80"
                 }`}
             >
-                {practiceFilter ?? "Filter by practice"}
+                {practiceFilter ?? t("workflows.filter.practice")}
                 <ChevronDown className="h-3 w-3" />
             </button>
             {practiceFilterOpen && (
@@ -290,7 +293,7 @@ export function WorkflowList() {
                         }}
                         className="flex items-center justify-between w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
                     >
-                        All Practices
+                        {t("workflows.filter.all_practices")}
                         {!practiceFilter && (
                             <Check className="h-3.5 w-3.5 text-muted-foreground" />
                         )}
@@ -326,7 +329,7 @@ export function WorkflowList() {
                         onClick={() => setActionsOpen((v) => !v)}
                         className="flex items-center gap-1 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors"
                     >
-                        Actions
+                        {t("projects.actions")}
                         <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                     {actionsOpen && (
@@ -336,14 +339,14 @@ export function WorkflowList() {
                                     onClick={handleBulkUnhide}
                                     className="w-full px-3 py-1.5 text-left text-xs text-foreground/80 hover:bg-muted transition-colors"
                                 >
-                                    Unhide
+                                    {t("workflows.actions.unhide")}
                                 </button>
                             ) : (
                                 <button
                                     onClick={handleBulkRemove}
                                     className="w-full px-3 py-1.5 text-left text-xs text-red-600 hover:bg-red-50 transition-colors"
                                 >
-                                    Delete
+                                    {t("workflows.actions.delete")}
                                 </button>
                             )}
                         </div>
@@ -360,13 +363,13 @@ export function WorkflowList() {
             {/* Page header */}
             <div className="flex items-center justify-between px-8 py-4 shrink-0">
                 <h1 className="text-2xl font-medium font-serif text-foreground">
-                    Workflows
+                    {t("workflows.title")}
                 </h1>
                 <div className="flex items-center gap-2">
                     <HeaderSearchBtn
                         value={search}
                         onChange={setSearch}
-                        placeholder="Search workflows…"
+                        placeholder={t("workflows.search_placeholder")}
                     />
                     <button
                         onClick={() => setNewModalOpen(true)}
@@ -403,11 +406,11 @@ export function WorkflowList() {
                             )}
                         </div>
                         <div className={`sticky left-8 z-[60] ${NAME_COL_W} bg-card pl-2 text-left`}>
-                            Name
+                            {t("workflows.col.name")}
                         </div>
-                        <div className="ml-auto w-28 shrink-0">Type</div>
-                        <div className="w-40 shrink-0">Practice</div>
-                        <div className="w-28 shrink-0">Source</div>
+                        <div className="ml-auto w-28 shrink-0">{t("workflows.col.type")}</div>
+                        <div className="w-40 shrink-0">{t("workflows.col.practice")}</div>
+                        <div className="w-28 shrink-0">{t("workflows.col.source")}</div>
                         <div className="w-8 shrink-0" />
                     </div>
 
@@ -441,41 +444,36 @@ export function WorkflowList() {
                                 <>
                                     <Library className="h-8 w-8 text-muted-foreground mb-4" />
                                     <p className="text-2xl font-medium font-serif text-foreground">
-                                        Custom Workflows
+                                        {t("workflows.empty.custom.title")}
                                     </p>
                                     <p className="mt-1 text-xs text-muted-foreground text-left">
-                                        Build reusable prompts and tabular
-                                        review templates tailored to your
-                                        practice.
+                                        {t("workflows.empty.custom.intro")}
                                     </p>
                                     <button
                                         onClick={() => setNewModalOpen(true)}
                                         className="mt-4 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-white hover:bg-foreground transition-colors shadow-md"
                                     >
-                                        + Create New
+                                        {t("action.create_new")}
                                     </button>
                                 </>
                             ) : activeTab === "hidden" ? (
                                 <>
                                     <Library className="h-8 w-8 text-muted-foreground mb-4" />
                                     <p className="text-2xl font-medium font-serif text-foreground">
-                                        Hidden Workflows
+                                        {t("workflows.empty.hidden.title")}
                                     </p>
                                     <p className="mt-1 text-xs text-muted-foreground text-left">
-                                        Built-in workflows you've hidden will
-                                        appear here. You can unhide them at any
-                                        time.
+                                        {t("workflows.empty.hidden.intro")}
                                     </p>
                                 </>
                             ) : (
                                 <>
                                     <Library className="h-8 w-8 text-muted-foreground mb-4" />
                                     <p className="text-2xl font-medium font-serif text-foreground">
-                                        Workflows
+                                        {t("workflows.title")}
                                     </p>
                                     <p className="mt-1 text-xs text-muted-foreground text-left">
-                                        Automate document analysis with reusable
-                                        prompts and tabular review templates.
+                                        {t("workflows.empty.default.intro")}
                                     </p>
                                 </>
                             )}
@@ -536,18 +534,18 @@ export function WorkflowList() {
                                     {wf.is_system ? (
                                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                             <LouisIcon size={14} />
-                                            Louis
+                                            {t("workflows.source.louis")}
                                         </span>
                                     ) : wf.user_id === user?.id ? (
                                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                             <User className="h-3.5 w-3.5 text-muted-foreground" />
-                                            Myself
+                                            {t("workflows.source.myself")}
                                         </span>
                                     ) : (
                                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground truncate max-w-full">
                                             <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                                             <span className="truncate">
-                                                {wf.shared_by_name ?? "Shared"}
+                                                {wf.shared_by_name ?? t("workflows.source.shared")}
                                             </span>
                                         </span>
                                     )}
