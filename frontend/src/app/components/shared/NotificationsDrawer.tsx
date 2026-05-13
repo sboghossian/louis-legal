@@ -1,36 +1,46 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Bell, X, Clock, AlertCircle, MessageSquare, FileText, Sparkles } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
-// SCAFFOLD: ported from haqq-prototype `renderNotifications`. In-memory fixture for now.
+const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 
-interface Notification {
+// Inbox entry shape mirrors backend/src/routes/inbox.ts
+interface InboxEntry {
     id: string;
+    kind: "matter-event" | "routine-output" | "deadline" | "system" | "team-invite";
     title: string;
-    body: string;
-    when: string;
+    body?: string;
+    severity: "info" | "warning" | "urgent";
     read: boolean;
-    kind: "deadline" | "comment" | "doc" | "skill" | "alert";
-    href?: string;
+    createdAt: string;
+    link?: string;
 }
 
-const FIXTURE: Notification[] = [
-    { id: "n1", title: "Deadline approaching",   body: "Acme x Globex MSA closing on May 28 — 3 days",      when: "10m ago", read: false, kind: "deadline", href: "/doc-workspace?docId=demo" },
-    { id: "n2", title: "New comment from Lazar", body: "\"Push on 24-month liability cap — Acme has leverage…\"", when: "2h ago",  read: false, kind: "comment",  href: "/doc-workspace?docId=demo" },
-    { id: "n3", title: "Doc workspace ready",    body: "Acme MSA has been ingested and is ready for review",  when: "yesterday", read: false, kind: "doc",      href: "/doc-workspace?docId=demo" },
-    { id: "n4", title: "New skill: SHA drafted", body: "draft.shareholders-agreement promoted from stub",      when: "2d ago",  read: true,  kind: "skill",    href: "/skills" },
-    { id: "n5", title: "Daily digest sent",       body: "MENA regulatory bulletins delivered via email",        when: "3d ago",  read: true,  kind: "alert",    href: "/routines" },
-];
-
-const ICONS = {
-    deadline: Clock,
-    comment: MessageSquare,
-    doc: FileText,
-    skill: Sparkles,
-    alert: AlertCircle,
+const ICONS: Record<InboxEntry["kind"], LucideIcon> = {
+    "matter-event": FileText,
+    "routine-output": Sparkles,
+    "deadline": Clock,
+    "system": Bell,
+    "team-invite": MessageSquare,
 };
+
+function relativeTime(iso: string): string {
+    try {
+        const t = new Date(iso).getTime();
+        const diff = Date.now() - t;
+        if (diff < 60_000) return "just now";
+        if (diff < 3_600_000) return `${Math.round(diff / 60_000)}m ago`;
+        if (diff < 86_400_000) return `${Math.round(diff / 3_600_000)}h ago`;
+        return `${Math.round(diff / 86_400_000)}d ago`;
+    } catch {
+        return "";
+    }
+}
 
 interface Props {
     open: boolean;
@@ -38,7 +48,33 @@ interface Props {
 }
 
 export function NotificationsDrawer({ open, onClose }: Props) {
-    const [items, setItems] = useState<Notification[]>(FIXTURE);
+    const [items, setItems] = useState<InboxEntry[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const refresh = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/inbox`, {
+                headers: auth,
+                cache: "no-store",
+            });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            const json = (await r.json()) as { entries?: InboxEntry[] };
+            setItems(json.entries ?? []);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : String(e));
+            setItems([]);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (open) refresh();
+    }, [open, refresh]);
 
     useEffect(() => {
         const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -47,15 +83,29 @@ export function NotificationsDrawer({ open, onClose }: Props) {
     }, [open, onClose]);
 
     if (!open) return null;
-    const unreadCount = items.filter(n => !n.read).length;
+    const unreadCount = items.filter((n) => !n.read).length;
 
-    function markAllRead() {
-        setItems(prev => prev.map(n => ({ ...n, read: true })));
+    async function markAllRead() {
+        // Optimistic update so the drawer reflects the action before the
+        // server round-trip completes.
+        setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+        try {
+            const auth = await getAuthHeader();
+            await fetch(`${API_BASE}/api/inbox/read-all`, { method: "POST", headers: auth });
+        } catch {
+            // Rollback isn't worth it — the next refresh will reconcile.
+        }
     }
 
-    function open_(n: Notification) {
-        setItems(prev => prev.map(p => p.id === n.id ? { ...p, read: true } : p));
-        if (n.href) window.location.href = n.href;
+    async function openEntry(n: InboxEntry) {
+        setItems((prev) => prev.map((p) => (p.id === n.id ? { ...p, read: true } : p)));
+        try {
+            const auth = await getAuthHeader();
+            await fetch(`${API_BASE}/api/inbox/${n.id}/read`, { method: "POST", headers: auth });
+        } catch {
+            /* swallow */
+        }
+        if (n.link) window.location.href = n.link;
     }
 
     return (
@@ -65,35 +115,79 @@ export function NotificationsDrawer({ open, onClose }: Props) {
                 <div className="px-4 py-3 border-b border-border flex items-center gap-2">
                     <Bell className="w-4 h-4" />
                     <span className="font-semibold text-sm">Notifications</span>
-                    {unreadCount > 0 && <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
-                    <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs" onClick={markAllRead}>Mark all read</Button>
-                    <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
+                    {unreadCount > 0 && (
+                        <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                            {unreadCount}
+                        </span>
+                    )}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-auto h-7 text-xs"
+                        onClick={markAllRead}
+                        disabled={unreadCount === 0}
+                    >
+                        Mark all read
+                    </Button>
+                    <button
+                        onClick={onClose}
+                        className="text-muted-foreground hover:text-foreground"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                    {items.map(n => {
-                        const Icon = ICONS[n.kind];
+                    {loading && items.length === 0 && (
+                        <div className="p-8 text-center text-sm text-muted-foreground">
+                            Loading…
+                        </div>
+                    )}
+                    {!loading && error && (
+                        <div className="p-8 text-center text-sm text-muted-foreground">
+                            Couldn&apos;t load notifications.
+                        </div>
+                    )}
+                    {!loading && !error && items.length === 0 && (
+                        <div className="p-8 text-center text-sm text-muted-foreground">
+                            You&apos;re all caught up.
+                        </div>
+                    )}
+                    {items.map((n) => {
+                        // Fall back to Bell if the server ever sends a kind
+                        // we don't recognize — keeps the row from crashing.
+                        const Icon = ICONS[n.kind] ?? Bell;
                         return (
                             <button
                                 key={n.id}
-                                onClick={() => open_(n)}
+                                onClick={() => openEntry(n)}
                                 className={`w-full text-left px-4 py-3 border-b border-border hover:bg-muted flex items-start gap-3 ${!n.read ? "bg-blue-50/40" : ""}`}
                             >
                                 <div className="relative">
                                     <Icon className="w-4 h-4 text-muted-foreground mt-0.5" />
-                                    {!n.read && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full" />}
+                                    {!n.read && (
+                                        <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                                    )}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="font-medium text-sm">{n.title}</div>
-                                    <div className="text-xs text-muted-foreground line-clamp-2">{n.body}</div>
-                                    <div className="text-[10px] text-muted-foreground mt-0.5">{n.when}</div>
+                                    {n.body && (
+                                        <div className="text-xs text-muted-foreground line-clamp-2">
+                                            {n.body}
+                                        </div>
+                                    )}
+                                    {n.severity === "urgent" && (
+                                        <div className="inline-flex items-center gap-1 mt-1 text-[10px] text-red-700">
+                                            <AlertCircle className="w-3 h-3" />
+                                            Urgent
+                                        </div>
+                                    )}
+                                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                                        {relativeTime(n.createdAt)}
+                                    </div>
                                 </div>
                             </button>
                         );
                     })}
-                    {!items.length && <div className="p-8 text-center text-sm text-muted-foreground">No notifications</div>}
-                </div>
-                <div className="px-4 py-2 border-t border-border text-[10px] text-amber-700 bg-amber-50">
-                    Scaffold: fixture data. Backend wire-up (notifications table + push channel) next-session.
                 </div>
             </div>
         </div>
