@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -54,7 +55,8 @@ export default function CitationsPage() {
     useEffect(() => {
         (async () => {
             try {
-                const r = await fetch(`${API_BASE}/api/citations/styles`);
+                const auth = await getAuthHeader();
+                const r = await fetch(`${API_BASE}/api/citations/styles`, { headers: auth });
                 const j = await r.json();
                 setStyles(j.styles ?? []);
             } catch (e) {
@@ -84,9 +86,10 @@ export default function CitationsPage() {
                 input.publisher = publisher || undefined;
                 input.year = year || undefined;
             }
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/citations/format-all`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ input }),
             });
             const j = await r.json();

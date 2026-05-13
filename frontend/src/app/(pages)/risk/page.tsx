@@ -5,6 +5,7 @@ import { ShieldAlert, AlertOctagon, AlertTriangle, AlertCircle, Info } from "luc
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -72,9 +73,10 @@ export default function RiskScanPage() {
         setError(null);
         setResult(null);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/risk/scan`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ text, jurisdiction: jurisdiction || undefined }),
             });
             if (!r.ok) {

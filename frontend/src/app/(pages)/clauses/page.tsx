@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 type ClauseListItem = {
     id: string;
@@ -61,9 +62,10 @@ export default function ClausesPage() {
     useEffect(() => {
         (async () => {
             try {
+                const auth = await getAuthHeader();
                 const [listR, metaR] = await Promise.all([
-                    fetch(`${API_BASE}/api/clauses`),
-                    fetch(`${API_BASE}/api/clauses/meta`),
+                    fetch(`${API_BASE}/api/clauses`, { headers: auth }),
+                    fetch(`${API_BASE}/api/clauses/meta`, { headers: auth }),
                 ]);
                 if (!listR.ok) throw new Error(`HTTP ${listR.status}`);
                 const list = await listR.json();
@@ -95,7 +97,8 @@ export default function ClausesPage() {
 
     async function openClause(id: string, side: "main" | "compare" = "main") {
         try {
-            const r = await fetch(`${API_BASE}/api/clauses/${encodeURIComponent(id)}`);
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/clauses/${encodeURIComponent(id)}`, { headers: auth });
             if (r.ok) {
                 const detail = await r.json();
                 if (side === "main") setSelected(detail);

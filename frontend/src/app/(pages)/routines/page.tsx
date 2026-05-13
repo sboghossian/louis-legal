@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useConfirm } from "@/app/contexts/ConfirmDialog";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getAuthHeader } from "@/app/lib/louisApi";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
@@ -85,7 +86,8 @@ export default function RoutinesPage() {
         setLoading(true);
         setError(null);
         try {
-            const r = await fetch(`${API_BASE}/api/routines`, { headers: { "x-user-id": "demo" } });
+            const auth = await getAuthHeader();
+            const r = await fetch(`${API_BASE}/api/routines`, { headers: auth });
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
             const j = await r.json();
             setRoutines(j.routines ?? []);
@@ -101,17 +103,19 @@ export default function RoutinesPage() {
     async function toggle(r: Routine) {
         const updated = { ...r, enabled: !r.enabled };
         setRoutines(prev => prev.map(x => x.id === r.id ? updated : x));
+        const auth = await getAuthHeader();
         await fetch(`${API_BASE}/api/routines/${r.id}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+            headers: { "Content-Type": "application/json", ...auth },
             body: JSON.stringify({ enabled: updated.enabled }),
         });
     }
 
     async function runNow(r: Routine) {
+        const auth = await getAuthHeader();
         await fetch(`${API_BASE}/api/routines/${r.id}/run`, {
             method: "POST",
-            headers: { "x-user-id": "demo" },
+            headers: auth,
         });
         // Poll the runs after a moment
         setTimeout(() => refresh(), 250);
@@ -124,16 +128,18 @@ export default function RoutinesPage() {
             destructive: true,
         });
         if (!ok) return;
+        const auth = await getAuthHeader();
         await fetch(`${API_BASE}/api/routines/${r.id}`, {
             method: "DELETE",
-            headers: { "x-user-id": "demo" },
+            headers: auth,
         });
         refresh();
     }
 
     async function openRuns(r: Routine) {
         setShowRuns(r);
-        const resp = await fetch(`${API_BASE}/api/routines/${r.id}/runs`, { headers: { "x-user-id": "demo" } });
+        const auth = await getAuthHeader();
+        const resp = await fetch(`${API_BASE}/api/routines/${r.id}/runs`, { headers: auth });
         const j = await resp.json();
         setRuns(j.runs ?? []);
     }
@@ -241,9 +247,10 @@ function NewRoutineModal({ onClose, onCreated }: { onClose: () => void; onCreate
         if (!title.trim() || !prompt.trim() || !schedule.trim()) return;
         setSubmitting(true);
         try {
+            const auth = await getAuthHeader();
             const r = await fetch(`${API_BASE}/api/routines`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "x-user-id": "demo" },
+                headers: { "Content-Type": "application/json", ...auth },
                 body: JSON.stringify({ title, description, prompt, schedule, kind, outputChannel, enabled }),
             });
             if (r.ok) onCreated();
