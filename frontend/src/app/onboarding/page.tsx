@@ -147,7 +147,7 @@ export default function OnboardingPage() {
                             "true",
                         );
                     }
-                    router.replace("/home");
+                    router.replace("/assistant");
                 }
             } catch { /* not signed in or backend offline — proceed */ }
         })();
@@ -190,9 +190,40 @@ export default function OnboardingPage() {
             if (user?.id && typeof window !== "undefined") {
                 localStorage.setItem(`louis.onboarded:${user.id}`, "true");
             }
-            router.replace("/home");
+            router.replace("/assistant");
         } finally {
             setSubmitting(false);
+        }
+    }
+
+    // "Skip for now" used to flip the step to "done" and force the user
+    // through one more "Enter Louis" click. Decision-doc Q52 says skip
+    // should complete the flow in one click — mark the profile as
+    // complete server-side (so we don't re-prompt) and route straight to
+    // the assistant.
+    async function skip() {
+        try {
+            const headers = await authHeaders();
+            // Fire-and-forget; if the backend rejects (offline / no auth)
+            // the localStorage flag still keeps the next visit quiet.
+            await fetch(`${API_BASE}/api/onboarding/me/complete`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", ...headers },
+                body: JSON.stringify({
+                    referralSource: source,
+                    role,
+                    organization,
+                    jurisdictions,
+                    practiceAreas,
+                    useCases,
+                    preferredLanguage: language,
+                }),
+            }).catch(() => undefined);
+        } finally {
+            if (user?.id && typeof window !== "undefined") {
+                localStorage.setItem(`louis.onboarded:${user.id}`, "true");
+            }
+            router.replace("/assistant");
         }
     }
 
@@ -266,7 +297,7 @@ export default function OnboardingPage() {
 
                     {step === "jurisdictions" && (
                         <Step title="Which jurisdictions do you work in?" subtitle="Pick any number — we'll prioritize content for these.">
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                 {JURISDICTIONS.map(j => {
                                     const active = jurisdictions.includes(j);
                                     return (
@@ -368,7 +399,7 @@ export default function OnboardingPage() {
                         <Button variant="ghost" onClick={back}>
                             <ArrowLeft className="w-4 h-4 mr-1" /> Back
                         </Button>
-                        <button onClick={() => setStep("done")} className="text-xs text-muted-foreground hover:underline">
+                        <button onClick={skip} className="text-xs text-muted-foreground hover:underline">
                             Skip for now
                         </button>
                         <Button onClick={next}>
