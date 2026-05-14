@@ -16,13 +16,16 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001"
 
 // Paths inside (pages)/ that don't gate on onboarding completion.
 // Note: /onboarding lives outside (pages)/ now, so this layout doesn't apply there.
-const ONBOARDING_EXEMPT = ["/about", "/docs", "/academy", "/help"];
+// /docs and /help used to be listed here too — they're now 308 redirects to
+// /academy (next.config.ts) and never reach this layout.
+const ONBOARDING_EXEMPT = ["/about", "/academy"];
 
 // Paths inside (pages)/ that are publicly readable — no auth required.
 // Used by anyone browsing the marketing/learning surfaces. Signed-in users
-// still see them inside the normal app chrome; signed-out users see them
-// wrapped in the marketing shell (top nav + footer).
-const PUBLIC_PATHS = ["/academy", "/about", "/transparency"];
+// still see them inside the marketing shell; signed-out users (and crawlers)
+// see the content instead of being bounced to /login. Keep this in sync with
+// the public routes in `sitemap.ts`.
+const PUBLIC_PATHS = ["/academy", "/about", "/transparency", "/plugins"];
 
 export default function LouisLayout({
     children,

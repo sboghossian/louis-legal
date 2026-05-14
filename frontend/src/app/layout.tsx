@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { SiteStructuredData } from "@/components/structured-data";
 import { APPEARANCE_BOOT_SCRIPT } from "@/contexts/AppearanceContext";
 import { LOCALE_BOOT_SCRIPT } from "@/contexts/LocaleContext";
 
@@ -31,33 +32,21 @@ export const metadata: Metadata = {
     },
     description: ROOT_DESCRIPTION,
     applicationName: "Louis",
-    icons: {
-        icon: [
-            { url: "/icon.svg", type: "image/svg+xml" },
-            { url: "/favicon.ico" },
-        ],
-        apple: "/apple-touch-icon.png",
-    },
+    // Icons are resolved from the `src/app/icon.svg` + `src/app/favicon.ico`
+    // file conventions — no explicit `icons` block needed.
+    // OG/Twitter images come from the `src/app/opengraph-image.tsx`
+    // convention, which generates a real 1200x630 PNG for every route.
     openGraph: {
         type: "website",
         url: "/",
         siteName: "Louis",
         title: ROOT_TITLE,
         description: ROOT_DESCRIPTION,
-        images: [
-            {
-                url: "/og-image.svg",
-                width: 1200,
-                height: 630,
-                alt: "Louis — open-source legal AI",
-            },
-        ],
     },
     twitter: {
         card: "summary_large_image",
         title: ROOT_TITLE,
         description: ROOT_DESCRIPTION,
-        images: ["/og-image.svg"],
     },
 };
 
@@ -83,6 +72,8 @@ export default function RootLayout({
                         __html: LOCALE_BOOT_SCRIPT,
                     }}
                 />
+                {/* Organization + WebSite JSON-LD — applies site-wide. */}
+                <SiteStructuredData />
             </head>
             <body
                 className={`${inter.variable} ${ebGaramond.variable} font-sans antialiased`}
