@@ -34,6 +34,7 @@ import {
     type LucideIcon,
 } from "lucide-react";
 import { MarketingShell } from "@/components/marketing/marketing-shell";
+import { SoftwareApplicationData } from "@/components/structured-data";
 import { LandingAuthRedirect } from "./_LandingAuthRedirect";
 import {
     HeroMock,
@@ -55,8 +56,9 @@ const LANDING_DESCRIPTION =
     "Open-source, sovereign, free. Build legal AI inside your own perimeter — your API key, your data, your stack. 983 skills, 30+ jurisdictions, MIT licensed. The substrate behind your firm's next ten years of legal software.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://legal.dashable.dev"),
-    title: LANDING_TITLE,
+    // `absolute` so the root layout's "%s · Louis" template doesn't append
+    // " · Louis" onto a title that already names the product.
+    title: { absolute: LANDING_TITLE },
     description: LANDING_DESCRIPTION,
     alternates: {
         canonical: "/",
@@ -67,26 +69,18 @@ export const metadata: Metadata = {
         siteName: "Louis",
         title: LANDING_TITLE,
         description: LANDING_DESCRIPTION,
-        images: [
-            {
-                url: "/og-image.svg",
-                width: 1200,
-                height: 630,
-                alt: "Louis — open-source legal AI",
-            },
-        ],
     },
     twitter: {
         card: "summary_large_image",
         title: LANDING_TITLE,
         description: LANDING_DESCRIPTION,
-        images: ["/og-image.svg"],
     },
 };
 
 export default function LandingPage() {
     return (
         <>
+            <SoftwareApplicationData />
             <LandingAuthRedirect />
             <MarketingShell>
                 <Hero />
