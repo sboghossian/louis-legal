@@ -418,7 +418,7 @@ function WhyOpenSource() {
     {
       icon: BookOpenCheck,
       title: "Built on what works",
-      body: "Forked from Mike. Rebuilt around the comfort-UI vision we developed at HAQQ. Production stack: Next.js + Express + Supabase + R2.",
+      body: "Forked from Mike. Rebuilt around a comfort-UI vision for legal practice — the surfaces a lawyer actually wants. Production stack: Next.js + Express + Supabase + R2.",
     },
   ];
 
@@ -580,14 +580,19 @@ function FounderNote() {
           Why we built this
         </span>
         <h2 className="text-2xl md:text-3xl font-serif font-light tracking-tight leading-tight mb-6">
-          A note from the HAQQ team
+          A note from the maintainer
         </h2>
         <div className="space-y-4 text-base text-gray-700 font-serif leading-relaxed">
           <p>
-            We&apos;re building HAQQ — an AI law firm for the MENA region. To
-            run it, we needed a legal-AI workspace we could actually inspect,
-            modify, and bend to how our lawyers practice. Closed platforms
-            didn&apos;t fit. So we forked{" "}
+            Louis is a solo experiment on the edges of AI — what happens when
+            you take the baseline of legal AI (assistant chat, document
+            analysis, drafting, structured review, workflows) and ship it as
+            open code instead of a closed SaaS. No company behind it. No
+            roadmap pressure. Just me, the repo, and whoever wants to fork
+            it.
+          </p>
+          <p>
+            I started from{" "}
             <a
               href="https://github.com/willchen96/mike"
               target="_blank"
@@ -596,30 +601,37 @@ function FounderNote() {
             >
               Mike
             </a>{" "}
-            and rebuilt it around the comfort-UI vision we&apos;d been
-            prototyping internally.
-          </p>
-          <p>
-            That rebuild is Louis. We open-sourced it because the baseline of
-            legal AI — assistant chat, document analysis, drafting, structured
-            review, workflows — should not be locked inside a closed product
-            with per-seat pricing. The depth, the firm-specific playbooks and
-            obligations and house style, that&apos;s where firms differentiate.
+            and rebuilt it around a comfort-UI vision for how a lawyer
+            actually wants to use software — calm surfaces, real citations,
+            tracked-change redlines that open in Word, a vault that knows
+            about privilege. Open-source because the baseline of legal AI
+            should not be locked inside a closed product with per-seat
+            pricing. The depth — the firm-specific playbooks, the
+            obligations, the house style — is where firms differentiate.
             The baseline should be common infrastructure.
           </p>
           <p>
-            Louis is the substrate. HAQQ runs on top of it, in production, on
-            real client matters. Everything we ship to our own lawyers ships to
-            the repo first.
+            If Louis is useful to you, fork it, change it, run it on your own
+            infrastructure. PRs welcome. Issues welcome. Everything is MIT.
           </p>
         </div>
         <div className="mt-8 flex items-center gap-3 text-sm">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center text-amber-900 font-serif">
-            H
+            S
           </div>
           <div>
-            <div className="font-medium text-gray-900">The HAQQ team</div>
-            <div className="text-gray-500 text-xs">Beirut · Dubai</div>
+            <div className="font-medium text-gray-900">
+              Stephane &middot;{" "}
+              <a
+                href="https://github.com/sboghossian"
+                target="_blank"
+                rel="noreferrer"
+                className="text-amber-800 hover:text-amber-900"
+              >
+                @sboghossian
+              </a>
+            </div>
+            <div className="text-gray-500 text-xs">Maintainer · MIT · solo project</div>
           </div>
         </div>
       </div>
