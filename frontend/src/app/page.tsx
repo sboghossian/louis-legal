@@ -31,6 +31,12 @@ import {
     GitBranch,
     Eye,
     BookOpenCheck,
+    Users,
+    Cpu,
+    Scale,
+    ClipboardCheck,
+    GitCompareArrows,
+    Star,
     type LucideIcon,
 } from "lucide-react";
 import { MarketingShell } from "@/components/marketing/marketing-shell";
@@ -46,6 +52,11 @@ import {
     WorkflowsMock,
     PromptLibraryMock,
     VaultMock,
+    PersonasMock,
+    ModelPickerMock,
+    CaseLawMock,
+    ApprovalAuditMock,
+    DocComparisonMock,
 } from "@/components/marketing/feature-mocks";
 
 const REPO_URL = "https://github.com/sboghossian/louis-legal";
@@ -86,7 +97,10 @@ export default function LandingPage() {
                 <Hero />
                 <SocialProofStrip />
                 <Features />
+                <TwoPaths />
                 <WhyOpenSource />
+                <FounderNote />
+                <Faq />
                 <FinalCta />
             </MarketingShell>
         </>
@@ -147,15 +161,25 @@ function Hero() {
                             Read the cookbook →
                         </Link>
                     </div>
-                    <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
-                        <span className="inline-flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                            Free forever
-                        </span>
+                    <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
+                        <a
+                            href={REPO_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-[#e7e2d6] bg-white/70 px-2.5 py-1 hover:border-amber-300 transition-colors"
+                        >
+                            <Star className="w-3 h-3 text-amber-600" />
+                            <span className="text-gray-700">MIT</span>
+                            <span className="text-gray-300">·</span>
+                            <span className="text-gray-700 font-mono">★ on GitHub</span>
+                            <span className="text-gray-300">·</span>
+                            <span className="text-emerald-600 inline-flex items-center gap-1">
+                                <span className="w-1 h-1 rounded-full bg-emerald-500 louis-pulse" />
+                                active
+                            </span>
+                        </a>
                         <span className="text-gray-300">·</span>
                         <span>BYO API keys</span>
-                        <span className="text-gray-300">·</span>
-                        <span>MIT licensed</span>
                         <span className="text-gray-300">·</span>
                         <span>Self-hostable</span>
                     </div>
@@ -270,6 +294,38 @@ const FEATURES: FeatureSpec[] = [
         Mock: VaultMock,
         href: "/vault",
     },
+    {
+        icon: Users,
+        title: "12 practice-area personas",
+        body: "Built-in M&A, Litigation, Employment, IP, Capital Markets, Arbitration, Tax, FinTech, Privacy, Real Estate, Compliance, Investigations — each with its own system prompt and skill subset. Roll your own without leaving the app.",
+        Mock: PersonasMock,
+        href: "/customize",
+    },
+    {
+        icon: Cpu,
+        title: "Bring your own model keys",
+        body: "Claude, GPT-5, Gemini, Qwen, or your own llama.cpp endpoint. Plug in provider keys to bypass the demo budget and bill your own account. Per-team budgets, per-route routing.",
+        Mock: ModelPickerMock,
+        href: "/settings",
+    },
+    {
+        icon: Scale,
+        title: "Verifiable case law via CourtListener",
+        body: "\"Find Ninth Circuit cases on qualified immunity from 2023.\" Real US opinions returned with direct links — no fabricated authorities. Federal and state coverage via the Free Law Project API.",
+        Mock: CaseLawMock,
+    },
+    {
+        icon: ClipboardCheck,
+        title: "Approval queue + audit log",
+        body: "Human-in-the-loop where it matters. Wire any agent action through an approval queue before dispatch. Structured activity feed with actor, action, scope on every read and write.",
+        Mock: ApprovalAuditMock,
+    },
+    {
+        icon: GitCompareArrows,
+        title: "Document comparison",
+        body: "Diff two versions of a contract, highlight material changes, and summarise what moved between drafts. The redline workflow lawyers actually do — automated, reviewable, exportable.",
+        Mock: DocComparisonMock,
+    },
 ];
 
 function Features() {
@@ -381,6 +437,181 @@ function WhyOpenSource() {
                                 <p className="text-sm text-gray-600 leading-relaxed">{body}</p>
                             </div>
                         </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Two paths — hosted demo vs self-host (both free)
+// ---------------------------------------------------------------------------
+
+function TwoPaths() {
+    return (
+        <section id="pricing" className="relative py-20 md:py-28 px-6 bg-white border-y border-[#e7e2d6]">
+            <div className="max-w-6xl mx-auto">
+                <div className="max-w-2xl mb-12 md:mb-16">
+                    <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
+                        <span className="h-px w-6 bg-amber-700" />
+                        Two paths · same code · both free
+                    </span>
+                    <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight leading-tight">
+                        Use the hosted demo, or clone the repo.
+                    </h2>
+                    <p className="mt-3 text-base text-gray-600 font-serif">
+                        One product, free either way. Same MIT-licensed code, same schema, same workflows. Migrate between the two whenever you want.
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="rounded-2xl border border-[#e7e2d6] bg-[#fbf8f2] p-6 md:p-8">
+                        <div className="flex items-baseline gap-3 mb-4">
+                            <h3 className="font-serif text-xl">Hosted</h3>
+                            <span className="text-xs uppercase tracking-wider text-amber-700">free to start</span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-5">
+                            Same code, run by us on legal.dashable.dev. A demo budget of model tokens is included so you can try the full surface without your own keys.
+                        </p>
+                        <ul className="space-y-2 text-sm text-gray-700 mb-6">
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Demo token budget included — no card required</span></li>
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Up and running in minutes, no installation</span></li>
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Managed OAuth, updates, infrastructure</span></li>
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Full data export to self-hosted at any time</span></li>
+                        </ul>
+                        <Link
+                            href="/signup"
+                            className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors"
+                        >
+                            Try hosted — free
+                            <ArrowRight className="h-4 w-4" />
+                        </Link>
+                    </div>
+                    <div className="rounded-2xl border border-[#e7e2d6] bg-white p-6 md:p-8">
+                        <div className="flex items-baseline gap-3 mb-4">
+                            <h3 className="font-serif text-xl">Self-hosted</h3>
+                            <span className="text-xs uppercase tracking-wider text-amber-700">free forever</span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-5">
+                            MIT-licensed code. Run on your own infrastructure with your own model keys. Documents never traverse our network.
+                        </p>
+                        <ul className="space-y-2 text-sm text-gray-700 mb-6">
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Fork the repo, follow the README</span></li>
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Bring your own LLM provider keys</span></li>
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>Client data never traverses our infrastructure</span></li>
+                            <li className="flex gap-2"><span className="text-emerald-600 mt-1">✓</span><span>One-command migration from hosted</span></li>
+                        </ul>
+                        <a
+                            href={REPO_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-gray-900 border border-gray-300 hover:bg-[#fbf8f2] transition-colors"
+                        >
+                            <Github className="h-4 w-4" />
+                            Fork on GitHub
+                        </a>
+                    </div>
+                </div>
+                <p className="mt-6 text-center text-xs text-gray-500 italic">
+                    No enterprise tier. No paid plan. One product either way — same MIT license.
+                </p>
+            </div>
+        </section>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Founder note
+// ---------------------------------------------------------------------------
+
+function FounderNote() {
+    return (
+        <section className="relative py-20 md:py-28 px-6 bg-white">
+            <div className="max-w-3xl mx-auto">
+                <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
+                    <span className="h-px w-6 bg-amber-700" />
+                    Why we built this
+                </span>
+                <h2 className="text-2xl md:text-3xl font-serif font-light tracking-tight leading-tight mb-6">
+                    A note from the HAQQ team
+                </h2>
+                <div className="space-y-4 text-base text-gray-700 font-serif leading-relaxed">
+                    <p>
+                        We&apos;re building HAQQ — an AI law firm for the MENA region. To run it, we needed a legal-AI workspace we could actually inspect, modify, and bend to how our lawyers practice. Closed platforms didn&apos;t fit. So we forked <a href="https://github.com/scisseroai/teamsuzie" target="_blank" rel="noreferrer" className="text-amber-800 underline decoration-amber-300 underline-offset-2">Mike</a> and rebuilt it around the comfort-UI vision we&apos;d been prototyping internally.
+                    </p>
+                    <p>
+                        That rebuild is Louis. We open-sourced it because the baseline of legal AI — assistant chat, document analysis, drafting, structured review, workflows — should not be locked inside a closed product with per-seat pricing. The depth, the firm-specific playbooks and obligations and house style, that&apos;s where firms differentiate. The baseline should be common infrastructure.
+                    </p>
+                    <p>
+                        Louis is the substrate. HAQQ runs on top of it, in production, on real client matters. Everything we ship to our own lawyers ships to the repo first.
+                    </p>
+                </div>
+                <div className="mt-8 flex items-center gap-3 text-sm">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center text-amber-900 font-serif">
+                        H
+                    </div>
+                    <div>
+                        <div className="font-medium text-gray-900">The HAQQ team</div>
+                        <div className="text-gray-500 text-xs">Beirut · Dubai</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// FAQ — straight answers to the questions every buyer asks
+// ---------------------------------------------------------------------------
+
+function Faq() {
+    const items = [
+        {
+            q: "How is Louis different from Harvey, Legora, or CoCounsel?",
+            a: "Harvey, Legora, and CoCounsel are polished closed SaaS products. Louis ships the same baseline surface — assistant chat, document analysis, drafting, structured review, workflows — as open-source code you can inspect, modify, and run inside your own infrastructure. The structural difference is ownership. When the assistant doesn't quite fit how your firm works, you can change it. When you want a drafting playbook or obligations tracker specific to your practice, you build it into the system, not around it.",
+        },
+        {
+            q: "Why give it away? And what if you disappear?",
+            a: "Louis is the open baseline. Above the baseline — the playbooks, the firm-specific workflows, the deep integrations into your DMS and billing and matter system — is where differentiation happens. We open-sourced the baseline because we don't believe legal teams should pay rent on commoditized infrastructure. Everything is MIT-licensed. If we shut down tomorrow, you still have the code, the prompts, the workflows, the schema, and the right to deploy it anywhere.",
+        },
+        {
+            q: "Is our client data really safe?",
+            a: "For self-hosted deployments, the app, the database, the prompts, the workflows, and the documents run where you put them. There is no shared Louis service that sees your traffic. Client matters travel only to whichever LLM provider you configure under your own keys and contract, or to a local model endpoint inside your perimeter. For the hosted demo, please do not upload sensitive, confidential, or privileged client documents.",
+        },
+        {
+            q: "What about hallucinated citations?",
+            a: "Same constraint as every LLM-based legal tool: models can confabulate. Louis mitigates that by routing citation-sensitive workflows through retrieval — vector search plus BM25 keyword search with reciprocal-rank fusion — so the assistant can quote ingested documents and verifiable sources (like CourtListener for US case law) instead of inventing authorities. Verification still requires a human. That's why the platform ships an approval queue.",
+        },
+        {
+            q: "Can we deploy this without an internal tech team?",
+            a: "Yes — that's what hosted is for. Same code, run by us, free to start with a demo token budget. Self-hosting the OSS requires Node, Postgres, an OpenAI-compatible model endpoint, and someone to own uptime, so most firms without a developer in-house pick hosted. You keep full data export and the right to migrate to self-hosted whenever you want — no lock-in to begin with.",
+        },
+    ];
+    return (
+        <section id="faq" className="relative py-20 md:py-28 px-6 bg-[#fbf8f2] border-y border-[#e7e2d6]">
+            <div className="max-w-3xl mx-auto">
+                <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
+                    <span className="h-px w-6 bg-amber-700" />
+                    Questions we get asked
+                </span>
+                <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight leading-tight mb-10">
+                    Straight answers.
+                </h2>
+                <div className="divide-y divide-[#e7e2d6]">
+                    {items.map(({ q, a }) => (
+                        <details key={q} className="group py-5">
+                            <summary className="flex items-start justify-between gap-4 cursor-pointer list-none">
+                                <h3 className="font-serif text-lg md:text-xl leading-tight text-gray-900">
+                                    {q}
+                                </h3>
+                                <span className="shrink-0 mt-1 text-amber-700 group-open:rotate-45 transition-transform text-2xl leading-none font-light">
+                                    +
+                                </span>
+                            </summary>
+                            <p className="mt-3 text-sm md:text-base text-gray-600 leading-relaxed font-serif">
+                                {a}
+                            </p>
+                        </details>
                     ))}
                 </div>
             </div>

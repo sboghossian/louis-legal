@@ -341,8 +341,207 @@ export function VaultMock({ className }: MockProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Newsfeed
+// Practice-area personas — 12 specialist agents
 // ---------------------------------------------------------------------------
+
+export function PersonasMock({ className }: MockProps) {
+    const personas = [
+        { name: "M&A", color: "bg-amber-500" },
+        { name: "Litigation", color: "bg-rose-500" },
+        { name: "Employment", color: "bg-emerald-500" },
+        { name: "IP", color: "bg-sky-500" },
+        { name: "Cap Markets", color: "bg-violet-500" },
+        { name: "Arbitration", color: "bg-indigo-500" },
+        { name: "FinTech", color: "bg-teal-500" },
+        { name: "Tax", color: "bg-orange-500" },
+        { name: "Investigations", color: "bg-slate-500" },
+        { name: "Privacy", color: "bg-pink-500" },
+        { name: "Real Estate", color: "bg-yellow-600" },
+        { name: "Compliance", color: "bg-lime-600" },
+    ];
+    return (
+        <div className={`${FRAME} ${className ?? ""}`}>
+            <div className="absolute inset-3 grid grid-cols-3 gap-1 text-[7px]">
+                {personas.map((p, i) => (
+                    <div
+                        key={p.name}
+                        className={`rounded-md border ${i === 0 ? "border-amber-400 bg-amber-50/60 ring-1 ring-amber-300" : "border-gray-200 bg-white"} p-1 flex flex-col items-center gap-1 louis-rise`}
+                        style={{ animationDelay: `${i * 0.04}s` }}
+                    >
+                        <span className={`w-2 h-2 rounded-full ${p.color}`} />
+                        <div className="text-gray-800 leading-tight text-center truncate w-full">{p.name}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// BYO-keys model picker — Claude / GPT / Gemini / Qwen / Local
+// ---------------------------------------------------------------------------
+
+export function ModelPickerMock({ className }: MockProps) {
+    const models = [
+        { name: "Claude Opus 4.7", provider: "Anthropic", status: "Your key", active: true },
+        { name: "GPT-5", provider: "OpenAI", status: "Your key", active: false },
+        { name: "Gemini 2.5 Pro", provider: "Google", status: "Your key", active: false },
+        { name: "Qwen 3.6-Plus", provider: "Alibaba", status: "Demo budget", active: false },
+        { name: "Llama 3 local", provider: "Self-hosted", status: "localhost:11434", active: false },
+    ];
+    return (
+        <div className={`${FRAME} ${className ?? ""}`}>
+            <div className="absolute inset-3 flex flex-col gap-1 text-[7px]">
+                <div className="text-[6.5px] uppercase tracking-wider text-amber-700 mb-0.5 inline-flex items-center gap-1">
+                    <span className="inline-block w-1 h-1 rounded-full bg-amber-500" />
+                    Bring your own key
+                </div>
+                {models.map((m, i) => (
+                    <div
+                        key={m.name}
+                        className={`rounded-md border ${m.active ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 bg-white"} px-2 py-1 flex items-center gap-2 louis-rise`}
+                        style={{ animationDelay: `${i * 0.08}s` }}
+                    >
+                        <span className={`w-1.5 h-1.5 rounded-full ${m.active ? "bg-emerald-400 louis-pulse" : "bg-gray-300"}`} />
+                        <div className="flex-1 min-w-0">
+                            <div className="truncate font-medium">{m.name}</div>
+                            <div className={`text-[6px] ${m.active ? "text-gray-300" : "text-gray-400"}`}>{m.provider}</div>
+                        </div>
+                        <div className={`text-[6px] px-1 rounded ${m.active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"}`}>{m.status}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Case law via CourtListener — verifiable US case law (Free Law Project)
+// ---------------------------------------------------------------------------
+
+export function CaseLawMock({ className }: MockProps) {
+    const cases = [
+        { name: "Ashcroft v. Iqbal", cite: "556 U.S. 662", year: "2009", court: "S. Ct." },
+        { name: "Twombly v. Bell Atlantic", cite: "550 U.S. 544", year: "2007", court: "S. Ct." },
+        { name: "Citizens United v. FEC", cite: "558 U.S. 310", year: "2010", court: "S. Ct." },
+    ];
+    return (
+        <div className={`${FRAME} ${className ?? ""}`}>
+            <div className="absolute inset-3 flex flex-col gap-1 text-[7px]">
+                <div className="rounded-md border border-gray-200 bg-white px-2 py-1 flex items-center gap-1.5 text-gray-600">
+                    <svg viewBox="0 0 16 16" className="w-2 h-2"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" strokeWidth="1.5"/><line x1="11" y1="11" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5"/></svg>
+                    <span className="italic">Ninth Circuit on qualified immunity 2023</span>
+                </div>
+                {cases.map((c, i) => (
+                    <div
+                        key={c.name}
+                        className="rounded-md border border-gray-200 bg-white px-2 py-1 louis-rise"
+                        style={{ animationDelay: `${i * 0.1}s` }}
+                    >
+                        <div className="flex items-center gap-1 mb-0.5">
+                            <span className="w-1 h-1 rounded-full bg-emerald-500" />
+                            <div className="text-gray-900 font-medium italic truncate">{c.name}</div>
+                        </div>
+                        <div className="flex items-center gap-2 text-[6.5px] text-gray-500">
+                            <span>{c.cite}</span>
+                            <span>·</span>
+                            <span>{c.court}</span>
+                            <span>·</span>
+                            <span>{c.year}</span>
+                            <span className="ml-auto text-amber-700 underline">view →</span>
+                        </div>
+                    </div>
+                ))}
+                <div className="mt-auto text-[6.5px] text-gray-400 italic">
+                    Real opinions via CourtListener · Free Law Project
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Approval queue + audit log — human-in-the-loop, structured activity feed
+// ---------------------------------------------------------------------------
+
+export function ApprovalAuditMock({ className }: MockProps) {
+    return (
+        <div className={`${FRAME} ${className ?? ""}`}>
+            <div className="absolute inset-3 flex flex-col gap-1.5 text-[7px]">
+                <div className="text-[6.5px] uppercase tracking-wider text-amber-700">Pending approvals · 2</div>
+                <div className="rounded-md border border-amber-200 bg-amber-50/60 px-2 py-1 louis-rise">
+                    <div className="flex items-center gap-1 mb-0.5">
+                        <span className="px-1 rounded bg-amber-200 text-amber-900 text-[6px] font-medium">REVIEW</span>
+                        <div className="text-gray-800 truncate flex-1">Send MNDA to globex@acme.com</div>
+                    </div>
+                    <div className="flex items-center gap-1 text-[6px] text-gray-500">
+                        <span>requested by agent · 2m ago</span>
+                        <span className="ml-auto px-1 rounded bg-emerald-600 text-white">Approve</span>
+                        <span className="px-1 rounded bg-gray-100 text-gray-700">Hold</span>
+                    </div>
+                </div>
+                <div className="text-[6.5px] uppercase tracking-wider text-gray-400 mt-1">Audit log · today</div>
+                {[
+                    { actor: "alice@firm", action: "read NDA_v7.pdf", time: "14:32" },
+                    { actor: "agent.m&a", action: "drafted redline §9.4", time: "14:35" },
+                    { actor: "bob@firm", action: "approved send", time: "14:37" },
+                ].map((e, i) => (
+                    <div
+                        key={i}
+                        className="flex items-center gap-1.5 text-[6.5px] text-gray-600 louis-rise"
+                        style={{ animationDelay: `${i * 0.1}s` }}
+                    >
+                        <span className="font-mono text-gray-400">{e.time}</span>
+                        <span className="font-medium text-gray-800">{e.actor}</span>
+                        <span className="text-gray-500 truncate">{e.action}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Document comparison — diff two versions
+// ---------------------------------------------------------------------------
+
+export function DocComparisonMock({ className }: MockProps) {
+    return (
+        <div className={`${FRAME} ${className ?? ""}`}>
+            <div className="absolute inset-3 flex flex-col gap-1.5">
+                <div className="flex items-center gap-1 text-[6.5px] text-gray-500">
+                    <span className="px-1 rounded bg-rose-100 text-rose-700 border border-rose-200">v6</span>
+                    <span>→</span>
+                    <span className="px-1 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">v7</span>
+                    <span className="ml-auto text-gray-400">3 material changes</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 flex-1 text-[6.5px] font-serif">
+                    <div className="rounded-md border border-gray-200 bg-white p-1.5 leading-relaxed">
+                        <div className="font-semibold text-[7px] mb-0.5">§9.4 Survivor cap</div>
+                        <div className="text-gray-700">
+                            Survivor cap shall be{" "}
+                            <span className="bg-rose-100 text-rose-700 line-through px-0.5">$5M</span>{" "}
+                            for{" "}
+                            <span className="bg-rose-100 text-rose-700 line-through px-0.5">36 months</span>.
+                        </div>
+                    </div>
+                    <div className="rounded-md border border-gray-200 bg-white p-1.5 leading-relaxed">
+                        <div className="font-semibold text-[7px] mb-0.5">§9.4 Survivor cap</div>
+                        <div className="text-gray-700">
+                            Survivor cap shall be{" "}
+                            <span className="bg-emerald-100 text-emerald-800 px-0.5 louis-pulse">$1.2M</span>{" "}
+                            for{" "}
+                            <span className="bg-emerald-100 text-emerald-800 px-0.5">18 months</span>.
+                        </div>
+                    </div>
+                </div>
+                <div className="text-[6.5px] text-amber-800 italic">
+                    Agent summary: cap and tail both reduced — conflicts with §9.6 fundamental reps.
+                </div>
+            </div>
+        </div>
+    );
+}
 
 // ---------------------------------------------------------------------------
 // Hero — composite mock of the workbench
