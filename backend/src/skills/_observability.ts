@@ -50,3 +50,39 @@ export function decisionStats() {
   }
   return { total, byIntent, bySource };
 }
+
+// ---------------------------------------------------------------------------
+// Cost governor — one event per turn (AC1 telemetry)
+// ---------------------------------------------------------------------------
+
+export interface TurnCostLog {
+  ts: string;                 // ISO timestamp
+  userId?: string;
+  chatId?: string;
+  intensity: string;          // quick | standard | thorough
+  skillCount: number;
+  effort: string;             // low | medium | high | max
+  model: string;
+  estCostUsd: number;
+  /** True when the estimate is at or under the configured per-turn ceiling. */
+  withinBudget?: boolean;
+}
+
+const COST_BUFFER_SIZE = 200;
+const costBuffer: TurnCostLog[] = [];
+
+/** Emit one cost-governor event per turn. In-memory ring buffer, like routes. */
+export function logTurnCost(log: TurnCostLog) {
+  costBuffer.push(log);
+  if (costBuffer.length > COST_BUFFER_SIZE) costBuffer.shift();
+}
+
+export function getRecentTurnCosts(limit = 50, opts?: { userId?: string }): TurnCostLog[] {
+  let entries = costBuffer;
+  if (opts?.userId) entries = entries.filter(e => e.userId === opts.userId);
+  return entries.slice(-limit).reverse();
+}
+
+export function clearTurnCosts() {
+  costBuffer.length = 0;
+}
