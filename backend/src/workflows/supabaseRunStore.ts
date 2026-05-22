@@ -169,6 +169,13 @@ export class SupabaseRunStore implements WorkflowRunStore {
     });
   }
 
+  async setFindings(id: string, findings: Finding[], now?: string): Promise<WorkflowRun | undefined> {
+    return this.mutate(id, (r) => {
+      r.findings = [...findings];
+      r.updatedAt = now ?? new Date().toISOString();
+    });
+  }
+
   async delete(id: string): Promise<boolean> {
     const { error } = await this.db.from(TABLE).delete().eq("id", id);
     if (error) throw new Error(`workflow run delete failed: ${error.message}`);

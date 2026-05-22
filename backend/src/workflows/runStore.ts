@@ -111,6 +111,14 @@ export class InMemoryRunStore implements WorkflowRunStore {
     return run;
   }
 
+  async setFindings(id: string, findings: Finding[], now?: string): Promise<WorkflowRun | undefined> {
+    const run = this.runs.get(id);
+    if (!run) return undefined;
+    run.findings = [...findings];
+    run.updatedAt = now ?? new Date().toISOString();
+    return run;
+  }
+
   async delete(id: string): Promise<boolean> {
     return this.runs.delete(id);
   }

@@ -14,13 +14,15 @@ export type QueueName =
   | "routines"
   | "documents"
   | "embeddings"
-  | "notifications";
+  | "notifications"
+  | "workflows";
 
 export const QUEUE_NAMES: QueueName[] = [
   "routines",
   "documents",
   "embeddings",
   "notifications",
+  "workflows",
 ];
 
 export interface EnqueueOptions {

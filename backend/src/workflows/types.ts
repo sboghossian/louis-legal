@@ -198,6 +198,8 @@ export interface WorkflowRunStore {
   update(id: string, patch: RunPatch, now?: string): Promise<WorkflowRun | undefined>;
   /** Append a finding to the run. */
   addFinding(id: string, finding: Finding, now?: string): Promise<WorkflowRun | undefined>;
+  /** Replace the run's findings wholesale (e.g. after Full-Bench revises them). */
+  setFindings(id: string, findings: Finding[], now?: string): Promise<WorkflowRun | undefined>;
   /** Delete a run (user cancel / test reset). Returns true if one was removed. */
   delete(id: string): Promise<boolean>;
   /** Drop everything (test/reset helper). */

@@ -13,6 +13,13 @@ export { InMemoryRunStore, VALID_TRANSITIONS, canTransition } from "./runStore";
 export { SupabaseRunStore, rowToRun, runToRow } from "./supabaseRunStore";
 export type { WorkflowRunRow } from "./supabaseRunStore";
 export { runStore, createRunStore, isSupabaseConfigured } from "./factory";
+export { runWorkflow, parseFindings, fallbackAssemble } from "./orchestrator";
+export type {
+  OrchestratorDeps,
+  RouteStep,
+  MemoryContextFn,
+  GroundingCheck,
+} from "./orchestrator";
 export {
   getTemplate,
   listTemplates,
