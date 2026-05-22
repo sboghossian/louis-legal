@@ -45,10 +45,10 @@ export interface MemoryContextResult {
  * effectiveness×recency, and capped at `limit`. Returns an empty block when no
  * memory has earned its place — the caller appends nothing in that case.
  */
-export function buildMemoryContext(
+export async function buildMemoryContext(
   store: MemoryStore,
   q: MemoryContextQuery,
-): MemoryContextResult {
+): Promise<MemoryContextResult> {
   const { userId } = q;
   const limit = q.limit ?? DEFAULT_CONTEXT_LIMIT;
   const seen = new Set<string>();
@@ -62,14 +62,22 @@ export function buildMemoryContext(
     }
   };
 
-  add(store.query({ userId, tier: "institutional", tags: q.tags, now: q.now }));
-  add(store.query({ userId, tier: "precedent", tags: q.tags, now: q.now }));
-  if (q.matterId) {
-    add(store.query({ userId, tier: "matter", scopeId: q.matterId, tags: q.tags, now: q.now }));
-  }
-  if (q.sessionId) {
-    add(store.query({ userId, tier: "session", scopeId: q.sessionId, tags: q.tags, now: q.now }));
-  }
+  // Cross-session tiers first (institutional, precedent), then scoped tiers.
+  // Run in parallel; merge in a stable order so dedup is deterministic.
+  const [institutional, precedent, matter, session] = await Promise.all([
+    store.query({ userId, tier: "institutional", tags: q.tags, now: q.now }),
+    store.query({ userId, tier: "precedent", tags: q.tags, now: q.now }),
+    q.matterId
+      ? store.query({ userId, tier: "matter", scopeId: q.matterId, tags: q.tags, now: q.now })
+      : Promise.resolve<MemoryEntry[]>([]),
+    q.sessionId
+      ? store.query({ userId, tier: "session", scopeId: q.sessionId, tags: q.tags, now: q.now })
+      : Promise.resolve<MemoryEntry[]>([]),
+  ]);
+  add(institutional);
+  add(precedent);
+  add(matter);
+  add(session);
 
   const now = q.now ? Date.parse(q.now) : Date.now();
   // `limit: 0` is a valid "inject nothing"; Math.max guards a negative limit.

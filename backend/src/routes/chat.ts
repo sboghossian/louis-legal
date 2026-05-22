@@ -611,16 +611,17 @@ chatRouter.post("/", requireAuth, async (req, res) => {
     let memoryCtx: MemoryContextResult = { block: "", entries: [] };
     try {
         // `if (userId)` guards against an empty id ever grouping users together.
-        if (userId)
-        memoryCtx = buildMemoryContext(memoryStore, {
-            userId,
-            tags: {
-                practiceArea: routeDecision.intent.practiceArea,
-                jurisdiction: routeDecision.intent.jurisdiction,
-            },
-            matterId: resolvedProjectId ?? undefined,
-            sessionId: chatId ?? undefined,
-        });
+        if (userId) {
+            memoryCtx = await buildMemoryContext(memoryStore, {
+                userId,
+                tags: {
+                    practiceArea: routeDecision.intent.practiceArea,
+                    jurisdiction: routeDecision.intent.jurisdiction,
+                },
+                matterId: resolvedProjectId ?? undefined,
+                sessionId: chatId ?? undefined,
+            });
+        }
     } catch (memErr) {
         devLog("[chat/stream] memory injection skipped", {
             error: memErr instanceof Error ? memErr.message : String(memErr),
@@ -803,13 +804,15 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         // ----- Processor v2: capture the turn back into working memory and keep
         // the injected entries' recency fresh. Fail-safe — memory is best-effort.
         try {
-            for (const entry of memoryCtx.entries) memoryStore.recordUsage(entry.id);
+            await Promise.all(
+                memoryCtx.entries.map((entry) => memoryStore.recordUsage(entry.id)),
+            );
             const memContent = summarizeTurnForMemory({
                 userMessage: latestUserMessage,
                 assistantText: fullText ?? "",
             });
             if (userId && memContent) {
-                memoryStore.put({
+                await memoryStore.put({
                     userId,
                     tier: resolvedProjectId ? "matter" : "session",
                     content: memContent,
