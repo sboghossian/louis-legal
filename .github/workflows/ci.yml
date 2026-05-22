@@ -89,6 +89,12 @@ jobs:
         run: pip install --quiet pgsanity
 
       - name: Check every .sql file under backend/migrations/
+        # Advisory, not a merge gate: pgsanity (ecpg-based) false-positives on
+        # valid Postgres our migrations rely on — CREATE EXTENSION, pgvector
+        # types, PL/pgSQL RPCs. Surfaces SQL errors as a signal without blocking
+        # CI, until we swap in a parser that understands those constructs.
+        # (The frontend lint step is likewise advisory.)
+        continue-on-error: true
         run: |
           fail=0
           for f in backend/migrations/*.sql; do
