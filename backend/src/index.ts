@@ -11,6 +11,7 @@ import { tabularRouter } from "./routes/tabular";
 import { workflowsRouter } from "./routes/workflows";
 import { workflowRunsRouter } from "./routes/workflowRuns";
 import { agentCardRouter } from "./agent";
+import { agentTaskRouter } from "./agent/task";
 import { userRouter } from "./routes/user";
 import { downloadsRouter } from "./routes/downloads";
 import { skillsRouter } from "./routes/skills";
@@ -151,6 +152,7 @@ app.use("/tabular-review", tabularRouter);
 app.use("/workflows", workflowsRouter);
 app.use("/api/workflows", workflowRunsRouter);
 app.use(agentCardRouter); // serves /.well-known/agent.json (Wave 3 agent-native surface)
+app.use(agentTaskRouter); // serves POST /.well-known/agent/task (Wave 4 A2A↔MCP bridge)
 app.use("/user", userRouter);
 app.use("/users", userRouter);
 app.use("/download", downloadsRouter);
