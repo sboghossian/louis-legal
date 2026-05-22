@@ -20,6 +20,10 @@ import {
     type MemoryContextResult,
 } from "../memory";
 import { decideTurnBudget } from "../lib/llm/budget";
+import {
+    parseWorkflowDispatch,
+    streamWorkflowDispatch,
+} from "./workflowChatDispatch";
 import { routeAsync as routeSkills } from "../skills/_router";
 import { completeText } from "../lib/llm";
 import { getUserApiKeys, getUserModelSettings } from "../lib/userSettings";
@@ -444,6 +448,13 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         req.body && typeof req.body === "object" && !Array.isArray(req.body)
             ? (req.body as Record<string, unknown>)
             : {};
+    // Opt-in (Wave 4): dispatch a typed workflow instead of a chat turn when the
+    // body carries `workflowTemplateId`. Additive — normal chat is unaffected.
+    const workflowDispatch = parseWorkflowDispatch(body);
+    if (workflowDispatch) {
+        await streamWorkflowDispatch(res, { userId, ...workflowDispatch });
+        return;
+    }
     const parsedMessages = parseChatMessages(body.messages);
     if (!parsedMessages.ok) {
         return void res.status(400).json({ detail: parsedMessages.detail });
