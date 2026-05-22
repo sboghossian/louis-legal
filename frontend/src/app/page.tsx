@@ -406,7 +406,7 @@ function ProcessorV2() {
     {
       icon: Layers,
       title: "Memory that earns its place",
-      body: "Four tiers — session, matter, institutional, and precedent — with tag-filtered retrieval. Memory that demonstrably helped is weighted up; stale or useless memory decays. Only earned context is injected, never the whole history.",
+      body: "Four tiers — session, matter, institutional, precedent — kept per lawyer and persisted across sessions. It learns from you: a thumbs-up lifts the memory that helped, an unhelpful one lets it decay. Only earned, relevant context is injected each turn — never the whole history, never another user's.",
     },
   ];
 
