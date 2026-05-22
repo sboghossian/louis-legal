@@ -49,6 +49,10 @@ import {
   JOB_NAME as NOTIFICATIONS_DELIVER,
   handleNotificationsDeliver,
 } from "./jobs/notifications.deliver";
+import {
+  JOB_NAME as WORKFLOWS_RUN,
+  handleWorkflowsRun,
+} from "./jobs/workflows.run";
 import { listRoutines } from "../routines/_store";
 
 // Map job names to handlers. Each handler receives a BullMQ-shaped Job.
@@ -63,6 +67,7 @@ const HANDLERS: Record<string, AnyHandler> = {
   [EMBEDDINGS_INDEX]: handleEmbeddingsIndex,
   [EMBEDDINGS_DELETE]: handleEmbeddingsDelete,
   [NOTIFICATIONS_DELIVER]: handleNotificationsDeliver,
+  [WORKFLOWS_RUN]: handleWorkflowsRun,
 };
 
 /**
