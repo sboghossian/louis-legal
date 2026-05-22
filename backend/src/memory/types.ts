@@ -44,6 +44,8 @@ export const TAG_KEYS = ["practiceArea", "jurisdiction", "docType"] as const;
 
 /** Input to {@link MemoryStore.put}. Defaults are filled by the store. */
 export interface MemoryInput {
+  /** Owner of this memory. Required — the store is per-user isolated. */
+  userId: string;
   tier: MemoryTier;
   content: string;
   tags?: MemoryTags;
@@ -58,6 +60,8 @@ export interface MemoryInput {
 /** A stored memory with its feedback/decay bookkeeping. */
 export interface MemoryEntry {
   id: string;
+  /** Owner of this memory. Every read is filtered to the querying user. */
+  userId: string;
   tier: MemoryTier;
   content: string;
   tags: MemoryTags;
@@ -78,6 +82,8 @@ export interface MemoryEntry {
 
 /** Filter + ranking parameters for {@link MemoryStore.query}. */
 export interface MemoryQuery {
+  /** Owner whose memory to read. Required — no cross-user reads. */
+  userId: string;
   /** Restrict to one tier. Omit to search all tiers. */
   tier?: MemoryTier;
   /** Exact-match scope (session/matter/client id). */
@@ -103,8 +109,8 @@ export interface MemoryStore {
   put(input: MemoryInput): MemoryEntry;
   /** Read one entry by id. */
   get(id: string): MemoryEntry | undefined;
-  /** Tag-filtered, effectiveness/recency-ranked retrieval. */
-  query(q?: MemoryQuery): MemoryEntry[];
+  /** Tag-filtered, effectiveness/recency-ranked retrieval (user-scoped). */
+  query(q: MemoryQuery): MemoryEntry[];
   /** Record helpful/unhelpful feedback; bumps the effectiveness signal. */
   recordOutcome(id: string, outcome: Outcome, now?: string): MemoryEntry | undefined;
   /** Mark an entry as used this turn (usageCount++, refreshes recency). */

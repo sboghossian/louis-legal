@@ -610,7 +610,10 @@ chatRouter.post("/", requireAuth, async (req, res) => {
     // recorded as used after the turn so their recency stays fresh.
     let memoryCtx: MemoryContextResult = { block: "", entries: [] };
     try {
+        // `if (userId)` guards against an empty id ever grouping users together.
+        if (userId)
         memoryCtx = buildMemoryContext(memoryStore, {
+            userId,
             tags: {
                 practiceArea: routeDecision.intent.practiceArea,
                 jurisdiction: routeDecision.intent.jurisdiction,
@@ -805,8 +808,9 @@ chatRouter.post("/", requireAuth, async (req, res) => {
                 userMessage: latestUserMessage,
                 assistantText: fullText ?? "",
             });
-            if (memContent) {
+            if (userId && memContent) {
                 memoryStore.put({
+                    userId,
                     tier: resolvedProjectId ? "matter" : "session",
                     content: memContent,
                     tags: {

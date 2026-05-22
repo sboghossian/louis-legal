@@ -10,6 +10,7 @@
  *
  * CREATE TABLE memory_entries (
  *   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+ *   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, -- owner; every read is user-scoped
  *   tier text NOT NULL,                 -- 'session'|'matter'|'institutional'|'precedent'
  *   content text NOT NULL,
  *   scope_id text,                      -- session/matter/client id
@@ -24,6 +25,7 @@
  *   updated_at timestamptz NOT NULL DEFAULT now(),
  *   last_used_at timestamptz NOT NULL DEFAULT now()
  * );
+ * CREATE INDEX memory_entries_user_id_idx ON memory_entries (user_id);
  * CREATE INDEX memory_entries_tier_idx ON memory_entries (tier);
  * CREATE INDEX memory_entries_scope_idx ON memory_entries (scope_id);
  */
@@ -66,6 +68,7 @@ export class InMemoryMemoryStore implements MemoryStore {
     const now = input.now ?? new Date().toISOString();
     const entry: MemoryEntry = {
       id: crypto.randomUUID(),
+      userId: input.userId,
       tier: input.tier,
       content: input.content,
       tags: { ...(input.tags ?? {}) },
@@ -86,9 +89,10 @@ export class InMemoryMemoryStore implements MemoryStore {
     return this.entries.get(id);
   }
 
-  query(q: MemoryQuery = {}): MemoryEntry[] {
+  query(q: MemoryQuery): MemoryEntry[] {
     const now = q.now ? Date.parse(q.now) : Date.now();
     const filtered = [...this.entries.values()].filter((e) => {
+      if (e.userId !== q.userId) return false; // per-user isolation, all tiers
       if (q.tier && e.tier !== q.tier) return false;
       if (q.scopeId !== undefined && e.scopeId !== q.scopeId) return false;
       return matchesTags(e, q.tags);

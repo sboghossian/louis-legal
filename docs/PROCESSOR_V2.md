@@ -106,11 +106,16 @@ memoryStore.reinforce(id);                 // precedent promotion
   `InMemoryMemoryStore` ships now, a Supabase-backed store can drop in later
   (future SQL documented in `store.ts`).
 
+- **Per-user isolation:** `userId` is a required field on every entry, input,
+  and query — `query()` filters to the querying user across *all* tiers, so
+  one user's memory can never surface in another's turn. (Sync in-memory store
+  for now; Supabase-backed persistence is the next slice.)
+
 **Live in the turn** (`context.ts`, wired in `chat.ts`):
-- `buildMemoryContext(store, { tags, matterId, sessionId, limit })` assembles a
-  ranked "Working memory" block (institutional + precedent always eligible,
-  matter/session gated by scope, tag-filtered, capped at 8) appended to the
-  system prompt before the model call.
+- `buildMemoryContext(store, { userId, tags, matterId, sessionId, limit })`
+  assembles a ranked "Working memory" block (institutional + precedent always
+  eligible, matter/session gated by scope, all scoped to `userId`, tag-filtered,
+  capped at 8) appended to the system prompt before the model call.
 - After a successful turn, `summarizeTurnForMemory()` captures the exchange as a
   `matter`/`session` memory and the injected entries are `recordUsage`'d so
   their recency stays fresh. Both paths are fail-safe.

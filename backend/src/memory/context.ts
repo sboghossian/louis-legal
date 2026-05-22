@@ -15,6 +15,8 @@ export const DEFAULT_CONTEXT_LIMIT = 8;
 export const MAX_MEMORY_CHARS = 600;
 
 export interface MemoryContextQuery {
+  /** Owner whose memory to assemble. Required — no cross-user reads. */
+  userId: string;
   /** Tags from the turn's routing decision (practice area, jurisdiction). */
   tags?: MemoryTags;
   /** Matter/project scope id — gates the `matter` tier. */
@@ -45,8 +47,9 @@ export interface MemoryContextResult {
  */
 export function buildMemoryContext(
   store: MemoryStore,
-  q: MemoryContextQuery = {},
+  q: MemoryContextQuery,
 ): MemoryContextResult {
+  const { userId } = q;
   const limit = q.limit ?? DEFAULT_CONTEXT_LIMIT;
   const seen = new Set<string>();
   const pool: MemoryEntry[] = [];
@@ -59,13 +62,13 @@ export function buildMemoryContext(
     }
   };
 
-  add(store.query({ tier: "institutional", tags: q.tags, now: q.now }));
-  add(store.query({ tier: "precedent", tags: q.tags, now: q.now }));
+  add(store.query({ userId, tier: "institutional", tags: q.tags, now: q.now }));
+  add(store.query({ userId, tier: "precedent", tags: q.tags, now: q.now }));
   if (q.matterId) {
-    add(store.query({ tier: "matter", scopeId: q.matterId, tags: q.tags, now: q.now }));
+    add(store.query({ userId, tier: "matter", scopeId: q.matterId, tags: q.tags, now: q.now }));
   }
   if (q.sessionId) {
-    add(store.query({ tier: "session", scopeId: q.sessionId, tags: q.tags, now: q.now }));
+    add(store.query({ userId, tier: "session", scopeId: q.sessionId, tags: q.tags, now: q.now }));
   }
 
   const now = q.now ? Date.parse(q.now) : Date.now();
