@@ -92,4 +92,36 @@ Branch base: `main` · integration branch `feat/lavern-wave2` · Source study: `
 - Wave 3: agent card LIVE; triage / rerank / sessions landed as tested modules,
   live-pipeline wiring documented as follow-ups (`docs/WAVE3.md`).
 - Migrations to apply: `2026-05-22-workflow-runs.sql`, `2026-05-22-sessions.sql`.
-- [ ] PR `feat/lavern-wave2` → main
+- [x] PR #9 `feat/lavern-wave2` → main MERGED (`6d61fdc`, CI green 3/3).
+
+# Wave 4 — make Wave 3 infra live (ADDITIVE + FLAGGED)
+
+Posture: build the missing seams + opt-in wiring. **Default chat/retrieval path
+unchanged.** Same agent-mode pattern; agents branch off merged `main` (have all
+Wave 2/3). Integration branch `feat/lavern-wave4`.
+
+## Parallel agent modules (new files, disjoint, self-contained, tested)
+- **W4-A Ollama provider adapter** — `lib/llm/ollama.ts`: `completeOllamaText` +
+  `streamOllama` matching existing `completeText`/`StreamChatParams` shapes,
+  calling Ollama HTTP (`OLLAMA_URL`); `pingOllama()` reachability probe. Makes
+  triage's `local` target serve. NO edit to providerForModel/dispatch (lead).
+- **W4-B A2A↔MCP task bridge** — `agent/task.ts` + `agentTaskRouter`:
+  `POST /.well-known/agent/task` maps an A2A task payload → MCP `tools/call`
+  (read `routes/mcp.ts` for the call shape). Pure builder + handler + tests.
+- **W4-C Session checkpoint helpers** — `sessions/checkpoint.ts`:
+  `checkpointStart`/`checkpointSave`/`checkpointHydrate` over `sessionStore`,
+  for opt-in chat/workflow resumability. Pure helpers + tests.
+- **W4-D Workflow progress events** — `workflows/events.ts`:
+  `WorkflowProgressEvent` types + pure formatter/emitter for SSE
+  `workflow_progress`. Tests.
+
+## Lead wiring (additive only — no default behavior change)
+- Mount `agentTaskRouter` (new endpoint).
+- `/chat` opt-in workflow dispatch: if request body has `workflowId`, enqueue
+  `workflows.run` + stream `workflow_progress`; else unchanged.
+- Ollama adapter available behind a route helper / flag; default selection NOT
+  changed (triage stays opt-in).
+
+## Done = typecheck 0 · vitest green · build 0 · docs · PR → main.
+## Status
+- [ ] Wave 4 in progress
