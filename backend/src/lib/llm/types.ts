@@ -58,6 +58,12 @@ export type StreamChatParams = {
      * one-shot completions should leave this off to save tokens and latency.
      */
     enableThinking?: boolean;
+    /**
+     * Adaptive cost-governor effort level (from the router intensity). Only the
+     * Claude provider consumes this (via `output_config.effort`); gemini/openai
+     * ignore it. When omitted, Claude falls back to its default effort.
+     */
+    effort?: "low" | "medium" | "high" | "max";
 };
 
 export type StreamChatResult = {

@@ -1478,7 +1478,7 @@ export async function runEditDocument(params: {
 // Tool dispatch
 // ---------------------------------------------------------------------------
 
-async function readDocumentContent(
+export async function readDocumentContent(
     docLabel: string,
     docStore: DocStore,
     write: (s: string) => void,
@@ -2724,6 +2724,11 @@ export async function runLLMStream(params: {
     model?: string;
     apiKeys?: import("./llm").UserApiKeys;
     /**
+     * Adaptive cost-governor effort tier from the router decision. Threaded to
+     * the Claude call site; no-op for gemini/openai.
+     */
+    effort?: "low" | "medium" | "high" | "max";
+    /**
      * If set, generate_docx will attach created docs to this project so
      * they appear in the project sidebar. Leave null for general chats —
      * generated docs still get persisted, but as standalone documents.
@@ -2743,6 +2748,7 @@ export async function runLLMStream(params: {
         buildCitations,
         model,
         apiKeys,
+        effort,
         projectId,
     } = params;
     const activeTools = extraTools?.length
@@ -2840,6 +2846,7 @@ export async function runLLMStream(params: {
         maxIterations: 10,
         apiKeys,
         enableThinking: true,
+        effort,
         callbacks: {
             onContentDelta: (delta) => {
                 iterText += delta;

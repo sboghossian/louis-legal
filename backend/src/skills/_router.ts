@@ -15,7 +15,18 @@ import {
   type RoutingClassification,
   type RoutingIntent,
 } from "./_llm-classifier";
-import { logRouteDecision } from "./_observability";
+import { logRouteDecision, logTurnCost } from "./_observability";
+import {
+  type Intensity,
+  type Effort,
+  type IntensityProfile,
+  pickIntensity,
+  escalate,
+  profileFor,
+} from "../lib/llm/effort";
+import { modelForTier, providerForModel } from "../lib/llm/models";
+import type { Provider } from "../lib/llm/types";
+import { estimateTurnCostUsd, withinBudget } from "../lib/llm/budget";
 
 export type Persona = "louis-twin" | "partner" | "associate" | "junior" | "in-house-counsel";
 export type Surface = "web" | "mobile" | "voice" | "api" | "word-plugin";
@@ -68,6 +79,14 @@ export interface RouteDecision {
   playbookSlug: PracticeArea | null;
   /** Confidence score from the classifier (0..1). */
   routingConfidence: number;
+  /**
+   * Adaptive cost-governor tier for this turn (quick | standard | thorough).
+   * Drives the skill budget, the recommended model tier, and the Claude
+   * `effort` control. Defaults to `standard` on the synchronous `route()` path.
+   */
+  intensity: Intensity;
+  /** Claude API effort level for this turn (gated no-op for non-Claude). */
+  effort: Effort;
   /** The composed system-prompt extra. May be empty string. */
   systemPromptExtra: string;
 }
@@ -265,6 +284,17 @@ export async function routeAsync(ctx: RouteContext): Promise<RouteDecision> {
   }
 
   const playbookSlug: PracticeArea | null = classification?.practiceArea ?? null;
+
+  // ----- adaptive cost governor: pick + escalate intensity -----
+  const messageWords = message.trim().split(/\s+/).filter(Boolean).length;
+  // Only a real classification carries a confidence signal. Without one, leave
+  // confidence undefined so `escalate` doesn't read 0 as "low confidence".
+  const confidence = classification?.confidence;
+  // Higher-stakes intents act as a risk signal when the classifier gives none.
+  const riskLevel = classification ? riskFromIntent(classification.intent) : undefined;
+  const base = pickIntensity({ messageWords, riskLevel, confidence });
+  const intensity = escalate(base, { confidence, riskLevel });
+
   const decision = routeFromIntent(ctx, {
     primary,
     docType,
@@ -274,6 +304,7 @@ export async function routeAsync(ctx: RouteContext): Promise<RouteDecision> {
     routingIntent: classification?.intent,
     recommendedModel: classification?.recommendedModel ?? null,
     routingConfidence: classification?.confidence ?? 0,
+    intensity,
   });
 
   // Log
@@ -293,7 +324,59 @@ export async function routeAsync(ctx: RouteContext): Promise<RouteDecision> {
     classifierSource: decision.classifierSource === "auto-route" ? "hybrid" : decision.classifierSource,
     latencyMs: Date.now() - started,
   });
+
+  // ----- per-turn cost-governor telemetry (AC1) -----
+  // Estimate spend from the input-prompt size we control (system + skills) plus
+  // a conservative output allowance. Actual usage is reconciled at the call site.
+  const estInputTokens = approxTokens(decision.systemPromptExtra) + approxTokens(message);
+  const estOutputTokens = ESTIMATED_OUTPUT_TOKENS;
+  const estCostUsd = estimateTurnCostUsd({
+    model: decision.recommendedModel ?? "",
+    inputTokens: estInputTokens,
+    outputTokens: estOutputTokens,
+  });
+  logTurnCost({
+    ts: new Date().toISOString(),
+    userId: ctx.userId,
+    chatId: ctx.chatId,
+    intensity: decision.intensity,
+    skillCount: decision.skillIds.length,
+    effort: decision.effort,
+    model: decision.recommendedModel ?? "",
+    estCostUsd,
+    withinBudget: withinBudget(estCostUsd),
+  });
+
   return decision;
+}
+
+/** ~4 chars per token — coarse, good enough for relative budgeting. */
+function approxTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
+
+/** Conservative per-turn output-token allowance for cost estimation. */
+const ESTIMATED_OUTPUT_TOKENS = 800;
+
+/**
+ * Treat producing/strategic intents as higher-stakes so the governor leans
+ * toward `thorough`, and pure extraction/summarisation as lower risk so simple
+ * turns stay `quick`. Returns undefined for neutral intents.
+ */
+function riskFromIntent(intent: RoutingIntent): string | undefined {
+  switch (intent) {
+    case "draft":
+    case "redline":
+    case "strategy":
+    case "compliance":
+      return "high";
+    case "summarize":
+    case "extract":
+    case "calc":
+      return "low";
+    default:
+      return undefined;
+  }
 }
 
 function mapRoutingIntentToLegacy(intent: RoutingIntent): string {
@@ -332,6 +415,8 @@ function routeFromIntent(
     routingIntent?: RoutingIntent;
     recommendedModel?: string | null;
     routingConfidence?: number;
+    /** Adaptive cost-governor tier. Defaults to `standard` when absent. */
+    intensity?: Intensity;
   },
 ): RouteDecision {
   const { message } = ctx;
@@ -457,7 +542,11 @@ function routeFromIntent(
   if (slug) {
     filtered = filterSkillsToPracticeArea(valid, slug);
   }
-  const trimmed = trimSkillList(filtered, 13);
+  // Adaptive skill cap: quick < standard < thorough, never above the prior
+  // hard max of 13. Trimming is monotonic in skillBudget.
+  const intensity: Intensity = classified.intensity ?? "standard";
+  const profile: IntensityProfile = profileFor(intensity);
+  const trimmed = trimSkillList(filtered, Math.min(profile.skillBudget, 13));
 
   // ----- compose system prompt: playbook first, then skills -----
 
@@ -468,6 +557,16 @@ function routeFromIntent(
     composed,
   ].filter(Boolean).join("\n\n---\n\n");
 
+  // Model precedence: classifier pick wins; otherwise derive from the
+  // intensity's model tier on the provider the classifier (or env default)
+  // implies. Falls back to the env default's provider when the classifier had
+  // no model opinion at all.
+  let recommendedModel = classified.recommendedModel ?? null;
+  if (!recommendedModel) {
+    const provider = providerForEnvDefault();
+    recommendedModel = modelForTier(profile.modelTier, provider);
+  }
+
   return {
     skillIds: trimmed,
     intent: {
@@ -477,11 +576,30 @@ function routeFromIntent(
       routingIntent: classified.routingIntent,
     },
     classifierSource: classified.classifierSource,
-    recommendedModel: classified.recommendedModel ?? null,
+    recommendedModel,
     playbookSlug: slug,
     routingConfidence: classified.routingConfidence ?? 0,
+    intensity,
+    effort: profile.effort,
     systemPromptExtra,
   };
+}
+
+/**
+ * Provider to use when deriving a tiered model and the classifier had no model
+ * opinion. Inferred from `LOUIS_MODEL_DEFAULT` / `ANTHROPIC_API_KEY` presence;
+ * defaults to claude (the only provider that consumes the `effort` control).
+ */
+function providerForEnvDefault(): Provider {
+  const envModel = process.env.LOUIS_MODEL_DEFAULT;
+  if (envModel) {
+    try {
+      return providerForModel(envModel);
+    } catch {
+      // fall through
+    }
+  }
+  return "claude";
 }
 
 /** Categories that are not practice-area-specific and should never be filtered out. */

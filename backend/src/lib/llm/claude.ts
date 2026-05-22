@@ -1,5 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Tool } from "@anthropic-ai/sdk/resources/messages/messages";
+import type {
+    Tool,
+    TextBlockParam,
+    OutputConfig,
+} from "@anthropic-ai/sdk/resources/messages/messages";
 import type {
     StreamChatParams,
     StreamChatResult,
@@ -7,6 +11,24 @@ import type {
     NormalizedToolResult,
 } from "./types";
 import { toClaudeTools } from "./tools";
+
+/**
+ * Build the Claude `system` param with a prompt-caching breakpoint on the
+ * stable prefix (skills/system block). The whole system prompt is treated as
+ * the cacheable prefix — it's identical across turns in a chat, so a single
+ * `cache_control: { type: "ephemeral" }` breakpoint lets the API reuse it and
+ * bills cached input at a fraction of the rate. No-op for other providers.
+ */
+function buildSystemWithCache(systemPrompt: string): string | Array<TextBlockParam> {
+    if (!systemPrompt) return systemPrompt;
+    return [
+        {
+            type: "text",
+            text: systemPrompt,
+            cache_control: { type: "ephemeral" },
+        },
+    ];
+}
 
 type ContentBlock =
     | { type: "text"; text: string }
@@ -42,6 +64,7 @@ export async function streamClaude(
         runTools,
         apiKeys,
         enableThinking,
+        effort,
     } = params;
     const maxIter = params.maxIterations ?? 10;
     const anthropic = client(apiKeys?.claude);
@@ -50,24 +73,27 @@ export async function streamClaude(
     const messages: NativeMessage[] = toNativeMessages(params.messages);
     let fullText = "";
 
+    // Adaptive cost governor: the router's effort tier wins; when thinking is on
+    // without an explicit effort we keep the prior "high" default. Typed against
+    // the SDK's OutputConfig (no casts) so a future SDK change fails the build.
+    const resolvedEffort: OutputConfig["effort"] | undefined =
+        effort ?? (enableThinking ? "high" : undefined);
+
     for (let iter = 0; iter < maxIter; iter++) {
         const stream = anthropic.messages.stream({
             model,
-            system: systemPrompt,
+            // Prompt-caching breakpoint on the stable system prefix (Claude only).
+            system: buildSystemWithCache(systemPrompt),
             messages: messages as Anthropic.MessageParam[],
             tools: claudeTools.length
                 ? (claudeTools as unknown as Tool[])
                 : undefined,
             max_tokens: MAX_TOKENS,
-            // Claude 4.x models require `thinking.type: "adaptive"` and
-            // drive effort via `output_config.effort` rather than a fixed
-            // token budget. We only opt in when the caller requested it.
-            ...(enableThinking
-                ? ({
-                      thinking: { type: "adaptive" },
-                      output_config: { effort: "high" },
-                  } as unknown as Record<string, unknown>)
-                : {}),
+            // Claude 4.x models require `thinking.type: "adaptive"` and drive
+            // effort via `output_config.effort` rather than a fixed token
+            // budget. Thinking opt-in is unchanged; effort is governor-driven.
+            ...(enableThinking ? { thinking: { type: "adaptive" } } : {}),
+            ...(resolvedEffort ? { output_config: { effort: resolvedEffort } } : {}),
             // Extended thinking requires temperature to be default (omitted).
         });
 

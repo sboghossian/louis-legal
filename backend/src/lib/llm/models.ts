@@ -53,3 +53,23 @@ export function resolveModel(id: string | null | undefined, fallback: string): s
     if (id && ALL_MODELS.has(id)) return id;
     return fallback;
 }
+
+// ---------------------------------------------------------------------------
+// Tiering — map an intensity model tier to a concrete model id per provider
+// ---------------------------------------------------------------------------
+
+const TIER_MODELS: Record<Provider, Record<"low" | "mid" | "main", readonly string[]>> = {
+    claude: { low: CLAUDE_LOW_MODELS, mid: CLAUDE_MID_MODELS, main: CLAUDE_MAIN_MODELS },
+    gemini: { low: GEMINI_LOW_MODELS, mid: GEMINI_MID_MODELS, main: GEMINI_MAIN_MODELS },
+    openai: { low: OPENAI_LOW_MODELS, mid: OPENAI_MID_MODELS, main: OPENAI_MAIN_MODELS },
+};
+
+/**
+ * Resolve a tier (`low` | `mid` | `main`) to a concrete model id for the given
+ * provider. Returns the first (canonical) model in that provider's tier array.
+ * Used by the adaptive router to pick a model from an intensity's tier when the
+ * classifier didn't already nominate one.
+ */
+export function modelForTier(tier: "low" | "mid" | "main", provider: Provider): string {
+    return TIER_MODELS[provider][tier][0];
+}

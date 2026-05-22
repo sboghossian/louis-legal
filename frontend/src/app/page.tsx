@@ -37,6 +37,8 @@ import {
   ClipboardCheck,
   GitCompareArrows,
   Star,
+  Gauge,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 import { MarketingShell } from "@/components/marketing/marketing-shell";
@@ -96,6 +98,7 @@ export default function LandingPage() {
         <Hero />
         <SocialProofStrip />
         <Features />
+        <ProcessorV2 />
         <TwoPaths />
         <WhyOpenSource />
         <FounderNote />
@@ -377,6 +380,62 @@ function Features() {
                 </Link>
               )}
             </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Processor v2 — the engine under the surfaces
+// ---------------------------------------------------------------------------
+
+function ProcessorV2() {
+  const pillars = [
+    {
+      icon: Gauge,
+      title: "Spends in proportion to stakes",
+      body: "A lightweight classifier sizes every turn before the expensive work runs — fewer skills, a cheaper model, and lower reasoning effort for simple questions; full power for high-stakes review. A per-turn budget cap keeps a single answer from running away.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Citations checked, not trusted",
+      body: "Every quote and section reference in an answer is mechanically cross-checked against the source document — zero extra LLM calls. Grounded citations earn a score; invented ones get flagged. A trust layer that doesn't cost a token.",
+    },
+    {
+      icon: Layers,
+      title: "Memory that earns its place",
+      body: "Four tiers — session, matter, institutional, and precedent — with tag-filtered retrieval. Memory that demonstrably helped is weighted up; stale or useless memory decays. Only earned context is injected, never the whole history.",
+    },
+  ];
+
+  return (
+    <section
+      id="processor"
+      className="relative py-20 md:py-28 px-6 bg-[#fbf8f2] border-y border-[#e7e2d6]"
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-2xl mb-12 md:mb-16">
+          <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-amber-700 mb-4">
+            <span className="h-px w-6 bg-amber-700" />
+            Processor v2
+          </span>
+          <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight leading-tight">
+            Cheaper turns. Verifiable answers. Memory that compounds.
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {pillars.map(({ icon: Icon, title, body }) => (
+            <div key={title} className="flex gap-4">
+              <div className="w-10 h-10 rounded-lg bg-white border border-[#e7e2d6] flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-amber-700" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg mb-1">{title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{body}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>

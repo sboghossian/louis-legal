@@ -228,6 +228,19 @@ in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
 - **Skill router** — Louis routes each user message through ~990 authored
   skills (drafting, review, research, jurisdiction, persona, …) and
   composes only the relevant ones into the system prompt.
+- **Processor v2** (`docs/PROCESSOR_V2.md`) — three credit/trust/memory wins
+  layered on the router:
+  - *Adaptive cost governor* — a cheap classifier picks an intensity tier
+    (`quick`/`standard`/`thorough`) that scales the skill count, model tier,
+    Claude `effort`, and a per-turn budget cap; low-confidence/high-risk turns
+    escalate one tier. Easy questions get cheap, fast answers.
+  - *Zero-LLM grounding* — every quoted span and section reference in an
+    answer is mechanically checked against the cited document (pure string
+    matching, no extra model call). Surfaced on `/chat` as a trailing
+    `grounding` SSE event `{ score, matched, unmatched }`.
+  - *Four-tier memory* — Session / Matter / Institutional / Precedent store
+    with tag-filtered retrieval and effectiveness/recency weighting, so only
+    memory that has earned its place is injected.
 - **Tabular review** — apply the same prompt(s) across many documents,
   one column = one question, like a due-diligence checklist.
 - **MCP server** at `/api/mcp` exposes calculators, clause lookups,

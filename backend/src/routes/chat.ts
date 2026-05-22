@@ -7,9 +7,11 @@ import {
     enrichWithPriorEvents,
     buildWorkflowStore,
     extractAnnotations,
+    readDocumentContent,
     runLLMStream,
     type ChatMessage,
 } from "../lib/chatTools";
+import { verifyGrounding } from "../grounding";
 import { routeAsync as routeSkills } from "../skills/_router";
 import { completeText } from "../lib/llm";
 import { getUserApiKeys, getUserModelSettings } from "../lib/userSettings";
@@ -658,6 +660,7 @@ chatRouter.post("/", requireAuth, async (req, res) => {
             workflowStore,
             model: chosenModel,
             apiKeys,
+            effort: routeDecision.effort,
             projectId: resolvedProjectId,
         });
 
@@ -673,6 +676,64 @@ chatRouter.post("/", requireAuth, async (req, res) => {
             content: events.length ? events : null,
             annotations: annotations.length ? annotations : null,
         });
+
+        // ----- AC2: surface the zero-LLM grounding score as a trailing event ---
+        // Best-effort cross-check of the assistant's quotes/section-refs against
+        // the text of the documents it actually cited. Runs AFTER the answer has
+        // streamed (so it never delays the reply) and is isolated in its own
+        // try/catch — a grounding failure must never turn a successful answer
+        // into a stream error. Emits nothing when the turn cited no source doc.
+        try {
+            const citedLabels = Array.from(
+                new Set(
+                    (annotations as Array<{ type?: string; doc_id?: unknown }>)
+                        .filter(
+                            (a) =>
+                                a?.type === "citation_data" &&
+                                typeof a.doc_id === "string",
+                        )
+                        .map((a) => a.doc_id as string),
+                ),
+            ).slice(0, 5); // cap storage round-trips made after the answer
+
+            const sourceTexts: string[] = [];
+            for (const label of citedLabels) {
+                const text = await readDocumentContent(
+                    label,
+                    docStore,
+                    write,
+                    docIndex,
+                    db,
+                    { emitEvents: false },
+                );
+                if (text && text !== "Document not found.") sourceTexts.push(text);
+            }
+
+            if (sourceTexts.length > 0) {
+                const grounding = verifyGrounding({
+                    findingText: fullText,
+                    document: { text: sourceTexts.join("\n\n") },
+                });
+                write(
+                    `data: ${JSON.stringify({
+                        type: "grounding",
+                        score: grounding.score,
+                        matched: grounding.matched,
+                        unmatched: grounding.unmatched,
+                        quotesChecked: grounding.quotesChecked,
+                        refsChecked: grounding.refsChecked,
+                        documentsChecked: sourceTexts.length,
+                    })}\n\n`,
+                );
+            }
+        } catch (groundingErr) {
+            devLog("[chat/stream] grounding skipped", {
+                error:
+                    groundingErr instanceof Error
+                        ? groundingErr.message
+                        : String(groundingErr),
+            });
+        }
 
         if (!chatTitle && lastUser?.content) {
             await db
