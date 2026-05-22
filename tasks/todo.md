@@ -1,65 +1,63 @@
-# Processor v2 — Lavern-inspired build (yalla)
+# Processor v2 goes live — memory injection + turn capture + budget alert (yalla)
 
-Branch: `feat/processor-v2` · Base: `main` · Spec: `docs/LAVERN_INSPIRATION.md`
+Branch: `feat/pv2-live` · Base: `feat/processor-v2` (PR #1) · Spec: `docs/PROCESSOR_V2.md`
+
+Processor v2 modules shipped in PR #1 but are **dormant**: `memoryStore` is
+imported nowhere and the budget guard is never enforced. This slice makes them
+live in the `/chat` turn. Behavior is **additive and safe** — memory only adds
+context, the budget guard only *alerts* (decision #87), and every new path is
+isolated so it can never break a turn.
 
 ## Definition of done (3 testable criteria)
 
-### AC1 — Adaptive cost governor
-- `routeAsync()` returns an `intensity` tier (`quick | standard | thorough`)
-  derived from request complexity (message length + classifier signal).
-- Intensity drives **(a)** adaptive skill count (quick < standard < thorough,
-  never exceeds the existing max), **(b)** a recommended model tier
-  (quick→LOW/MID, thorough→MAIN), and **(c)** an `effort` control passed to the
-  Claude call site (gated — no-op for non-Claude providers).
-- A per-turn budget guard estimates token spend and caps/flags when a turn would
-  exceed a configurable ceiling.
-- **+ Prompt caching:** drop a `cache_control: ephemeral` breakpoint on the
-  stable skills/system-prompt prefix for Claude calls (no-op other providers).
-- **+ Confidence-based escalation:** start at the intensity's tier; bump one
-  tier when classifier confidence is low or risk = high.
-- **+ Telemetry:** emit one per-turn event via `_observability.ts`
-  `{intensity, skillCount, effort, model, estCostUsd}`.
-- **Test:** unit tests assert quick→fewer skills + low effort + cheaper model;
-  thorough→more skills + high effort + main model; low-confidence→tier bump;
-  cache breakpoint present on Claude payload. `npm run typecheck` exit 0.
+### AC1 — Earned memory is injected into the turn
+- New **pure** helper `buildMemoryContext(store, query)` in `backend/src/memory/`
+  returns a formatted "Working memory" prompt block from the top-N ranked
+  entries for a turn: `session`/`matter` filtered by `scopeId`,
+  `institutional`/`precedent` always eligible, all tag-filtered by
+  `{practiceArea, jurisdiction}` and capped at N (default 8). Empty store / no
+  matches → empty string.
+- Wired into `routes/chat.ts`: the block is appended to
+  `routeDecision.systemPromptExtra` before `buildMessages`, using
+  `routeDecision.intent.{practiceArea,jurisdiction}` for tags and the
+  resolved project/matter id for scope.
+- **Test (vitest):** seeded entries → block contains the right entries, ranked
+  by effectiveness×recency, capped at N, wrong-jurisdiction excluded, empty
+  store → `""`. `npx tsc --noEmit` exit 0.
 
-### AC2 — Zero-LLM grounding verifier
-- New `backend/src/grounding/` exports `verifyGrounding(text, parsedDoc)` →
-  `{ score: 0..1, matched: [], unmatched: [] }`. Pure: no LLM, no network.
-  Cross-checks quoted text + section refs against the parsed document; ignores
-  boilerplate-only citations.
-- **+ Surfaced:** Agent A wires `verifyGrounding()` into the `/chat` response as
-  a `grounding` field (routes through `chat.ts`, NOT `citations/_engine.ts`
-  which is uncommitted WIP).
-- **Test:** unit tests cover exact-quote match, missing citation, section-ref
-  match, boilerplate-only → not credited. `npx vitest run` green.
+### AC2 — The turn is captured back into memory
+- New **pure** helper `summarizeTurnForMemory({ userMessage, assistantText })`
+  returns bounded memory content (≤ a fixed char cap), or `null` for
+  empty/trivial turns.
+- Wired into `routes/chat.ts` (in the existing post-stream block, fail-safe):
+  after a successful turn, `put` a `matter`-tier (or `session`-tier when no
+  matter) memory of the exchange and `recordUsage` on every entry that was
+  injected this turn (advances recency).
+- **Test (vitest):** helper returns bounded non-empty content for a normal
+  turn, `null` for empty assistantText; `recordUsage` advances `usageCount`
+  and `lastUsedAt` (already covered — assert the wiring contract via the
+  helper).
 
-### AC3 — Four-tier memory + feedback weighting
-- New `backend/src/memory/` exposes a store with Session / Matter /
-  Institutional / Precedent tiers, tag-filtered retrieval
-  (`{practiceArea, jurisdiction, docType}`), and effectiveness-weighted ranking
-  (helped ↑, stale ↓). Persistence behind an interface (in-memory impl + space
-  for Supabase later).
-- **Test:** unit tests cover tier write/read, tag filter, weighting order.
-  `npx vitest run` green.
+### AC3 — Budget guard alerts live
+- New **pure** helper `decideTurnBudget({ model, estimatedTokens })` in
+  `lib/llm/budget.ts` → `{ estUsd, ceilingUsd, withinBudget }` (composes the
+  existing `estimateTurnCostUsd` + `turnBudgetCeilingUsd` + `withinBudget`).
+- Wired into `routes/chat.ts`: when a turn is estimated over ceiling, emit a
+  trailing `budget` SSE event `{ type:"budget", estUsd, ceilingUsd, over:true }`.
+  **Alert only — never blocks the turn** (decision #87).
+- **Test (vitest):** `decideTurnBudget` flags over/under correctly around the
+  ceiling. `npx vitest run` fully green.
 
 ### Integration / deliverable
-- All three converge into `feat/processor-v2`; full `npm run typecheck` exit 0
-  and `npx vitest run` fully green; single PR opened against `main`.
+- All three wired into `routes/chat.ts`; full `npm run typecheck` exit 0 and
+  `npx vitest run` green; README + `docs/PROCESSOR_V2.md` updated to mark these
+  capabilities **live**; single PR opened against `main` (or stacked on PR #1).
 
-## Parallel agent decomposition (worktree-isolated, disjoint files)
-- **Agent A — Cost governor:** `_router.ts`, new `lib/llm/effort.ts`,
-  `lib/llm/models.ts` (tier helper), Claude call site, minimal `routes/chat.ts`
-  wiring, new `lib/llm/budget.ts`. (AC1)
-- **Agent B — Grounding:** `backend/src/grounding/*` only (new files). (AC2)
-- **Agent C — Memory:** `backend/src/memory/*` only (new files). (AC3)
-- Integration owner: main thread merges B + C (additive) then A; resolves
-  conflicts; runs full typecheck + vitest; opens PR.
-
-## Out of scope (this PR)
-- Hybrid local+frontier Ollama triage (L — rides BullMQ, separate PR)
-- Workflow-template layer + Full Bench adversarial mode (L — separate PR)
-- Cohere rerank upgrade (cohere-ai already a dep; separate PR)
+## Out of scope (this slice)
+- Thumbs-up/down → `recordOutcome` link (needs per-message memory-id
+  persistence — follow-up).
+- Persisting memory tiers to Supabase (interface seam already exists).
+- Model-tier downgrade on budget breach (alert-only for now).
 
 ## Status
-- [ ] tayyeb received → fire agents
+- [x] shipped: memory injection + turn capture + budget alert live; reviewed; green
