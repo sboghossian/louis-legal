@@ -255,6 +255,20 @@ in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
   - *Auto-brief intake* — short message + attached docs → synthesized task brief.
   - *Output-quality eval harness* — score legal outputs against expectations +
     an optional LLM judge.
+- **Workflow orchestration** (`docs/WORKFLOWS.md`) — typed, multi-step legal
+  workflows (Contract Review, Due Diligence, Research Memo) that run as BullMQ
+  jobs outside the chat turn, reuse the Processor v2 primitives, and emit
+  severity-tagged findings. RED findings get a bounded adversarial Full-Bench
+  (Challenger → Defender → Evaluator); the deliverable is assembled, validated
+  (no skeleton/placeholder/process-dump), and fidelity-checked. **Mandatory
+  human gate** on any side-effect step (`POST /api/workflows/:runId/approve`) —
+  no autonomous multi-step action. `/api/workflows`; Supabase-persisted
+  (`workflow_runs`, per-user RLS) or in-process. Derivatives (client-letter /
+  summary / redline / memo) generate from a completed run.
+- **Agent-native surface** (`docs/WAVE3.md`) — `GET /.well-known/agent.json`
+  advertises Louis's capabilities to other agents. Hybrid local(Ollama)+frontier
+  triage, Cohere rerank, and durable sessions ship as tested modules (wiring
+  follow-ups documented).
 - **Tabular review** — apply the same prompt(s) across many documents,
   one column = one question, like a due-diligence checklist.
 - **MCP server** at `/api/mcp` exposes calculators, clause lookups,

@@ -79,12 +79,17 @@ Branch base: `main` · integration branch `feat/lavern-wave2` · Source study: `
 2a solo → then 2b (spine) with 2c/2d/2e cores buildable in parallel agents
 (disjoint dirs, worktrees + symlinked node_modules) → I wire + integrate + ship.
 
-## Status
-- [x] tayyeb received → **Slice 2a SHIPPED** (`feat/lavern-wave2`): `workflows/`
-  types + 3 seed templates + registry (`getTemplate`/`listTemplates`/
-  `validateTemplate`) + `WorkflowRunStore` (InMemory + Supabase, env-gated
-  factory) + `2026-05-22-workflow-runs.sql`. Reuses `ModelTier`; no LLM/network.
-  typecheck 0; +30 vitest (259 total green). AC met.
-- [ ] Slice 2b — orchestrator engine + BullMQ job + gates (NEXT)
-- [ ] Slices 2c / 2d / 2e — parallel-safe cores after 2b spine
-- [ ] Integration + ship → then Wave 3
+## Status — WAVE 2 + WAVE 3 SHIPPED (`feat/lavern-wave2`, agent-mode build)
+- [x] 2a foundation `66d68d8` · contracts seam `6152ed4`
+- [x] 2b orchestrator + BullMQ job + gated `/api/workflows` `6deb2e4`
+- [x] 2c Full-Bench / 2e derivatives + Wave 3 modules landed `56b1ebd`,
+  wired (FullBench + derivatives route + agent-card) `cd9afe5`
+- [x] 2d assembly/validate/fidelity landed `8110ed4`, wired `e0648b7`
+- Built by 7 parallel worktree agents against a committed contracts seam;
+  integrated per-file (`git checkout <branch> -- <paths>`), not merged.
+- typecheck 0; full suite **418 green** (was 229 after Wave 1); `npm run build` 0.
+- Docs: `docs/WORKFLOWS.md`, `docs/WAVE3.md`, README.
+- Wave 3: agent card LIVE; triage / rerank / sessions landed as tested modules,
+  live-pipeline wiring documented as follow-ups (`docs/WAVE3.md`).
+- Migrations to apply: `2026-05-22-workflow-runs.sql`, `2026-05-22-sessions.sql`.
+- [ ] PR `feat/lavern-wave2` → main
