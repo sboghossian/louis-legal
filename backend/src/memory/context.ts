@@ -69,6 +69,7 @@ export function buildMemoryContext(
   }
 
   const now = q.now ? Date.parse(q.now) : Date.now();
+  // `limit: 0` is a valid "inject nothing"; Math.max guards a negative limit.
   const ranked = rankEntries(pool, now).slice(0, Math.max(0, limit));
   if (ranked.length === 0) return { block: "", entries: [] };
 

@@ -627,7 +627,9 @@ chatRouter.post("/", requireAuth, async (req, res) => {
     const apiMessages = buildMessages(
         enrichedMessages,
         docAvailability,
-        routeDecision.systemPromptExtra + memoryCtx.block,
+        // `?? ""` hardens against an empty routing decision so we never inject
+        // the literal string "undefined" ahead of the memory block.
+        (routeDecision.systemPromptExtra ?? "") + memoryCtx.block,
     );
 
     const workflowStore = await buildWorkflowStore(userId, userEmail, db);
@@ -765,6 +767,10 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         // block). Rough char/4 token estimate; emits a `budget` event only when
         // the turn is estimated over the configured ceiling. Fail-safe.
         try {
+            // Rough char/4 token estimate — a conservative upper bound (it
+            // counts JSON syntax + the full injected doc context, which are
+            // real input tokens). Erring toward over-estimating is fine: this
+            // only raises an alert, never blocks (decision #87).
             const inputTokens = Math.ceil(JSON.stringify(apiMessages).length / 4);
             const outputTokens = Math.ceil((fullText?.length ?? 0) / 4);
             const budget = decideTurnBudget({
