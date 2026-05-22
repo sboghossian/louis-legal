@@ -1,18 +1,16 @@
 /**
  * Deterministic tests for the zero-LLM grounding verifier (AC2).
  *
- * RUNNER NOTE: AC2 asked for vitest, but vitest is not installed in this repo
- * (node_modules is a shared symlink; ZERO-network constraint forbids installing
- * it). The codebase's actual test convention is Node's built-in test runner via
- * tsx (see `src/skills/_llm-classifier.test.ts`), which is also dependency-free
- * and on-brand for AC2's "Node stdlib only" mandate. These tests therefore use
- * `node:test` + `node:assert`. They are written so the describe/it/expect shape
- * maps 1:1 onto vitest if vitest is later added.
+ * RUNNER NOTE: written for vitest, the runner standardized on during Processor
+ * v2 integration (vitest is installed and configured in `vitest.config.ts`).
+ * The original draft used `node:test` under a worktree-local "no network"
+ * assumption; on the integration machine vitest installs fine, so these tests
+ * use vitest's `test`/`expect` to run alongside the cost-governor and memory
+ * suites under a single `npx vitest run`.
  *
- * Run: cd backend && npx tsx --test src/grounding/verifier.test.ts
+ * Run: cd backend && npx vitest run src/grounding/verifier.test.ts
  */
-import { test } from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { verifyGrounding } from "./verifier";
 import type { GroundingDocument, GroundingInput } from "./types";
 
@@ -39,99 +37,99 @@ function run(
 
 test("exact-quote match is credited and scores 1", () => {
   const r = run('The provider relies on "indirect damages exceeding the fees paid".');
-  assert.equal(r.quotesChecked, 1);
-  assert.equal(r.refsChecked, 0);
-  assert.equal(r.matched.length, 1);
-  assert.equal(r.unmatched.length, 0);
-  assert.equal(r.score, 1);
+  expect(r.quotesChecked).toBe(1);
+  expect(r.refsChecked).toBe(0);
+  expect(r.matched.length).toBe(1);
+  expect(r.unmatched.length).toBe(0);
+  expect(r.score).toBe(1);
 });
 
 test("quote absent from doc is unmatched and drops the score", () => {
   const r = run('The clause says "the moon is made of green cheese always".');
-  assert.equal(r.quotesChecked, 1);
-  assert.equal(r.matched.length, 0);
-  assert.deepEqual(r.unmatched, ["the moon is made of green cheese always"]);
-  assert.equal(r.score, 0);
+  expect(r.quotesChecked).toBe(1);
+  expect(r.matched.length).toBe(0);
+  expect(r.unmatched).toEqual(["the moon is made of green cheese always"]);
+  expect(r.score).toBe(0);
 });
 
 test("a valid Section X reference is credited", () => {
   const r = run("As established in Section 5.2, liability is capped.");
-  assert.equal(r.refsChecked, 1);
-  assert.equal(r.quotesChecked, 0);
-  assert.deepEqual(r.matched, ["5.2"]);
-  assert.equal(r.score, 1);
+  expect(r.refsChecked).toBe(1);
+  expect(r.quotesChecked).toBe(0);
+  expect(r.matched).toEqual(["5.2"]);
+  expect(r.score).toBe(1);
 });
 
 test("an absent section reference is unmatched", () => {
   const r = run("See Section 9.9 for the indemnity carve-out.");
-  assert.equal(r.refsChecked, 1);
-  assert.deepEqual(r.unmatched, ["9.9"]);
-  assert.equal(r.score, 0);
+  expect(r.refsChecked).toBe(1);
+  expect(r.unmatched).toEqual(["9.9"]);
+  expect(r.score).toBe(0);
 });
 
 test("a Clause X reference present only in raw text is credited", () => {
   const r = run("Confidentiality is governed by Clause 3.");
-  assert.equal(r.refsChecked, 1);
-  assert.deepEqual(r.matched, ["3"]);
-  assert.equal(r.score, 1);
+  expect(r.refsChecked).toBe(1);
+  expect(r.matched).toEqual(["3"]);
+  expect(r.score).toBe(1);
 });
 
 test("a boilerplate-only quote is NOT credited (treated as nothing to check)", () => {
   const r = run('The contract states "in no event shall".');
   // Boilerplate-only quotes are excluded before counting -> nothing checkable.
-  assert.equal(r.quotesChecked, 0);
-  assert.equal(r.refsChecked, 0);
-  assert.equal(r.matched.length, 0);
-  assert.equal(r.unmatched.length, 0);
-  assert.equal(r.score, 1); // vacuously grounded
+  expect(r.quotesChecked).toBe(0);
+  expect(r.refsChecked).toBe(0);
+  expect(r.matched.length).toBe(0);
+  expect(r.unmatched.length).toBe(0);
+  expect(r.score).toBe(1); // vacuously grounded
 });
 
 test("a longer quote that merely CONTAINS boilerplate IS credited", () => {
   const r = run(
     'It provides that "in no event shall the Provider be liable for indirect damages".',
   );
-  assert.equal(r.quotesChecked, 1);
-  assert.equal(r.matched.length, 1);
-  assert.equal(r.score, 1);
+  expect(r.quotesChecked).toBe(1);
+  expect(r.matched.length).toBe(1);
+  expect(r.score).toBe(1);
 });
 
 test("matching is case-insensitive for quotes and refs", () => {
   const r = run('Per SECTION 5.2 it says "IN NO EVENT SHALL THE PROVIDER BE LIABLE FOR INDIRECT DAMAGES".');
-  assert.equal(r.refsChecked, 1);
-  assert.equal(r.quotesChecked, 1);
-  assert.equal(r.unmatched.length, 0);
-  assert.equal(r.score, 1);
+  expect(r.refsChecked).toBe(1);
+  expect(r.quotesChecked).toBe(1);
+  expect(r.unmatched.length).toBe(0);
+  expect(r.score).toBe(1);
 });
 
 test("mixed grounded + ungrounded citations yield a fractional score", () => {
   const r = run(
     'Section 5.2 caps liability, but "this exact phrase does not appear anywhere".',
   );
-  assert.equal(r.refsChecked, 1);
-  assert.equal(r.quotesChecked, 1);
-  assert.equal(r.matched.length, 1); // the ref
-  assert.equal(r.unmatched.length, 1); // the bogus quote
-  assert.equal(r.score, 0.5);
+  expect(r.refsChecked).toBe(1);
+  expect(r.quotesChecked).toBe(1);
+  expect(r.matched.length).toBe(1); // the ref
+  expect(r.unmatched.length).toBe(1); // the bogus quote
+  expect(r.score).toBe(0.5);
 });
 
 test("empty input scores 1 (vacuously grounded)", () => {
   const r = run("", { text: "", headings: [], sectionRefs: [] });
-  assert.equal(r.quotesChecked, 0);
-  assert.equal(r.refsChecked, 0);
-  assert.equal(r.matched.length, 0);
-  assert.equal(r.unmatched.length, 0);
-  assert.equal(r.score, 1);
+  expect(r.quotesChecked).toBe(0);
+  expect(r.refsChecked).toBe(0);
+  expect(r.matched.length).toBe(0);
+  expect(r.unmatched.length).toBe(0);
+  expect(r.score).toBe(1);
 });
 
 test("a finding with prose but no citations scores 1", () => {
   const r = run("This agreement appears one-sided and favors the provider.");
-  assert.equal(r.quotesChecked, 0);
-  assert.equal(r.refsChecked, 0);
-  assert.equal(r.score, 1);
+  expect(r.quotesChecked).toBe(0);
+  expect(r.refsChecked).toBe(0);
+  expect(r.score).toBe(1);
 });
 
 test("optional document fields may be omitted (only text provided)", () => {
   const r = run("Confidentiality is governed by Clause 3.", { text: DOC_TEXT });
-  assert.deepEqual(r.matched, ["3"]);
-  assert.equal(r.score, 1);
+  expect(r.matched).toEqual(["3"]);
+  expect(r.score).toBe(1);
 });
