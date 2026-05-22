@@ -24,6 +24,14 @@ export {
   MAX_MEMORY_CHARS,
 } from "./context";
 export type { MemoryContextQuery, MemoryContextResult } from "./context";
+export {
+  memoryUsedAnnotation,
+  extractMemoryUsedIds,
+  ratingToOutcome,
+  applyMemoryFeedback,
+  MEMORY_USED_ANNOTATION,
+} from "./feedback";
+export type { FeedbackRating, MemoryUsedAnnotation } from "./feedback";
 export { TAG_KEYS } from "./types";
 export type {
   MemoryTier,

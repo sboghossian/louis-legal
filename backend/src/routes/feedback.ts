@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth";
 import { createServerSupabase } from "../lib/supabase";
+import { memoryStore, extractMemoryUsedIds, applyMemoryFeedback } from "../memory";
 
 export const feedbackRouter = Router();
 
@@ -63,7 +64,7 @@ feedbackRouter.post("/:messageId", requireAuth, async (req, res) => {
     // chat_messages select policy).
     const { data: msg } = await db
         .from("chat_messages")
-        .select("id, chat_id")
+        .select("id, chat_id, annotations")
         .eq("id", messageId)
         .maybeSingle();
     if (!msg) return void res.status(404).json({ detail: "Message not found" });
@@ -97,6 +98,27 @@ feedbackRouter.post("/:messageId", requireAuth, async (req, res) => {
         { onConflict: "message_id,user_id" },
     );
     if (error) return void res.status(500).json({ detail: error.message });
+
+    // Feed the memory effectiveness loop: a thumbs up/down weights the memory
+    // entries that informed this message. Best-effort — never fail feedback if
+    // memory is unavailable. Gated to the chat OWNER so a collaborator (or a
+    // forged message id) can't skew another user's memory effectiveness.
+    try {
+        const { data: chat } = await db
+            .from("chats")
+            .select("user_id")
+            .eq("id", (msg as { chat_id: string }).chat_id)
+            .maybeSingle();
+        if (chat && (chat as { user_id: string }).user_id === userId) {
+            const ids = extractMemoryUsedIds(
+                (msg as { annotations?: unknown }).annotations,
+            );
+            if (ids.length > 0) await applyMemoryFeedback(memoryStore, ids, rating);
+        }
+    } catch (memErr) {
+        console.error("[feedback] memory recordOutcome skipped:", memErr);
+    }
+
     res.json({ rating, note });
 });
 

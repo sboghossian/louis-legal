@@ -16,6 +16,7 @@ import {
     memoryStore,
     buildMemoryContext,
     summarizeTurnForMemory,
+    memoryUsedAnnotation,
     type MemoryContextResult,
 } from "../memory";
 import { decideTurnBudget } from "../lib/llm/budget";
@@ -702,11 +703,17 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         });
 
         const annotations = extractAnnotations(fullText, docIndex, events);
+        // Record which memory entries informed this turn, so a later thumbs
+        // up/down on the message can feed the memory effectiveness loop.
+        const memUsed = userId
+            ? memoryUsedAnnotation(memoryCtx.entries.map((e) => e.id))
+            : null;
+        const allAnnotations = memUsed ? [...annotations, memUsed] : annotations;
         await db.from("chat_messages").insert({
             chat_id: chatId,
             role: "assistant",
             content: events.length ? events : null,
-            annotations: annotations.length ? annotations : null,
+            annotations: allAnnotations.length ? allAnnotations : null,
         });
 
         // ----- AC2: surface the zero-LLM grounding score as a trailing event ---
