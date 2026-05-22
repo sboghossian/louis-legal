@@ -122,11 +122,15 @@ await memoryStore.reinforce(id);                 // precedent promotion
 - After a successful turn, `summarizeTurnForMemory()` captures the exchange as a
   `matter`/`session` memory and the injected entries are `recordUsage`'d so
   their recency stays fresh. Both paths are fail-safe.
-- *Follow-up:* link thumbs-up/down → `recordOutcome` (needs per-message
-  memory-id persistence).
+- **Feedback loop:** the injected entry ids are recorded on the message's
+  `annotations` as `{ type: "memory_used", ids }` (`memory/feedback.ts`). A
+  thumbs-up/down (`routes/feedback.ts`, gated to the chat owner) then calls
+  `recordOutcome(helped|unhelpful)` on those entries — so memory that helped
+  rises and useless memory decays.
 
 **Tests:** `memory/store.test.ts`, `memory/context.test.ts`,
-`memory/supabaseStore.test.ts` (pure mappers), `memory/factory.test.ts`.
+`memory/supabaseStore.test.ts` (pure mappers), `memory/factory.test.ts`,
+`memory/feedback.test.ts`.
 
 ---
 
@@ -151,4 +155,3 @@ discovery.
 - Atomic counter increments (RPC) before enabling Supabase memory in prod;
   applying `2026-05-22-memory-entries.sql` to the live Supabase project.
 - Persisting the grounding score to Supabase.
-- Thumbs-up/down → `recordOutcome` wiring (needs per-message memory-id storage).
