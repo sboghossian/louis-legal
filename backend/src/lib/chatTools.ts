@@ -1478,7 +1478,7 @@ export async function runEditDocument(params: {
 // Tool dispatch
 // ---------------------------------------------------------------------------
 
-async function readDocumentContent(
+export async function readDocumentContent(
     docLabel: string,
     docStore: DocStore,
     write: (s: string) => void,
