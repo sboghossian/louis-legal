@@ -6,7 +6,10 @@
  * ranking helpers are exported for callers that want to score externally-held
  * entries.
  */
-export { InMemoryMemoryStore, memoryStore, PROMOTION_THRESHOLD } from "./store";
+export { InMemoryMemoryStore, PROMOTION_THRESHOLD, matchesTags } from "./store";
+export { SupabaseMemoryStore, rowToEntry, entryToRow } from "./supabaseStore";
+export type { MemoryRow } from "./supabaseStore";
+export { memoryStore, createMemoryStore, isSupabaseConfigured } from "./factory";
 export {
   effectivenessScore,
   recencyWeight,

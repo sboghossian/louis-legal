@@ -100,26 +100,26 @@ export interface MemoryQuery {
 }
 
 /**
- * Persistence-agnostic memory store. The in-memory implementation ships now;
- * a Supabase-backed implementation can satisfy the same interface later without
- * changing call sites. See {@link InMemoryMemoryStore}.
+ * Persistence-agnostic memory store. Async so the same interface backs both the
+ * in-memory implementation ({@link InMemoryMemoryStore}) and a Supabase-backed
+ * one (`SupabaseMemoryStore`) without changing call sites.
  */
 export interface MemoryStore {
   /** Write a new memory; returns the materialised entry. */
-  put(input: MemoryInput): MemoryEntry;
+  put(input: MemoryInput): Promise<MemoryEntry>;
   /** Read one entry by id. */
-  get(id: string): MemoryEntry | undefined;
+  get(id: string): Promise<MemoryEntry | undefined>;
   /** Tag-filtered, effectiveness/recency-ranked retrieval (user-scoped). */
-  query(q: MemoryQuery): MemoryEntry[];
+  query(q: MemoryQuery): Promise<MemoryEntry[]>;
   /** Record helpful/unhelpful feedback; bumps the effectiveness signal. */
-  recordOutcome(id: string, outcome: Outcome, now?: string): MemoryEntry | undefined;
+  recordOutcome(id: string, outcome: Outcome, now?: string): Promise<MemoryEntry | undefined>;
   /** Mark an entry as used this turn (usageCount++, refreshes recency). */
-  recordUsage(id: string, now?: string): MemoryEntry | undefined;
+  recordUsage(id: string, now?: string): Promise<MemoryEntry | undefined>;
   /**
    * Reinforce a precedent on recurrence: usage++ + helpful++ + recency refresh,
    * and promote `tentative → confirmed` once it crosses the promotion threshold.
    */
-  reinforce(id: string, now?: string): MemoryEntry | undefined;
+  reinforce(id: string, now?: string): Promise<MemoryEntry | undefined>;
   /** Drop everything (test/reset helper). */
-  clear(): void;
+  clear(): Promise<void>;
 }

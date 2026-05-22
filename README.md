@@ -244,7 +244,9 @@ in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
     with tag-filtered retrieval and effectiveness/recency weighting, **per-user
     isolated** (every read scoped to the querying user, all tiers). **Live:**
     the earned slice is injected into each turn's system prompt and the turn is
-    captured back, so only memory that has earned its place is used.
+    captured back. **Persistent:** Supabase-backed when `SUPABASE_URL` +
+    `SUPABASE_SECRET_KEY` are set (table `memory_entries`, per-user RLS), else an
+    in-process fallback for dev/self-host.
 - **Tabular review** — apply the same prompt(s) across many documents,
   one column = one question, like a due-diligence checklist.
 - **MCP server** at `/api/mcp` exposes calculators, clause lookups,

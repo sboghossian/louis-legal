@@ -50,7 +50,7 @@ export const PROMOTION_THRESHOLD = 3;
  * entry matches when its own tag is `undefined` (broadly-applicable) OR equals
  * the requested value. Keys absent from the filter are ignored.
  */
-function matchesTags(entry: MemoryEntry, filter: MemoryQuery["tags"]): boolean {
+export function matchesTags(entry: MemoryEntry, filter: MemoryQuery["tags"]): boolean {
   if (!filter) return true;
   for (const key of TAG_KEYS) {
     const wanted = filter[key];
@@ -64,7 +64,7 @@ function matchesTags(entry: MemoryEntry, filter: MemoryQuery["tags"]): boolean {
 export class InMemoryMemoryStore implements MemoryStore {
   private readonly entries = new Map<string, MemoryEntry>();
 
-  put(input: MemoryInput): MemoryEntry {
+  async put(input: MemoryInput): Promise<MemoryEntry> {
     const now = input.now ?? new Date().toISOString();
     const entry: MemoryEntry = {
       id: crypto.randomUUID(),
@@ -85,11 +85,11 @@ export class InMemoryMemoryStore implements MemoryStore {
     return entry;
   }
 
-  get(id: string): MemoryEntry | undefined {
+  async get(id: string): Promise<MemoryEntry | undefined> {
     return this.entries.get(id);
   }
 
-  query(q: MemoryQuery): MemoryEntry[] {
+  async query(q: MemoryQuery): Promise<MemoryEntry[]> {
     const now = q.now ? Date.parse(q.now) : Date.now();
     const filtered = [...this.entries.values()].filter((e) => {
       if (e.userId !== q.userId) return false; // per-user isolation, all tiers
@@ -101,7 +101,7 @@ export class InMemoryMemoryStore implements MemoryStore {
     return q.limit !== undefined ? ranked.slice(0, Math.max(0, q.limit)) : ranked;
   }
 
-  recordOutcome(id: string, outcome: Outcome, now?: string): MemoryEntry | undefined {
+  async recordOutcome(id: string, outcome: Outcome, now?: string): Promise<MemoryEntry | undefined> {
     const entry = this.entries.get(id);
     if (!entry) return undefined;
     if (outcome === "helped") entry.helpfulCount += 1;
@@ -110,7 +110,7 @@ export class InMemoryMemoryStore implements MemoryStore {
     return entry;
   }
 
-  recordUsage(id: string, now?: string): MemoryEntry | undefined {
+  async recordUsage(id: string, now?: string): Promise<MemoryEntry | undefined> {
     const entry = this.entries.get(id);
     if (!entry) return undefined;
     const ts = now ?? new Date().toISOString();
@@ -120,7 +120,7 @@ export class InMemoryMemoryStore implements MemoryStore {
     return entry;
   }
 
-  reinforce(id: string, now?: string): MemoryEntry | undefined {
+  async reinforce(id: string, now?: string): Promise<MemoryEntry | undefined> {
     const entry = this.entries.get(id);
     if (!entry) return undefined;
     const ts = now ?? new Date().toISOString();
@@ -138,10 +138,7 @@ export class InMemoryMemoryStore implements MemoryStore {
     return entry;
   }
 
-  clear(): void {
+  async clear(): Promise<void> {
     this.entries.clear();
   }
 }
-
-/** Process-wide default store. Swap for a Supabase-backed store in production. */
-export const memoryStore: MemoryStore = new InMemoryMemoryStore();

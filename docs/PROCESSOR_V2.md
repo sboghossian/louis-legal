@@ -84,12 +84,12 @@ which is separate WIP.)
 `index.ts`).
 
 ```ts
-import { memoryStore } from "@/memory";
+import { memoryStore } from "@/memory"; // async interface
 
-memoryStore.put({ tier: "matter", content, tags: { jurisdiction: "UAE" }, scopeId });
-memoryStore.query({ tier: "matter", tags: { jurisdiction: "UAE" }, limit: 8 });
-memoryStore.recordOutcome(id, "helped");   // feedback weighting
-memoryStore.reinforce(id);                 // precedent promotion
+await memoryStore.put({ userId, tier: "matter", content, tags: { jurisdiction: "UAE" }, scopeId });
+await memoryStore.query({ userId, tier: "matter", tags: { jurisdiction: "UAE" }, limit: 8 });
+await memoryStore.recordOutcome(id, "helped");   // feedback weighting
+await memoryStore.reinforce(id);                 // precedent promotion
 ```
 
 - **Tiers:** `session` · `matter` · `institutional` · `precedent`.
@@ -102,14 +102,17 @@ memoryStore.reinforce(id);                 // precedent promotion
   half-life). Helped ↑, stale ↓.
 - **Precedent promotion:** `reinforce()` advances usage + helpfulness and
   promotes `tentative → confirmed` at `PROMOTION_THRESHOLD` recurrences.
-- **Persistence seam:** everything is behind the `MemoryStore` interface;
-  `InMemoryMemoryStore` ships now, a Supabase-backed store can drop in later
-  (future SQL documented in `store.ts`).
-
+- **Persistence:** the `MemoryStore` interface is **async**. A
+  `createMemoryStore()` factory picks `SupabaseMemoryStore` (table
+  `memory_entries`, migration `2026-05-22-memory-entries.sql`, per-user RLS) when
+  `SUPABASE_URL` + `SUPABASE_SECRET_KEY` are set, else falls back to
+  `InMemoryMemoryStore` (ephemeral — dev/test/self-host). Pure
+  `rowToEntry`/`entryToRow` mappers; ranking applied in-process.
+  *Pre-prod TODO:* swap counter updates for atomic Postgres increments (RPC)
+  before enabling Supabase memory in production.
 - **Per-user isolation:** `userId` is a required field on every entry, input,
-  and query — `query()` filters to the querying user across *all* tiers, so
-  one user's memory can never surface in another's turn. (Sync in-memory store
-  for now; Supabase-backed persistence is the next slice.)
+  and query — `query()` filters to the querying user across *all* tiers, so one
+  user's memory can never surface in another's turn (enforced in both stores).
 
 **Live in the turn** (`context.ts`, wired in `chat.ts`):
 - `buildMemoryContext(store, { userId, tags, matterId, sessionId, limit })`
@@ -122,7 +125,8 @@ memoryStore.reinforce(id);                 // precedent promotion
 - *Follow-up:* link thumbs-up/down → `recordOutcome` (needs per-message
   memory-id persistence).
 
-**Tests:** `memory/store.test.ts`, `memory/context.test.ts`.
+**Tests:** `memory/store.test.ts`, `memory/context.test.ts`,
+`memory/supabaseStore.test.ts` (pure mappers), `memory/factory.test.ts`.
 
 ---
 
@@ -144,4 +148,7 @@ discovery.
 - Hybrid local(Ollama)+frontier map-reduce triage (rides BullMQ).
 - Workflow-template layer + adversarial "Full Bench" mode.
 - Cohere rerank over the existing embeddings layer.
-- Persisting memory tiers and the grounding score to Supabase.
+- Atomic counter increments (RPC) before enabling Supabase memory in prod;
+  applying `2026-05-22-memory-entries.sql` to the live Supabase project.
+- Persisting the grounding score to Supabase.
+- Thumbs-up/down → `recordOutcome` wiring (needs per-message memory-id storage).
