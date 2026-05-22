@@ -413,6 +413,139 @@ html[data-theme="light"] body {
     color: var(--foreground);
 }
 
+/* ---------------------------------------------------------------------------
+ * Helm theme — ported from the Helm prototype (mission-control aesthetic):
+ * deep near-black surfaces, a violet→cyan gradient accent, calm dark chrome.
+ * Additive + reversible: nothing else changes unless you pick "Helm" in
+ * /settings/appearance. Legacy cream/gold/amber hardcodes are repainted below
+ * so the prominent surfaces (sidebar, marketing nav, inspector) follow along.
+ * ------------------------------------------------------------------------- */
+html[data-theme="helm"] {
+    color-scheme: dark;
+    --background: #07080c;
+    --foreground: #f4f5f8;
+    --card: #11141d;
+    --card-foreground: #f4f5f8;
+    --popover: #11141d;
+    --popover-foreground: #f4f5f8;
+    --primary: #8b76ff;
+    --primary-foreground: #0a0a12;
+    --secondary: #171b26;
+    --secondary-foreground: #f4f5f8;
+    --muted: #11141d;
+    --muted-foreground: #aab0bf;
+    --accent: #1a1f2b;
+    --accent-foreground: #f4f5f8;
+    --destructive: #ff6b81;
+    --border: rgba(255, 255, 255, 0.08);
+    --input: rgba(255, 255, 255, 0.12);
+    --ring: #8b76ff;
+    --chart-1: #8b76ff;
+    --chart-2: #2fd6ee;
+    --chart-3: #3ddc97;
+    --chart-4: #ffb53d;
+    --chart-5: #ff6b81;
+    --sidebar: #0b0d13;
+    --sidebar-foreground: #f4f5f8;
+    --sidebar-primary: #8b76ff;
+    --sidebar-primary-foreground: #0a0a12;
+    --sidebar-accent: #171b26;
+    --sidebar-accent-foreground: #f4f5f8;
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-ring: #8b76ff;
+    --success: #3ddc97;
+    --success-foreground: #04140c;
+    --warning: #ffb53d;
+    --warning-foreground: #1a1205;
+    --info: #2fd6ee;
+    --info-foreground: #03171c;
+    /* repaint legacy brand vars onto dark so old references stay legible */
+    --louis-cream: #11141d;
+    --louis-cream-soft: #171b26;
+    --louis-ink: #f4f5f8;
+    --louis-ink-soft: #aab0bf;
+    --louis-gold: #8b76ff;
+    --louis-gold-soft: #2fd6ee;
+    --louis-rule: rgba(255, 255, 255, 0.08);
+    --color-azure: 139, 118, 255;
+}
+html[data-theme="helm"] body {
+    background:
+        radial-gradient(1100px 650px at 82% -12%, rgba(139, 118, 255, 0.1), transparent 60%),
+        radial-gradient(900px 560px at -8% 112%, rgba(47, 214, 238, 0.08), transparent 55%),
+        var(--background);
+    color: var(--foreground);
+}
+/* generic gray utilities → theme tokens */
+html[data-theme="helm"] .bg-white {
+    background-color: var(--card) !important;
+    color: var(--card-foreground) !important;
+}
+html[data-theme="helm"] .bg-gray-50,
+html[data-theme="helm"] .bg-gray-100,
+html[data-theme="helm"] .hover\:bg-gray-50:hover,
+html[data-theme="helm"] .hover\:bg-gray-100:hover {
+    background-color: var(--muted) !important;
+}
+html[data-theme="helm"] .border-gray-100,
+html[data-theme="helm"] .border-gray-200,
+html[data-theme="helm"] .border-gray-300 {
+    border-color: var(--border) !important;
+}
+html[data-theme="helm"] .divide-gray-100 > * + *,
+html[data-theme="helm"] .divide-gray-200 > * + * {
+    border-color: var(--border) !important;
+}
+html[data-theme="helm"] .text-gray-500,
+html[data-theme="helm"] .text-gray-600,
+html[data-theme="helm"] .text-gray-700,
+html[data-theme="helm"] .text-gray-800,
+html[data-theme="helm"] .text-gray-900 {
+    color: var(--foreground) !important;
+}
+html[data-theme="helm"] .text-gray-300,
+html[data-theme="helm"] .text-gray-400 {
+    color: var(--muted-foreground) !important;
+}
+/* legacy cream/gold hardcodes (sidebar, marketing nav, inspector) */
+html[data-theme="helm"] .bg-\[\#fbf8f2\],
+html[data-theme="helm"] .bg-\[\#FBF8F2\],
+html[data-theme="helm"] .bg-\[\#f7f3ea\],
+html[data-theme="helm"] .bg-\[\#F5F0E5\],
+html[data-theme="helm"] .bg-\[\#f5f0e5\] {
+    background-color: var(--sidebar) !important;
+}
+html[data-theme="helm"] .border-\[\#E7E2D6\],
+html[data-theme="helm"] .border-\[\#e7e2d6\] {
+    border-color: var(--border) !important;
+}
+html[data-theme="helm"] .text-\[\#1f2937\],
+html[data-theme="helm"] .text-\[\#1F2937\] {
+    color: var(--foreground) !important;
+}
+/* amber active-state → violet accent */
+html[data-theme="helm"] .bg-amber-50,
+html[data-theme="helm"] .bg-amber-100 {
+    background-color: var(--accent) !important;
+}
+html[data-theme="helm"] .text-amber-700,
+html[data-theme="helm"] .text-amber-800 {
+    color: var(--primary) !important;
+}
+html[data-theme="helm"] .border-amber-200 {
+    border-color: rgba(139, 118, 255, 0.4) !important;
+}
+html[data-theme="helm"] .bg-amber-700,
+html[data-theme="helm"] .bg-amber-700\/80 {
+    background-color: var(--primary) !important;
+}
+/* signature: violet→cyan gradient on primary buttons */
+html[data-theme="helm"] button.bg-primary,
+html[data-theme="helm"] .bg-primary:not(.text-gray-900) {
+    background-image: linear-gradient(135deg, #8b76ff, #2fd6ee);
+    color: #0a0a12 !important;
+}
+
 /* Density nudges the global vertical rhythm. Components that already pick
  * their own padding keep their look; flexible containers tighten up. */
 html[data-density="compact"] {
