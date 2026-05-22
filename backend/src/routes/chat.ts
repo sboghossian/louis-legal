@@ -658,6 +658,7 @@ chatRouter.post("/", requireAuth, async (req, res) => {
             workflowStore,
             model: chosenModel,
             apiKeys,
+            effort: routeDecision.effort,
             projectId: resolvedProjectId,
         });
 
