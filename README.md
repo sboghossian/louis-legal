@@ -247,6 +247,14 @@ in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
     captured back. **Persistent:** Supabase-backed when `SUPABASE_URL` +
     `SUPABASE_SECRET_KEY` are set (table `memory_entries`, per-user RLS), else an
     in-process fallback for dev/self-host.
+- **Quality & onboarding suite** (`docs/LAVERN_FEATURES.md`) — Lavern-inspired:
+  - *Legal-Design quality audit* — deterministic ethics/dark-pattern scan,
+    readability scoring, and meaning-preservation risk flags. `POST /api/quality/audit`.
+  - *Agent-builder onboarding* — scrape a firm's site (SSRF-hardened) → propose
+    AI agent profiles, each with a `seenOnSite` citation. `POST /api/agent-builder/analyze`.
+  - *Auto-brief intake* — short message + attached docs → synthesized task brief.
+  - *Output-quality eval harness* — score legal outputs against expectations +
+    an optional LLM judge.
 - **Tabular review** — apply the same prompt(s) across many documents,
   one column = one question, like a due-diligence checklist.
 - **MCP server** at `/api/mcp` exposes calculators, clause lookups,

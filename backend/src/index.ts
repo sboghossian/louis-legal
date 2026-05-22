@@ -30,6 +30,8 @@ import { skillsSyncRouter } from "./routes/skillsSync";
 import { mcpRouter } from "./routes/mcp";
 import { inboxRouter } from "./routes/inbox";
 import { feedbackRouter } from "./routes/feedback";
+import { qualityRouter } from "./routes/quality";
+import { agentBuilderRouter } from "./routes/agentBuilder";
 import { authRouter } from "./routes/auth";
 import { publicApiRouter } from "./routes/public-api";
 import { eventsRouter } from "./routes/events";
@@ -167,6 +169,8 @@ app.use("/api/skills-sync", skillsSyncRouter);
 app.use("/api/mcp", mcpRouter);
 app.use("/api/inbox", inboxRouter);
 app.use("/api/feedback", feedbackRouter);
+app.use("/api/quality", qualityRouter);
+app.use("/api/agent-builder", agentBuilderRouter);
 
 // Auth helpers — service-role signup that bypasses the email-confirm
 // gate + Supabase's built-in mailer rate limit. Capped tightly because
