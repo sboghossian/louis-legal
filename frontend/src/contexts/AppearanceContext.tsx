@@ -52,6 +52,7 @@ export const THEMES: { id: AppearanceTheme; label: string; preview: string }[] =
         { id: "slate", label: "Slate", preview: "#f5f7fb" },
         { id: "light", label: "Clean light", preview: "#ffffff" },
         { id: "dark", label: "Dark", preview: "#1c1c1c" },
+        { id: "helm", label: "Helm", preview: "#0b0d13" },
     ];
 
 export const FONTS: { id: AppearanceFont; label: string; sample: string }[] = [
