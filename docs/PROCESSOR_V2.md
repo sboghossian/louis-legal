@@ -32,7 +32,11 @@ classifier's complexity/risk/confidence signals:
   non-Claude providers); the skill budget caps how many skills the router loads;
   the model tier maps into `models.ts`.
 - A per-turn **budget guard** (`budget.ts`) estimates token spend and
-  caps/flags a turn that would exceed a configurable ceiling.
+  caps/flags a turn that would exceed a configurable ceiling
+  (`LOUIS_TURN_BUDGET_USD`, default $1). **Live:** `chat.ts` calls
+  `decideTurnBudget()` after the turn and emits a trailing
+  `{"type":"budget","estUsd","ceilingUsd","over":true}` SSE event when over
+  ceiling — an *alert*, never a block (decision #87).
 - **Prompt caching:** a `cache_control: ephemeral` breakpoint is dropped on the
   stable skills/system-prompt prefix for Claude calls.
 - **Telemetry:** one per-turn event via `skills/_observability.ts`
@@ -102,7 +106,18 @@ memoryStore.reinforce(id);                 // precedent promotion
   `InMemoryMemoryStore` ships now, a Supabase-backed store can drop in later
   (future SQL documented in `store.ts`).
 
-**Tests:** `memory/store.test.ts`.
+**Live in the turn** (`context.ts`, wired in `chat.ts`):
+- `buildMemoryContext(store, { tags, matterId, sessionId, limit })` assembles a
+  ranked "Working memory" block (institutional + precedent always eligible,
+  matter/session gated by scope, tag-filtered, capped at 8) appended to the
+  system prompt before the model call.
+- After a successful turn, `summarizeTurnForMemory()` captures the exchange as a
+  `matter`/`session` memory and the injected entries are `recordUsage`'d so
+  their recency stays fresh. Both paths are fail-safe.
+- *Follow-up:* link thumbs-up/down → `recordOutcome` (needs per-message
+  memory-id persistence).
+
+**Tests:** `memory/store.test.ts`, `memory/context.test.ts`.
 
 ---
 
