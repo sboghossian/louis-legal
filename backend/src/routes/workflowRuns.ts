@@ -17,10 +17,14 @@
 import { Router } from "express";
 
 import { requireAuth } from "../middleware/auth";
+import { completeText } from "../lib/llm";
+import { modelForTier } from "../lib/llm/models";
 import { queues } from "../queue";
 import { JOB_NAME as WORKFLOWS_RUN } from "../queue/jobs/workflows.run";
+import { getDerivative } from "../workflows/derivatives";
 import { runStore } from "../workflows/factory";
 import { getTemplate, listTemplates, validateTemplate } from "../workflows/templates/registry";
+import type { DerivativeType } from "../workflows/contracts";
 
 export const workflowRunsRouter = Router();
 workflowRunsRouter.use(requireAuth);
@@ -103,4 +107,32 @@ workflowRunsRouter.post("/:runId/approve", async (req, res) => {
     templateId: run.templateId,
   });
   res.status(202).json({ run, job: { id: enq.id, skipped: enq.skipped ?? false } });
+});
+
+/** Generate a derivative document (client letter, summary, redline, memo) from a
+ *  completed run (2e). Synchronous: cheap single-shot generation off stored findings. */
+workflowRunsRouter.post("/:runId/derivatives/:type", async (req, res) => {
+  const userId = res.locals.userId as string;
+  const run = await runStore.get(req.params.runId);
+  if (!run || run.userId !== userId) {
+    res.status(404).json({ error: "run not found" });
+    return;
+  }
+  if (run.status !== "done") {
+    res.status(409).json({ error: `run is not complete (status: ${run.status})` });
+    return;
+  }
+  const derivative = getDerivative(req.params.type as DerivativeType);
+  if (!derivative) {
+    res.status(404).json({ error: `unknown derivative type "${req.params.type}"` });
+    return;
+  }
+  const ctx = derivative.buildContext(run);
+  const text = await completeText({
+    model: modelForTier("main", "claude"),
+    systemPrompt: ctx.systemPrompt,
+    user: ctx.user,
+    maxTokens: ctx.maxTokens,
+  });
+  res.json({ type: derivative.type, text });
 });

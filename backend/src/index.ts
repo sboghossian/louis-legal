@@ -10,6 +10,7 @@ import { documentsRouter } from "./routes/documents";
 import { tabularRouter } from "./routes/tabular";
 import { workflowsRouter } from "./routes/workflows";
 import { workflowRunsRouter } from "./routes/workflowRuns";
+import { agentCardRouter } from "./agent";
 import { userRouter } from "./routes/user";
 import { downloadsRouter } from "./routes/downloads";
 import { skillsRouter } from "./routes/skills";
@@ -149,6 +150,7 @@ app.use("/single-documents", documentsRouter);
 app.use("/tabular-review", tabularRouter);
 app.use("/workflows", workflowsRouter);
 app.use("/api/workflows", workflowRunsRouter);
+app.use(agentCardRouter); // serves /.well-known/agent.json (Wave 3 agent-native surface)
 app.use("/user", userRouter);
 app.use("/users", userRouter);
 app.use("/download", downloadsRouter);

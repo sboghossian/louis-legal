@@ -21,6 +21,7 @@ import { verifyGrounding } from "../../grounding/verifier";
 import { completeText } from "../../lib/llm";
 import { modelForTier } from "../../lib/llm/models";
 import { runWorkflow, type OrchestratorDeps } from "../../workflows/orchestrator";
+import { runFullBench } from "../../workflows/fullBench";
 import { getTemplate } from "../../workflows/templates/registry";
 import { runStore } from "../../workflows/factory";
 
@@ -61,8 +62,9 @@ export async function handleWorkflowsRun(job: JobLike): Promise<WorkflowsRunResu
       const r = verifyGrounding({ findingText, document: { text: documentText } });
       return { score: r.score, unmatched: r.unmatched };
     },
-    // --- integration hooks (wired after the 2c/2d cores merge) ---
-    // fullBench: runFullBench,
+    // Bounded adversarial Full-Bench over RED findings (2c).
+    fullBench: runFullBench,
+    // --- assembly hooks wired when the 2d core lands ---
     // assemble: assembleDeliverable,
     // validate: validateDeliverable,
     // fidelity: verifyFidelity,
