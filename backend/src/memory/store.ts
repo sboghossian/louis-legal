@@ -66,6 +66,7 @@ export class InMemoryMemoryStore implements MemoryStore {
     const now = input.now ?? new Date().toISOString();
     const entry: MemoryEntry = {
       id: crypto.randomUUID(),
+      userId: input.userId,
       tier: input.tier,
       content: input.content,
       tags: { ...(input.tags ?? {}) },
@@ -86,9 +87,10 @@ export class InMemoryMemoryStore implements MemoryStore {
     return this.entries.get(id);
   }
 
-  query(q: MemoryQuery = {}): MemoryEntry[] {
+  query(q: MemoryQuery): MemoryEntry[] {
     const now = q.now ? Date.parse(q.now) : Date.now();
     const filtered = [...this.entries.values()].filter((e) => {
+      if (e.userId !== q.userId) return false; // per-user isolation, all tiers
       if (q.tier && e.tier !== q.tier) return false;
       if (q.scopeId !== undefined && e.scopeId !== q.scopeId) return false;
       return matchesTags(e, q.tags);

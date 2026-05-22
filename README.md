@@ -241,7 +241,8 @@ in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
     matching, no extra model call). **Live:** surfaced on `/chat` as a trailing
     `grounding` SSE event `{ score, matched, unmatched }`.
   - *Four-tier memory* — Session / Matter / Institutional / Precedent store
-    with tag-filtered retrieval and effectiveness/recency weighting. **Live:**
+    with tag-filtered retrieval and effectiveness/recency weighting, **per-user
+    isolated** (every read scoped to the querying user, all tiers). **Live:**
     the earned slice is injected into each turn's system prompt and the turn is
     captured back, so only memory that has earned its place is used.
 - **Tabular review** — apply the same prompt(s) across many documents,

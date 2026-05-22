@@ -611,6 +611,7 @@ chatRouter.post("/", requireAuth, async (req, res) => {
     let memoryCtx: MemoryContextResult = { block: "", entries: [] };
     try {
         memoryCtx = buildMemoryContext(memoryStore, {
+            userId,
             tags: {
                 practiceArea: routeDecision.intent.practiceArea,
                 jurisdiction: routeDecision.intent.jurisdiction,
@@ -807,6 +808,7 @@ chatRouter.post("/", requireAuth, async (req, res) => {
             });
             if (memContent) {
                 memoryStore.put({
+                    userId,
                     tier: resolvedProjectId ? "matter" : "session",
                     content: memContent,
                     tags: {

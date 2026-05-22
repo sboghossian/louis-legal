@@ -36,8 +36,8 @@ path.** grounding, budget alert, and memory capture all run *after* the answer
 streams, each in its own try/catch with a `devLog` skip — none can break a
 successful turn. Reuse this pattern for future post-turn work.
 
-**Top follow-up — cross-user isolation.** `memoryStore` is a process-global
-in-memory `Map`. Scoped tiers (matter/session) are gated by id so blast radius is
-zero today (nothing writes the unscoped institutional/precedent tiers), but
-before any multi-tenant use add a `userId` field + Supabase persistence (the
-`MemoryStore` interface seam already exists for this).
+**Cross-user isolation — DONE (2026-05-22, `feat/pv2-isolation`).** Made `userId`
+a required field on every memory entry/input/query; `query()` filters to the
+querying user across all tiers. The remaining follow-up is **Supabase-backed
+persistence** (the store is still a process-global in-memory `Map`; the
+`MemoryStore` interface seam exists, but the impl will need to go async).
