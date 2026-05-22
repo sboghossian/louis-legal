@@ -293,6 +293,20 @@ export async function runWorkflow(
       }
     }
 
+    if (deps.fidelity) {
+      const fid = await deps.fidelity(run, deliverable, deps.llm);
+      if (!fid.ok) {
+        return (
+          (await deps.store.transition(runId, "failed", {
+            now: now(),
+            error: `deliverable failed fidelity: ${fid.redCovered}/${fid.redTotal} RED covered; missing: ${fid.missing.join(
+              "; ",
+            )}`,
+          })) ?? run
+        );
+      }
+    }
+
     await deps.store.update(runId, { deliverable }, now());
     return (await deps.store.transition(runId, "done", { now: now() })) ?? run;
   } catch (err) {

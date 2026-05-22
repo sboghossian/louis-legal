@@ -184,6 +184,17 @@ describe("validation + fail-safe", () => {
     expect(final.error).toContain("too thin");
   });
 
+  it("fails the run when the deliverable fails the fidelity check", async () => {
+    const run = await store.create({ userId: U, templateId: twoStep.id, now: T0 });
+    const deps = baseDeps({
+      fidelity: async () => ({ ok: false, redTotal: 2, redCovered: 1, missing: ["Dropped RED"] }),
+    });
+    const final = await runWorkflow(deps, { template: twoStep, runId: run.id });
+    expect(final.status).toBe("failed");
+    expect(final.error).toContain("Dropped RED");
+    expect(final.error).toContain("1/2 RED covered");
+  });
+
   it("records failed (never throws) when a step llm throws", async () => {
     const run = await store.create({ userId: U, templateId: twoStep.id, now: T0 });
     const deps = baseDeps({

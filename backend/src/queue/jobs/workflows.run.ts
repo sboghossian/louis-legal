@@ -22,6 +22,11 @@ import { completeText } from "../../lib/llm";
 import { modelForTier } from "../../lib/llm/models";
 import { runWorkflow, type OrchestratorDeps } from "../../workflows/orchestrator";
 import { runFullBench } from "../../workflows/fullBench";
+import {
+  assembleDeliverable,
+  validateDeliverable,
+  verifyFidelity,
+} from "../../workflows/assembly";
 import { getTemplate } from "../../workflows/templates/registry";
 import { runStore } from "../../workflows/factory";
 
@@ -64,10 +69,10 @@ export async function handleWorkflowsRun(job: JobLike): Promise<WorkflowsRunResu
     },
     // Bounded adversarial Full-Bench over RED findings (2c).
     fullBench: runFullBench,
-    // --- assembly hooks wired when the 2d core lands ---
-    // assemble: assembleDeliverable,
-    // validate: validateDeliverable,
-    // fidelity: verifyFidelity,
+    // Assembly → validation → fidelity, the final phase (2d).
+    assemble: assembleDeliverable,
+    validate: validateDeliverable,
+    fidelity: verifyFidelity,
   };
 
   const run = await runWorkflow(deps, { template, runId });
