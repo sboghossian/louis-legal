@@ -14,7 +14,12 @@ tested seams rather than risking the working chat path in one push.
 
 ## Open follow-ups
 
-- **Ollama provider adapter** (`lib/llm/ollama.ts` implementing `StreamChatParams`) so `triage`'s `local` target can actually serve requests.
-- **Reachability probe** for `isLocalAvailable()` (cheap `GET /api/tags` with a TTL) instead of an env-only check.
-- **Session checkpointing** in the chat turn and the workflow engine (`create` on start, `hydrate` on resume, `save` per step) so partial progress survives crashes.
-- **A2A↔MCP task bridge** (`POST /.well-known/agent/task` → MCP `tools/call`).
+**Wave 4 (`docs/WAVE4.md`) addressed most of these:** the Ollama provider adapter
++ `pingOllama` probe, the A2A↔MCP task bridge (mounted), session checkpoint
+helpers, and the `/chat` workflow dispatch all landed (additive/opt-in). What
+remains:
+
+- Flip defaults so the live chat path uses triage / checkpoints / rerank by
+  default (the "full live rewire" — a separate reviewed change).
+- True per-token Ollama streaming (NDJSON) + Ollama tool-calling.
+- Live per-step workflow progress over chat (Supabase realtime / pub/sub).

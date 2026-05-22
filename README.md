@@ -265,10 +265,13 @@ in `frontend/.env.local` and `FRONTEND_URL=https://legal.dashable.dev` in
   no autonomous multi-step action. `/api/workflows`; Supabase-persisted
   (`workflow_runs`, per-user RLS) or in-process. Derivatives (client-letter /
   summary / redline / memo) generate from a completed run.
-- **Agent-native surface** (`docs/WAVE3.md`) — `GET /.well-known/agent.json`
-  advertises Louis's capabilities to other agents. Hybrid local(Ollama)+frontier
-  triage, Cohere rerank, and durable sessions ship as tested modules (wiring
-  follow-ups documented).
+- **Agent-native surface** (`docs/WAVE3.md`, `docs/WAVE4.md`) —
+  `GET /.well-known/agent.json` advertises Louis's capabilities and
+  `POST /.well-known/agent/task` runs an A2A task via the MCP tools. Hybrid
+  local(Ollama)+frontier triage (opt-in `completeRouted`), Cohere rerank,
+  durable session checkpointing, and an opt-in `/chat` workflow dispatch
+  (`workflowTemplateId`) are wired additively — the default chat path is
+  unchanged.
 - **Tabular review** — apply the same prompt(s) across many documents,
   one column = one question, like a due-diligence checklist.
 - **MCP server** at `/api/mcp` exposes calculators, clause lookups,

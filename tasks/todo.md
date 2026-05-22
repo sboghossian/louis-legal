@@ -123,5 +123,15 @@ Wave 2/3). Integration branch `feat/lavern-wave4`.
   changed (triage stays opt-in).
 
 ## Done = typecheck 0 · vitest green · build 0 · docs · PR → main.
-## Status
-- [ ] Wave 4 in progress
+## Status — WAVE 4 SHIPPED (`feat/lavern-wave4`, agent-mode, additive)
+- [x] 4 modules built by parallel agents, landed `66f226c`: ollama adapter
+  (`lib/llm/ollama.ts`), A2A↔MCP bridge (`agent/task.ts`), session checkpoint
+  (`sessions/checkpoint.ts`), workflow_progress events (`workflows/events.ts`).
+- [x] Additive wiring `3c2271f`: A2A route mounted, `/chat` opt-in workflow
+  dispatch (`workflowTemplateId`), opt-in triage route helper (`lib/llm/route.ts`).
+  Default chat/retrieval path UNCHANGED.
+- [x] typecheck 0; full suite **499 green**; build clean.
+- [x] Docs `docs/WAVE4.md` + WAVE3 follow-ups + README.
+- [ ] PR `feat/lavern-wave4` → main
+- Remaining (out of scope, documented): flip defaults (full live rewire), true
+  Ollama NDJSON streaming + tool-calling, live per-step workflow progress.
