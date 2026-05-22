@@ -55,6 +55,8 @@ data: {"type":"content","delta":"..."}        ← model prose
 data: {"type":"tool_call_start","name":"..."} ← about to run a tool
 data: {"type":"doc_read","filename":"..."}    ← tool-result events
 data: {"type":"doc_created", …}
+data: {"type":"grounding","score":0.83, …}    ← trailing zero-LLM
+                                                citation check (AC2)
 …
 data: [DONE]
 ```
@@ -66,7 +68,10 @@ Pipeline:
 2. `routes/chat.ts` runs the **skill router**
    (`backend/src/skills/_router.ts`) which selects relevant skills from
    the ~990 authored markdown files and composes a system-prompt
-   extension.
+   extension. The **Processor v2 cost governor** (`lib/llm/effort.ts`)
+   picks an intensity tier here — scaling the skill count, model tier,
+   and Claude `effort`, under a per-turn budget cap. See
+   [`PROCESSOR_V2.md`](./PROCESSOR_V2.md).
 3. `lib/chatTools.ts → runLLMStream` calls `lib/llm/index.ts` which
    dispatches to the provider adapter (`claude.ts`, `gemini.ts`,
    `openai.ts`). All three adapters speak the same `streamChatWithTools`
@@ -77,6 +82,10 @@ Pipeline:
 5. When the turn ends, the assistant message is persisted with its
    events as JSON in `chat_messages.content`. The frontend later
    re-hydrates statuses (edit accept/reject) at load time.
+6. A fail-safe trailing block runs the **zero-LLM grounding verifier**
+   (`backend/src/grounding/`) over the answer against the documents it
+   cited, emitting a `grounding` SSE event. It runs after the reply, in
+   its own try/catch, so it can never delay or break a successful turn.
 
 ## BYO API keys
 
