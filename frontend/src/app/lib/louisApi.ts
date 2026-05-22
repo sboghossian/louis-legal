@@ -159,7 +159,7 @@ export async function signupViaServer(payload: {
     }
 }
 
-export type AppearanceTheme = "cream" | "light" | "dark" | "paper" | "slate";
+export type AppearanceTheme = "cream" | "light" | "dark" | "paper" | "slate" | "helm";
 export type AppearanceFont =
     | "serif-garamond"
     | "sans-inter"
