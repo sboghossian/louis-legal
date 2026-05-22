@@ -4,6 +4,7 @@ import {
   withinBudget,
   turnBudgetCeilingUsd,
   rateForModel,
+  decideTurnBudget,
 } from "./budget";
 
 describe("estimateTurnCostUsd", () => {
@@ -79,5 +80,37 @@ describe("turnBudgetCeilingUsd", () => {
     expect(turnBudgetCeilingUsd()).toBe(1.0);
     process.env.LOUIS_TURN_BUDGET_USD = "-5";
     expect(turnBudgetCeilingUsd()).toBe(1.0);
+  });
+});
+
+describe("decideTurnBudget", () => {
+  const ORIGINAL = process.env.LOUIS_TURN_BUDGET_USD;
+  beforeEach(() => {
+    delete process.env.LOUIS_TURN_BUDGET_USD;
+  });
+  afterEach(() => {
+    if (ORIGINAL === undefined) delete process.env.LOUIS_TURN_BUDGET_USD;
+    else process.env.LOUIS_TURN_BUDGET_USD = ORIGINAL;
+  });
+
+  it("flags an over-ceiling turn with estimate + ceiling", () => {
+    const d = decideTurnBudget({
+      model: "claude-opus-4-7",
+      inputTokens: 1_000_000,
+      outputTokens: 1_000_000,
+    });
+    expect(d.withinBudget).toBe(false);
+    expect(d.estUsd).toBeGreaterThan(d.ceilingUsd);
+    expect(d.ceilingUsd).toBe(1.0);
+  });
+
+  it("passes a cheap turn under the ceiling", () => {
+    const d = decideTurnBudget({
+      model: "claude-haiku-4-5",
+      inputTokens: 2_000,
+      outputTokens: 500,
+    });
+    expect(d.withinBudget).toBe(true);
+    expect(d.estUsd).toBeLessThan(d.ceilingUsd);
   });
 });

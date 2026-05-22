@@ -14,6 +14,13 @@ export {
   rankEntries,
   DEFAULT_HALF_LIFE_DAYS,
 } from "./ranking";
+export {
+  buildMemoryContext,
+  summarizeTurnForMemory,
+  DEFAULT_CONTEXT_LIMIT,
+  MAX_MEMORY_CHARS,
+} from "./context";
+export type { MemoryContextQuery, MemoryContextResult } from "./context";
 export { TAG_KEYS } from "./types";
 export type {
   MemoryTier,

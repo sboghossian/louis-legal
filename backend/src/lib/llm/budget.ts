@@ -72,3 +72,20 @@ export function turnBudgetCeilingUsd(): number {
 export function withinBudget(estUsd: number, ceilingUsd: number = turnBudgetCeilingUsd()): boolean {
   return estUsd <= ceilingUsd;
 }
+
+export interface TurnBudgetDecision {
+  estUsd: number;
+  ceilingUsd: number;
+  withinBudget: boolean;
+}
+
+/**
+ * Compose the estimate + ceiling + verdict for one turn — the single call the
+ * chat handler uses to decide whether to emit a budget alert. Pure; never
+ * blocks the turn itself (decision #87: alert, not block).
+ */
+export function decideTurnBudget(input: TurnCostInput): TurnBudgetDecision {
+  const estUsd = estimateTurnCostUsd(input);
+  const ceilingUsd = turnBudgetCeilingUsd();
+  return { estUsd, ceilingUsd, withinBudget: withinBudget(estUsd, ceilingUsd) };
+}

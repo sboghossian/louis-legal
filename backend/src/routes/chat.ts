@@ -12,6 +12,13 @@ import {
     type ChatMessage,
 } from "../lib/chatTools";
 import { verifyGrounding } from "../grounding";
+import {
+    memoryStore,
+    buildMemoryContext,
+    summarizeTurnForMemory,
+    type MemoryContextResult,
+} from "../memory";
+import { decideTurnBudget } from "../lib/llm/budget";
 import { routeAsync as routeSkills } from "../skills/_router";
 import { completeText } from "../lib/llm";
 import { getUserApiKeys, getUserModelSettings } from "../lib/userSettings";
@@ -598,10 +605,29 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         chosenModelSource,
     });
 
+    // Processor v2: inject earned working memory into the system prompt. Pure +
+    // additive — an empty store contributes "", and the entries returned are
+    // recorded as used after the turn so their recency stays fresh.
+    let memoryCtx: MemoryContextResult = { block: "", entries: [] };
+    try {
+        memoryCtx = buildMemoryContext(memoryStore, {
+            tags: {
+                practiceArea: routeDecision.intent.practiceArea,
+                jurisdiction: routeDecision.intent.jurisdiction,
+            },
+            matterId: resolvedProjectId ?? undefined,
+            sessionId: chatId ?? undefined,
+        });
+    } catch (memErr) {
+        devLog("[chat/stream] memory injection skipped", {
+            error: memErr instanceof Error ? memErr.message : String(memErr),
+        });
+    }
+
     const apiMessages = buildMessages(
         enrichedMessages,
         docAvailability,
-        routeDecision.systemPromptExtra,
+        routeDecision.systemPromptExtra + memoryCtx.block,
     );
 
     const workflowStore = await buildWorkflowStore(userId, userEmail, db);
@@ -732,6 +758,61 @@ chatRouter.post("/", requireAuth, async (req, res) => {
                     groundingErr instanceof Error
                         ? groundingErr.message
                         : String(groundingErr),
+            });
+        }
+
+        // ----- Processor v2: per-turn budget alert (decision #87 — alert, not
+        // block). Rough char/4 token estimate; emits a `budget` event only when
+        // the turn is estimated over the configured ceiling. Fail-safe.
+        try {
+            const inputTokens = Math.ceil(JSON.stringify(apiMessages).length / 4);
+            const outputTokens = Math.ceil((fullText?.length ?? 0) / 4);
+            const budget = decideTurnBudget({
+                model: chosenModel ?? "",
+                inputTokens,
+                outputTokens,
+            });
+            if (!budget.withinBudget) {
+                write(
+                    `data: ${JSON.stringify({
+                        type: "budget",
+                        estUsd: budget.estUsd,
+                        ceilingUsd: budget.ceilingUsd,
+                        over: true,
+                    })}\n\n`,
+                );
+            }
+        } catch (budgetErr) {
+            devLog("[chat/stream] budget check skipped", {
+                error:
+                    budgetErr instanceof Error
+                        ? budgetErr.message
+                        : String(budgetErr),
+            });
+        }
+
+        // ----- Processor v2: capture the turn back into working memory and keep
+        // the injected entries' recency fresh. Fail-safe — memory is best-effort.
+        try {
+            for (const entry of memoryCtx.entries) memoryStore.recordUsage(entry.id);
+            const memContent = summarizeTurnForMemory({
+                userMessage: latestUserMessage,
+                assistantText: fullText ?? "",
+            });
+            if (memContent) {
+                memoryStore.put({
+                    tier: resolvedProjectId ? "matter" : "session",
+                    content: memContent,
+                    tags: {
+                        practiceArea: routeDecision.intent.practiceArea,
+                        jurisdiction: routeDecision.intent.jurisdiction,
+                    },
+                    scopeId: resolvedProjectId ?? chatId ?? undefined,
+                });
+            }
+        } catch (memErr) {
+            devLog("[chat/stream] memory capture skipped", {
+                error: memErr instanceof Error ? memErr.message : String(memErr),
             });
         }
 
